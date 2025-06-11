@@ -1,0 +1,161 @@
+---
+description: 
+globs: *.pas
+alwaysApply: false
+---
+# Pascal Script Guidelines for xEdit
+
+## Documentation References
+- [xEdit Scripting Functions](mdc:https:/tes5edit.github.io/docs/13-Scripting-Functions.html) - Official documentation
+- [xEdit Script Examples](mdc:https:/tes5edit.github.io/docs/14-Script-Examples.html)
+- [xEdit Pascal Script Reference](mdc:https:/tes5edit.github.io/docs/15-Pascal-Script-Reference.html)
+
+## xEdit Script Lifecycle
+
+### Required Functions
+Every xEdit script must implement these three lifecycle functions:
+
+1. **Initialize**:
+   ```pascal
+   function Initialize: integer;
+   begin
+     // Setup code - runs once at script start
+     // Create TStringList objects
+     // Set up file paths
+     // Initialize variables
+     Result := 0;
+   end;
+   ```
+
+2. **Process**:
+   ```pascal
+   function Process(e: IInterface): integer;
+   begin
+     // Main processing - runs for each record
+     // e is the current record being processed
+     // Return 0 to continue processing
+     Result := 0;
+   end;
+   ```
+
+3. **Finalize**:
+   ```pascal
+   function Finalize: integer;
+   begin
+     // Cleanup code - runs once at script end
+     // Free TStringList objects
+     // Save output files
+     // Generate manifests
+     Result := 0;
+   end;
+   ```
+
+### Global Variables
+xEdit provides these read-only variables:
+- `DataPath`: Path to game's data folder
+- `ProgramPath`: Path to xEdit installation
+- `ScriptsPath`: Path to 'Edit Scripts' folder
+- `FileCount`: Number of loaded files
+- `wbAppName`: Returns 'TES5','TES4','FNV','FO3'
+- `wbVersionNumber`: xEdit version number
+
+### Unsupported Features
+1. **Language Features**:
+   - Anonymous methods
+   - Array arguments
+   - Function overloading
+   - Object types
+   - Out parameters (use var instead)
+   - Procedural types
+   - Structured types
+   - Subclasses without constructors
+   - Try blocks (limited error catching)
+
+2. **Operators**:
+   - `&` (prefix)
+   - `@` (address)
+   - `^` (dereference)
+   - `<<` and `>>` (use Shl/Shr instead)
+
+3. **Keywords**:
+   - `absolute`
+   - `as`
+   - `constructor`
+   - `in`
+   - `is`
+   - `object`
+   - `type` (limited support)
+   - `with`
+
+### Best Practices
+1. **Memory Management**:
+   - Always free TStringList objects in Finalize
+   - Use var parameters instead of out
+   - Avoid complex object hierarchies
+
+2. **Error Handling**:
+   - Check for nil/Assigned before use
+   - Use simple if/else instead of try/except
+   - Validate input data early
+
+3. **Performance**:
+   - Minimize string operations
+   - Use TStringList for collections
+   - Avoid unnecessary object creation
+   - Free objects promptly
+
+4. **Code Style**:
+   - Use explicit begin/end blocks
+   - Group related variable declarations
+   - Use meaningful variable names
+   - Document complex logic
+
+### Common Patterns
+1. **Record Processing**:
+   ```pascal
+   function Process(e: IInterface): integer;
+   begin
+     if not Assigned(e) then Exit;
+     recordType := Signature(e);
+     if recordType = '' then Exit;
+     // Process record
+     Result := 0;
+   end;
+   ```
+
+2. **File Output**:
+   ```pascal
+   function Finalize: integer;
+   begin
+     manifest := TStringList.Create;
+     try
+       // Add manifest data
+       manifest.SaveToFile(manifestPath);
+     finally
+       manifest.Free;
+     end;
+     Result := 0;
+   end;
+   ```
+
+3. **Field Exclusion**:
+   ```pascal
+   var
+     UNIVERSAL_EXCLUDED_FIELDS: TStringList;
+   
+   function Initialize: integer;
+   begin
+     UNIVERSAL_EXCLUDED_FIELDS := TStringList.Create;
+     UNIVERSAL_EXCLUDED_FIELDS.Add('Data Size');
+     // ... add more fields
+     Result := 0;
+   end;
+   ```
+
+### Debugging Tips
+1. Use AddMessage for output
+2. Check return values
+3. Validate input data
+4. Log important operations
+5. Use meaningful error messages
+
