@@ -8,6 +8,7 @@
     "dev": "ts-node src/index.ts",
     "json-processor:dev": "ts-node json-processor/src/index.ts",
     "select-winners": "ts-node json-processor/src/select-winners.ts",
+    "fix-json": "ts-node json-processor/src/fix-json.ts",
     "sample": "ts-node json-processor/src/random-sampler.ts",
     "test": "jest",
     "test:watch": "jest --watch"

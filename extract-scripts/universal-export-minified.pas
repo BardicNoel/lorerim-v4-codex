@@ -1,6 +1,3 @@
-// Pascal script for xEdit (Universal Record Exporter with Nested Field Support - grouped by type + manifest to subfolder)
-// Specifically designed for Skyrim records
-
 unit UserScript;
 
 var
@@ -112,28 +109,29 @@ begin
   Result := Copy(ref, startPos + 1, endPos - startPos - 1);
 end;
 
-procedure DumpElement(e: IInterface; indent: integer; sl: TStringList);
+function DumpElement(e: IInterface): string;
 var
   i, count: integer;
   child, nextChild: IInterface;
-  elemName, nextName, elemValue, indentStr: string;
+  elemName, nextName, elemValue: string;
   isArray: boolean;
   needsComma: boolean;
   isLastElement: boolean;
+  jsonStr: string;
   isCondition: boolean;
 begin
   if not Assigned(e) then begin
     AddMessage('Warning: Nil element passed to DumpElement');
+    Result := 'null';
     Exit;
   end;
 
   // Check if this is a condition record
   isCondition := (Name(e) = 'CTDA - CTDA');
 
-  indentStr := StringOfChar(' ', indent * 2);
   count := ElementCount(e);
   if count > 0 then begin
-    sl.Add(indentStr + '{');
+    jsonStr := '{';
     i := 0;
     needsComma := false;
     while i < count do begin
@@ -162,7 +160,7 @@ begin
       end;
 
       if needsComma then
-        sl[sl.Count - 1] := sl[sl.Count - 1] + ',';
+        jsonStr := jsonStr + ',';
       needsComma := true;
 
       isArray := false;
@@ -176,7 +174,8 @@ begin
       end;
 
       if isArray then begin
-        sl.Add(indentStr + '  "' + EscapeString(elemName) + '": [');
+        jsonStr := jsonStr + '"' + EscapeString(elemName) + '":[';
+
         while (i < count) and (Name(ElementByIndex(e, i)) = elemName) do begin
           child := ElementByIndex(e, i);
           if not Assigned(child) then begin
@@ -187,21 +186,20 @@ begin
           isLastElement := (i + 1 >= count) or (Name(ElementByIndex(e, i + 1)) <> elemName);
 
           if ElementCount(child) > 0 then begin
-            DumpElement(child, indent + 2, sl);
+            jsonStr := jsonStr + DumpElement(child);
             if not isLastElement then
-              sl[sl.Count - 1] := sl[sl.Count - 1] + ',';
+              jsonStr := jsonStr + ',';
           end else begin
             elemValue := GetEditValue(child);
             if not IsNullOrEmpty(elemValue) then begin
+              jsonStr := jsonStr + '"' + EscapeString(elemValue) + '"';
               if not isLastElement then
-                sl.Add(indentStr + '    "' + EscapeString(elemValue) + '",')
-              else
-                sl.Add(indentStr + '    "' + EscapeString(elemValue) + '"');
+                jsonStr := jsonStr + ',';
             end;
           end;
           Inc(i);
         end;
-        sl.Add(indentStr + '  ]');
+        jsonStr := jsonStr + ']';
       end else begin
         child := ElementByIndex(e, i);
         if not Assigned(child) then begin
@@ -214,8 +212,7 @@ begin
             Inc(i);
             Continue;
           end;
-          sl.Add(indentStr + '  "' + EscapeString(elemName) + '": ');
-          DumpElement(child, indent + 1, sl);
+          jsonStr := jsonStr + '"' + EscapeString(elemName) + '":' + DumpElement(child);
         end else begin
           if (elemName = 'FormID') then
             elemValue := Signature(e) + ':' + IntToHex(FixedFormID(e), 8)
@@ -229,17 +226,20 @@ begin
             elemValue := ExtractFormID(elemValue);
 
           if not IsNullOrEmpty(elemValue) then
-            sl.Add(indentStr + '  "' + EscapeString(elemName) + '": "' + EscapeString(elemValue) + '"');
+            jsonStr := jsonStr + '"' + EscapeString(elemName) + '":"' + EscapeString(elemValue) + '"';
         end;
         Inc(i);
       end;
     end;
-    sl.Add(indentStr + '}');
+    jsonStr := jsonStr + '}';
   end else begin
     elemValue := GetEditValue(e);
     if not IsNullOrEmpty(elemValue) then
-      sl.Add(indentStr + '"' + EscapeString(elemValue) + '"');
+      jsonStr := '"' + EscapeString(elemValue) + '"'
+    else
+      jsonStr := '""';
   end;
+  Result := jsonStr;
 end;
 
 function Initialize: integer;
@@ -313,18 +313,15 @@ begin
   try
     if StrToInt(recordCounts.Values[recordType]) > 0 then
       temp.Add(',');
-    temp.Add('  {');
-    temp.Add('    "plugin": "' + EscapeString(pluginName) + '",');
-    temp.Add('    "load_order": "' + IntToHex(GetLoadOrderFormID(e) shr 24, 2) + '",');
-    temp.Add('    "form_id": "' + fixedID + '",');
-    temp.Add('    "full_form_id": "' + fullID + '",');
-    temp.Add('    "unique_id": "' + pluginName + '|' + fixedID + '",');
-    temp.Add('    "record_type": "' + EscapeString(recordType) + '",');
-    temp.Add('    "editor_id": "' + EscapeString(editorID) + '",');
-    temp.Add('    "winning": ' + BoolToStr(IsWinningOverride(e)) + ',');
-    temp.Add('    "data": ');
-    DumpElement(e, 3, temp);
-    temp.Add('  }');
+    temp.Add('{"plugin":"' + EscapeString(pluginName) + '",' +
+             '"load_order":"' + IntToHex(GetLoadOrderFormID(e) shr 24, 2) + '",' +
+             '"form_id":"' + fixedID + '",' +
+             '"full_form_id":"' + fullID + '",' +
+             '"unique_id":"' + pluginName + '|' + fixedID + '",' +
+             '"record_type":"' + EscapeString(recordType) + '",' +
+             '"editor_id":"' + EscapeString(editorID) + '",' +
+             '"winning":' + BoolToStr(IsWinningOverride(e)) + ',' +
+             '"data":' + DumpElement(e) + '}');
     
     sl.AddStrings(temp);
   finally
@@ -395,4 +392,4 @@ begin
   Result := 0;
 end;
 
-end.
+end. 

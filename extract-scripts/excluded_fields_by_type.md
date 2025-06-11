@@ -11,6 +11,12 @@ The following fields should be excluded from ALL record types:
 - Any flags or fields that are consistently zeroed or hex-filled with no gameplay reference
 - Any null fields (fields that contain no meaningful data)
 
+## Condition Field Exclusions
+The following fields should be excluded from ALL condition records (CTDA):
+- `Unused` (appears in multiple places, always contains hex data)
+- `Parameter #2` when value is "00 00 00 00" (empty/default value)
+- Any parameter fields that contain only hex data with no meaningful reference
+
 ---
 
 ## NPC_ (Non-Player Character)
@@ -48,6 +54,9 @@ The following fields should be excluded from ALL record types:
 
 ## PERK (Perks)
 - `PRKF - End Marker` (Effects)
+- Empty/Default condition parameters
+- Unused condition fields
+- Any condition fields that only contain hex data with no meaningful reference
 
 ## MGEF (Magic Effects)
 - *(no exclusions yet)*

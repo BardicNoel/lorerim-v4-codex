@@ -31,25 +31,50 @@ function cleanJsonString(str: string): string {
     .replace(/\\\\/g, '\\')
     // Ensure proper escaping of quotes in the entire string
     .replace(/(?<!\\)"/g, '\\"')
-    // Remove trailing commas in objects and arrays
-    .replace(/,(\s*[}\]])/g, '$1')
+    // Fix newlines between property names and values
+    .replace(/"([^"]*)"\s*\n\s*{/g, '"$1": {')
+    .replace(/"([^"]*)"\s*\n\s*"/g, '"$1": "')
+    .replace(/"([^"]*)"\s*\n\s*\[/g, '"$1": [')
     // Fix missing commas between object properties
+    .replace(/"\s*"\s*"/g, '", "')
+    // Fix missing commas after object properties
     .replace(/"\s*}\s*"/g, '", "')
     // Fix missing commas between array elements
-    .replace(/"\s*]\s*"/g, '", "');
+    .replace(/"\s*]\s*"/g, '", "')
+    // Fix missing commas after values
+    .replace(/"([^"]*)"\s*"([^"]*)"/g, '"$1", "$2"')
+    // Fix missing commas in object properties
+    .replace(/"([^"]*)"\s*:\s*"([^"]*)"\s*"([^"]*)"/g, '"$1": "$2", "$3"')
+    // Fix missing object keys
+    .replace(/"\s*:\s*{/g, '": {')
+    // Fix malformed object structures
+    .replace(/{([^}]*):([^}]*)}/g, '{"$1": $2}')
+    // Fix missing quotes around property names
+    .replace(/([{,]\s*)([a-zA-Z0-9_]+)(\s*:)/g, '$1"$2"$3')
+    // Fix missing commas in nested objects
+    .replace(/"([^"]*)"\s*{\s*"([^"]*)"/g, '"$1": { "$2"')
+    // Fix missing commas after nested objects
+    .replace(/"}\s*"([^"]*)"/g, '"}, "$1"');
 }
 
 // Function to validate and fix JSON structure
 function validateAndFixJson(str: string): string {
   let fixed = str;
   let lastFixed = '';
+  let attempts = 0;
+  const MAX_ATTEMPTS = 5;
   
   // Keep trying to fix the JSON until it's valid or no more changes can be made
-  while (fixed !== lastFixed) {
+  while (fixed !== lastFixed && attempts < MAX_ATTEMPTS) {
+    attempts++;
     lastFixed = fixed;
     
     // Fix common JSON structure issues
     fixed = fixed
+      // Fix newlines between property names and values
+      .replace(/"([^"]*)"\s*\n\s*{/g, '"$1": {')
+      .replace(/"([^"]*)"\s*\n\s*"/g, '"$1": "')
+      .replace(/"([^"]*)"\s*\n\s*\[/g, '"$1": [')
       // Fix missing commas between object properties
       .replace(/"\s*}\s*"/g, '", "')
       // Fix missing commas between array elements
@@ -63,7 +88,22 @@ function validateAndFixJson(str: string): string {
       // Fix missing colons
       .replace(/"\s*"\s*"/g, '": "')
       // Fix missing commas
-      .replace(/"\s*"\s*"/g, '", "');
+      .replace(/"\s*"\s*"/g, '", "')
+      // Fix malformed object structures
+      .replace(/{([^}]*):([^}]*)}/g, '{"$1": $2}')
+      // Fix missing object keys
+      .replace(/"\s*:\s*{/g, '": {')
+      // Fix nested object issues
+      .replace(/{([^{]*){/g, '{$1{')
+      .replace(/}([^}]*)}/g, '}$1}')
+      // Fix missing commas in nested objects
+      .replace(/"([^"]*)"\s*{\s*"([^"]*)"/g, '"$1": { "$2"')
+      // Fix missing commas after nested objects
+      .replace(/"}\s*"([^"]*)"/g, '"}, "$1"')
+      // Fix missing commas after values
+      .replace(/"([^"]*)"\s*"([^"]*)"/g, '"$1", "$2"')
+      // Fix missing commas in object properties
+      .replace(/"([^"]*)"\s*:\s*"([^"]*)"\s*"([^"]*)"/g, '"$1": "$2", "$3"');
   }
   
   return fixed;
@@ -79,7 +119,7 @@ async function findErrorLine(filePath: string, errorPosition: number): Promise<{
   let currentPosition = 0;
   let lineNumber = 0;
   let lastLines: string[] = [];
-  const contextLines = 3;
+  const contextLines = 5;
 
   for await (const line of rl) {
     lineNumber++;
@@ -91,10 +131,14 @@ async function findErrorLine(filePath: string, errorPosition: number): Promise<{
     }
 
     if (currentPosition >= errorPosition) {
+      // Get the line numbers for context
+      const startLine = Math.max(1, lineNumber - contextLines + 1);
+      const contextWithNumbers = lastLines.map((l, i) => `${startLine + i}: ${l}`);
+      
       return { 
         line: lineNumber, 
         content: line,
-        context: lastLines
+        context: contextWithNumbers
       };
     }
   }
@@ -194,17 +238,20 @@ async function selectWinners(inputFile: string): Promise<void> {
       resolve();
     });
     pipeline.on('error', async (error: Error) => {
-      console.error('Pipeline error:', error);
+      console.error('\n=== JSON PARSING ERROR ===');
+      console.error('Error:', error.message);
       console.error(`Last processed record: ${lastRecordKey}`);
       
       // Try to find the error location
       const errorInfo = await findErrorLine(inputFile, currentPosition);
       if (errorInfo) {
-        console.error(`\nError occurred around line ${errorInfo.line}:`);
-        console.error('Content:', errorInfo.content);
-        console.error('\nContext:');
+        console.error('\n=== ERROR LOCATION ===');
+        console.error(`Error occurred at line ${errorInfo.line}:`);
+        console.error('Problematic line:', errorInfo.content);
+        console.error('\nContext (5 lines before error):');
         errorInfo.context.forEach(line => console.error(line));
         console.error('\nPosition in file:', currentPosition, 'bytes');
+        console.error('========================\n');
       }
       
       reject(new Error(`Error processing file: ${error.message}`));
