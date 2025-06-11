@@ -1,0 +1,20 @@
+Primary Character Resource Types
+--------------------------------
+1. RACE (RACE) – Defines character attributes, visuals, base stats, and flags (e.g., playable, vampire, beast race).
+2. SPELL (SPEL) – Main holder for any spell or magical ability, including powers and racial abilities.
+3. MAGIC EFFECT (MGEF) – Used by spells to define actual effects (damage, heal, summon, etc.).
+4. INGREDIENT (INGR) – Alchemy components with alchemical effects.
+5. ALCHEMY (ALCH) – Potions and poisons usable by players or NPCs.
+6. SHOUT (SHOU) – Dragon Shouts, composed of one or more Words of Power.
+7. WORD OF POWER (WOOP) – Individual components of Shouts, often linked to specific effects or conditions.
+8. PERK (PERK) – Grants effects, abilities, skill bonuses, or modifies game logic.
+9. ENCHANTMENT (ENCH) – Used by weapons, armor, and items; defines magical item effects.
+10. ABILITY (ABLV) – Bundled passive effects, often found in races, perks, or vampire/werewolf forms.
+
+Secondary or Supportive Types
+-----------------------------
+11. BOOK (BOOK) – Spell tomes, skill books, and other lore sources that might grant abilities.
+12. GLOB (GLOB) – Global variables, often used to gate ability conditions or perk logic.
+13. AVIF (Actor Value Information) – Defines skill names, descriptions, and behavior for actor values.
+14. LVSP (Leveled Spell List) – Spells assigned by level progression (especially in creature races or NPCs).
+15. NPC_ (NPC_) – For verifying what spells/abilities are assigned to NPCs, including vampire and werewolf templates.
