@@ -5,9 +5,11 @@ module.exports = {
   roots: ['<rootDir>'],
   testMatch: [
     '**/__tests__/**/*.test.ts',
-    '**/src/**/*.test.ts'
+    '**/src/**/*.test.ts',
+    '**/tests/**/*.test.ts'
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1'
-  }
+  },
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
 }; 
