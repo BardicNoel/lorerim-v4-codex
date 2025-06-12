@@ -1,8 +1,0 @@
----
-description: 
-globs: 
-alwaysApply: false
----
-# Post Extract Scripts
-These scripts are used to process data/ records into Lorerim concerns.
-The original exports are meant to dump a great deal of data from the raw files, so that processing can be manipulated here as new ideas develop

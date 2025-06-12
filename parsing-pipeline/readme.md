@@ -1,119 +1,90 @@
 # Parsing Pipeline
 
-A flexible and extensible data processing pipeline for transforming and analyzing large JSON datasets. The pipeline is designed to be both configurable through a configuration file and accessible through an interactive CLI.
+A flexible and extensible data processing pipeline for transforming and analyzing large JSON datasets. The pipeline uses a functional approach with YAML-based configuration for defining processing stages.
 
 ## Project Structure
 
 ```
 parsing-pipeline/
 ├── src/
-│   ├── cli/                 # Interactive CLI implementation
 │   ├── pipeline/           # Core pipeline implementation
 │   ├── processors/         # Data processing stages
-│   │   ├── trim/          # JSON trimming functionality
-│   │   └── json/          # JSON-specific processors
+│   │   └── core/          # Core processing functions
 │   ├── types/             # TypeScript type definitions
 │   └── utils/             # Shared utilities
 ├── config/                # Pipeline configuration files
+│   └── pipelines/        # Pipeline YAML configurations
 └── docs/                 # Detailed documentation
 ```
 
 ## Components
 
-### 1. Pipeline CLI
+### 1. Pipeline Core
 
-The interactive command-line interface that provides easy access to pipeline functionality:
+The main pipeline engine that processes data according to YAML configuration:
 
-- Run individual pipeline stages for debugging
-- Execute full pipeline configurations
-- Interactive mode for exploring data transformations
-- Helpful command suggestions and documentation
-
-### 2. Pipeline Core
-
-The main pipeline engine that processes data according to configuration:
-
-- Configuration-driven processing
-- Stage chaining and dependency management
+- YAML-based configuration
+- Functional processing stages
 - Progress tracking and reporting
 - Error handling and recovery
 
-### 3. Processors
+### 2. Processors
 
-Individual data processing stages that can be used independently or as part of a pipeline:
+Core data processing functions that can be chained in a pipeline:
 
-- JSON Trimming: Remove unnecessary fields and null values
-- JSON Selection: Filter and select specific records
-- Random Sampling: Create representative subsets of data
-- Custom Processors: Extensible architecture for new processing stages
+- Filter Records: Filter records based on conditions
+- Remove Fields: Remove specified fields from records
+- Keep Fields: Keep only specified fields in records
+- Sanitize Fields: Remove or replace fields containing specific patterns
 
 ## Usage
 
-### Running Individual Stages
+### Running a Pipeline
 
-Each processor can be run independently for debugging:
-
-```bash
-# Trim JSON data
-npm run trim -- <input> <type> <profile> <output> [--removeNulls] [--overwrite]
-
-# Select winners from JSON
-npm run select-winners -- <input> <output> [--criteria] [--overwrite]
-
-# Random sampling
-npm run random-sampler -- <input> <output> <count> [--seed] [--overwrite]
-```
-
-### Running Full Pipeline
-
-Execute a complete pipeline configuration:
+Execute a pipeline defined in a YAML configuration file:
 
 ```bash
-npm run pipeline -- --config <config-file>
+# From project root
+npx ts-node parsing-pipeline/src/scripts/run-pipeline.ts parsing-pipeline/config/pipelines/filter-winners.yaml
+
+# From parsing-pipeline directory
+npm run pipeline -- config/pipelines/filter-winners.yaml
 ```
 
-### Interactive CLI
-
-Start the interactive CLI:
-
-```bash
-npm run cli
-```
-
-## Configuration
+### Pipeline Configuration
 
 Pipeline configurations are defined in YAML files:
 
 ```yaml
 name: "Example Pipeline"
+version: "1.0.0"
+description: "Process user data"
+input: "data/raw/input.json"
+output: "data/processed/output.json"
 stages:
-  - name: "trim"
-    type: "json-trim"
-    input: "input.json"
-    output: "trimmed.json"
-    args:
-      type: "MGEF"
-      profile: "logic"
-      removeNulls: true
+  - name: "filter-records"
+    type: "filter-records"
+    config:
+      conditions:
+        - field: "status"
+          operator: "equals"
+          value: "active"
 
-  - name: "select"
-    type: "select-winners"
-    input: "trimmed.json"
-    output: "selected.json"
-    args:
-      criteria:
-        - field: "type"
-          value: "spell"
+  - name: "remove-fields"
+    type: "remove-fields"
+    config:
+      fields:
+        - "internalId"
+        - "metadata"
 ```
 
 ## Development
 
 ### Adding New Processors
 
-1. Create a new processor class in `src/processors/`
-2. Implement the `Processor` interface
-3. Add CLI support in `src/cli/`
-4. Update documentation
+1. Create a new processor function in `src/processors/core/`
+2. Add the processor to the exports in `src/processors/core/index.ts`
+3. Update documentation with new processor examples
 
 ### Building
 
