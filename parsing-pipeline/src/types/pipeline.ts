@@ -62,7 +62,7 @@ export interface SanitizeFieldsConfig extends BaseStageConfig {
   type: 'sanitize-fields';
   rules: {
     pattern: string;  // Pattern to match in field values
-    action: 'remove' | 'replace';  // What to do with matching fields
+    action: 'remove' | 'replace' | 'extractFormId';  // What to do with matching fields
     replacement?: string;  // Value to replace with (if action is 'replace')
     excludeFields?: FieldPath[];  // Fields to exclude from checking
   }[];

@@ -42,4 +42,19 @@ stages:
           - "unique_id"
           - "record_type"
           - "editor_id"
+          - "winning"
+
+  - name: "Extract Form IDs"
+    type: "sanitize-fields"
+    description: "Extract form IDs from reference strings (e.g., 'MAGINVIceSpellArt [STAT:0009DB72]' becomes 'STAT:0009DB72')"
+    rules:
+      - action: "extractFormId"
+        excludeFields:
+          - "plugin"
+          - "load_order"
+          - "form_id"
+          - "full_form_id"
+          - "unique_id"
+          - "record_type"
+          - "editor_id"
           - "winning" 

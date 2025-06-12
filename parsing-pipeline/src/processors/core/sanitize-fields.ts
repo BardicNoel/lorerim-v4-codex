@@ -6,6 +6,11 @@ function isExcludedField(fieldPath: string, excludeFields?: string[]): boolean {
     return excludeFields.some(excluded => fieldPath.startsWith(excluded));
 }
 
+function extractFormId(value: string): string | null {
+    const match = value.match(/\[([A-Z]+:[0-9A-F]+)\]/);
+    return match ? match[1] : null;
+}
+
 function processObject(
     obj: Record<string, any>,
     rules: SanitizeFieldsConfig['rules'],
@@ -43,6 +48,18 @@ function processObject(
         // Handle primitive values
         if (typeof value === 'string') {
             const rule = rules[0]; // For now, we only use the first rule
+            
+            // Handle form ID extraction
+            if (rule.action === 'extractFormId') {
+                const formId = extractFormId(value);
+                if (formId) {
+                    stats.fieldsReplaced++;
+                    result[key] = formId;
+                    continue;
+                }
+            }
+            
+            // Handle other string patterns
             if (value.includes(rule.pattern)) {
                 if (rule.action === 'remove') {
                     stats.fieldsRemoved++;
