@@ -1,0 +1,26 @@
+name: "Test Pipeline"
+description: "Simple test pipeline with filter and keep stages"
+input: "../data/raw/test-data.json"
+output: "../data/processed/test-output.json"
+stages:
+  - name: "Filter Load Order Winners"
+    type: "filter-records"
+    description: "Filter active users with dark theme preference"
+    criteria:
+      - field: "status"
+        operator: "equals"
+        value: "active"
+      - field: "profile.preferences.theme"
+        operator: "equals"
+        value: "dark"
+
+  - name: "Keep Essential Fields"
+    type: "keep-fields"
+    description: "Keep only essential fields"
+    fields:
+      - "id"
+      - "name"
+      - "status"
+      - "email"
+      - "profile.role"
+      - "profile.preferences.theme" 

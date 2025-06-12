@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+1. execution must be from ./post-extract-scripts, not the root folder
+
+2. the shell is powershell, use appropriate commands for that env

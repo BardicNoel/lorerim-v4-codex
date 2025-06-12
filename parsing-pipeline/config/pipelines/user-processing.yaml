@@ -1,0 +1,35 @@
+name: "User Data Processing Pipeline"
+description: "Process user data by filtering active users and removing sensitive fields"
+input: "data/raw/users.json"
+output: "data/processed/clean-users.json"
+
+stages:
+  - name: "Filter Active Users"
+    type: "filter-records"
+    description: "Filter out inactive users"
+    criteria:
+      - field: "status"
+        operator: "equals"
+        value: "active"
+      - field: "lastLogin"
+        operator: "greater-than"
+        value: "2024-01-01"
+
+  - name: "Remove Sensitive Fields"
+    type: "remove-fields"
+    description: "Remove sensitive user information"
+    fields:
+      - "password"
+      - "ssn"
+      - "creditCard"
+      - "securityQuestions"
+    conditions:
+      - field: "type"
+        operator: "equals"
+        value: "user"
+
+  - config: "stages/keep-essential-fields.yaml"
+    enabled: true
+
+  - config: "stages/sanitize-user-fields.yaml"
+    enabled: true 

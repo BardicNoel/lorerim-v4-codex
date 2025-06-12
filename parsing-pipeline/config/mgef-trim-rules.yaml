@@ -1,0 +1,99 @@
+# MGEF Trim Rules Configuration
+# This file defines different trim profiles for MGEF records
+# The structure matches the exact nesting of fields in the MGEF data
+
+profiles:
+  # Logic profile - keeps only gameplay logic related fields
+  logic:
+    description: "Focuses on gameplay logic, removing visual, audio, and metadata fields"
+    removeNulls: true  # Remove null values from the output
+    remove_fields:
+      # General Metadata
+      - "load_order"
+      - "full_form_id"
+      - "form_id"
+      
+      # Magic Effect Data
+      - "Magic Effect Data":
+          "DATA - Data":
+            - "Unused"
+            - "Casting Light"
+            - "Hit Shader"
+            - "Enchant Shader"
+            - "Taper Curve"
+            - "Taper Duration"
+            - "Second AV Weight"
+            - "Projectile"
+            - "Explosion"
+            - "Casting Art"
+            - "Spellmaking":
+                - "Casting Time"
+            - "Assoc. Item"
+      
+      # Visual/Display Data
+      - "MDOB"      # Menu Display Object
+      - "ENSH"      # Enchant Shader
+      - "HITS"      # Hit Shader
+      - "CIS1"      # Casting Light
+      - "CIS2"      # Casting Art
+      - "EFID"      # Hit Effect Art
+      - "EFIT"      # Impact Data
+      - "EFII"      # Enchant Art
+      - "EFIX"      # Hit Visuals
+      - "EFME"      # Enchant Visuals
+      - "IMSP"      # Image Space Modifier
+      - "EQUI"      # Equip Ability
+      
+      # Sound and Audio
+      - "SNDD"      # Sounds
+      
+      # Scripting
+      - "VMAD"      # Virtual Machine Adapter
+      
+      # Keyword Management
+      - "KWDA"      # Keywords
+      - "KSIZ"      # Keyword Count
+      
+      # Miscellaneous
+      - "AIDT"      # Assoc. Item
+      - "PROJ"      # Projectile
+      - "EXPL"      # Explosion (if not used in logic)
+      - "AVWT"      # Second AV Weight
+      - "AVVA"      # Second Actor Value
+      - "TAPR"      # Taper Curve
+      - "TAPD"      # Taper Duration
+      - "DUAL"      # Dual Casting Art
+      - "PERK"      # Perk to Apply
+      - "CTDA"      # Conditions
+
+  # Basic scan profile - removes fields not needed for system understanding
+  scan:
+    description: "Minimal fields needed for system understanding and scanning"
+    remove_fields:
+      - "VMAD"      # Virtual Machine Adapter
+      - "CTDA"      # Condition
+      - "CIS1"      # Counter Effect
+      - "CIS2"      # Counter Effect
+      - "EFIT"      # Effect Item
+      - "EFII"      # Effect Item
+      - "EFIX"      # Effect Item
+      - "EFME"      # Effect Item
+      - "EFID"      # Effect ID
+      - "SNDD"      # Sounds
+      - "MDOB"      # Menu Display Object
+      - "IMSP"      # Image Space Modifier
+
+  # Analysis profile - removes only VMAD and condition-related fields
+  analysis:
+    description: "Extended fields for detailed effect analysis"
+    remove_fields:
+      - "VMAD"      # Virtual Machine Adapter
+      - "CTDA"      # Condition
+      - "CIS1"      # Counter Effect
+      - "CIS2"      # Counter Effect
+
+  # Full profile - keeps all fields except VMAD
+  full:
+    description: "Complete record with minimal trimming"
+    remove_fields:
+      - "VMAD"      # Remove VMAD as it's typically not needed for analysis 

@@ -119,6 +119,9 @@ var
   isLastElement: boolean;
   jsonStr: string;
   isCondition: boolean;
+  hasContent: boolean;
+  skipField: boolean;
+  tempStr: string;
 begin
   if not Assigned(e) then begin
     AddMessage('Warning: Nil element passed to DumpElement');
@@ -126,14 +129,13 @@ begin
     Exit;
   end;
 
-  // Check if this is a condition record
   isCondition := (Name(e) = 'CTDA - CTDA');
-
   count := ElementCount(e);
   if count > 0 then begin
     jsonStr := '{';
     i := 0;
     needsComma := false;
+    hasContent := false;
     while i < count do begin
       child := ElementByIndex(e, i);
       if not Assigned(child) then begin
@@ -144,37 +146,33 @@ begin
       elemName := Name(child);
       if elemName = '' then elemName := '[' + IntToStr(i) + ']';
 
-      // Skip excluded fields
-      if IsExcludedField(elemName, currentRecordType) then begin
+      skipField := false;
+      if IsExcludedField(elemName, currentRecordType) then
+        skipField := true;
+
+      if isCondition and not skipField then begin
+        elemValue := GetEditValue(child);
+        if IsExcludedConditionField(elemName, elemValue) then
+          skipField := true;
+      end;
+
+      if skipField then begin
         Inc(i);
         Continue;
       end;
 
-      // For condition records, check condition-specific exclusions
-      if isCondition then begin
-        elemValue := GetEditValue(child);
-        if IsExcludedConditionField(elemName, elemValue) then begin
-          Inc(i);
-          Continue;
-        end;
-      end;
-
-      if needsComma then
-        jsonStr := jsonStr + ',';
-      needsComma := true;
-
+      tempStr := '';
       isArray := false;
       if i + 1 < count then begin
         nextChild := ElementByIndex(e, i + 1);
         if Assigned(nextChild) then begin
           nextName := Name(nextChild);
-          if nextName = elemName then
-            isArray := true;
+          if nextName = elemName then isArray := true;
         end;
       end;
 
       if isArray then begin
-        jsonStr := jsonStr + '"' + EscapeString(elemName) + '":[';
+        tempStr := '"' + EscapeString(elemName) + '":[';
 
         while (i < count) and (Name(ElementByIndex(e, i)) = elemName) do begin
           child := ElementByIndex(e, i);
@@ -186,20 +184,29 @@ begin
           isLastElement := (i + 1 >= count) or (Name(ElementByIndex(e, i + 1)) <> elemName);
 
           if ElementCount(child) > 0 then begin
-            jsonStr := jsonStr + DumpElement(child);
-            if not isLastElement then
-              jsonStr := jsonStr + ',';
+            elemValue := DumpElement(child);
+            if elemValue <> '{}' then begin
+              if needsComma then tempStr := tempStr + ',';
+              tempStr := tempStr + elemValue;
+              needsComma := true;
+            end;
           end else begin
             elemValue := GetEditValue(child);
             if not IsNullOrEmpty(elemValue) then begin
-              jsonStr := jsonStr + '"' + EscapeString(elemValue) + '"';
-              if not isLastElement then
-                jsonStr := jsonStr + ',';
+              if needsComma then tempStr := tempStr + ',';
+              tempStr := tempStr + '"' + EscapeString(elemValue) + '"';
+              needsComma := true;
             end;
           end;
           Inc(i);
         end;
-        jsonStr := jsonStr + ']';
+        tempStr := tempStr + ']';
+        if tempStr <> '[]' then begin
+          if hasContent then jsonStr := jsonStr + ',';
+          jsonStr := jsonStr + tempStr;
+          hasContent := true;
+        end;
+        needsComma := false;
       end else begin
         child := ElementByIndex(e, i);
         if not Assigned(child) then begin
@@ -212,7 +219,12 @@ begin
             Inc(i);
             Continue;
           end;
-          jsonStr := jsonStr + '"' + EscapeString(elemName) + '":' + DumpElement(child);
+          elemValue := DumpElement(child);
+          if elemValue <> '{}' then begin
+            if hasContent then jsonStr := jsonStr + ',';
+            jsonStr := jsonStr + '"' + EscapeString(elemName) + '":' + elemValue;
+            hasContent := true;
+          end;
         end else begin
           if (elemName = 'FormID') then
             elemValue := Signature(e) + ':' + IntToHex(FixedFormID(e), 8)
@@ -221,12 +233,14 @@ begin
           else
             elemValue := GetEditValue(child);
 
-          // Extract just the FormID for parameter fields
           if (Pos('Parameter #', elemName) > 0) and (Pos('[', elemValue) > 0) then
             elemValue := ExtractFormID(elemValue);
 
-          if not IsNullOrEmpty(elemValue) then
+          if not IsNullOrEmpty(elemValue) then begin
+            if hasContent then jsonStr := jsonStr + ',';
             jsonStr := jsonStr + '"' + EscapeString(elemName) + '":"' + EscapeString(elemValue) + '"';
+            hasContent := true;
+          end;
         end;
         Inc(i);
       end;
@@ -313,15 +327,7 @@ begin
   try
     if StrToInt(recordCounts.Values[recordType]) > 0 then
       temp.Add(',');
-    temp.Add('{"plugin":"' + EscapeString(pluginName) + '",' +
-             '"load_order":"' + IntToHex(GetLoadOrderFormID(e) shr 24, 2) + '",' +
-             '"form_id":"' + fixedID + '",' +
-             '"full_form_id":"' + fullID + '",' +
-             '"unique_id":"' + pluginName + '|' + fixedID + '",' +
-             '"record_type":"' + EscapeString(recordType) + '",' +
-             '"editor_id":"' + EscapeString(editorID) + '",' +
-             '"winning":' + BoolToStr(IsWinningOverride(e)) + ',' +
-             '"data":' + DumpElement(e) + '}');
+    temp.Add('{"plugin":"' + EscapeString(pluginName) + '","load_order":"' + IntToHex(GetLoadOrderFormID(e) shr 24, 2) + '","form_id":"' + fixedID + '","full_form_id":"' + fullID + '","unique_id":"' + pluginName + '|' + fixedID + '","record_type":"' + EscapeString(recordType) + '","editor_id":"' + EscapeString(editorID) + '","winning":' + BoolToStr(IsWinningOverride(e)) + ',"data":' + DumpElement(e) + '}');
     
     sl.AddStrings(temp);
   finally

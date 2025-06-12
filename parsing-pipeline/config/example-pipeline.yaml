@@ -1,0 +1,59 @@
+name: "MGEF Data Processing Pipeline"
+description: "Process MGEF records through multiple stages"
+input: "data/raw/mgef.json"
+output: "data/processed/mgef-clean.json"
+
+stages:
+  - type: "filter-records"
+    description: "Filter out inactive and invalid records"
+    criteria:
+      - field: "status"
+        operator: "equals"
+        value: "active"
+      - field: "lastLogin"
+        operator: "greater-than"
+        value: "2024-01-01"
+      - field: "email"
+        operator: "contains"
+        value: "@"
+
+  - type: "remove-fields"
+    description: "Remove internal and temporary fields"
+    fields:
+      - "internal"
+      - "temp"
+      - "debug"
+      - "metadata"
+    conditions:
+      - field: "type"
+        operator: "equals"
+        value: "user"
+
+  - type: "keep-fields"
+    description: "Keep only essential fields for admin users"
+    fields:
+      - "id"
+      - "name"
+      - "email"
+      - "role"
+      - "permissions"
+    conditions:
+      - field: "type"
+        operator: "equals"
+        value: "admin"
+
+  - type: "sanitize-fields"
+    description: "Clean up and standardize field values"
+    rules:
+      - field: "name"
+        type: "string"
+        transform: "trim"
+      - field: "email"
+        type: "string"
+        transform: "lowercase"
+      - field: "permissions"
+        type: "string"
+        transform: "uppercase"
+      - field: "createdAt"
+        type: "date"
+        transform: "parse-date" 

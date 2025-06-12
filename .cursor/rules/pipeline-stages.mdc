@@ -1,0 +1,165 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Adding New Pipeline Stages
+
+This guide explains how to add new stages to the JSON processing pipeline.
+
+## Directory Structure
+
+New stages should be added to the `src/processors/json/` directory:
+
+```
+src/processors/json/
+├── index.ts           # Exports all processors
+├── your-stage.ts      # Your new stage implementation
+└── ...
+```
+
+## Implementation Steps
+
+1. Create a new processor class that extends `BaseProcessor`:
+
+```typescript
+import { BaseProcessor, ProcessorOptions } from './index';
+
+export interface YourStageOptions extends ProcessorOptions {
+  // Add your stage-specific options here
+  yourOption?: string;
+}
+
+export class YourStageProcessor extends BaseProcessor {
+  constructor(options: YourStageOptions) {
+    super(options);
+    // Initialize your stage
+  }
+
+  async transform(data: any): Promise<any> {
+    // Implement your transformation logic
+    return transformedData;
+  }
+}
+```
+
+2. Add your processor to the exports in `index.ts`:
+
+```typescript
+export * from './your-stage';
+```
+
+3. Register your processor in `src/cli/index.ts`:
+
+```typescript
+const processorMap: { [key: string]: new (options: any) => JsonProcessor } = {
+  'your-stage': YourStageProcessor,
+  // ... other processors
+};
+
+function getProcessorOptions(processor: string, args: any): any {
+  const baseOptions: ProcessorOptions = {
+    inputPath: args.input,
+    outputPath: args.output,
+    overwrite: args.overwrite
+  };
+
+  switch (processor) {
+    case 'your-stage':
+      return {
+        ...baseOptions,
+        yourOption: args.yourOption
+      };
+    // ... other cases
+  }
+}
+
+function getUsage(processor: string): string {
+  switch (processor) {
+    case 'your-stage':
+      return 'npm run your-stage -- --input <input> [--yourOption <value>] [--output <output>] [--overwrite]';
+    // ... other cases
+  }
+}
+```
+
+4. Add the CLI command to `package.json`:
+
+```json
+{
+  "scripts": {
+    "your-stage": "npm run processor -- your-stage"
+  }
+}
+```
+
+## Best Practices
+
+1. **Pure Transformations**: 
+   - Keep the `transform` method pure and focused
+   - Avoid side effects
+   - Return transformed data without modifying input
+
+2. **Error Handling**:
+   - Use the `ProcessorResult` interface for consistent error reporting
+   - Include meaningful error messages
+   - Track statistics in the result
+
+3. **Type Safety**:
+   - Define clear interfaces for your options
+   - Use TypeScript types for all parameters
+   - Extend `ProcessorOptions` for common options
+
+4. **Documentation**:
+   - Add JSDoc comments to your class and methods
+   - Document all options and their effects
+   - Include usage examples
+
+## Example Implementation
+
+```typescript
+import { BaseProcessor, ProcessorOptions } from './index';
+
+export interface FilterOptions extends ProcessorOptions {
+  field: string;
+  value: any;
+}
+
+export class FilterProcessor extends BaseProcessor {
+  private field: string;
+  private value: any;
+
+  constructor(options: FilterOptions) {
+    super(options);
+    this.field = options.field;
+    this.value = options.value;
+  }
+
+  async transform(data: any): Promise<any> {
+    if (data[this.field] === this.value) {
+      return data;
+    }
+    return null; // Will be filtered out by the pipeline
+  }
+}
+```
+
+## Testing
+
+1. Create unit tests for your processor:
+   - Test the `transform` method with various inputs
+   - Verify error handling
+   - Check statistics reporting
+
+2. Test the CLI integration:
+   - Verify command-line arguments
+   - Test file processing
+   - Check output formatting
+
+## Common Pitfalls
+
+1. ❌ Modifying input data directly
+2. ❌ Not handling errors properly
+3. ❌ Missing type definitions
+4. ❌ Forgetting to register the processor
+5. ❌ Not following the common options pattern
