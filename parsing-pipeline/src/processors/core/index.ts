@@ -3,6 +3,7 @@ import { createFilterRecordsProcessor } from './filter-records';
 import { createRemoveFieldsProcessor } from './remove-fields';
 import { createKeepFieldsProcessor } from './keep-fields';
 import { createSanitizeFieldsProcessor } from './sanitize-fields';
+import { createRepairJsonProcessor } from './repair-json';
 
 // Core processor interface
 export interface Processor {
@@ -21,6 +22,8 @@ export function createProcessor(stage: StageConfig): Processor {
       return createKeepFieldsProcessor(stage);
     case 'sanitize-fields':
       return createSanitizeFieldsProcessor(stage);
+    case 'repair-json':
+      return createRepairJsonProcessor(stage.options);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }

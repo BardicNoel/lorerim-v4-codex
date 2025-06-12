@@ -1,0 +1,12 @@
+name: "json-repair-pipeline"
+description: "Pipeline to repair malformed JSON in input data"
+input: "../data/xEdit-extract/PERK_full_dump.json"
+output: "../data/xEdit-extract/PERK_full_dump_output.json"
+stages:
+  - name: "repair-json"
+    type: "repair-json"
+    description: "Attempts to repair malformed JSON strings in the data"
+    options:
+      maxAttempts: 3
+      strictMode: false
+      preserveOriginal: true 

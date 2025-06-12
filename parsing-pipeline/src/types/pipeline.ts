@@ -9,7 +9,8 @@ export type StageType =
   | 'filter-records'
   | 'remove-fields'
   | 'keep-fields'
-  | 'sanitize-fields';
+  | 'sanitize-fields'
+  | 'repair-json';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -68,12 +69,23 @@ export interface SanitizeFieldsConfig extends BaseStageConfig {
   }[];
 }
 
+// Repair JSON stage configuration
+export interface RepairJsonConfig extends BaseStageConfig {
+  type: 'repair-json';
+  options: {
+    maxAttempts: number;
+    strictMode: boolean;
+    preserveOriginal: boolean;
+  };
+}
+
 // Stage configuration union type
 export type StageConfig = 
   | FilterRecordsConfig
   | RemoveFieldsConfig
   | KeepFieldsConfig
-  | SanitizeFieldsConfig;
+  | SanitizeFieldsConfig
+  | RepairJsonConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {
