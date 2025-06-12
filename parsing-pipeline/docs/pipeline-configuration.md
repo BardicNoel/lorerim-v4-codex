@@ -7,156 +7,160 @@ The pipeline configuration is defined in YAML format and specifies the sequence 
 ```yaml
 name: string              # Name of the pipeline
 description: string       # Optional description
-version: string          # Pipeline version
+input: string            # Input file path
+output: string           # Output file path
 stages:                  # Array of processing stages
-  - name: string        # Stage name (must be unique)
-    type: string        # Processor type
-    input: string       # Input file path
-    output: string      # Output file path
-    args: object        # Stage-specific arguments
-    dependsOn: string[] # Optional dependencies on other stages
+  - name: string        # Stage name
+    type: string        # Stage type
+    description: string # Optional stage description
+    enabled: boolean    # Optional, defaults to true
+    # Stage-specific configuration
 ```
 
-## Available Processors
+## Stage Types
 
-### JSON Trim Processor
-
-Removes specified fields and optionally null values from JSON data.
-
-```yaml
-- name: "trim-spells"
-  type: "json-trim"
-  input: "spells.json"
-  output: "trimmed-spells.json"
-  args:
-    type: "MGEF"           # Record type
-    profile: "logic"       # Trim profile name
-    removeNulls: true      # Remove null values
-```
-
-### Select Winners Processor
-
+### 1. Filter Records
 Filters records based on specified criteria.
 
 ```yaml
-- name: "select-spells"
-  type: "select-winners"
-  input: "trimmed-spells.json"
-  output: "selected-spells.json"
-  args:
-    criteria:
-      - field: "type"
-        value: "spell"
-      - field: "level"
-        value: "1"
+type: "filter-records"
+criteria:
+  - field: string      # Field path
+    operator: string   # equals, not-equals, contains, not-contains, greater-than, less-than
+    value: any        # Value to compare against
 ```
 
-### Random Sampler Processor
+Example:
+```yaml
+- name: "Filter Active Users"
+  type: "filter-records"
+  description: "Keep only active users"
+  criteria:
+    - field: "status"
+      operator: "equals"
+      value: "active"
+```
 
-Creates a random sample of records.
+### 2. Remove Fields
+Removes specified fields from records.
 
 ```yaml
-- name: "sample-spells"
-  type: "random-sampler"
-  input: "selected-spells.json"
-  output: "sampled-spells.json"
-  args:
-    count: 100            # Number of records to sample
-    seed: 12345          # Optional random seed
+type: "remove-fields"
+fields:
+  field_path:          # Nested field structure
+    nested_field:
+      - "field1"
+      - "field2"
 ```
 
-## Stage Dependencies
+Example:
+```yaml
+- name: "Remove Sensitive Data"
+  type: "remove-fields"
+  description: "Remove sensitive user information"
+  fields:
+    user:
+      profile:
+        - "password"
+        - "ssn"
+        - "creditCard"
+```
 
-Stages can depend on other stages using the `dependsOn` field:
+### 3. Keep Fields
+Keeps only specified fields in records.
 
 ```yaml
-stages:
-  - name: "trim"
-    type: "json-trim"
-    input: "input.json"
-    output: "trimmed.json"
-    args:
-      type: "MGEF"
-      profile: "logic"
-
-  - name: "select"
-    type: "select-winners"
-    input: "trimmed.json"
-    output: "selected.json"
-    dependsOn: ["trim"]    # Will run after "trim" stage
-    args:
-      criteria:
-        - field: "type"
-          value: "spell"
+type: "keep-fields"
+fields:
+  - "field1"
+  - "field2"
+  - "nested.field3"
 ```
 
-## Error Handling
+Example:
+```yaml
+- name: "Keep Essential Fields"
+  type: "keep-fields"
+  description: "Keep only essential user information"
+  fields:
+    - "id"
+    - "name"
+    - "email"
+    - "status"
+```
 
-The pipeline supports error handling through the `onError` field:
+### 4. Sanitize Fields
+Removes or replaces fields containing specific patterns.
 
 ```yaml
-name: "error-handling-example"
-stages:
-  - name: "process"
-    type: "json-trim"
-    input: "input.json"
-    output: "output.json"
-    onError:
-      action: "skip"      # Options: skip, retry, fail
-      retries: 3          # Number of retries (if action is retry)
-      delay: 1000         # Delay between retries in milliseconds
+type: "sanitize-fields"
+rules:
+  - pattern: string           # Pattern to match
+    action: string           # remove or replace
+    replacement?: string     # Value to replace with (if action is replace)
+    excludeFields?: string[] # Fields to exclude from checking
 ```
 
-## Progress Tracking
-
-Enable progress tracking for stages:
-
+Example:
 ```yaml
-stages:
-  - name: "process"
-    type: "json-trim"
-    input: "input.json"
-    output: "output.json"
-    progress:
-      enabled: true
-      interval: 1000      # Progress update interval in milliseconds
+- name: "Clean Null References"
+  type: "sanitize-fields"
+  description: "Remove null reference strings"
+  rules:
+    - pattern: "NULL - Null Reference"
+      action: "remove"
+      excludeFields:
+        - "plugin"
+        - "form_id"
+        - "editor_id"
 ```
 
-## Example Configuration
+## Complete Example
 
 Here's a complete example of a pipeline configuration:
 
 ```yaml
-name: "Spell Processing Pipeline"
-description: "Process and analyze spell data"
-version: "1.0.0"
-
+name: "User Data Processing Pipeline"
+description: "Process and clean user data"
+input: "data/raw/users.json"
+output: "data/processed/clean-users.json"
 stages:
-  - name: "trim-spells"
-    type: "json-trim"
-    input: "spells.json"
-    output: "trimmed-spells.json"
-    args:
-      type: "MGEF"
-      profile: "logic"
-      removeNulls: true
+  - name: "Filter Active Users"
+    type: "filter-records"
+    description: "Keep only active users"
+    criteria:
+      - field: "status"
+        operator: "equals"
+        value: "active"
 
-  - name: "select-level-1"
-    type: "select-winners"
-    input: "trimmed-spells.json"
-    output: "level-1-spells.json"
-    dependsOn: ["trim-spells"]
-    args:
-      criteria:
-        - field: "level"
-          value: "1"
+  - name: "Remove Sensitive Data"
+    type: "remove-fields"
+    description: "Remove sensitive user information"
+    fields:
+      user:
+        profile:
+          - "password"
+          - "ssn"
+          - "creditCard"
 
-  - name: "sample-spells"
-    type: "random-sampler"
-    input: "level-1-spells.json"
-    output: "sampled-spells.json"
-    dependsOn: ["select-level-1"]
-    args:
-      count: 100
-      seed: 12345
+  - name: "Keep Essential Fields"
+    type: "keep-fields"
+    description: "Keep only essential user information"
+    fields:
+      - "id"
+      - "name"
+      - "email"
+      - "status"
+
+  - name: "Clean Null References"
+    type: "sanitize-fields"
+    description: "Remove null reference strings"
+    rules:
+      - pattern: "NULL - Null Reference"
+        action: "remove"
+        excludeFields:
+          - "id"
+          - "name"
+          - "email"
+          - "status"
 ``` 

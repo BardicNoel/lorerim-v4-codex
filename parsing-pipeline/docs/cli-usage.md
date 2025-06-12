@@ -1,163 +1,151 @@
 # Command Line Interface
 
-The parsing pipeline provides both an interactive CLI and direct command-line access to individual processors.
+The parsing pipeline provides a simple command-line interface for running data processing pipelines defined in YAML configuration files.
 
-## Interactive CLI
+## Running a Pipeline
 
-Start the interactive CLI:
-
-```bash
-npm run cli
-```
-
-### Features
-
-- Command history and auto-completion
-- Built-in help system
-- Pipeline configuration management
-- Stage execution and monitoring
-- Data preview and validation
-
-### Available Commands
-
-```
-help                    Show help information
-exit                    Exit the CLI
-config                  Manage pipeline configurations
-  list                 List available configurations
-  show <name>          Show configuration details
-  create <name>        Create new configuration
-  edit <name>          Edit existing configuration
-  delete <name>        Delete configuration
-run                     Execute pipeline or stage
-  pipeline <config>    Run full pipeline
-  stage <name>         Run individual stage
-  debug <stage>        Debug stage with sample data
-preview                 Preview data
-  input <file>         Preview input file
-  output <file>        Preview output file
-  stage <name>         Preview stage output
-validate                Validate data or configuration
-  config <file>        Validate pipeline config
-  data <file>          Validate data file
-```
-
-## Direct Command Usage
-
-Each processor can be run directly from the command line for debugging or scripting.
-
-### JSON Trim Processor
+To run a pipeline, use the following command from the `parsing-pipeline` directory:
 
 ```bash
-npm run trim -- <input> <type> <profile> <output> [options]
-
-Options:
-  --removeNulls        Remove null values
-  --overwrite         Overwrite output file if exists
-  --batchSize <size>  Number of records to process at once
-  --verbose          Show detailed progress
+npm run pipeline -- config/pipelines/your-pipeline.yaml
 ```
 
-Example:
+### Example
+
 ```bash
-npm run trim -- "spells.json" "MGEF" "logic" "trimmed-spells.json" --removeNulls --overwrite
+# Run the filter-winners pipeline
+npm run pipeline -- config/pipelines/filter-winners.yaml
 ```
 
-### Select Winners Processor
+## Pipeline Configuration
 
-```bash
-npm run select-winners -- <input> <output> [options]
+Pipeline configurations are defined in YAML files under the `config/pipelines` directory. Each configuration specifies:
 
-Options:
-  --criteria <json>   Selection criteria in JSON format
-  --overwrite        Overwrite output file if exists
-  --batchSize <size> Number of records to process at once
-  --verbose         Show detailed progress
+- Pipeline name and description
+- Input and output file paths
+- A sequence of processing stages
+
+Example configuration:
+```yaml
+name: "Filter Non-Winning Records"
+description: "Filter non-winning records, remove specific fields, and clean up null references"
+input: "data/raw/test-data.json"
+output: "data/processed/filtered-test-data.json"
+stages:
+  - name: "Filter Non-Winning Records"
+    type: "filter-records"
+    description: "Keep only records where winning is false"
+    criteria:
+      - field: "winning"
+        operator: "equals"
+        value: false
+
+  - name: "Remove Specific Fields"
+    type: "remove-fields"
+    description: "Remove Explosion and Projectile fields"
+    fields:
+      data:
+        "Magic Effect Data":
+          "DATA - Data":
+            - "Explosion"
+            - "Projectile"
+
+  - name: "Remove Null References"
+    type: "sanitize-fields"
+    description: "Recursively remove all fields containing NULL - Null Reference"
+    rules:
+      - pattern: "NULL - Null Reference"
+        action: "remove"
+        excludeFields:
+          - "plugin"
+          - "load_order"
+          - "form_id"
+          - "full_form_id"
+          - "unique_id"
+          - "record_type"
+          - "editor_id"
+          - "winning"
 ```
 
-Example:
-```bash
-npm run select-winners -- "spells.json" "selected-spells.json" --criteria '{"type":"spell","level":"1"}' --overwrite
+## Available Stage Types
+
+### 1. Filter Records
+Filters records based on specified criteria.
+
+```yaml
+type: "filter-records"
+criteria:
+  - field: "status"
+    operator: "equals"
+    value: "active"
 ```
 
-### Random Sampler Processor
+### 2. Remove Fields
+Removes specified fields from records.
 
-```bash
-npm run random-sampler -- <input> <output> <count> [options]
-
-Options:
-  --seed <number>    Random seed for reproducible sampling
-  --overwrite       Overwrite output file if exists
-  --batchSize <size> Number of records to process at once
-  --verbose        Show detailed progress
+```yaml
+type: "remove-fields"
+fields:
+  data:
+    "Magic Effect Data":
+      "DATA - Data":
+        - "Explosion"
+        - "Projectile"
 ```
 
-Example:
-```bash
-npm run random-sampler -- "spells.json" "sampled-spells.json" 100 --seed 12345 --overwrite
+### 3. Keep Fields
+Keeps only specified fields in records.
+
+```yaml
+type: "keep-fields"
+fields:
+  - "id"
+  - "name"
+  - "status"
 ```
 
-## Pipeline Execution
+### 4. Sanitize Fields
+Removes or replaces fields containing specific patterns.
 
-Run a complete pipeline configuration:
-
-```bash
-npm run pipeline -- --config <config-file> [options]
-
-Options:
-  --dry-run         Show what would be executed without running
-  --stage <name>    Run only specified stage
-  --skip <names>    Skip specified stages
-  --verbose        Show detailed progress
-  --parallel      Run independent stages in parallel
+```yaml
+type: "sanitize-fields"
+rules:
+  - pattern: "NULL - Null Reference"
+    action: "remove"
+    excludeFields:
+      - "plugin"
+      - "form_id"
 ```
 
-Example:
-```bash
-npm run pipeline -- --config "configs/spell-processing.yaml" --verbose
+## Output
+
+The pipeline will:
+1. Process the input file according to the stages defined
+2. Write the result to the specified output file
+3. Display processing statistics for each stage
+
+Example output:
 ```
+=== Running Pipeline: Filter Non-Winning Records ===
+Description: Filter non-winning records, remove specific fields, and clean up null references
+Input: data/raw/test-data.json
+Output: data/processed/filtered-test-data.json
+Stages: 3
 
-## Output Formats
+Loaded stage: Filter Non-Winning Records
+Description: Keep only records where winning is false
+Loaded stage: Remove Specific Fields
+Description: Remove Explosion and Projectile fields
+Loaded stage: Remove Null References
+Description: Recursively remove all fields containing NULL - Null Reference
 
-The CLI supports multiple output formats:
+Reading input file...
+Read 3 records
 
-```bash
-# JSON output
-npm run trim -- "spells.json" "MGEF" "logic" "output.json" --format json
+Processing data...
 
-# CSV output
-npm run trim -- "spells.json" "MGEF" "logic" "output.csv" --format csv
+Writing output file...
 
-# Pretty-printed JSON
-npm run trim -- "spells.json" "MGEF" "logic" "output.json" --format pretty
-```
-
-## Error Handling
-
-The CLI provides detailed error information:
-
-```bash
-# Show full error details
-npm run trim -- "spells.json" "MGEF" "logic" "output.json" --debug
-
-# Continue on error
-npm run trim -- "spells.json" "MGEF" "logic" "output.json" --continue
-
-# Retry on failure
-npm run trim -- "spells.json" "MGEF" "logic" "output.json" --retry 3
-```
-
-## Progress Reporting
-
-Monitor progress of long-running operations:
-
-```bash
-# Show progress bar
-npm run trim -- "spells.json" "MGEF" "logic" "output.json" --progress
-
-# Show detailed statistics
-npm run trim -- "spells.json" "MGEF" "logic" "output.json" --stats
-
-# Log to file
-npm run trim -- "spells.json" "MGEF" "logic" "output.json" --log "process.log"
+Pipeline completed successfully!
+Final output: data/processed/filtered-test-data.json
 ``` 
