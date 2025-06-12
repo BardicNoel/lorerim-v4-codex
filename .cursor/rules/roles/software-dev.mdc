@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Whenever writing code, define usecases, write tests, then write code
+
+- prefer functional programming best practices

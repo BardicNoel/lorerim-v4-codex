@@ -1,0 +1,7 @@
+---
+description: 
+globs: skyrim-extractor/**
+alwaysApply: false
+---
+This is a project nested beneath the monolith. Any script execution in this project should be from the dir skyrim-extractor
+

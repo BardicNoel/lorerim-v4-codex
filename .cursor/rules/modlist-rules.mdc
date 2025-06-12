@@ -1,0 +1,142 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Modlist Module Rules
+
+## Functional Programming Principles
+
+1. **Pure Functions**
+   - Keep parsing and validation logic pure
+   - Avoid side effects in core business logic
+   - Use function composition with `pipe` and `flow`
+
+2. **Effect Handling**
+   - Wrap all file system operations in `TaskEither`
+   - Use `TE.tryCatch` for error handling
+   - Chain operations using `TE.chain` instead of imperative code
+
+3. **Type Safety**
+   - Use `Either` for error handling
+   - Use `Option` for nullable values
+   - Maintain strict TypeScript types
+
+## Code Structure
+
+1. **Imports**
+   ```typescript
+   // Core imports
+   import { promises as fs } from 'fs';
+   import type { Stats } from 'node:fs';
+   import * as path from 'path';
+   
+   // fp-ts imports (use .js extension for ESM)
+   import { pipe, flow } from 'fp-ts/lib/function.js';
+   import * as E from 'fp-ts/lib/Either.js';
+   import * as A from 'fp-ts/lib/Array.js';
+   import * as O from 'fp-ts/lib/Option.js';
+   import * as TE from 'fp-ts/lib/TaskEither.js';
+   ```
+
+2. **Type Definitions**
+   - Place all interfaces at the top
+   - Use descriptive names
+   - Include JSDoc comments for complex types
+
+3. **Function Organization**
+   - Pure functions first
+   - Effectful functions after
+   - Export only public functions
+
+## Error Handling
+
+1. **Error Types**
+   ```typescript
+   // Good
+   const result = await loadEnabledMods(path)();
+   if (E.isLeft(result)) {
+     // Handle error
+   }
+   
+   // Bad
+   try {
+     const mods = await loadEnabledMods(path);
+   } catch (e) {
+     // Don't use try/catch
+   }
+   ```
+
+2. **Error Messages**
+   - Be descriptive
+   - Include relevant context
+   - Use consistent formatting
+
+## Testing Requirements
+
+1. **Test Structure**
+   - Use `describe` blocks for logical grouping
+   - One `it` block per test case
+   - Use `beforeAll`/`afterAll` for setup/teardown
+
+2. **Test Coverage**
+   - Test all public functions
+   - Include error cases
+   - Test edge cases
+
+3. **Test Data**
+   - Use realistic test data
+   - Clean up test files after tests
+   - Use descriptive test names
+
+## Examples
+
+### Good Implementation
+```typescript
+// Pure function
+const parseModlistLines = (content: string): string[] =>
+  content
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(line => line.startsWith('+'))
+    .map(line => line.slice(1));
+
+// Effectful function
+const readFile = (filePath: string): TE.TaskEither<Error, string> =>
+  TE.tryCatch(
+    () => fs.readFile(filePath, 'utf-8'),
+    (err: unknown) => new Error(`Failed to read file: ${filePath}`)
+  );
+```
+
+### Bad Implementation
+```typescript
+// Don't mix effects with pure logic
+const loadEnabledMods = async (path: string): Promise<string[]> => {
+  const content = await fs.readFile(path, 'utf-8');
+  return content.split('\n').filter(line => line.startsWith('+'));
+};
+
+// Don't use mutable state
+let enabledMods: string[] = [];
+function addMod(mod: string) {
+  enabledMods.push(mod);
+}
+```
+
+## Documentation
+
+1. **Function Documentation**
+   - Include parameter descriptions
+   - Document return types
+   - Provide usage examples
+
+2. **Type Documentation**
+   - Document interface properties
+   - Explain type relationships
+   - Include examples
+
+3. **Error Documentation**
+   - List possible error cases
+   - Explain error handling
+   - Provide recovery examples

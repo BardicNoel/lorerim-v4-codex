@@ -1,0 +1,338 @@
+---
+description: 
+globs: skyrim-extractor/**/*modlist*
+alwaysApply: false
+---
+---
+description: Rules for maintaining and extending the modlist module in skyrim-extractor
+globs: src/modlist.ts src/modlist.test.ts
+alwaysApply: true
+
+---
+
+# Modlist Module Rules
+
+## File Structure
+
+1. **Required Files**
+   ```
+   skyrim-extractor/
+   ├── src/
+   │   └── modlist.ts
+   ├── tests/
+   │   ├── modlist.test.ts
+   │   └── fixtures/
+   │       └── modlist-test/
+   │           ├── modlist.txt
+   │           ├── ModA/
+   │           │   └── plugin1.esp
+   │           ├── ModB/
+   │           │   └── plugin2.esp
+   │           └── ModC/
+   │               └── plugin3.esp
+   └── docs/
+       └── modlist.md
+   ```
+
+2. **Test Organization**
+   ```typescript
+   // tests/modlist.test.ts
+   import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+   import { promises as fs } from 'fs';
+   import * as path from 'path';
+   import * as E from 'fp-ts/lib/Either.js';
+   import * as O from 'fp-ts/lib/Option.js';
+   import * as TE from 'fp-ts/lib/TaskEither.js';
+   import { pipe } from 'fp-ts/lib/function.js';
+   import { loadEnabledMods, resolvePluginsFromModlist } from '../src/modlist.js';
+
+   describe('Modlist Loader', () => {
+     const TEST_DIR = path.join(__dirname, 'fixtures/modlist-test');
+     
+     beforeAll(async () => {
+       // Setup test fixtures
+     });
+     
+     afterAll(async () => {
+       // Cleanup test fixtures
+     });
+     
+     // Test cases...
+   });
+   ```
+
+3. **Test Fixtures**
+   - Place all test data in `tests/fixtures/`
+   - Organize fixtures by module
+   - Use realistic test data
+   - Clean up after tests
+
+## Functional Programming Guidelines
+
+1. **Pure Functions**
+   ```typescript
+   // Good example
+   const parseModlistLines = (content: string): string[] =>
+     content
+       .split(/\r?\n/)
+       .map(line => line.trim())
+       .filter(line => line.startsWith('+'))
+       .map(line => line.slice(1));
+
+   // Bad example
+   const parseModlistLines = (content: string): string[] => {
+     const lines = content.split('\n');
+     const result = [];
+     for (const line of lines) {
+       if (line.startsWith('+')) {
+         result.push(line.slice(1));
+       }
+     }
+     return result;
+   };
+   ```
+
+2. **Effect Handling**
+   ```typescript
+   // Good example
+   const readFile = (filePath: string): TE.TaskEither<Error, string> =>
+     TE.tryCatch(
+       () => fs.readFile(filePath, 'utf-8'),
+       (err: unknown) => new Error(`Failed to read file: ${filePath}`)
+     );
+
+   // Bad example
+   const readFile = async (filePath: string): Promise<string> => {
+     try {
+       return await fs.readFile(filePath, 'utf-8');
+     } catch (e) {
+       throw new Error(`Failed to read file: ${filePath}`);
+     }
+   };
+   ```
+
+## Type Definitions
+
+1. **Interface Structure**
+   ```typescript
+   // Good example
+   export interface ModlistEntry {
+     filename: string;    // Name of the plugin file
+     loadOrder: number;   // Load order index
+     fullPath: string;    // Full path to the plugin file
+     modFolder: string;   // Name of the containing mod folder
+   }
+
+   // Bad example
+   export interface ModlistEntry {
+     filename: string;
+     loadOrder: number;
+     fullPath: string;
+     modFolder: string;
+   }
+   ```
+
+## Error Handling
+
+1. **Error Types**
+   ```typescript
+   // Good example
+   const result = await loadEnabledMods(path)();
+   if (E.isLeft(result)) {
+     // Handle error
+   }
+
+   // Bad example
+   try {
+     const mods = await loadEnabledMods(path);
+   } catch (e) {
+     // Don't use try/catch
+   }
+   ```
+
+## Testing Guidelines
+
+1. **Test Structure**
+   ```typescript
+   // Good example
+   describe('Modlist Loader', () => {
+     const TEST_DIR = path.join(__dirname, '../test-fixtures/modlist-test');
+     
+     beforeAll(async () => {
+       // Setup
+     });
+     
+     afterAll(async () => {
+       // Cleanup
+     });
+     
+     describe('loadEnabledMods', () => {
+       it('should load enabled mods in correct order', async () => {
+         // Test
+       });
+     });
+   });
+
+   // Bad example
+   test('loadEnabledMods', async () => {
+     // Don't use flat test structure
+   });
+   ```
+
+## Documentation
+
+1. **Function Documentation**
+   ```typescript
+   // Good example
+   /**
+    * Parses a MO2 modlist file and returns an array of enabled mod names.
+    * @param modlistPath - Path to the modlist.txt file
+    * @returns TaskEither<Error, string[]> - Either an error or array of enabled mod names
+    */
+   export const loadEnabledMods = (modlistPath: string): TE.TaskEither<Error, string[]> => {
+     // Implementation
+   };
+
+   // Bad example
+   // Parses modlist file
+   export const loadEnabledMods = (path: string) => {
+     // Implementation
+   };
+   ```
+
+## Documentation Updates
+
+1. **When to Update Documentation**
+   ```markdown
+   // Required updates when:
+   - Adding new functions
+   - Modifying function signatures
+   - Changing error handling
+   - Adding new types
+   - Changing behavior
+   ```
+
+2. **Documentation Files**
+   ```
+   skyrim-extractor/
+   ├── docs/
+   │   ├── modlist.md           # Main module documentation
+   │   └── mo2_files_primer.md  # MO2 file format documentation
+   ```
+
+3. **Documentation Structure**
+   ```markdown
+   # Modlist Module
+
+   ## Overview
+   - Brief description
+   - Key features
+   - Usage context
+
+   ## Types
+   - All public interfaces
+   - Type relationships
+   - Examples
+
+   ## Functions
+   - Function signatures
+   - Parameters
+   - Return types
+   - Examples
+   - Error cases
+
+   ## Error Handling
+   - Common errors
+   - Recovery strategies
+   - Examples
+
+   ## Implementation Details
+   - Functional approach
+   - Design decisions
+   - Performance considerations
+   ```
+
+4. **Code Comments**
+   ```typescript
+   // Good example
+   /**
+    * Parses a MO2 modlist file and returns an array of enabled mod names.
+    * @param modlistPath - Path to the modlist.txt file
+    * @returns TaskEither<Error, string[]> - Either an error or array of enabled mod names
+    * @throws {Error} When file is not found or is a directory
+    */
+   export const loadEnabledMods = (modlistPath: string): TE.TaskEither<Error, string[]> => {
+     // Implementation
+   };
+
+   // Bad example
+   // Loads modlist
+   export const loadEnabledMods = (path: string) => {
+     // Implementation
+   };
+   ```
+
+5. **Documentation Review Checklist**
+   ```markdown
+   - [ ] All public functions documented
+   - [ ] All types documented
+   - [ ] Examples up to date
+   - [ ] Error cases covered
+   - [ ] Implementation details current
+   - [ ] Code comments match documentation
+   ```
+
+6. **Documentation PR Template**
+   ```markdown
+   ## Documentation Updates
+   - [ ] Updated function documentation
+   - [ ] Updated type documentation
+   - [ ] Added/updated examples
+   - [ ] Updated error handling docs
+   - [ ] Updated implementation details
+   - [ ] Code comments match docs
+   ```
+
+## Git Workflow
+
+1. **Branch Naming**
+   ```
+   // Good examples
+   feature/modlist-plugin-resolution
+   fix/modlist-error-handling
+   docs/modlist-examples
+
+   // Bad examples
+   modlist-changes
+   fix-bug
+   new-feature
+   ```
+
+2. **Commit Messages**
+   ```
+   // Good example
+   modlist: add new function for plugin resolution
+   
+   - Add resolvePluginsFromModlist function
+   - Add tests for new function
+   - Update documentation
+
+   // Bad example
+   added new function
+   fixed stuff
+   ```
+
+3. **Pull Request Template**
+   ```markdown
+   ## Changes
+   - [ ] Link to issue
+   - [ ] Description of changes
+   - [ ] Test coverage
+   - [ ] Documentation updates
+
+
+
+
+
+
+   ```

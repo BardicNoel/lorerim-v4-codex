@@ -1,0 +1,223 @@
+{
+  "PERK": [
+    {
+      "type": "EDID",
+      "description": "Editor ID",
+      "data_type": "string"
+    },
+    {
+      "type": "FULL",
+      "description": "Perk name",
+      "data_type": "string"
+    },
+    {
+      "type": "DESC",
+      "description": "Perk description",
+      "data_type": "string"
+    },
+    {
+      "type": "DATA",
+      "description": "Perk data block",
+      "data_type": "struct"
+    },
+    {
+      "type": "PRKE",
+      "description": "Perk entry data",
+      "data_type": "struct"
+    }
+  ],
+  "ARMO": [
+    {
+      "type": "EDID",
+      "description": "Editor ID",
+      "data_type": "string"
+    },
+    {
+      "type": "FULL",
+      "description": "Name",
+      "data_type": "string"
+    },
+    {
+      "type": "BMDT",
+      "description": "Body template data",
+      "data_type": "struct"
+    },
+    {
+      "type": "DNAM",
+      "description": "Armor data",
+      "data_type": "struct"
+    },
+    {
+      "type": "MODL",
+      "description": "Model filename",
+      "data_type": "string"
+    },
+    {
+      "type": "ICON",
+      "description": "Icon texture path",
+      "data_type": "string"
+    }
+  ],
+  "COBJ": [
+    {
+      "type": "EDID",
+      "description": "Editor ID",
+      "data_type": "string"
+    },
+    {
+      "type": "CNAM",
+      "description": "Workbench keyword",
+      "data_type": "formid"
+    },
+    {
+      "type": "BNAM",
+      "description": "Crafting station keyword",
+      "data_type": "formid"
+    },
+    {
+      "type": "FNAM",
+      "description": "Created item",
+      "data_type": "formid"
+    },
+    {
+      "type": "INTV",
+      "description": "Creation count",
+      "data_type": "uint32"
+    },
+    {
+      "type": "NAM1",
+      "description": "First required item",
+      "data_type": "formid"
+    },
+    {
+      "type": "NAM2",
+      "description": "Second required item",
+      "data_type": "formid"
+    }
+  ],
+  "LVLI": [
+    {
+      "type": "EDID",
+      "description": "Editor ID",
+      "data_type": "string"
+    },
+    {
+      "type": "LVLD",
+      "description": "List flags",
+      "data_type": "uint8"
+    },
+    {
+      "type": "LVLF",
+      "description": "Flags",
+      "data_type": "uint8"
+    },
+    {
+      "type": "LLCT",
+      "description": "List count",
+      "data_type": "uint32"
+    },
+    {
+      "type": "CNTO",
+      "description": "List item entry",
+      "data_type": "struct"
+    }
+  ],
+  "NPC_": [
+    {
+      "type": "EDID",
+      "description": "Editor ID",
+      "data_type": "string"
+    },
+    {
+      "type": "FULL",
+      "description": "Name",
+      "data_type": "string"
+    },
+    {
+      "type": "ACBS",
+      "description": "Actor base stats",
+      "data_type": "struct"
+    },
+    {
+      "type": "AIDT",
+      "description": "AI data",
+      "data_type": "struct"
+    },
+    {
+      "type": "DATA",
+      "description": "Flags and base info",
+      "data_type": "struct"
+    }
+  ],
+  "RACE": [
+    {
+      "type": "EDID",
+      "description": "Editor ID",
+      "data_type": "string"
+    },
+    {
+      "type": "FULL",
+      "description": "Race name",
+      "data_type": "string"
+    },
+    {
+      "type": "DATA",
+      "description": "Race data flags and settings",
+      "data_type": "struct"
+    },
+    {
+      "type": "SPLO",
+      "description": "Spells the race knows",
+      "data_type": "array"
+    },
+    {
+      "type": "DNAM",
+      "description": "Attributes (height, weight, etc.)",
+      "data_type": "struct"
+    }
+  ],
+  "BOOK": [
+    {
+      "type": "EDID",
+      "description": "Editor ID",
+      "data_type": "string"
+    },
+    {
+      "type": "FULL",
+      "description": "Title",
+      "data_type": "string"
+    },
+    {
+      "type": "DESC",
+      "description": "Book content or description",
+      "data_type": "string"
+    },
+    {
+      "type": "DATA",
+      "description": "Book properties (skill boost, flags)",
+      "data_type": "struct"
+    }
+  ],
+  "GRUP": [
+    {
+      "type": "Label",
+      "description": "Group type label",
+      "data_type": "string"
+    },
+    {
+      "type": "GroupType",
+      "description": "Group identifier",
+      "data_type": "uint32"
+    },
+    {
+      "type": "Timestamp",
+      "description": "Group timestamp",
+      "data_type": "uint16"
+    },
+    {
+      "type": "VersionControl",
+      "description": "Versioning and user info",
+      "data_type": "uint32"
+    }
+  ]
+}
