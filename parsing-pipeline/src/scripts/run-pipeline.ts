@@ -1,40 +1,14 @@
-import { readFileSync, existsSync } from 'fs';
-import { parse } from 'yaml';
+import { existsSync } from 'fs';
 import * as path from 'path';
 import { PipelineConfig, StageConfig } from '../types/pipeline';
 import { createPipeline } from '../processors/core';
 import { readJsonFile, writeJsonFile } from '../utils/file';
-
-async function loadStageConfig(configPath: string): Promise<StageConfig> {
-    if (!existsSync(configPath)) {
-        throw new Error(`Stage configuration file not found: ${configPath}`);
-    }
-
-    const fileContents = readFileSync(configPath, 'utf8');
-    const config = parse(fileContents) as StageConfig;
-
-    if (!config.name || !config.type) {
-        throw new Error(`Invalid stage configuration in ${configPath}: missing required fields`);
-    }
-
-    return config;
-}
+import { loadPipelineConfig } from '../utils/yaml-loader';
 
 async function runPipelineFromConfig(configPath: string) {
     try {
-        // Check if config file exists
-        if (!existsSync(configPath)) {
-            throw new Error(`Pipeline configuration file not found: ${configPath}`);
-        }
-
-        // Load and parse pipeline configuration
-        const fileContents = readFileSync(configPath, 'utf8');
-        const pipelineConfig = parse(fileContents) as PipelineConfig;
-
-        // Validate pipeline configuration
-        if (!pipelineConfig.name || !pipelineConfig.input || !pipelineConfig.output || !pipelineConfig.stages) {
-            throw new Error('Invalid pipeline configuration: missing required fields');
-        }
+        // Load pipeline configuration with imports
+        const pipelineConfig = loadPipelineConfig(configPath);
 
         console.log(`\n=== Running Pipeline: ${pipelineConfig.name} ===`);
         if (pipelineConfig.description) {
@@ -93,11 +67,9 @@ async function runPipelineFromConfig(configPath: string) {
         }
 
         console.log('\nPipeline completed successfully!');
-        console.log(`Final output: ${pipelineConfig.output}`);
-
     } catch (error) {
         console.error('\nPipeline failed:', error instanceof Error ? error.message : String(error));
-        process.exit(1);
+        throw error;
     }
 }
 

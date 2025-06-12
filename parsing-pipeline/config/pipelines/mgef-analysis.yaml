@@ -1,60 +1,39 @@
-name: "Filter Non-Winning Records"
-description: "Filter non-winning records, remove specific fields, and clean up null references"
+# Import base pipeline configuration
+name: "MGEF Analysis Pipeline"
+description: "Process MGEF data for analysis"
 input: "../data/raw/Export_MGEF.json"
-output: "../data/processed/MGEF.analysis.json"
-stages:
-  - name: "Filter Non-Winning Records"
-    type: "filter-records"
-    description: "Keep only records where winning is false"
-    criteria:
-      - field: "winning"
-        operator: "equals"
-        value: false
+output: "../data/processed/Step-1.MGEF_Analysis.json"
 
-  - name: "Remove Specific Fields"
+# Use stages from base template
+stages:
+  - from: "ref"
+    file: "config/templates/base-pipeline.yaml"
+    ref: "filter_winners"
+
+  - from: "ref"
+    file: "config/templates/base-pipeline.yaml"
+    ref: "remove_null_refs"
+
+  - from: "local"
+    name: "Remove MGEF Specific Fields"
     type: "remove-fields"
-    description: "Remove fields that are not needed for analysis"
+    description: "Remove MGEF-specific fields that are not needed for analysis"
     fields:
       data:
-        "Magic Effect Data":
+        "MGEF - Magic Effect":
           "DATA - Data":
-            - "Explosion"
-            - "Projectile"
-            - "Taper Weight"
-            - "Hit Shader"
-            - "Enchant Shader"
-            - "Taper Curve"
-            - "Taper Duration"
+            - "Flags"
+            - "Base Cost"
+            - "Associated Item"
+            - "Magic Skill"
+            - "Resistance"
+            - "Counter Effect"
+            - "Casting Type"
+            - "Delivery"
+            - "Second Actor Value"
             - "Second AV Weight"
-        "SNDD - Sounds": "all"
+          "SNDD - Sounds": "all"
 
-  - name: "Remove Null References"
-    type: "sanitize-fields"
-    description: "Recursively remove all fields containing NULL - Null Reference"
-    rules:
-      - pattern: "NULL - Null Reference"
-        action: "remove"
-        excludeFields:
-          - "plugin"
-          - "load_order"
-          - "form_id"
-          - "full_form_id"
-          - "unique_id"
-          - "record_type"
-          - "editor_id"
-          - "winning"
-
-  - name: "Extract Form IDs"
-    type: "sanitize-fields"
-    description: "Extract form IDs from reference strings (e.g., 'MAGINVIceSpellArt [STAT:0009DB72]' becomes 'STAT:0009DB72')"
-    rules:
-      - action: "extractFormId"
-        excludeFields:
-          - "plugin"
-          - "load_order"
-          - "form_id"
-          - "full_form_id"
-          - "unique_id"
-          - "record_type"
-          - "editor_id"
-          - "winning" 
+  - from: "ref"
+    file: "config/templates/base-pipeline.yaml"
+    ref: "extract_form_ids"
