@@ -1,0 +1,39 @@
+# Import base pipeline configuration
+name: "MGEF Analysis Pipeline"
+description: "Process MGEF data for analysis"
+input: "../data/raw/Export_MGEF.json"
+output: "../data/processed/Step-1.MGEF_Analysis.json"
+
+# Use stages from base template
+stages:
+  - from: "ref"
+    file: "config/templates/base-pipeline.yaml"
+    ref: "filter_winners"
+
+  - from: "ref"
+    file: "config/templates/base-pipeline.yaml"
+    ref: "remove_null_refs"
+
+  - from: "local"
+    name: "Remove MGEF Specific Fields"
+    type: "remove-fields"
+    description: "Remove MGEF-specific fields that are not needed for analysis"
+    fields:
+      data:
+        "MGEF - Magic Effect":
+          "DATA - Data":
+            - "Flags"
+            - "Base Cost"
+            - "Associated Item"
+            - "Magic Skill"
+            - "Resistance"
+            - "Counter Effect"
+            - "Casting Type"
+            - "Delivery"
+            - "Second Actor Value"
+            - "Second AV Weight"
+          "SNDD - Sounds": "all"
+
+  - from: "ref"
+    file: "config/templates/base-pipeline.yaml"
+    ref: "extract_form_ids"

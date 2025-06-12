@@ -1,0 +1,73 @@
+name: "${pipelineName}"
+description: "${pipelineDescription}"
+input: "${inputPath}"
+output: "${outputPath}"
+
+# Common exclude fields that can be reused
+common_exclude_fields:
+  - "plugin"
+  - "load_order"
+  - "form_id"
+  - "full_form_id"
+  - "unique_id"
+  - "record_type"
+  - "editor_id"
+  - "winning"
+
+# Stage definitions that can be referenced
+stages:
+  filter_winners:
+    name: "Filter Winning Records"
+    type: "filter-records"
+    description: "Keep only winning records"
+    criteria:
+      - field: "winning"
+        operator: "equals"
+        value: true
+
+  remove_null_refs:
+    name: "Remove Null References"
+    type: "sanitize-fields"
+    description: "Remove null reference strings"
+    rules:
+      - pattern: "NULL - Null Reference"
+        action: "remove"
+        excludeFields:
+          - "plugin"
+          - "form_id"
+          - "editor_id"
+
+  sanitize_fields:
+    name: "Sanitize Fields"
+    type: "sanitize-fields"
+    description: "Ensure fields have correct types and values"
+    rules:
+      - field: "form_id"
+        type: "string"
+        required: true
+      - field: "reference"
+        type: "string"
+        required: true
+      - field: "winning"
+        type: "boolean"
+        required: true
+      - field: "amount"
+        type: "number"
+        required: true
+      - field: "date"
+        type: "date"
+        required: true
+      - field: "description"
+        type: "string"
+        required: false
+
+  extract_form_ids:
+    name: "Extract Form IDs"
+    type: "sanitize-fields"
+    description: "Extract form IDs from reference strings"
+    rules:
+      - action: "extractFormId"
+        excludeFields:
+          - "plugin"
+          - "form_id"
+          - "editor_id" 

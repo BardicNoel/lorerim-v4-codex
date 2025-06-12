@@ -1,0 +1,26 @@
+name: "WEAP Analysis Pipeline"
+description: "Process WEAP records for analysis"
+input: "../data/raw/Export_WEAP.json"
+output: "../data/processed/WEAP.analysis.json"
+
+# Import the base template
+imports:
+  - "../templates/base-pipeline.yaml"
+
+stages:
+  # Use the common stages from the template
+  *common_stages
+
+  # Add WEAP-specific stage
+  - name: "Remove WEAP Specific Fields"
+    type: "remove-fields"
+    description: "Remove WEAP-specific fields that are not needed for analysis"
+    fields:
+      data:
+        "Weapon Data":
+          "DATA - Data":
+            - "Weight"
+            - "Value"
+            - "Damage"
+            - "Clip Rounds"
+        "VATS - VATS Data": "all" 

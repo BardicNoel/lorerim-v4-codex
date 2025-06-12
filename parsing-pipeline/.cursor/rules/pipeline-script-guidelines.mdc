@@ -1,0 +1,211 @@
+---
+description: When adding a post processing script, or creating a pipeline
+globs: 
+alwaysApply: false
+---
+# Pipeline Script Guidelines
+
+This document outlines the steps required to add a new script to the pipeline system.
+
+## 1. Script Structure
+
+### Basic Requirements
+- Place script in `json-processor/src/` directory
+- Use TypeScript
+- Follow the standard script pattern:
+
+```typescript
+import { promises as fs } from 'fs';
+import { OutputManager } from './utils/output-manager';
+import { reportMinifiedSizes } from './reporting';
+
+async function processScript(inputFile: string, outputPath?: string, overwrite?: boolean): Promise<void> {
+  // Initialize output manager
+  const outputManager = new OutputManager({
+    inputPath: inputFile,
+    defaultSuffix: '.processed.json',  // Customize suffix
+    customOutputPath: outputPath,
+    overwrite: overwrite
+  });
+
+  // Validate input/output
+  if (!outputManager.validateOutputPath()) {
+    throw new Error('Invalid output path');
+  }
+
+  // Process the file
+  const fileContent = await fs.readFile(inputFile, 'utf-8');
+  let jsonContent: any;
+  
+  try {
+    jsonContent = JSON.parse(fileContent);
+  } catch (error) {
+    throw new Error(`Failed to parse JSON: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  // Process the data
+  const processedContent = processData(jsonContent);
+
+  // Write output
+  outputManager.writeOutput(processedContent);
+
+  // Report sizes
+  reportMinifiedSizes(fileContent, processedContent, 'Input', 'Output');
+}
+
+// Command line interface
+async function main() {
+  const args = process.argv.slice(2);
+  const overwrite = args.includes('--overwrite');
+  const filteredArgs = args.filter(arg => arg !== '--overwrite');
+  
+  const inputFile = filteredArgs[0];
+  const outputFile = filteredArgs[1];
+  
+  if (!inputFile) {
+    console.error('Please provide an input file path');
+    process.exit(1);
+  }
+
+  try {
+    await processScript(inputFile, outputFile, overwrite);
+  } catch (error) {
+    console.error('Error:', error instanceof Error ? error.message : error);
+    process.exit(1);
+  }
+}
+
+if (require.main === module) {
+  main();
+}
+
+export { processScript };
+```
+
+## 2. Package.json Updates
+
+Add the script to `package.json`:
+
+```json
+{
+  "scripts": {
+    "your-script-name": "ts-node json-processor/src/your-script.ts"
+  }
+}
+```
+
+## 3. Pipeline Type Definition
+
+Add the script type to `types/pipeline-config.ts`:
+
+```typescript
+export type PipelineType = 'select-winners' | 'random-sampler' | 'trim' | 'your-script-name';
+
+export interface PipelineStep {
+    type: PipelineType;
+    description?: string;
+    output_suffix?: string;
+    args?: {
+        // Add your script's arguments here
+        your_arg?: string;
+        another_arg?: boolean;
+    };
+}
+```
+
+## 4. Pipeline Runner Updates
+
+Add script handling to `scripts/run-pipeline-config.ts`:
+
+```typescript
+switch (step.type) {
+    case 'your-script-name':
+        command = `npm run your-script-name -- "${currentInput}" "${outputFile}"`;
+        break;
+    // ... other cases
+}
+```
+
+## 5. Pipeline Configuration
+
+Add the script to your pipeline configuration in `config/pipeline-example.yaml`:
+
+```yaml
+steps:
+  - type: "your-script-name"
+    description: "Description of what your script does"
+    output_suffix: ".processed.json"
+    args:
+      your_arg: "value"
+      another_arg: true
+```
+
+## Best Practices
+
+1. **Error Handling**
+   - Use try/catch blocks for all file operations
+   - Provide meaningful error messages
+   - Validate input parameters before processing
+
+2. **Output Management**
+   - Use the `OutputManager` class for consistent file handling
+   - Support overwrite flag
+   - Use appropriate file suffixes
+
+3. **Data Processing**
+   - Handle both array and object input formats
+   - Preserve data structure when appropriate
+   - Report processing statistics
+
+4. **Logging**
+   - Log start and completion of processing
+   - Report number of records processed
+   - Show file sizes before and after
+
+5. **Testing**
+   - Test with various input formats
+   - Test error conditions
+   - Test with large files
+
+## Example Implementation
+
+Here's a complete example of adding a new script:
+
+1. Create `json-processor/src/example-processor.ts`
+2. Add to `package.json`:
+   ```json
+   "example-processor": "ts-node json-processor/src/example-processor.ts"
+   ```
+3. Add to `types/pipeline-config.ts`:
+   ```typescript
+   export type PipelineType = 'select-winners' | 'random-sampler' | 'trim' | 'example-processor';
+   ```
+4. Add to pipeline configuration:
+   ```yaml
+   steps:
+     - type: "example-processor"
+       description: "Example processor step"
+       output_suffix: ".example.json"
+   ```
+
+## Common Issues
+
+1. **JSON Parsing**
+   - Always use try/catch when parsing JSON
+   - Handle both array and object formats
+   - Validate data structure before processing
+
+2. **File Paths**
+   - Use relative paths from the script location
+   - Handle path separators correctly
+   - Validate file existence before processing
+
+3. **Memory Usage**
+   - Process large files in batches
+   - Use streams for very large files
+   - Clean up resources properly
+
+4. **Error Messages**
+   - Be specific about what went wrong
+   - Include relevant file paths
+   - Suggest possible solutions 
