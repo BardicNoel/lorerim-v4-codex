@@ -1,24 +1,22 @@
 import '@jest/globals';
 import { createProcessor, createPipeline } from '../../src/processors/core';
-import { StageConfig, JsonArray, JsonObject, JsonValue } from '../../src/types/pipeline';
+import { StageConfig, JsonArray, JsonObject, JsonValue, RemoveFieldsConfig } from '../../src/types/pipeline';
 
 describe('Core Processors', () => {
   const testData: JsonArray = [
     {
-      id: 1,
-      name: 'Test 1',
-      status: 'active',
-      email: 'test1@example.com',
-      internalId: 'INT-001',
-      metadata: { tags: ['test'] as unknown as JsonValue }
-    },
-    {
-      id: 2,
-      name: 'Test 2',
-      status: 'inactive',
-      email: 'test2@example.com',
-      internalId: 'INT-002',
-      metadata: { tags: ['test'] as unknown as JsonValue }
+      data: {
+        "Magic Effect Data": {
+          "DATA - Data": {
+            "Explosion": "value1",
+            "Projectile": "value2"
+          },
+          "SNDD - Sounds": {
+            "sound1": "value1",
+            "sound2": "value2"
+          }
+        }
+      }
     }
   ];
 
@@ -68,6 +66,36 @@ describe('Core Processors', () => {
       expect(secondRecord).not.toHaveProperty('metadata');
       expect(secondRecord).toHaveProperty('name');
       expect(secondRecord).toHaveProperty('status');
+    });
+
+    it('should handle nested field removal with all value', async () => {
+      const stage: RemoveFieldsConfig = {
+        name: 'remove-fields',
+        type: 'remove-fields',
+        fields: {
+          data: {
+            "Magic Effect Data": {
+              "DATA - Data": ["Explosion", "Projectile"],
+              "SNDD - Sounds": "all"
+            }
+          }
+        }
+      };
+
+      const processor = createProcessor(stage);
+      const result = await processor.transform(testData);
+
+      const record = result[0] as JsonObject;
+      const data = record.data as JsonObject;
+      const magicEffectData = data["Magic Effect Data"] as JsonObject;
+      const dataData = magicEffectData["DATA - Data"] as JsonObject;
+
+      // Check that specific fields are removed
+      expect(dataData).not.toHaveProperty("Explosion");
+      expect(dataData).not.toHaveProperty("Projectile");
+      
+      // Check that the entire SNDD - Sounds field is removed
+      expect(magicEffectData).not.toHaveProperty("SNDD - Sounds");
     });
   });
 

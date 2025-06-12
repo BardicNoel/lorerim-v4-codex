@@ -35,7 +35,9 @@ export interface FilterRecordsConfig extends BaseStageConfig {
 // Remove fields stage configuration
 export interface RemoveFieldsConfig extends BaseStageConfig {
   type: 'remove-fields';
-  fields: FieldPath[];
+  fields: FieldPath[] | {
+    [key: string]: string[] | string | { [key: string]: string[] | string | { [key: string]: string[] | string } };
+  };
   value?: string;  // Optional value to match against field contents
   conditions?: {
     field: FieldPath;

@@ -1,0 +1,45 @@
+name: "Filter Non-Winning Records"
+description: "Filter non-winning records, remove specific fields, and clean up null references"
+input: "../data/raw/Export_MGEF.json"
+output: "../data/processed/MGEF.analysis.json"
+stages:
+  - name: "Filter Non-Winning Records"
+    type: "filter-records"
+    description: "Keep only records where winning is false"
+    criteria:
+      - field: "winning"
+        operator: "equals"
+        value: false
+
+  - name: "Remove Specific Fields"
+    type: "remove-fields"
+    description: "Remove fields that are not needed for analysis"
+    fields:
+      data:
+        "Magic Effect Data":
+          "DATA - Data":
+            - "Explosion"
+            - "Projectile"
+            - "Taper Weight"
+            - "Hit Shader"
+            - "Enchant Shader"
+            - "Taper Curve"
+            - "Taper Duration"
+            - "Second AV Weight"
+        "SNDD - Sounds": "all"
+
+  - name: "Remove Null References"
+    type: "sanitize-fields"
+    description: "Recursively remove all fields containing NULL - Null Reference"
+    rules:
+      - pattern: "NULL - Null Reference"
+        action: "remove"
+        excludeFields:
+          - "plugin"
+          - "load_order"
+          - "form_id"
+          - "full_form_id"
+          - "unique_id"
+          - "record_type"
+          - "editor_id"
+          - "winning" 

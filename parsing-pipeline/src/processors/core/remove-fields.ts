@@ -1,21 +1,28 @@
 import { JsonArray, JsonRecord, RemoveFieldsConfig } from '../../types/pipeline';
 import { Processor } from './index';
-import { getNestedValue } from '../../utils/field-access';
+import { getNestedValue, setNestedValue } from '../../utils/field-access';
 
-function shouldRemoveField(record: JsonRecord, field: string, value?: string): boolean {
-    const fieldValue = getNestedValue(record, field);
-    
-    // If no value is specified, just remove the field
-    if (!value) {
-        return true;
+function processNestedFields(obj: any, fields: any, path: string[] = []): void {
+    for (const [key, value] of Object.entries(fields)) {
+        const currentPath = [...path, key];
+        
+        if (value === 'all') {
+            // Remove the entire field
+            delete obj[key];
+        } else if (Array.isArray(value)) {
+            // Remove specific fields from an object
+            for (const field of value) {
+                if (obj[key] && typeof obj[key] === 'object') {
+                    delete obj[key][field];
+                }
+            }
+        } else if (typeof value === 'object' && value !== null) {
+            // Recursively process nested objects
+            if (obj[key] && typeof obj[key] === 'object') {
+                processNestedFields(obj[key], value, currentPath);
+            }
+        }
     }
-
-    // If field value is a string, check if it contains the specified value
-    if (typeof fieldValue === 'string') {
-        return fieldValue.includes(value);
-    }
-
-    return false;
 }
 
 export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Processor {
@@ -28,14 +35,7 @@ export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Process
             
             return data.map(record => {
                 const newRecord = { ...record };
-                
-                for (const field of config.fields) {
-                    if (shouldRemoveField(record, field, config.value)) {
-                        delete newRecord[field];
-                        fieldsRemoved++;
-                    }
-                }
-                
+                processNestedFields(newRecord, config.fields);
                 return newRecord;
             });
         },
