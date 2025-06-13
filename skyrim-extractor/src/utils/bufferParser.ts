@@ -2,6 +2,15 @@ import { RecordHeader, Subrecord } from '../types';
 import { parentPort } from 'worker_threads';
 import { getRecordTypeAt } from './recordUtils';
 
+// Types we care about according to design doc
+const PROCESSED_RECORD_TYPES = new Set([
+  'PERK',  // Perks
+  'AVIF',  // Actor Value Information
+  'RACE',  // Races
+  'SPEL',  // Spells
+  'MGEF'   // Magic Effects
+]);
+
 type DebugCallback = (message: string) => void;
 
 let debugCallback: DebugCallback | null = null;
@@ -68,7 +77,7 @@ export function parseRecordHeader(headerBuf: Buffer): RecordHeader {
   }
 
   // GRUP records should be handled by parseGRUPHeader, not here
-  if (type == 'GRUP') {
+  if (type === 'GRUP') {
     throw new Error('GRUP records must be handled by parseGRUPHeader, not parseRecordHeader');
   }
   

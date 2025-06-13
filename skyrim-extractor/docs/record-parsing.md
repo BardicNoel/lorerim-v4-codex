@@ -57,6 +57,36 @@ Offset  Size  Field
 9: Cell Temporary Children
 ```
 
+## GRUP Handling Rules
+
+### Unsupported Record Types
+1. **Individual Records**
+   - If a record type is not in `PROCESSED_RECORD_TYPES`, skip it
+   - Read the record's size from its header
+   - Advance the buffer past the record (header + data)
+   - Log: "Skipping record of type {type} because it's unsupported"
+   - Continue processing the next record
+
+2. **Top-Level GRUPs**
+   - If a GRUP's label (record type) is not in `PROCESSED_RECORD_TYPES`
+   - Skip the entire GRUP and all its contents
+   - Log: "Skipping group with label {type} because it's unsupported"
+   - Return empty array of records
+
+3. **Nested GRUPs**
+   - Process all records within nested GRUPs
+   - Do not skip entire nested GRUPs based on type
+   - Only skip individual unsupported records within them
+   - Preserve the GRUP hierarchy and context
+
+### Supported Record Types
+Currently supported record types:
+- PERK (Perks)
+- AVIF (Actor Value Information)
+- RACE (Races)
+- SPEL (Spells)
+- MGEF (Magic Effects)
+
 ## GRUP Unpacking Strategy
 
 ### Goal

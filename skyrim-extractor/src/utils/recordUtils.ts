@@ -144,6 +144,13 @@ export function validateRecordSize(header: RecordHeader, buffer: Buffer, offset:
  * Validates that a GRUP's size is reasonable
  */
 export function validateGRUPSize(grup: GRUPHeader, buffer: Buffer, offset: number): void {
+  // Check for zero or too small size
+  if (grup.size < 24) {
+    throw new Error(
+      `GRUP at offset ${offset} has invalid size: ${grup.size} (must be at least 24)`
+    );
+  }
+
   // First check if size exceeds remaining buffer
   if (grup.size > buffer.length - offset) {
     throw new Error(

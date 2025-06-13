@@ -1,6 +1,7 @@
 import { ParsedRecord } from '../types';
 import { parseGRUPHeader, validateGRUPSize } from './recordUtils';
-import { parseRecordHeader, scanSubrecords } from './bufferParser';
+import { parseRecord, parseRecordHeader } from '../recordParser';
+import { hexDump } from './bufferParser';
 
 // Types we care about according to design doc
 const PROCESSED_RECORD_TYPES = new Set([
@@ -27,19 +28,21 @@ export function processGRUP(buffer: Buffer, offset: number, pluginName: string):
   }
   console.log(`  Timestamp: ${header.timestamp}`);
   console.log(`  Version: ${header.versionControl}`);
+  console.log('  Buffer context:');
+  console.log(hexDump(buffer, offset, 32).join('\n'));
 
   // For Top-Level GRUPs, check if we care about this type
   if (header.groupType === 0) {
     const recordType = header.label.toString('ascii');
     if (!PROCESSED_RECORD_TYPES.has(recordType)) {
-      console.log(`  Skipping - not a processed record type`);
+      console.log(`  Skipping group with label ${recordType} because it's unsupported`);
       return []; // Skip this GRUP if we don't care about its type
     }
     console.log(`  Processing records of type: ${recordType}`);
     return processTopLevelGRUP(buffer, offset, header, recordType, pluginName);
   }
 
-  // For other GRUP types, we need to check each record
+  // For other GRUP types, process all records within them
   return processNestedGRUP(buffer, offset, header, pluginName);
 }
 
@@ -77,20 +80,13 @@ function processTopLevelGRUP(
   const endOffset = offset + header.size;
 
   while (currentOffset < endOffset) {
-    const recordHeader = parseRecordHeader(buffer.slice(currentOffset, currentOffset + 20));
-    const recordData = buffer.slice(currentOffset + 20, currentOffset + 20 + recordHeader.dataSize);
-    
-    records.push({
-      meta: {
-        type: recordType,
-        formId: recordHeader.formId,
-        plugin: pluginName
-      },
-      data: parseSubrecords(recordData),
-      header: buffer.slice(currentOffset, currentOffset + 20).toString('base64')
-    });
+    console.log(`\nProcessing record at offset ${currentOffset}:`);
+    console.log('Buffer context:');
+    console.log(hexDump(buffer, currentOffset, 32).join('\n'));
 
-    currentOffset += 20 + recordHeader.dataSize;
+    const { record, newOffset } = parseRecord(buffer, currentOffset, pluginName);
+    records.push(record);
+    currentOffset = newOffset;
   }
 
   return records;
@@ -109,55 +105,43 @@ function processNestedGRUP(
   let currentOffset = offset + 24;
   const endOffset = offset + header.size;
 
+  console.log(`\nProcessing nested GRUP from ${offset} to ${endOffset} (size: ${header.size})`);
+
   while (currentOffset < endOffset) {
+    console.log(`\nProcessing at offset ${currentOffset}:`);
+    console.log('Buffer context:');
+    console.log(hexDump(buffer, currentOffset, 32).join('\n'));
+
     const recordType = buffer.toString('ascii', currentOffset, currentOffset + 4);
+    console.log(`  Record type: ${recordType}`);
     
     if (recordType === 'GRUP') {
       // Recursively process nested GRUP
       const nestedRecords = processGRUP(buffer, currentOffset, pluginName);
       records.push(...nestedRecords);
-    } else if (PROCESSED_RECORD_TYPES.has(recordType)) {
-      // Process normal record if it's a type we care about
-      const recordHeader = parseRecordHeader(buffer.slice(currentOffset, currentOffset + 20));
-      const recordData = buffer.slice(currentOffset + 20, currentOffset + 20 + recordHeader.dataSize);
-      
-      records.push({
-        meta: {
-          type: recordType,
-          formId: recordHeader.formId,
-          plugin: pluginName
-        },
-        data: parseSubrecords(recordData),
-        header: buffer.slice(currentOffset, currentOffset + 20).toString('base64')
-      });
-    }
-    // Skip records we don't care about
-
-    // Move to next record
-    if (recordType === 'GRUP') {
       const grupHeader = parseGRUPHeader(buffer, currentOffset);
+      console.log(`  Nested GRUP size: ${grupHeader.size}`);
       currentOffset += grupHeader.size;
     } else {
+      // Read the record header to get its size
       const recordHeader = parseRecordHeader(buffer.slice(currentOffset, currentOffset + 20));
-      currentOffset += 20 + recordHeader.dataSize;
+      console.log(`  Record size: ${recordHeader.dataSize}`);
+      console.log(`  Total record size (header + data): ${20 + recordHeader.dataSize}`);
+      
+      if (!PROCESSED_RECORD_TYPES.has(recordType)) {
+        console.log(`  Skipping record of type ${recordType} because it's unsupported`);
+        currentOffset += 20 + recordHeader.dataSize; // Skip header + data
+        continue;
+      }
+      
+      // Process supported records
+      const { record, newOffset } = parseRecord(buffer, currentOffset, pluginName);
+      records.push(record);
+      currentOffset = newOffset;
     }
+
+    console.log(`  Next offset: ${currentOffset}`);
   }
 
   return records;
-}
-
-/**
- * Parse subrecords from a record's data buffer
- */
-function parseSubrecords(dataBuffer: Buffer): Record<string, Buffer[]> {
-  const subrecords: Record<string, Buffer[]> = {};
-  
-  for (const subrecord of scanSubrecords(dataBuffer)) {
-    if (!subrecords[subrecord.type]) {
-      subrecords[subrecord.type] = [];
-    }
-    subrecords[subrecord.type].push(subrecord.data);
-  }
-  
-  return subrecords;
 } 

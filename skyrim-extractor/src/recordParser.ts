@@ -1,14 +1,15 @@
 import { parseRecordHeader, scanSubrecords } from './utils/bufferParser';
 import { ParsedRecord } from './types';
 
-export function parseRecord(pluginBuffer: Buffer, offset: number, pluginName: string): { record: ParsedRecord; newOffset: number } {
-  const headerBuf = pluginBuffer.slice(offset, offset + 20);
-  const header = parseRecordHeader(headerBuf);
+export { parseRecordHeader };
+
+export function parseRecord(buffer: Buffer, offset: number, pluginName: string): { record: ParsedRecord, newOffset: number } {
+  const header = parseRecordHeader(buffer.slice(offset, offset + 20));
+  const data = buffer.slice(offset + 20, offset + 20 + header.dataSize);
   
-  const subrecordData = pluginBuffer.slice(offset + 20, offset + 20 + header.dataSize);
   const subrecords: Record<string, Buffer[]> = {};
 
-  for (const subrecord of scanSubrecords(subrecordData)) {
+  for (const subrecord of scanSubrecords(data)) {
     if (!subrecords[subrecord.type]) {
       subrecords[subrecord.type] = [];
     }
@@ -22,7 +23,7 @@ export function parseRecord(pluginBuffer: Buffer, offset: number, pluginName: st
       plugin: pluginName
     },
     data: subrecords,
-    header: headerBuf.toString('base64')
+    header: buffer.slice(offset, offset + 20).toString('base64')
   };
 
   return {
