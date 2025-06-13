@@ -1,0 +1,6 @@
+{
+  "extractedDir": "../data/mod-samples",
+  "pluginsTxtPath": "../data/mod-samples/plugins.txt",
+  "outputDir": "../output/skyrim-extractor/mod-samples",
+  "maxThreads": 4
+} 

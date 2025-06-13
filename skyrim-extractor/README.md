@@ -1,102 +1,77 @@
-# Skyrim Extractor
+# Skyrim Plugin Record Parser
 
-A Node.js project for parsing Skyrim ESP/ESM binary plugin files.
+A Node.js tool for parsing Skyrim plugin files (`.esp`, `.esm`, `.esl`) and extracting their records into structured JSON format.
 
-## Purpose
-This tool is designed to efficiently parse and analyze Skyrim mod plugin files (ESP/ESM) for modding, analysis, and automation purposes.
+## Features
+
+- Parses Skyrim plugin files into structured JSON records
+- Supports all record types (PERK, RACE, AVIF, SPEL, MGEF, etc.)
+- Handles extended size subrecords (XXXX)
+- Preserves raw record headers and subrecord data
+- Groups records by type in separate JSON files
 
 ## Prerequisites
-- Node.js 18+ installed
-- A Mod Organizer 2 modlist.txt file
-- Extracted mod folders containing the plugins
 
-## Getting Started
-1. Clone the repository and install dependencies:
-```bash
-git clone <repository-url>
-cd skyrim-extractor
-npm install
-npm run build
+- Node.js 16 or higher
+- npm 7 or higher
+
+## Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+## Usage
+
+1. Set up your environment variables:
+   - `EXTRACTED_DIR`: Path to directory containing extracted mod folders
+   - `PLUGINS_TXT`: Path to your plugins.txt file
+   - `OUTPUT_DIR`: Path where JSON files will be saved (defaults to './output')
+
+2. Run the parser:
+   ```bash
+   npm start
+   ```
+
+## Output Format
+
+The parser creates separate JSON files for each record type (e.g., `PERK.json`, `RACE.json`). Each file contains an array of records with the following structure:
+
+```json
+{
+  "meta": {
+    "type": "PERK",
+    "formId": "00058F80",
+    "plugin": "Requiem.esp"
+  },
+  "data": {
+    "EDID": [Buffer],
+    "FULL": [Buffer],
+    // ... other subrecords
+  },
+  "header": "base64_encoded_header"
+}
 ```
-
-2. Run the extractor:
-```bash
-# Run with a specific modlist directory
-npm start -- --modlist <path-to-modlist-directory>
-
-# Run with verbose logging enabled
-npm start -- --modlist <path-to-modlist-directory> --verbose
-
-# Or use the local test setup
-npm run dev:local
-```
-
-### Command Line Options
-- `--modlist <path>`: (Required) Path to the directory containing modlist.txt
-- `--verbose`: (Optional) Enable detailed logging of record parsing
-
-### Directory Structure
-The modlist directory should contain:
-```
-modlist-directory/
-├── modlist.txt           # MO2 modlist file
-├── ModA/                 # Enabled mod folder
-│   └── SomePlugin.esp
-├── ModB/                 # Disabled mod folder (ignored)
-│   └── AnotherPlugin.esp
-└── ModC/                 # Another enabled mod folder
-    └── ThirdPlugin.esp
-```
-
-### Modlist Format
-The `modlist.txt` file should be in MO2 format:
-```
-+ModA
--ModB
-+ModC
-```
-- Lines starting with `+` indicate enabled mods
-- Lines starting with `-` indicate disabled mods
-- The order of enabled mods determines the search priority for plugins
 
 ## Development
-- See `uesp/skyrim_plugin_parser_primer.md` for a technical overview and implementation tips.
-- The project uses Node.js streams and buffers for high-performance binary parsing.
-- Run tests with `npm test`
 
-### Project Structure
-```
-skyrim-extractor/
-├── src/
-│   ├── index.ts          # Entry point
-│   ├── modlist.ts        # Modlist parsing
-│   └── plugin/           # Plugin parsing logic
-├── test-fixtures/        # Test data
-├── package.json
-└── tsconfig.json
-```
+- Build TypeScript:
+  ```bash
+  npm run build
+  ```
 
-## Troubleshooting
-1. **"Path is not a file" error**
-   - Ensure you're pointing to a directory containing `modlist.txt`
-   - The directory should not be the modlist file itself
+- Run in development mode:
+  ```bash
+  npm run dev
+  ```
 
-2. **"Plugin file not found" error**
-   - Verify the plugin exists in one of the enabled mod folders
-   - Check that the mod folder is enabled in modlist.txt
-   - Confirm the plugin filename matches exactly (case-insensitive)
+- Run tests:
+  ```bash
+  npm test
+  ```
 
-3. **Build errors**
-   - Run `npm run build` to ensure TypeScript is compiled
-   - Check for any TypeScript errors in the console
+## License
 
-## References
-- [UESP Mod File Format](https://en.uesp.net/wiki/Skyrim_Mod:Mod_File_Format)
-- `uesp/skyrim_plugin_parser_primer.md` (included)
-- `uesp/skyrim_record_definitions_full.json` (included)
-
-## Next Steps
-- [ ] Add support for plugins.txt
-- [ ] Implement binary plugin parsing
-- [ ] Add JSON output by record type
-- [ ] Add worker thread support for parallel processing
+MIT 
