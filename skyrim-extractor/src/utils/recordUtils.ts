@@ -1,5 +1,6 @@
 import { RecordHeader } from '../types';
 import { parentPort } from 'worker_threads';
+import { RECORD_HEADER } from './buffer.constants';
 
 export type RecordCategory = 'TES4' | 'GRUP' | 'NORMAL' | 'UNKNOWN';
 
@@ -67,7 +68,7 @@ export function validateRecordType(buffer: Buffer, offset: number): void {
  * Parses a GRUP header at the given offset
  */
 export function parseGRUPHeader(buffer: Buffer, offset: number): GRUPHeader {
-  if (offset + 24 > buffer.length) {
+  if (offset + RECORD_HEADER.TOTAL_SIZE > buffer.length) {
     throw new Error(`Incomplete GRUP header at offset ${offset}`);
   }
 
@@ -118,18 +119,18 @@ export function parseGRUPHeader(buffer: Buffer, offset: number): GRUPHeader {
  */
 export function validateRecordSize(header: RecordHeader, buffer: Buffer, offset: number): void {
   // First check if size exceeds remaining buffer
-  if (header.dataSize > buffer.length - offset - 20) {
+  if (header.dataSize > buffer.length - offset - RECORD_HEADER.TOTAL_SIZE) {
     throw new Error(
       `Record at offset ${offset} has invalid data size:\n` +
       `Data size: ${header.dataSize}\n` +
-      `Remaining buffer: ${buffer.length - offset - 20}\n` +
+      `Remaining buffer: ${buffer.length - offset - RECORD_HEADER.TOTAL_SIZE}\n` +
       `Buffer size: ${buffer.length}\n` +
       `Offset: ${offset}`
     );
   }
 
   // Then check if total record size exceeds buffer
-  if (offset + 20 + header.dataSize > buffer.length) {
+  if (offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize > buffer.length) {
     throw new Error(
       `Record at offset ${offset} exceeds buffer bounds.\n` +
       `Record type: ${header.type}\n` +
@@ -145,9 +146,9 @@ export function validateRecordSize(header: RecordHeader, buffer: Buffer, offset:
  */
 export function validateGRUPSize(grup: GRUPHeader, buffer: Buffer, offset: number): void {
   // Check for zero or too small size
-  if (grup.size < 24) {
+  if (grup.size < RECORD_HEADER.TOTAL_SIZE) {
     throw new Error(
-      `GRUP at offset ${offset} has invalid size: ${grup.size} (must be at least 24)`
+      `GRUP at offset ${offset} has invalid size: ${grup.size} (must be at least ${RECORD_HEADER.TOTAL_SIZE})`
     );
   }
 

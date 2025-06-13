@@ -4,12 +4,12 @@ import { parseRecord, parseRecordHeader } from '../../recordParser';
 import { setDebugCallback } from '../bufferParser';
 import { 
   PROCESSED_RECORD_TYPES, 
-  RECORD_HEADER_SIZE, 
   debugLog, 
   dumpHex, 
   getGroupTypeName,
   errorLog 
 } from './grupUtils';
+import { RECORD_HEADER } from '../buffer.constants';
 
 // Set up debug callback
 setDebugCallback((message: string) => {
@@ -110,16 +110,16 @@ function processTopLevelGRUP(
       debugLog(`\nProcessing record at offset ${currentOffset}:`);
       
       // Parse record header
-      const recordHeader = parseRecordHeader(buffer.subarray(currentOffset, currentOffset + RECORD_HEADER_SIZE));
-      const totalRecordSize = RECORD_HEADER_SIZE + recordHeader.dataSize;
+      const recordHeader = parseRecordHeader(buffer.subarray(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE));
+      const totalRecordSize = RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
       
       debugLog(`  Record type: ${recordHeader.type}`);
       debugLog(`  Data size: ${recordHeader.dataSize}`);
       debugLog(`  Total record size (header + data): ${totalRecordSize}`);
       
       // Dump record header and initial data
-      dumpHex(buffer, currentOffset, RECORD_HEADER_SIZE, 'Record Header Hex Dump (24 bytes)');
-      dumpHex(buffer, currentOffset + RECORD_HEADER_SIZE, 64, 'Initial Record Data (64 bytes)');
+      dumpHex(buffer, currentOffset, RECORD_HEADER.TOTAL_SIZE, 'Record Header Hex Dump (24 bytes)');
+      dumpHex(buffer, currentOffset + RECORD_HEADER.TOTAL_SIZE, 64, 'Initial Record Data (64 bytes)');
 
       // Process the record
       const { record } = parseRecord(buffer, currentOffset, pluginName);
@@ -174,7 +174,7 @@ function processNestedGRUP(
       debugLog(`\nProcessing at offset ${currentOffset}:`);
       
       // Dump header
-      dumpHex(buffer, currentOffset, RECORD_HEADER_SIZE, 'Header Hex Dump (24 bytes)');
+      dumpHex(buffer, currentOffset, RECORD_HEADER.TOTAL_SIZE, 'Header Hex Dump (24 bytes)');
 
       const recordType = buffer.toString('ascii', currentOffset, currentOffset + 4);
       debugLog(`  Record type: ${recordType}`);
@@ -188,14 +188,14 @@ function processNestedGRUP(
         currentOffset += grupHeader.size;
       } else {
         // Read the record header to get its size
-        const recordHeader = parseRecordHeader(buffer.subarray(currentOffset, currentOffset + RECORD_HEADER_SIZE));
-        const totalRecordSize = RECORD_HEADER_SIZE + recordHeader.dataSize;
+        const recordHeader = parseRecordHeader(buffer.subarray(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE));
+        const totalRecordSize = RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
         
         debugLog(`  Record size: ${recordHeader.dataSize}`);
         debugLog(`  Total record size (header + data): ${totalRecordSize}`);
         
         // Dump initial record data
-        dumpHex(buffer, currentOffset + RECORD_HEADER_SIZE, 64, 'Initial Record Data (64 bytes)');
+        dumpHex(buffer, currentOffset + RECORD_HEADER.TOTAL_SIZE, 64, 'Initial Record Data (64 bytes)');
         
         if (!PROCESSED_RECORD_TYPES.has(recordType)) {
           debugLog(`  Skipping record of type ${recordType} because it's unsupported`);

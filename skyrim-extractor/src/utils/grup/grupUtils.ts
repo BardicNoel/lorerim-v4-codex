@@ -1,5 +1,6 @@
 import { parentPort } from 'worker_threads';
 import { hexDump } from '../bufferParser';
+import { RECORD_HEADER, SUBRECORD_HEADER, GRUP_HEADER, BUFFER } from '../buffer.constants';
 
 // Types we care about according to design doc
 export const PROCESSED_RECORD_TYPES = new Set([
@@ -10,9 +11,7 @@ export const PROCESSED_RECORD_TYPES = new Set([
   'MGEF'   // Magic Effects
 ]);
 
-// Constants for record structure
-export const RECORD_HEADER_SIZE = 24; // Signature(4) + DataSize(4) + Flags(4) + FormID(4) + VersionControlInfo(4) + Unknown(4)
-export const SUBRECORD_HEADER_SIZE = 6; // Signature(4) + Size(2)
+
 
 /**
  * Utility function to format debug messages with [grupHandler] prefix

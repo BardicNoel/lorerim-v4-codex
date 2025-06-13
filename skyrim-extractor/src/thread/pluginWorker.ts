@@ -14,6 +14,7 @@ import {
 } from '../utils/recordUtils';
 import { processGRUP } from '../utils/grup/grupHandler';
 import { logGRUPFields } from '../utils/debugUtils';
+import { RECORD_HEADER, SUBRECORD_HEADER, BUFFER } from '../utils/buffer.constants';
 
 if (!parentPort) {
   throw new Error('This module must be run as a worker thread');
@@ -103,21 +104,21 @@ function processGRUPRecord(buffer: Buffer, offset: number, manifest: PluginManif
  * Process a TES4 record
  */
 function processTES4(buffer: Buffer, offset: number, manifest: PluginManifest): { newOffset: number } {
-  const header = parseRecordHeader(buffer.slice(offset, offset + 20));
+  const header = parseRecordHeader(buffer.subarray(offset, offset + RECORD_HEADER.TOTAL_SIZE));
   validateRecordSize(header, buffer, offset);
 
   // Update manifest
   manifest.recordCounts.TES4++;
 
   // Calculate new offset with alignment
-  const newOffset = offset + 20 + header.dataSize;
+  const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize;
   
   // Look ahead to find next valid record
   let lookaheadOffset = newOffset;
   const maxLookahead = 64; // Maximum bytes to look ahead
   let foundValidRecord = false;
 
-  while (lookaheadOffset < newOffset + maxLookahead && lookaheadOffset + 8 <= buffer.length) {
+  while (lookaheadOffset < newOffset + maxLookahead && lookaheadOffset + BUFFER.RECORD_TYPE_SIZE <= buffer.length) {
     const recordType = getRecordTypeAt(buffer, lookaheadOffset);
     if (recordType !== 'UNKNOWN') {
       foundValidRecord = true;
@@ -138,7 +139,7 @@ function processTES4(buffer: Buffer, offset: number, manifest: PluginManifest): 
  * Process a normal record
  */
 function processNormalRecord(buffer: Buffer, offset: number, manifest: PluginManifest): { newOffset: number } {
-  const header = parseRecordHeader(buffer.slice(offset, offset + 20));
+  const header = parseRecordHeader(buffer.subarray(offset, offset + RECORD_HEADER.TOTAL_SIZE));
   validateRecordSize(header, buffer, offset);
 
   // Update manifest
@@ -149,7 +150,7 @@ function processNormalRecord(buffer: Buffer, offset: number, manifest: PluginMan
   manifest.recordTypes[header.type]++;
 
   // Calculate new offset with alignment
-  const newOffset = offset + 20 + header.dataSize;
+  const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize;
   return { newOffset };
 }
 
