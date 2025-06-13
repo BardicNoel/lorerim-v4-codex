@@ -1,4 +1,5 @@
 import { RecordHeader } from '../types';
+import { parentPort } from 'worker_threads';
 
 export type RecordCategory = 'TES4' | 'GRUP' | 'NORMAL' | 'UNKNOWN';
 
@@ -13,25 +14,34 @@ export interface GRUPHeader {
   unknown: number;     // Unknown value
 }
 
+function debugLog(message: string) {
+  if (parentPort) {
+    parentPort.postMessage({ type: 'debug', message });
+  }
+}
+
 /**
  * Safely determines the type of record at the given offset
  * Note: For TES4 records, we need to check the first 4 bytes for 'TES4'
  * For all other records, we check bytes 4-8 for the type
  */
-export function getRecordTypeAt(buffer: Buffer, offset: number): RecordCategory {
-  if (offset + 4 > buffer.length) return 'UNKNOWN';
+export function getRecordTypeAt(buffer: Buffer, offset: number): string {
+  if (offset + 4 > buffer.length) {
+    debugLog(`Buffer too short at offset ${offset} (need 4 bytes, have ${buffer.length - offset})`);
+    return 'UNKNOWN';
+  }
 
-  // All record types are defined in first 4 bytes
   const type = buffer.toString('ascii', offset, offset + 4);
+  debugLog(`Reading record type at offset ${offset}: ${type} (${Buffer.from(type).toString('hex')})`);
 
-  // Check for known record types
-  if (type === 'TES4') return 'TES4';
-  if (type === 'GRUP') return 'GRUP';
-  if (/^[A-Z0-9_ ]{4}$/.test(type)) return 'NORMAL';
+  // Validate record type
+  if (!/^[A-Z0-9]{4}$/.test(type)) {
+    debugLog(`Invalid record type at offset ${offset}: ${type}`);
+    return 'UNKNOWN';
+  }
 
-  return 'UNKNOWN';
+  return type;
 }
-
 
 /**
  * Validates that a record type is valid ASCII

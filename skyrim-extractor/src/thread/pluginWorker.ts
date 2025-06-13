@@ -1,8 +1,9 @@
 // src/thread/pluginWorker.ts
 import { parentPort } from 'worker_threads';
-import { readFile } from 'fs/promises';
+import { readFile, writeFile, mkdir } from 'fs/promises';
+import path from 'path';
 import { PluginMeta } from '../types';
-import { parseRecordHeader, scanSubrecords } from '../utils/bufferParser';
+import { parseRecordHeader, scanSubrecords, setDebugCallback, hexDump } from '../utils/bufferParser';
 import { 
   getRecordTypeAt, 
   parseGRUPHeader, 
@@ -11,21 +12,41 @@ import {
   validateRecordType,
   formatBufferSlice
 } from '../utils/recordUtils';
-import { hexDump, logGRUPFields } from '../utils/debugUtils';
+import { processGRUP } from '../utils/grupHandler';
+import { logGRUPFields } from '../utils/debugUtils';
 
 if (!parentPort) {
   throw new Error('This module must be run as a worker thread');
 }
 
+// Set up debug callback immediately
+setDebugCallback((message: string) => {
+  parentPort?.postMessage({ type: 'debug', message });
+});
+
 /**
  * Send a log message to the main process
  */
-function log(message: string) {
-  parentPort?.postMessage({ type: 'log', message });
+function log(message: string, functionName: string = '') {
+  const prefix = functionName ? `[${functionName}] ` : '';
+  parentPort?.postMessage({ type: 'debug', message: `${prefix}${message}` });
+}
+
+/**
+ * Convert buffer to hex string representation
+ */
+function bufferToHexString(buffer: Buffer): string {
+  let hexString = '';
+  for (let i = 0; i < buffer.length; i++) {
+    hexString += buffer[i].toString(16).padStart(2, '0');
+    if (i % 16 === 15) hexString += '\n';
+    else if (i % 2 === 1) hexString += ' ';
+  }
+  return hexString;
 }
 
 interface PluginManifest {
-  name: string;
+  pluginName: string;
   recordCounts: {
     TES4: number;
     GRUP: number;
@@ -36,12 +57,13 @@ interface PluginManifest {
     typeStr: string;
     count: number;
   }[];
+  recordTypes: Record<string, number>;
 }
 
 /**
  * Process a GRUP record
  */
-function processGRUP(buffer: Buffer, offset: number, manifest: PluginManifest): { newOffset: number } {
+function processGRUPRecord(buffer: Buffer, offset: number, manifest: PluginManifest): { newOffset: number } {
   const header = parseGRUPHeader(buffer, offset);
   validateGRUPSize(header, buffer, offset);
 
@@ -60,6 +82,18 @@ function processGRUP(buffer: Buffer, offset: number, manifest: PluginManifest): 
   }
   groupEntry.count++;
 
+  // Process GRUP using new handler
+  const records = processGRUP(buffer, offset, manifest.pluginName);
+  
+  // Add records to manifest
+  records.forEach(record => {
+    manifest.recordCounts.NORMAL++;
+    if (!manifest.recordTypes[record.meta.type]) {
+      manifest.recordTypes[record.meta.type] = 0;
+    }
+    manifest.recordTypes[record.meta.type]++;
+  });
+
   // Calculate new offset with alignment
   const newOffset = offset + header.size;
   return { newOffset };
@@ -69,9 +103,7 @@ function processGRUP(buffer: Buffer, offset: number, manifest: PluginManifest): 
  * Process a TES4 record
  */
 function processTES4(buffer: Buffer, offset: number, manifest: PluginManifest): { newOffset: number } {
-  // For TES4, we already know it's valid from getRecordTypeAt
-  const headerBuf = buffer.slice(offset, offset + 20);
-  const header = parseRecordHeader(headerBuf);
+  const header = parseRecordHeader(buffer.slice(offset, offset + 20));
   validateRecordSize(header, buffer, offset);
 
   // Update manifest
@@ -95,6 +127,7 @@ function processTES4(buffer: Buffer, offset: number, manifest: PluginManifest): 
   }
 
   if (foundValidRecord) {
+    log(`Found valid record at offset ${lookaheadOffset} after lookahead`, 'processTES4');
     return { newOffset: lookaheadOffset };
   }
 
@@ -105,13 +138,17 @@ function processTES4(buffer: Buffer, offset: number, manifest: PluginManifest): 
  * Process a normal record
  */
 function processNormalRecord(buffer: Buffer, offset: number, manifest: PluginManifest): { newOffset: number } {
-  const headerBuf = buffer.slice(offset, offset + 20);
-  const header = parseRecordHeader(headerBuf);
+  const header = parseRecordHeader(buffer.slice(offset, offset + 20));
   validateRecordSize(header, buffer, offset);
 
   // Update manifest
   manifest.recordCounts.NORMAL++;
+  if (!manifest.recordTypes[header.type]) {
+    manifest.recordTypes[header.type] = 0;
+  }
+  manifest.recordTypes[header.type]++;
 
+  // Calculate new offset with alignment
   const newOffset = offset + 20 + header.dataSize;
   return { newOffset };
 }
@@ -120,58 +157,85 @@ function processNormalRecord(buffer: Buffer, offset: number, manifest: PluginMan
  * Process a plugin file
  */
 async function processPlugin(plugin: PluginMeta): Promise<void> {
+  let currentBuffer: Buffer | null = null;
+  let currentOffset = 0;
+
   try {
-    log(`\nProcessing plugin: ${plugin.name}`);
-    const buffer = await readFile(plugin.fullPath);
-    
+    // Read plugin file
+    currentBuffer = await readFile(plugin.fullPath);
+    log(`Processing plugin: ${plugin.name}`, 'processPlugin');
+
+    // Special handling for Wizard Warrior plugins
+    if (plugin.name.toLowerCase().includes('wizard warrior')) {
+      log(`Found Wizard Warrior plugin: ${plugin.name}`);
+      const outputDir = path.join(process.cwd(), 'output');
+      try {
+        await mkdir(outputDir, { recursive: true });
+        const outputPath = path.join(outputDir, `${plugin.name}.txt`);
+        const hexString = bufferToHexString(currentBuffer);
+        await writeFile(outputPath, hexString);
+        log(`Wrote hex representation to: ${outputPath}`);
+      } catch (error) {
+        log(`Failed to write Wizard Warrior plugin data: ${error}`);
+      }
+    }
+
     // Initialize manifest
     const manifest: PluginManifest = {
-      name: plugin.name,
+      pluginName: plugin.name,
       recordCounts: {
         TES4: 0,
         GRUP: 0,
         NORMAL: 0
       },
-      groups: []
+      groups: [],
+      recordTypes: {}
     };
 
-    let offset = 0;
-    while (offset < buffer.length) {
-      const recordType = getRecordTypeAt(buffer, offset);
-      let result: { newOffset: number };
+    // Process records
+    currentOffset = 0;
+    while (currentOffset < currentBuffer.length) {
+      try {
+        const recordType = getRecordTypeAt(currentBuffer, currentOffset);
+        log(`Found record type at offset ${currentOffset}: ${recordType}`, 'processPlugin');
+        
+        let result: { newOffset: number };
 
-      switch (recordType) {
-        case 'GRUP':
-          result = processGRUP(buffer, offset, manifest);
-          break;
-        case 'TES4':
-          result = processTES4(buffer, offset, manifest);
-          break;
-        case 'NORMAL':
-          result = processNormalRecord(buffer, offset, manifest);
-          break;
-        default:
-          log(`[ERROR] Unknown record type at offset ${offset}`);
-          parentPort?.postMessage({ 
-            type: 'error', 
-            error: `Unknown record type at offset ${offset}`,
-            plugin: plugin.name
-          });
-          return;
+        switch (recordType) {
+          case 'GRUP':
+            result = processGRUPRecord(currentBuffer, currentOffset, manifest);
+            break;
+          case 'TES4':
+            result = processTES4(currentBuffer, currentOffset, manifest);
+            break;
+          default:
+            result = processNormalRecord(currentBuffer, currentOffset, manifest);
+        }
+
+        currentOffset = result.newOffset;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        log(`[ERROR] Failed at offset ${currentOffset}: ${errorMessage}`, 'processPlugin');
+        log(`Hex dump with context:`, 'processPlugin');
+        const hexLines = hexDump(currentBuffer, currentOffset, 32);
+        hexLines.forEach((line: string) => log(line, 'processPlugin'));
+        throw error; // Re-throw to be caught by outer try-catch
       }
-
-      offset = result.newOffset;
     }
 
     // Print manifest summary
-    log(`\nPlugin Summary: ${plugin.name}`);
-    log(`Record Counts:`);
-    log(`  TES4: ${manifest.recordCounts.TES4}`);
-    log(`  GRUP: ${manifest.recordCounts.GRUP}`);
-    log(`  Normal Records: ${manifest.recordCounts.NORMAL}`);
-    log(`Group Types:`);
+    log(`\nPlugin Summary: ${plugin.name}`, 'processPlugin');
+    log(`Record Counts:`, 'processPlugin');
+    log(`  TES4: ${manifest.recordCounts.TES4}`, 'processPlugin');
+    log(`  GRUP: ${manifest.recordCounts.GRUP}`, 'processPlugin');
+    log(`  Normal Records: ${manifest.recordCounts.NORMAL}`, 'processPlugin');
+    log(`Group Types:`, 'processPlugin');
     manifest.groups.forEach(group => {
-      log(`  ${group.typeStr}: ${group.count}`);
+      log(`  ${group.typeStr}: ${group.count}`, 'processPlugin');
+    });
+    log(`Record Types:`, 'processPlugin');
+    Object.entries(manifest.recordTypes).forEach(([type, count]) => {
+      log(`  ${type}: ${count}`, 'processPlugin');
     });
 
     // Send completion message
@@ -183,7 +247,12 @@ async function processPlugin(plugin: PluginMeta): Promise<void> {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    log(`[ERROR] Failed to process plugin ${plugin.name}: ${errorMessage}`);
+    log(`[ERROR] Failed to process plugin ${plugin.name}: ${errorMessage}`, 'processPlugin');
+    if (currentBuffer) {
+      log(`Hex dump with context:`, 'processPlugin');
+      const hexLines = hexDump(currentBuffer, currentOffset, 32);
+      hexLines.forEach((line: string) => log(line, 'processPlugin'));
+    }
     parentPort?.postMessage({ 
       type: 'error', 
       error: errorMessage,

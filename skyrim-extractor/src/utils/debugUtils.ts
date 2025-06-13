@@ -1,4 +1,29 @@
 import fs from 'fs';
+import path from 'path';
+
+let debugLogStream: fs.WriteStream | null = null;
+
+export function initDebugLog(outputDir: string): void {
+  const debugLogPath = path.join(outputDir, 'debug.log');
+  debugLogStream = fs.createWriteStream(debugLogPath, { flags: 'a' });
+}
+
+export function closeDebugLog(): void {
+  if (debugLogStream) {
+    debugLogStream.end();
+    debugLogStream = null;
+  }
+}
+
+export function debugLog(message: string): void {
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] ${message}\n`;
+  
+  if (debugLogStream) {
+    debugLogStream.write(logMessage);
+  }
+  console.log(message);
+}
 
 export function hexDump(buffer: Buffer, start: number, length: number = 64): void {
   const end = Math.min(start + length, buffer.length);

@@ -6,6 +6,7 @@ import { ParsedRecord } from './types';
 import { PluginMeta } from './types';
 import { getEnabledPlugins } from './utils/modUtils';
 import { writeRecords } from './fileOutput';
+import { initDebugLog, closeDebugLog, debugLog } from './utils/debugUtils';
 
 function printHeader(text: string): void {
   console.log('\n' + '='.repeat(80));
@@ -31,6 +32,10 @@ export async function main(configPath?: string): Promise<void> {
     console.log(`  Mod Directory: ${config.modDirPath}`);
     console.log(`  Output Directory: ${config.outputPath}`);
     console.log(`  Max Threads: ${config.maxThreads}`);
+    
+    // Initialize debug logging
+    initDebugLog(config.outputPath);
+    debugLog('Debug logging initialized');
     
     // Validate configuration
     printSubHeader('VALIDATING CONFIGURATION');
@@ -93,9 +98,13 @@ export async function main(configPath?: string): Promise<void> {
     console.log(`Successfully processed ${plugins.length} plugins`);
     console.log(`Found records of types: ${Array.from(recordsByType.keys()).join(', ')}`);
 
+    // Close debug log
+    closeDebugLog();
+
   } catch (error: unknown) {
     printHeader('PROCESSING FAILED');
     console.error('Error:', error instanceof Error ? error.message : String(error));
+    closeDebugLog();
     process.exit(1);
   }
 }
