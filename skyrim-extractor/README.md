@@ -25,15 +25,27 @@ A Node.js tool for parsing Skyrim plugin files (`.esp`, `.esm`, `.esl`) and extr
 
 ## Usage
 
-1. Set up your environment variables:
-   - `EXTRACTED_DIR`: Path to directory containing extracted mod folders
-   - `PLUGINS_TXT`: Path to your plugins.txt file
-   - `OUTPUT_DIR`: Path where JSON files will be saved (defaults to './output')
+1. Create a config file (e.g., `config.json`):
+   ```json
+   {
+     "modDirPath": "./data/mod-samples",
+     "outputPath": "./output",
+     "maxThreads": 4
+   }
+   ```
 
 2. Run the parser:
    ```bash
-   npm start
+   npm start -- --config config.json
    ```
+
+## Configuration
+
+The tool requires a configuration file with the following options:
+
+- `modDirPath`: Path to directory containing modlist.txt and plugins.txt
+- `outputPath`: Path where JSON files will be saved
+- `maxThreads`: Number of worker threads to use (1-8)
 
 ## Output Format
 

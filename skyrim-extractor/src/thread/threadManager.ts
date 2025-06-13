@@ -38,8 +38,10 @@ export class ThreadManager {
     this.activeWorkers++;
 
     worker.on('message', (message) => {
-      console.log(`\nThread Manager: Message from ${plugin.name}:`, message.type);
-      if (message.type === 'record') {
+      if (message.type === 'log') {
+        // Forward log messages to console
+        console.log(message.message);
+      } else if (message.type === 'record') {
         this.onRecord(message.record);
       } else if (message.type === 'done') {
         console.log(`Thread Manager: Worker completed ${plugin.name}`);

@@ -1,12 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-
-export interface Config {
-  extractedDir: string;
-  pluginsTxtPath: string;
-  outputDir: string;
-  maxThreads: number;
-}
+import { Config } from './types';
 
 export async function loadConfig(configPath?: string): Promise<Config> {
   if (!configPath) {
@@ -27,16 +21,14 @@ export async function loadConfig(configPath?: string): Promise<Config> {
 
   // No defaults: all fields must be present
   const mergedConfig: Config = {
-    extractedDir: configFile.extractedDir,
-    pluginsTxtPath: configFile.pluginsTxtPath,
-    outputDir: configFile.outputDir,
+    modDirPath: configFile.modDirPath,
+    outputPath: configFile.outputPath,
     maxThreads: configFile.maxThreads,
   };
 
   // Resolve all paths relative to config file
-  mergedConfig.extractedDir = path.resolve(configDir, mergedConfig.extractedDir);
-  mergedConfig.pluginsTxtPath = path.resolve(configDir, mergedConfig.pluginsTxtPath);
-  mergedConfig.outputDir = path.resolve(configDir, mergedConfig.outputDir);
+  mergedConfig.modDirPath = path.resolve(configDir, mergedConfig.modDirPath);
+  mergedConfig.outputPath = path.resolve(configDir, mergedConfig.outputPath);
 
   // Clamp maxThreads
   if (typeof mergedConfig.maxThreads !== 'number' || isNaN(mergedConfig.maxThreads)) {
@@ -49,22 +41,19 @@ export async function loadConfig(configPath?: string): Promise<Config> {
 
 export function validateConfig(config: Config): string[] {
   const errors: string[] = [];
-  if (!config.extractedDir || !fs.existsSync(config.extractedDir)) {
-    errors.push(`Extracted directory not found: ${config.extractedDir}`);
+  if (!config.modDirPath || !fs.existsSync(config.modDirPath)) {
+    errors.push(`Mod directory not found: ${config.modDirPath}`);
   }
-  if (!config.pluginsTxtPath || !fs.existsSync(config.pluginsTxtPath)) {
-    errors.push(`Plugins.txt file not found: ${config.pluginsTxtPath}`);
-  }
-  if (!config.outputDir) {
+  if (!config.outputPath) {
     errors.push(`Output directory not specified.`);
   } else {
     try {
-      if (!fs.existsSync(config.outputDir)) {
-        fs.mkdirSync(config.outputDir, { recursive: true });
+      if (!fs.existsSync(config.outputPath)) {
+        fs.mkdirSync(config.outputPath, { recursive: true });
       }
-      fs.accessSync(config.outputDir, fs.constants.W_OK);
+      fs.accessSync(config.outputPath, fs.constants.W_OK);
     } catch (e) {
-      errors.push(`Output directory is not writable: ${config.outputDir}`);
+      errors.push(`Output directory is not writable: ${config.outputPath}`);
     }
   }
   if (!config.maxThreads || config.maxThreads < 1 || config.maxThreads > 8) {

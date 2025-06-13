@@ -314,10 +314,9 @@ Configuration can be provided through multiple sources, with the following prece
 ### Configuration Interface
 ```ts
 interface Config {
-  extractedDir: string;    // Directory containing extracted mods
-  pluginsTxtPath: string;  // Path to plugins.txt file
-  outputDir: string;       // Directory for output files
-  maxThreads: number;      // Maximum number of worker threads (capped at 8)
+  modDirPath: string;    // Directory containing modlist.txt and plugins.txt
+  outputPath: string;    // Directory for output files
+  maxThreads: number;    // Maximum number of worker threads (capped at 8)
 }
 ```
 
@@ -328,8 +327,7 @@ skyrim-extractor [options]
 
 Options:
   -c, --config <path>        Path to config file
-  -e, --extracted-dir <path> Directory containing extracted mods
-  -p, --plugins-txt <path>   Path to plugins.txt file
+  -m, --mod-dir <path>       Directory containing modlist.txt and plugins.txt
   -o, --output-dir <path>    Directory for output files
   -t, --threads <number>     Maximum number of worker threads (max 8)
   -h, --help                 Display help information
@@ -338,23 +336,21 @@ Options:
 
 ### Environment Variables
 The following environment variables can be used to configure the tool:
-- `EXTRACTED_DIR`: Directory containing extracted mods
-- `PLUGINS_TXT`: Path to plugins.txt file
+- `MOD_DIR`: Directory containing modlist.txt and plugins.txt
 - `OUTPUT_DIR`: Directory for output files
 - `MAX_THREADS`: Maximum number of worker threads (capped at 8)
 
 ### Configuration Validation
 The configuration is validated before processing starts, checking for:
-1. Existence of directories and files
+1. Existence of mod directory and required files (modlist.txt, plugins.txt)
 2. Write permissions for the output directory
 3. Valid thread count (1-8)
 
 ### Example Config File
 ```json
 {
-  "extractedDir": "./extracted",
-  "pluginsTxtPath": "./plugins.txt",
-  "outputDir": "./output",
+  "modDirPath": "./data/mod-samples",
+  "outputPath": "./output",
   "maxThreads": 4
 }
 ```
@@ -362,13 +358,13 @@ The configuration is validated before processing starts, checking for:
 ### Usage Examples
 ```bash
 # Using command line arguments
-skyrim-extractor -e ./extracted -p ./plugins.txt -o ./output -t 4
+skyrim-extractor -m ./data/mod-samples -o ./output -t 4
 
 # Using a config file
 skyrim-extractor -c config.json
 
 # Using environment variables
-EXTRACTED_DIR=./extracted PLUGINS_TXT=./plugins.txt OUTPUT_DIR=./output MAX_THREADS=4 skyrim-extractor
+MOD_DIR=./data/mod-samples OUTPUT_DIR=./output MAX_THREADS=4 skyrim-extractor
 ```
 
 ---

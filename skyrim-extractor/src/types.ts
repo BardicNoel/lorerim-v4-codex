@@ -117,4 +117,10 @@ export interface RawMGEF {
     flags: number;
     associatedAV: number;
   };
+}
+
+export interface Config {
+  modDirPath: string;  // Path to directory containing modlist.txt and plugins.txt
+  outputPath: string;
+  maxThreads: number;
 } 

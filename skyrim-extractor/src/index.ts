@@ -4,7 +4,7 @@ import { loadConfig, validateConfig } from './config';
 import { ThreadManager } from './thread/threadManager';
 import { ParsedRecord } from './types';
 import { PluginMeta } from './types';
-import { resolvePlugins } from './pluginResolver';
+import { getEnabledPlugins } from './utils/modUtils';
 import { writeRecords } from './fileOutput';
 
 function printHeader(text: string): void {
@@ -28,9 +28,8 @@ export async function main(configPath?: string): Promise<void> {
     console.log(`Loading config from: ${configPath}`);
     const config = await loadConfig(configPath);
     console.log('Configuration loaded successfully:');
-    console.log(`  Extracted Directory: ${config.extractedDir}`);
-    console.log(`  Plugins File: ${config.pluginsTxtPath}`);
-    console.log(`  Output Directory: ${config.outputDir}`);
+    console.log(`  Mod Directory: ${config.modDirPath}`);
+    console.log(`  Output Directory: ${config.outputPath}`);
     console.log(`  Max Threads: ${config.maxThreads}`);
     
     // Validate configuration
@@ -45,8 +44,8 @@ export async function main(configPath?: string): Promise<void> {
 
     // Resolve plugins
     printSubHeader('RESOLVING PLUGINS');
-    console.log(`Reading plugins from: ${config.pluginsTxtPath}`);
-    const plugins = await resolvePlugins(config.pluginsTxtPath, config.extractedDir);
+    console.log(`Reading plugins from mod directory: ${config.modDirPath}`);
+    const plugins = await getEnabledPlugins(config.modDirPath);
     console.log(`Found ${plugins.length} plugins to process:`);
     plugins.forEach(plugin => console.log(`  - ${plugin.name} (${plugin.fullPath})`));
 
@@ -87,7 +86,7 @@ export async function main(configPath?: string): Promise<void> {
     printSubHeader('WRITING OUTPUT');
     for (const [type, records] of recordsByType) {
       console.log(`Writing ${records.length} ${type} records...`);
-      // TODO: Write records to output files
+      await writeRecords(records, config.outputPath);
     }
 
     printHeader('PROCESSING COMPLETE');

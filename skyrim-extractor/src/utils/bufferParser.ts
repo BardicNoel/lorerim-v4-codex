@@ -43,12 +43,42 @@ export function parseRecordHeader(headerBuf: Buffer): RecordHeader {
     throw new Error(`Invalid record header size: ${headerBuf.length} (expected 20)\n${dump}`);
   }
 
+  // Read record type (4 bytes)
   const type = headerBuf.toString('ascii', 0, 4);
+  
+  // Read data size (4 bytes)
   const dataSize = headerBuf.readUInt32LE(4);
+  
+  // Read form ID (4 bytes)
   const formId = headerBuf.readUInt32LE(8).toString(16).toUpperCase().padStart(8, '0');
+  
+  // Read remaining fields
   const flags = headerBuf.readUInt32LE(12);
   const versionControl = headerBuf.readUInt16LE(16);
   const formVersion = headerBuf.readUInt16LE(18);
+
+  // Validate based on record type
+  if (type === 'TES4') {
+    // // TES4 header has special validation
+    // if (formId !== '00000000') {
+    //   const dump = hexDump(headerBuf, 8, 4).join('\n');
+    //   throw new Error(`TES4 header must have form ID 00000000, found ${formId}\n${dump}`);
+    // }
+  } else {
+    // Normal record validation
+    if (!/^[A-Z]{4}$/.test(type)) {
+      const dump = hexDump(headerBuf, 0, 4).join('\n');
+      throw new Error(`Invalid record type '${type}' at offset 0\n${dump}`);
+    }
+    if (dataSize > 100 * 1024 * 1024) { // 100MB max
+      const dump = hexDump(headerBuf, 4, 4).join('\n');
+      throw new Error(`Suspicious data size: ${dataSize} bytes at offset 4\n${dump}`);
+    }
+    if (formId === '00000000') {
+      const dump = hexDump(headerBuf, 8, 4).join('\n');
+      throw new Error(`Invalid form ID 00000000 for record type ${type} at offset 8\n${dump}`);
+    }
+  }
 
   return {
     type,
