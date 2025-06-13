@@ -7,4 +7,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
+  // Silence console output during tests
+  silent: true,
+  verbose: false
 }; 

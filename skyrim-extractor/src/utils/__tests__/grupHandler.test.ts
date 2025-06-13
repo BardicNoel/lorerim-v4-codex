@@ -1,4 +1,4 @@
-import { processGRUP } from '../grupHandler';
+import { processGRUP } from '../grup/grupHandler';
 import { ParsedRecord } from '../../types';
 
 describe('GRUP Handler', () => {

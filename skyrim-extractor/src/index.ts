@@ -76,7 +76,11 @@ export async function main(configPath?: string): Promise<void> {
         await threadManager.processPlugin(plugin);
         console.log(`✓ Completed ${plugin.name}`);
       } catch (error) {
-        console.error(`✗ Failed to process ${plugin.name}:`, error instanceof Error ? error.message : String(error));
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error(`✗ Failed to process ${plugin.name}: ${errorMessage}`);
+        if (error instanceof Error && error.stack) {
+          console.error('Stack trace:', error.stack);
+        }
         throw error; // Re-throw to stop processing
       }
     }

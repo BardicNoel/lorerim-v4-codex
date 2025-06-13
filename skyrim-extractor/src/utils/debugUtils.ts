@@ -22,14 +22,22 @@ export function debugLog(message: string): void {
   if (debugLogStream) {
     debugLogStream.write(logMessage);
   }
-  console.log(message);
+  
+  // Add extra newlines for certain message types
+  if (message.startsWith('GRUP at offset') || 
+      message.startsWith('Processing nested GRUP') ||
+      message.startsWith('Processing at offset')) {
+    console.log('\n' + message);
+  } else {
+    console.log(message);
+  }
 }
 
 export function hexDump(buffer: Buffer, start: number, length: number = 64): void {
   const end = Math.min(start + length, buffer.length);
   const slice = buffer.slice(start, end);
 
-  console.log(`[HEX DUMP] Offset: ${start}`);
+  console.log('\n[HEX DUMP] Offset: ' + start);
   for (let i = 0; i < slice.length; i += 16) {
     const row = slice.slice(i, i + 16);
     const hex = row.toString('hex').match(/.{1,2}/g)?.join(' ') ?? '';
@@ -37,6 +45,7 @@ export function hexDump(buffer: Buffer, start: number, length: number = 64): voi
     const offset = (start + i).toString(16).padStart(8, '0');
     console.log(`${offset}  ${hex.padEnd(47)}  ${ascii}`);
   }
+  console.log(''); // Add extra newline after hex dump
 }
 
 export function logGRUPFields(buffer: Buffer, offset: number): void {

@@ -17,14 +17,22 @@ export class ThreadManager {
     this.onRecord = onRecord;
   }
 
+  /**
+   * Truncate plugin name to 20 characters for cleaner logging
+   */
+  private truncatePluginName(name: string): string {
+    return name.length > 20 ? name.substring(0, 17) + '...' : name;
+  }
+
   async processPlugin(plugin: PluginMeta): Promise<void> {
-    debugLog(`\nThread Manager: Processing plugin ${plugin.name}`);
+    const shortName = this.truncatePluginName(plugin.name);
+    debugLog(`\nThread Manager: Processing plugin ${shortName}`);
     debugLog(`  Active workers: ${this.activeWorkers}/${this.maxWorkers}`);
     debugLog(`  Queue size: ${this.queue.length}`);
 
     return new Promise((resolve, reject) => {
       if (this.activeWorkers >= this.maxWorkers) {
-        debugLog(`  Queueing plugin ${plugin.name} (max workers reached)`);
+        debugLog(`  Queueing plugin ${shortName} (max workers reached)`);
         this.queue.push(plugin);
         return;
       }
@@ -34,23 +42,24 @@ export class ThreadManager {
   }
 
   private async startWorker(plugin: PluginMeta, resolve: () => void, reject: (error: Error) => void): Promise<void> {
-    debugLog(`\nThread Manager: Starting worker for ${plugin.name}`);
+    const shortName = this.truncatePluginName(plugin.name);
+    debugLog(`\nThread Manager: Starting worker for ${shortName}`);
     const worker = new Worker(path.join(__dirname, 'pluginWorker.js'));
     this.workers.push(worker);
     this.activeWorkers++;
 
     worker.on('message', (message) => {
       if (message.type === 'debug') {
-        debugLog(`[Worker ${plugin.name}] ${message.message}`);
+        debugLog(`[WKR ${shortName}] ${message.message}`);
       } else if (message.type === 'record') {
         this.onRecord(message.record);
       } else if (message.type === 'done') {
-        debugLog(`Thread Manager: Worker completed ${plugin.name}`);
+        debugLog(`Thread Manager: WKR completed ${shortName}`);
         this.cleanupWorker(worker);
         resolve();
         this.processNextInQueue();
       } else if (message.type === 'error') {
-        debugLog(`Thread Manager: Worker error for ${plugin.name}: ${message.error}`);
+        debugLog(`Thread Manager: WKR error for ${shortName}: ${message.error}`);
         this.cleanupWorker(worker);
         reject(new Error(message.error));
         this.processNextInQueue();
@@ -58,7 +67,7 @@ export class ThreadManager {
     });
 
     worker.on('error', (error) => {
-      debugLog(`\nThread Manager: Worker crashed for ${plugin.name}: ${error}`);
+      debugLog(`\nThread Manager: WKR crashed for ${shortName}: ${error}`);
       this.cleanupWorker(worker);
       reject(error);
       this.processNextInQueue();
@@ -66,11 +75,11 @@ export class ThreadManager {
 
     worker.on('exit', (code) => {
       if (code !== 0) {
-        debugLog(`\nThread Manager: Worker exited with code ${code} for ${plugin.name}`);
+        debugLog(`\nThread Manager: WKR exited with code ${code} for ${shortName}`);
       }
     });
 
-    debugLog(`Thread Manager: Sending process message to worker for ${plugin.name}`);
+    debugLog(`Thread Manager: Sending process message to WKR for ${shortName}`);
     worker.postMessage({ type: 'process', plugin });
   }
 
@@ -87,7 +96,8 @@ export class ThreadManager {
   private processNextInQueue(): void {
     if (this.queue.length > 0 && this.activeWorkers < this.maxWorkers) {
       const nextPlugin = this.queue.shift()!;
-      debugLog(`\nThread Manager: Processing next plugin from queue: ${nextPlugin.name}`);
+      const shortName = this.truncatePluginName(nextPlugin.name);
+      debugLog(`\nThread Manager: Processing next plugin from queue: ${shortName}`);
       this.processPlugin(nextPlugin);
     }
   }

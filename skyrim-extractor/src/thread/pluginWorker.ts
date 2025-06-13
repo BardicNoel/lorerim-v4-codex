@@ -12,7 +12,7 @@ import {
   validateRecordType,
   formatBufferSlice
 } from '../utils/recordUtils';
-import { processGRUP } from '../utils/grupHandler';
+import { processGRUP } from '../utils/grup/grupHandler';
 import { logGRUPFields } from '../utils/debugUtils';
 
 if (!parentPort) {
@@ -165,20 +165,7 @@ async function processPlugin(plugin: PluginMeta): Promise<void> {
     currentBuffer = await readFile(plugin.fullPath);
     log(`Processing plugin: ${plugin.name}`, 'processPlugin');
 
-    // Special handling for Wizard Warrior plugins
-    if (plugin.name.toLowerCase().includes('wizard warrior')) {
-      log(`Found Wizard Warrior plugin: ${plugin.name}`);
-      const outputDir = path.join(process.cwd(), 'output');
-      try {
-        await mkdir(outputDir, { recursive: true });
-        const outputPath = path.join(outputDir, `${plugin.name}.txt`);
-        const hexString = bufferToHexString(currentBuffer);
-        await writeFile(outputPath, hexString);
-        log(`Wrote hex representation to: ${outputPath}`);
-      } catch (error) {
-        log(`Failed to write Wizard Warrior plugin data: ${error}`);
-      }
-    }
+
 
     // Initialize manifest
     const manifest: PluginManifest = {
@@ -249,7 +236,6 @@ async function processPlugin(plugin: PluginMeta): Promise<void> {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     log(`[ERROR] Failed to process plugin ${plugin.name}: ${errorMessage}`, 'processPlugin');
     if (currentBuffer) {
-      log(`Hex dump with context:`, 'processPlugin');
       const hexLines = hexDump(currentBuffer, currentOffset, 32);
       hexLines.forEach((line: string) => log(line, 'processPlugin'));
     }
@@ -267,3 +253,5 @@ parentPort?.on('message', async (message: { type: string; plugin: PluginMeta }) 
     await processPlugin(message.plugin);
   }
 });
+
+export { processPlugin };

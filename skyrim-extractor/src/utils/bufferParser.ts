@@ -19,7 +19,7 @@ export function setDebugCallback(callback: DebugCallback) {
   debugCallback = callback;
 }
 
-function debugLog(message: string) {
+export function debugLog(message: string) {
   if (debugCallback) {
     debugCallback(message);
   } else if (parentPort) {
