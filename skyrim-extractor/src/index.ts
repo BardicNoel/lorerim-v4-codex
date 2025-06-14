@@ -5,6 +5,7 @@ import { ParsedRecord } from './types';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { getEnabledPlugins } from './utils/modUtils';
+import { createFileWriter } from './utils/fileWriter';
 
 function printHeader(text: string): void {
   console.log('\n' + '='.repeat(80));
@@ -33,7 +34,7 @@ export async function main(configPath?: string): Promise<void> {
 
     // Process plugins
     const plugins = await getEnabledPlugins(config.modDirPath);
-    const recordsByType = new Map<string, ParsedRecord[]>();
+    const recordsByType: Record<string, ParsedRecord[]> = {};
 
     printHeader('Processing Plugins');
     for (const plugin of plugins) {
@@ -47,23 +48,21 @@ export async function main(configPath?: string): Promise<void> {
       
       // Merge records by type
       for (const [type, typeRecords] of Object.entries(records)) {
-        if (!recordsByType.has(type)) {
-          recordsByType.set(type, []);
+        if (!recordsByType[type]) {
+          recordsByType[type] = [];
         }
-        recordsByType.get(type)!.push(...typeRecords);
+        recordsByType[type].push(...typeRecords);
       }
     }
 
     // Write output files
     printHeader('Writing Output Files');
-    for (const [type, records] of recordsByType) {
-      const outputPath = path.join(config.outputPath, `${type}.json`);
-      await fs.writeFile(outputPath, JSON.stringify(records, null, 2));
-      console.log(`Wrote ${records.length} ${type} records to ${outputPath}`);
-    }
+    const fileWriter = createFileWriter();
+    await fileWriter.writeRecords(recordsByType, config.outputPath);
+    await fileWriter.writeStats(stats.getStats(), config.outputPath);
 
     console.log(`Successfully processed ${plugins.length} plugins`);
-    console.log(`Found records of types: ${Array.from(recordsByType.keys()).join(', ')}`);
+    console.log(`Found records of types: ${Object.keys(recordsByType).join(', ')}`);
 
     // Display stats at the end
     console.log('\n' + stats.formatStats());

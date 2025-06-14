@@ -2,6 +2,7 @@ import { createFileWriter } from '../fileWriter';
 import { ParsedRecord } from '../../types';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import { ProcessingStats } from '../stats';
 
 // Mock fs promises
 jest.mock('fs/promises', () => ({
@@ -66,9 +67,18 @@ describe('FileWriter', () => {
 
   describe('writeStats', () => {
     it('should write stats to index.json', async () => {
-      const stats = {
-        PERK: 1,
-        RACE: 2
+      const stats: ProcessingStats = {
+        totalRecords: 3,
+        recordsByType: { PERK: 1, RACE: 2 },
+        skippedRecords: 0,
+        skippedTypes: new Set(),
+        totalBytes: 1000,
+        processingTime: 100,
+        pluginsProcessed: 1,
+        errors: {
+          count: 0,
+          types: {}
+        }
       };
 
       await fileWriter.writeStats(stats, testOutputDir);
@@ -79,13 +89,22 @@ describe('FileWriter', () => {
       // Parse the written string and check the object
       const writtenString = (writeFile as jest.Mock).mock.calls[0][1];
       const writtenObj = JSON.parse(writtenString);
-      expect(writtenObj.stats).toEqual({ PERK: 1, RACE: 2 });
+      expect(writtenObj.stats.recordsByType).toEqual({ PERK: 1, RACE: 2 });
     });
 
     it('should include timestamp and record types in index.json', async () => {
-      const stats = {
-        PERK: 1,
-        RACE: 2
+      const stats: ProcessingStats = {
+        totalRecords: 3,
+        recordsByType: { PERK: 1, RACE: 2 },
+        skippedRecords: 0,
+        skippedTypes: new Set(),
+        totalBytes: 1000,
+        processingTime: 100,
+        pluginsProcessed: 1,
+        errors: {
+          count: 0,
+          types: {}
+        }
       };
 
       await fileWriter.writeStats(stats, testOutputDir);
@@ -95,17 +114,31 @@ describe('FileWriter', () => {
 
       expect(writtenContent).toHaveProperty('timestamp');
       expect(writtenContent).toHaveProperty('recordTypes', ['PERK', 'RACE']);
-      expect(writtenContent).toHaveProperty('stats', stats);
+      expect(writtenContent.stats.recordsByType).toEqual({ PERK: 1, RACE: 2 });
     });
 
     it('should handle empty stats object', async () => {
-      await fileWriter.writeStats({}, testOutputDir);
+      const stats: ProcessingStats = {
+        totalRecords: 0,
+        recordsByType: {},
+        skippedRecords: 0,
+        skippedTypes: new Set(),
+        totalBytes: 0,
+        processingTime: 0,
+        pluginsProcessed: 0,
+        errors: {
+          count: 0,
+          types: {}
+        }
+      };
+
+      await fileWriter.writeStats(stats, testOutputDir);
 
       const writeCall = (writeFile as jest.Mock).mock.calls[0];
       const writtenContent = JSON.parse(writeCall[1]);
 
-      expect(writtenContent).toHaveProperty('stats', {});
-      expect(writtenContent).toHaveProperty('recordTypes', []);
+      expect(writtenContent.stats.recordsByType).toEqual({});
+      expect(writtenContent.recordTypes).toEqual([]);
     });
   });
 }); 

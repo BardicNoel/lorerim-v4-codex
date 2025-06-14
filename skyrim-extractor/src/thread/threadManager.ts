@@ -4,6 +4,7 @@ import path from 'path';
 import { PluginMeta } from '../types';
 import { createRecordAggregator } from '../utils/recordAggregator';
 import { createFileWriter } from '../utils/fileWriter';
+import { ProcessingStats } from '../utils/stats';
 
 const MAX_CONCURRENCY = 4;
 const PROGRESS_INTERVAL = 1000; // Log progress every second
@@ -52,7 +53,20 @@ class ThreadManagerImpl implements ThreadManager {
 
     // Write all records to disk
     const records = this.aggregator.getRecords();
-    const stats = this.aggregator.getStats();
+    const recordCounts = this.aggregator.getStats();
+    const stats: ProcessingStats = {
+      totalRecords: Object.values(recordCounts).reduce((sum: number, count: number) => sum + count, 0),
+      recordsByType: recordCounts,
+      skippedRecords: 0,
+      skippedTypes: new Set(),
+      totalBytes: 0,
+      processingTime: 0,
+      pluginsProcessed: 1,
+      errors: {
+        count: 0,
+        types: {}
+      }
+    };
     
     await this.fileWriter.writeRecords(records, outputDir);
     await this.fileWriter.writeStats(stats, outputDir);
