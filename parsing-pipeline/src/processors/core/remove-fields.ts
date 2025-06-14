@@ -37,9 +37,7 @@ export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Process
             return data.map(record => {
                 const parsedRecord = record as ParsedRecord;
                 const newRecord: ParsedRecord = {
-                    meta: { ...parsedRecord.meta },
-                    data: { ...parsedRecord.data },
-                    header: parsedRecord.header
+                    ...parsedRecord
                 };
                 processNestedFields(newRecord.data, config.fields);
                 return newRecord;

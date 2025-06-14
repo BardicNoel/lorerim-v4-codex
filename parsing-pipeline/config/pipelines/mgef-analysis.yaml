@@ -12,22 +12,22 @@ stages:
     description: 'Decode binary record data into structured format'
     recordType: 'MGEF'
 
-  # - from: 'local'
-  #   name: 'Remove MGEF Specific Fields'
-  #   type: 'remove-fields'
-  #   description: 'Remove MGEF-specific fields that are not needed for analysis'
-  #   fields:
-  #     data:
-  #       'MGEF - Magic Effect':
-  #         'DATA - Data':
-  #           - 'Flags'
-  #           - 'Base Cost'
-  #           - 'Associated Item'
-  #           - 'Magic Skill'
-  #           - 'Resistance'
-  #           - 'Counter Effect'
-  #           - 'Casting Type'
-  #           - 'Delivery'
-  #           - 'Second Actor Value'
-  #           - 'Second AV Weight'
-  #         'SNDD - Sounds': 'all'
+  - from: 'local'
+    name: 'Remove MGEF Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove MGEF-specific fields that are not needed for analysis'
+    fields:
+      data:
+        'MGEF - Magic Effect':
+          'DATA - Data':
+            - 'Flags'
+            - 'Base Cost'
+            - 'Associated Item'
+            - 'Magic Skill'
+            - 'Resistance'
+            - 'Counter Effect'
+            - 'Casting Type'
+            - 'Delivery'
+            - 'Second Actor Value'
+            - 'Second AV Weight'
+          'SNDD - Sounds': 'all'
