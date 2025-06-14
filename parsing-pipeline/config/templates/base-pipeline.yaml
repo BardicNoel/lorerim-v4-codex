@@ -37,6 +37,12 @@ stages:
           - "form_id"
           - "editor_id"
 
+  decode_binary_data:
+    name: "Decode Binary Data"
+    type: "buffer-decoder"
+    description: "Decode binary record data into structured format"
+    recordType: "${recordType}"
+
   sanitize_fields:
     name: "Sanitize Fields"
     type: "sanitize-fields"

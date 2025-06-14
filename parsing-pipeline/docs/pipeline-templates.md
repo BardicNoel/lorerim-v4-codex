@@ -215,6 +215,11 @@ imports:
 stages:
   *common_stages
 
+  - name: "Decode MGEF Binary Data"
+    type: "buffer-decoder"
+    description: "Decode binary record data into structured format"
+    recordType: "MGEF"
+
   - name: "Remove MGEF Specific Fields"
     type: "remove-fields"
     description: "Remove MGEF-specific fields that are not needed for analysis"

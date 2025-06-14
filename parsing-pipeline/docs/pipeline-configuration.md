@@ -106,7 +106,6 @@ Decodes binary record data using predefined schemas.
 
 ```yaml
 type: "buffer-decoder"
-description: "Decode binary record data into structured format"
 recordType: string          # Type of record being decoded (e.g., "PERK", "SPEL")
 ```
 
@@ -117,6 +116,8 @@ Example:
   description: "Decode binary record data into structured format"
   recordType: "PERK"
 ```
+
+Note: The buffer decoder uses predefined schemas for each record type. These schemas are defined in the codebase and cannot be modified through the pipeline configuration.
 
 ## Complete Example
 

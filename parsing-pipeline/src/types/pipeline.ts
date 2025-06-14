@@ -69,6 +69,11 @@ export interface SanitizeFieldsConfig extends BaseStageConfig {
   }[];
 }
 
+// Buffer decoder stage configuration
+export interface BufferDecoderConfig extends BaseStageConfig {
+  type: 'buffer-decoder';
+  recordType: string;  // The type of record being decoded (e.g., "PERK", "SPEL")
+}
 
 // Stage configuration union type
 export type StageConfig = 
@@ -76,6 +81,7 @@ export type StageConfig =
   | RemoveFieldsConfig
   | KeepFieldsConfig
   | SanitizeFieldsConfig
+  | BufferDecoderConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {
