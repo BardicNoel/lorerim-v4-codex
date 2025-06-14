@@ -1,22 +1,22 @@
 import '@jest/globals';
 import { createProcessor, createPipeline } from '../../src/processors/core';
-import { StageConfig, JsonArray, JsonObject, JsonValue, RemoveFieldsConfig } from '../../src/types/pipeline';
+import { StageConfig, JsonArray, RemoveFieldsConfig } from '../../src/types/pipeline';
+import { ParsedRecord } from '@lorerim/platform-types';
 
 describe('Core Processors', () => {
   const testData: JsonArray = [
     {
+      meta: {
+        type: 'MGEF',
+        formId: '0x12345678',
+        plugin: 'test.esp',
+        stackOrder: 0
+      },
       data: {
-        "Magic Effect Data": {
-          "DATA - Data": {
-            "Explosion": "value1",
-            "Projectile": "value2"
-          },
-          "SNDD - Sounds": {
-            "sound1": "value1",
-            "sound2": "value2"
-          }
-        }
-      }
+        'DATA': [Buffer.from('test data')],
+        'SNDD': [Buffer.from('sound data')]
+      },
+      header: 'base64encodedheader'
     }
   ];
 
@@ -27,9 +27,9 @@ describe('Core Processors', () => {
         type: 'filter-records',
         criteria: [
           {
-            field: 'status',
+            field: 'meta.type',
             operator: 'equals',
-            value: 'active'
+            value: 'MGEF'
           }
         ]
       };
@@ -38,7 +38,7 @@ describe('Core Processors', () => {
       const result = await processor.transform(testData);
 
       expect(result).toHaveLength(1);
-      expect(result[0].status).toBe('active');
+      expect((result[0] as ParsedRecord).meta.type).toBe('MGEF');
     });
   });
 
@@ -47,25 +47,16 @@ describe('Core Processors', () => {
       const stage: StageConfig = {
         name: 'remove-fields',
         type: 'remove-fields',
-        fields: ['internalId', 'metadata']
+        fields: ['data.SNDD']
       };
 
       const processor = createProcessor(stage);
       const result = await processor.transform(testData);
 
       // Check that the fields are removed from the first record
-      const firstRecord = result[0];
-      expect(firstRecord).not.toHaveProperty('internalId');
-      expect(firstRecord).not.toHaveProperty('metadata');
-      expect(firstRecord).toHaveProperty('name');
-      expect(firstRecord).toHaveProperty('status');
-
-      // Check that the fields are removed from the second record
-      const secondRecord = result[1];
-      expect(secondRecord).not.toHaveProperty('internalId');
-      expect(secondRecord).not.toHaveProperty('metadata');
-      expect(secondRecord).toHaveProperty('name');
-      expect(secondRecord).toHaveProperty('status');
+      const firstRecord = result[0] as ParsedRecord;
+      expect(firstRecord.data).not.toHaveProperty('SNDD');
+      expect(firstRecord.data).toHaveProperty('DATA');
     });
 
     it('should handle nested field removal with all value', async () => {
@@ -74,10 +65,8 @@ describe('Core Processors', () => {
         type: 'remove-fields',
         fields: {
           data: {
-            "Magic Effect Data": {
-              "DATA - Data": ["Explosion", "Projectile"],
-              "SNDD - Sounds": "all"
-            }
+            'DATA': 'all',
+            'SNDD': 'all'
           }
         }
       };
@@ -85,17 +74,11 @@ describe('Core Processors', () => {
       const processor = createProcessor(stage);
       const result = await processor.transform(testData);
 
-      const record = result[0] as JsonObject;
-      const data = record.data as JsonObject;
-      const magicEffectData = data["Magic Effect Data"] as JsonObject;
-      const dataData = magicEffectData["DATA - Data"] as JsonObject;
-
-      // Check that specific fields are removed
-      expect(dataData).not.toHaveProperty("Explosion");
-      expect(dataData).not.toHaveProperty("Projectile");
+      const record = result[0] as ParsedRecord;
       
-      // Check that the entire SNDD - Sounds field is removed
-      expect(magicEffectData).not.toHaveProperty("SNDD - Sounds");
+      // Check that all data fields are removed
+      expect(record.data).not.toHaveProperty('DATA');
+      expect(record.data).not.toHaveProperty('SNDD');
     });
   });
 
@@ -104,16 +87,17 @@ describe('Core Processors', () => {
       const stage: StageConfig = {
         name: 'keep-fields',
         type: 'keep-fields',
-        fields: ['id', 'name']
+        fields: ['meta.type', 'meta.formId']
       };
 
       const processor = createProcessor(stage);
       const result = await processor.transform(testData);
 
-      expect(result[0]).toHaveProperty('id');
-      expect(result[0]).toHaveProperty('name');
-      expect(result[0]).not.toHaveProperty('status');
-      expect(result[0]).not.toHaveProperty('email');
+      const record = result[0] as ParsedRecord;
+      expect(record.meta).toHaveProperty('type');
+      expect(record.meta).toHaveProperty('formId');
+      expect(record.meta).not.toHaveProperty('plugin');
+      expect(record.meta).not.toHaveProperty('stackOrder');
     });
   });
 
@@ -124,9 +108,9 @@ describe('Core Processors', () => {
         type: 'sanitize-fields',
         rules: [
           {
-            pattern: '@example.com',
+            pattern: 'test.esp',
             action: 'replace',
-            replacement: '@test.com'
+            replacement: 'sanitized.esp'
           }
         ]
       };
@@ -134,9 +118,8 @@ describe('Core Processors', () => {
       const processor = createProcessor(stage);
       const result = await processor.transform(testData);
 
-      // The sanitize processor replaces the entire value with the replacement
-      expect(result[0].email).toBe('@test.com');
-      expect(result[1].email).toBe('@test.com');
+      const record = result[0] as ParsedRecord;
+      expect(record.meta.plugin).toBe('sanitized.esp');
     });
   });
 
@@ -148,16 +131,16 @@ describe('Core Processors', () => {
           type: 'filter-records',
           criteria: [
             {
-              field: 'status',
+              field: 'meta.type',
               operator: 'equals',
-              value: 'active'
+              value: 'MGEF'
             }
           ]
         },
         {
           name: 'remove-fields',
           type: 'remove-fields',
-          fields: ['internalId', 'metadata']
+          fields: ['data.SNDD']
         }
       ];
 
@@ -165,9 +148,10 @@ describe('Core Processors', () => {
       const result = await pipeline.transform(testData);
 
       expect(result).toHaveLength(1);
-      expect(result[0].status).toBe('active');
-      expect(result[0]).not.toHaveProperty('internalId');
-      expect(result[0]).not.toHaveProperty('metadata');
+      const record = result[0] as ParsedRecord;
+      expect(record.meta.type).toBe('MGEF');
+      expect(record.data).not.toHaveProperty('SNDD');
+      expect(record.data).toHaveProperty('DATA');
     });
 
     it('should throw error for unknown stage type', () => {

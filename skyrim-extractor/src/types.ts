@@ -1,20 +1,10 @@
+import { ParsedRecord } from '@lorerim/platform-types';
+
 export interface PluginMeta {
   name: string;        // e.g., 'Requiem.esp'
   fullPath: string;    // absolute path to plugin binary
   modFolder: string;   // which mod the plugin came from
   index: number;       // load order index from plugins.txt
-}
-
-export interface ParsedRecord {
-  meta: {
-    type: string;   // e.g., 'PERK'
-    formId: string; // e.g., '00058F80'
-    stackOrder?: number | null; // e.g., 0, 1, 2, (0 being the highest version of this record)
-    plugin: string; // e.g., 'Requiem.esp'
-
-  };
-  data: Record<string, Buffer[]>; // Subrecord content by subrecord ID
-  header: string; // Raw 24-byte record header in base64
 }
 
 export interface RecordHeader {
@@ -129,4 +119,7 @@ export interface Config {
   modDirPath: string;  // Path to directory containing modlist.txt and plugins.txt
   outputPath: string;
   maxThreads: number;
-} 
+}
+
+// Re-export ParsedRecord from platform types
+export { ParsedRecord }; 

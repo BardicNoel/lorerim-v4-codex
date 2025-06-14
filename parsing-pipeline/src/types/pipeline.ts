@@ -1,8 +1,10 @@
+import { ParsedRecord } from '@lorerim/platform-types';
+
 // JSON types
 export type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
 export interface JsonObject { [key: string]: JsonValue; }
-export type JsonArray = JsonObject[];
-export type JsonRecord = JsonObject;
+export type JsonArray = ParsedRecord[]; // Use platform's record format
+export type JsonRecord = ParsedRecord; // Use extractor's record format as our standard
 
 // Stage types
 export type StageType = 

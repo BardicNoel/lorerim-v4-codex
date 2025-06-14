@@ -15,6 +15,7 @@
     "extract:debug": "node dist/cli.js --config config.json --debug"
   },
   "dependencies": {
+    "@lorerim/platform-types": "file:../__platform",
     "typescript": "^5.0.0"
   },
   "devDependencies": {

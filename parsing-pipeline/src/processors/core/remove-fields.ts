@@ -1,8 +1,9 @@
-import { JsonArray, JsonRecord, RemoveFieldsConfig } from '../../types/pipeline';
+import { JsonArray, RemoveFieldsConfig } from '../../types/pipeline';
 import { Processor } from './index';
 import { getNestedValue, setNestedValue } from '../../utils/field-access';
+import { ParsedRecord } from '@lorerim/platform-types';
 
-function processNestedFields(obj: any, fields: any, path: string[] = []): void {
+function processNestedFields(obj: Record<string, any>, fields: any, path: string[] = []): void {
     for (const [key, value] of Object.entries(fields)) {
         const currentPath = [...path, key];
         
@@ -34,8 +35,13 @@ export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Process
             totalRecords = data.length;
             
             return data.map(record => {
-                const newRecord = { ...record };
-                processNestedFields(newRecord, config.fields);
+                const parsedRecord = record as ParsedRecord;
+                const newRecord: ParsedRecord = {
+                    meta: { ...parsedRecord.meta },
+                    data: { ...parsedRecord.data },
+                    header: parsedRecord.header
+                };
+                processNestedFields(newRecord.data, config.fields);
                 return newRecord;
             });
         },

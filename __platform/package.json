@@ -1,0 +1,20 @@
+{
+  "name": "@lorerim/platform-types",
+  "version": "1.0.0",
+  "description": "Common type definitions for the Lorerim platform",
+  "main": "dist/types.js",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+} 

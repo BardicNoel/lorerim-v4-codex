@@ -1,7 +1,7 @@
 # Import base pipeline configuration
 name: "MGEF Analysis Pipeline"
 description: "Process MGEF data for analysis"
-input: "../output/Export_MGEF.json"
+input: "../skyrim-extractor/output/MGEF.json"
 output: "../data/processed/Step-1.MGEF_Analysis.json"
 
 # Use stages from base template
@@ -32,7 +32,3 @@ stages:
             - "Second Actor Value"
             - "Second AV Weight"
           "SNDD - Sounds": "all"
-
-  - from: "ref"
-    file: "config/templates/base-pipeline.yaml"
-    ref: "extract_form_ids"

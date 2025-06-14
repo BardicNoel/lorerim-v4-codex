@@ -1,8 +1,9 @@
-import { JsonArray, JsonRecord, FilterRecordsConfig } from '../../types/pipeline';
+import { JsonArray, FilterRecordsConfig } from '../../types/pipeline';
 import { Processor } from './index';
 import { getNestedValue } from '../../utils/field-access';
+import { ParsedRecord } from '@lorerim/platform-types';
 
-function evaluateCriteria(record: JsonRecord, criteria: FilterRecordsConfig['criteria']): boolean {
+function evaluateCriteria(record: ParsedRecord, criteria: FilterRecordsConfig['criteria']): boolean {
     return criteria.every(criterion => {
         const value = getNestedValue(record, criterion.field);
         
@@ -38,7 +39,7 @@ export function createFilterRecordsProcessor(config: FilterRecordsConfig): Proce
         async transform(data: JsonArray): Promise<JsonArray> {
             totalRecords = data.length;
             const result = data.filter(record => {
-                const matches = evaluateCriteria(record, config.criteria);
+                const matches = evaluateCriteria(record as ParsedRecord, config.criteria);
                 if (!matches) {
                     recordsFiltered++;
                 }

@@ -1,3 +1,5 @@
+import { ParsedRecord } from '@lorerim/platform-types';
+
 export type FieldType = 'string' | 'uint8' | 'uint16' | 'uint32' | 'float32' | 'struct' | 'formid' | 'array' | 'unknown';
 
 
@@ -51,6 +53,5 @@ export interface RecordSpecificSchemas {
   };
 }
 
-export interface ParsedRecord {
-  [tag: string]: any;
-} 
+// Use the platform's ParsedRecord type
+export { ParsedRecord }; 

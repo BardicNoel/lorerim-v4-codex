@@ -1,6 +1,8 @@
 import { Buffer } from 'buffer';
 import { FieldSchema, ParsedRecord, StringEncoding } from './types';
 import { commonFieldSchemas, recordSpecificSchemas } from './schemas';
+import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
+import { Processor } from '../core';
 
 export class BufferDecoder {
   private getFieldSchema(recordType: string, tag: string): FieldSchema | undefined {
@@ -141,9 +143,11 @@ export class BufferDecoder {
     }
   }
 
-  public parseRecord(recordType: string, buffer: Buffer): ParsedRecord {
-    const result: ParsedRecord = {};
+  public parseRecord(recordType: string, buffer: Buffer): Record<string, any> {
+    console.log(`[DEBUG] Decoding ${recordType} record (${buffer.length} bytes)`);
+    const result: Record<string, any> = {};
     let offset = 0;
+    let fieldCount = 0;
 
     while (offset < buffer.length) {
       const tag = buffer.toString('ascii', offset, offset + 4);
@@ -151,6 +155,7 @@ export class BufferDecoder {
       const schema = this.getFieldSchema(recordType, tag);
 
       if (schema) {
+        console.log(`[DEBUG] Processing field ${tag} (${length} bytes)`);
         switch (schema.type) {
           case 'string':
             if (!('encoding' in schema)) {
@@ -183,14 +188,94 @@ export class BufferDecoder {
             break;
 
           case 'unknown':
-            // For unknown fields, we just skip the data
+            console.log(`[DEBUG] Skipping unknown field ${tag}`);
             break;
         }
+        fieldCount++;
+      } else {
+        console.log(`[DEBUG] No schema found for field ${tag}, skipping`);
       }
 
       offset += 6 + length; // 4 bytes tag + 2 bytes length + data length
     }
 
+    console.log(`[DEBUG] Completed decoding ${recordType} record (${fieldCount} fields)`);
     return result;
   }
+}
+
+export function createBufferDecoderProcessor(config: BufferDecoderConfig): Processor {
+  const decoder = new BufferDecoder();
+  let stats = {
+    recordsProcessed: 0,
+    recordsDecoded: 0,
+    errors: 0,
+    totalFields: 0,
+    skippedFields: 0
+  };
+
+  return {
+    transform(records: JsonArray): Promise<JsonArray> {
+      console.log(`[DEBUG] Starting buffer decoder for ${config.recordType} records`);
+      const startTime = Date.now();
+      const totalRecords = records.length;
+      console.log(`[DEBUG] Processing ${totalRecords} records`);
+
+      stats.recordsProcessed = totalRecords;
+      stats.recordsDecoded = 0;
+      stats.errors = 0;
+      stats.totalFields = 0;
+      stats.skippedFields = 0;
+
+      const processedRecords = records.map((record: ParsedRecord) => {
+        console.log(`[DEBUG] Processing record:`, record);
+        try {
+          if (!record.meta || !record.data || !record.header) {
+            console.log(`[DEBUG] Invalid record structure, skipping`);
+            return record;
+          }
+
+          // Get the DATA field which contains the binary data
+          const dataField = record.data.DATA?.[0];
+          
+          if (!dataField) {
+            console.log(`[DEBUG] No DATA field found, skipping`);
+            return record;
+          }
+
+          // Convert the data to a Buffer if it's not already
+          const binaryData = Buffer.isBuffer(dataField) ? dataField : Buffer.from(dataField);
+          console.log(`[DEBUG] Decoding ${config.recordType} record (${binaryData.length} bytes)`);
+
+          // Decode the record
+          const decodedData = decoder.parseRecord(config.recordType, binaryData);
+          console.log(`[DEBUG] Successfully decoded record`);
+
+          // Update the record: keep DATA as Buffer[], add DATA_DECODED for decoded object
+          const updatedRecord: ParsedRecord = {
+            ...record,
+            decodedData: decodedData,
+          };
+
+          stats.recordsDecoded++;
+          return updatedRecord;
+        } catch (error) {
+          console.error(`[ERROR] Failed to process record:`, error);
+          stats.errors++;
+          return record;
+        }
+      });
+
+      const duration = Date.now() - startTime;
+      console.log(`[DEBUG] Buffer decoder completed in ${duration}ms`);
+      console.log(`[DEBUG] Successfully decoded ${stats.recordsDecoded}/${stats.recordsProcessed} records`);
+      if (stats.errors > 0) {
+        console.log(`[DEBUG] Encountered ${stats.errors} errors during decoding`);
+      }
+
+      return Promise.resolve(processedRecords);
+    },
+
+    getStats: () => stats
+  };
 } 

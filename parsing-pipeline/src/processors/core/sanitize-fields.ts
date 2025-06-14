@@ -1,5 +1,6 @@
-import { JsonArray, JsonRecord, SanitizeFieldsConfig } from '../../types/pipeline';
+import { JsonArray, SanitizeFieldsConfig } from '../../types/pipeline';
 import { Processor } from './index';
+import { ParsedRecord } from '@lorerim/platform-types';
 
 function isExcludedField(fieldPath: string, excludeFields?: string[]): boolean {
     if (!excludeFields) return false;
@@ -94,9 +95,15 @@ export function createSanitizeFieldsProcessor(config: SanitizeFieldsConfig): Pro
             stats.fieldsRemoved = 0;
             stats.fieldsReplaced = 0;
 
-            return data.map(record => 
-                processObject(record, config.rules, '', stats)
-            );
+            return data.map(record => {
+                const parsedRecord = record as ParsedRecord;
+                const newRecord: ParsedRecord = {
+                    meta: { ...parsedRecord.meta },
+                    data: processObject(parsedRecord.data, config.rules, '', stats),
+                    header: parsedRecord.header
+                };
+                return newRecord;
+            });
         },
 
         getStats: () => stats

@@ -56,7 +56,7 @@ function validateStage(stage: any): StageConfig {
     }
 
     // Validate stage type
-    if (!['filter-records', 'remove-fields', 'keep-fields', 'sanitize-fields'].includes(stage.type)) {
+    if (!['filter-records', 'remove-fields', 'keep-fields', 'sanitize-fields', 'buffer-decoder'].includes(stage.type)) {
         throw new Error(`Invalid stage type: ${stage.type}`);
     }
 
@@ -80,6 +80,11 @@ function validateStage(stage: any): StageConfig {
         case 'sanitize-fields':
             if (!stage.rules) {
                 throw new Error('Sanitize fields stage must have rules');
+            }
+            break;
+        case 'buffer-decoder':
+            if (!stage.recordType) {
+                throw new Error('Buffer decoder stage must have recordType');
             }
             break;
     }

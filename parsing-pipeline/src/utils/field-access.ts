@@ -1,14 +1,24 @@
 import { JsonValue } from '../types/pipeline';
+import { ParsedRecord } from '@lorerim/platform-types';
 
 /**
  * Get a value from a nested object using dot notation
- * @param obj The object to get the value from
- * @param path The dot-notation path to the field (e.g., "user.profile.status")
+ * @param record The record to get the value from
+ * @param path The dot-notation path to the field (e.g., "data.EDID")
  * @returns The value at the specified path, or undefined if not found
  */
-export function getNestedValue(obj: Record<string, any>, path: string): JsonValue | undefined {
+export function getNestedValue(record: ParsedRecord, path: string): JsonValue | undefined {
     const parts = path.split('.');
-    let current: any = obj;
+    let current: any = record;
+
+    // Special handling for data fields
+    if (parts[0] === 'data') {
+        current = record.data;
+        parts.shift(); // Remove 'data' from path
+    } else if (parts[0] === 'meta') {
+        current = record.meta;
+        parts.shift(); // Remove 'meta' from path
+    }
 
     for (const part of parts) {
         if (current === null || current === undefined || typeof current !== 'object') {
@@ -22,13 +32,22 @@ export function getNestedValue(obj: Record<string, any>, path: string): JsonValu
 
 /**
  * Set a value in a nested object using dot notation
- * @param obj The object to set the value in
- * @param path The dot-notation path to the field (e.g., "user.profile.status")
+ * @param record The record to set the value in
+ * @param path The dot-notation path to the field (e.g., "data.EDID")
  * @param value The value to set
  */
-export function setNestedValue(obj: Record<string, any>, path: string, value: JsonValue): void {
+export function setNestedValue(record: ParsedRecord, path: string, value: JsonValue): void {
     const parts = path.split('.');
-    let current: any = obj;
+    let current: any = record;
+
+    // Special handling for data fields
+    if (parts[0] === 'data') {
+        current = record.data;
+        parts.shift(); // Remove 'data' from path
+    } else if (parts[0] === 'meta') {
+        current = record.meta;
+        parts.shift(); // Remove 'meta' from path
+    }
 
     // Navigate to the second-to-last part
     for (let i = 0; i < parts.length - 1; i++) {
@@ -45,10 +64,10 @@ export function setNestedValue(obj: Record<string, any>, path: string, value: Js
 
 /**
  * Check if a path exists in an object
- * @param obj The object to check
+ * @param record The record to check
  * @param path The dot-notation path to check
  * @returns True if the path exists, false otherwise
  */
-export function hasNestedPath(obj: Record<string, any>, path: string): boolean {
-    return getNestedValue(obj, path) !== undefined;
+export function hasNestedPath(record: ParsedRecord, path: string): boolean {
+    return getNestedValue(record, path) !== undefined;
 } 
