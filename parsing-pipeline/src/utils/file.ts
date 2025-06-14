@@ -20,22 +20,22 @@ export async function readJsonFile(filePath: string): Promise<JsonArray> {
   }
 }
 
-export async function writeJsonFile(filePath: string, data: JsonArray): Promise<void> {
-  try {
-    // Ensure output directory exists
-    const outputDir = path.dirname(filePath);
-    await fs.mkdir(outputDir, { recursive: true });
+// export async function writeJsonFile(filePath: string, data: JsonArray): Promise<void> {
+//   try {
+//     // Ensure output directory exists
+//     const outputDir = path.dirname(filePath);
+//     await fs.mkdir(outputDir, { recursive: true });
 
-    // Write file with pretty formatting
-    await fs.writeFile(
-      filePath,
-      JSON.stringify(data, null, 2),
-      'utf-8'
-    );
-  } catch (error) {
-    throw new Error(`Failed to write JSON file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
-  }
-}
+//     // Write file with pretty formatting
+//     await fs.writeFile(
+//       filePath,
+//       JSON.stringify(data, null, 2),
+//       'utf-8'
+//     );
+//   } catch (error) {
+//     throw new Error(`Failed to write JSON file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+//   }
+// }
 
 export async function validateJsonFile(filePath: string): Promise<boolean> {
   try {

@@ -2,7 +2,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { ParsedRecord } from '../types';
 import { ProcessingStats } from './stats';
-import { formatJSON } from './jsonFormatter';
+import { formatJSON } from '@lorerim/platform-types';
 
 interface FileWriter {
   writeRecords(records: Record<string, ParsedRecord[]>, outputDir: string): Promise<void>;

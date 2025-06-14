@@ -1,0 +1,56 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# TypeScript Array Type Conventions
+
+This rule defines the proper way to handle array types in TypeScript.
+
+## Array Type Guidelines
+
+1. Always use direct array type notation instead of creating type aliases for arrays
+2. Use the `Type[]` syntax for array types
+3. Avoid creating unnecessary type aliases for arrays
+
+## Examples
+
+### Good Examples
+
+```typescript
+// Direct array type notation
+function processUsers(users: User[]) {
+  // Implementation
+}
+
+// With generics
+function getItems<T>(items: T[]) {
+  // Implementation
+}
+
+// With complex types
+function handleRecords(records: ParsedRecord[]) {
+  // Implementation
+}
+```
+
+### Bad Examples
+
+```typescript
+// ❌ Don't create type aliases for arrays
+type UserArray = User[];
+type RecordArray = ParsedRecord[];
+
+// ❌ Don't use Array<T> syntax when Type[] is clearer
+function processUsers(users: Array<User>) {
+  // Implementation
+}
+```
+
+## Rationale
+
+1. Direct array notation (`Type[]`) is more readable and commonly used in TypeScript
+2. Creating type aliases for arrays adds unnecessary complexity
+3. The `Type[]` syntax is more concise than `Array<Type>`
+4. Following this convention makes the codebase more consistent and easier to maintain
+

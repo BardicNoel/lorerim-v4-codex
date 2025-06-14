@@ -2,8 +2,8 @@
   "name": "@lorerim/platform-types",
   "version": "1.0.0",
   "description": "Common type definitions for the Lorerim platform",
-  "main": "dist/types.js",
-  "types": "dist/types.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build"
@@ -12,7 +12,9 @@
     "dist"
   ],
   "dependencies": {
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "fs-extra": "^11.2.0",
+    "@types/fs-extra": "^11.0.4"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

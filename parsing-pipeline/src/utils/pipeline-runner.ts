@@ -1,6 +1,7 @@
 import { PipelineConfig } from '../types/pipeline';
 import { createPipeline } from '../processors/core';
-import { readJsonFile, writeJsonFile } from './file';
+import { readJsonFile } from './file';
+import { writeJsonFile } from '@lorerim/platform-types';
 
 export async function runPipeline(config: PipelineConfig): Promise<void> {
   console.log(`\n=== Running Pipeline ===`);

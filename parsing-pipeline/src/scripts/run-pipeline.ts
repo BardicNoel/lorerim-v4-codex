@@ -2,8 +2,9 @@ import { existsSync } from 'fs';
 import * as path from 'path';
 import { PipelineConfig, StageConfig } from '../types/pipeline';
 import { createPipeline } from '../processors/core';
-import { readJsonFile, writeJsonFile } from '../utils/file';
+import { readJsonFile } from '../utils/file';
 import { loadPipelineConfig } from '../utils/yaml-loader';
+import { writeJsonFile } from '@lorerim/platform-types';
 
 async function runPipelineFromConfig(configPath: string) {
     try {

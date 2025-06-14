@@ -1,34 +1,33 @@
 # Import base pipeline configuration
-name: "MGEF Analysis Pipeline"
-description: "Process MGEF data for analysis"
-input: "../skyrim-extractor/output/MGEF.json"
-output: "../data/processed/Step-1.MGEF_Analysis.json"
+name: 'MGEF Analysis Pipeline'
+description: 'Process MGEF data for analysis'
+input: '../output/skyrim-extractor/mod-samples/MGEF.json'
+output: '../output/parsing-pipeline/1.MGEF_Analysis.json'
 
 # Use stages from base template
 stages:
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'MGEF'
 
-  - from: "local"
-    name: "Decode Binary Records"
-    type: "buffer-decoder"
-    description: "Decode binary record data into structured format"
-    recordType: "MGEF"
-
-  - from: "local"
-    name: "Remove MGEF Specific Fields"
-    type: "remove-fields"
-    description: "Remove MGEF-specific fields that are not needed for analysis"
+  - from: 'local'
+    name: 'Remove MGEF Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove MGEF-specific fields that are not needed for analysis'
     fields:
       data:
-        "MGEF - Magic Effect":
-          "DATA - Data":
-            - "Flags"
-            - "Base Cost"
-            - "Associated Item"
-            - "Magic Skill"
-            - "Resistance"
-            - "Counter Effect"
-            - "Casting Type"
-            - "Delivery"
-            - "Second Actor Value"
-            - "Second AV Weight"
-          "SNDD - Sounds": "all"
+        'MGEF - Magic Effect':
+          'DATA - Data':
+            - 'Flags'
+            - 'Base Cost'
+            - 'Associated Item'
+            - 'Magic Skill'
+            - 'Resistance'
+            - 'Counter Effect'
+            - 'Casting Type'
+            - 'Delivery'
+            - 'Second Actor Value'
+            - 'Second AV Weight'
+          'SNDD - Sounds': 'all'
