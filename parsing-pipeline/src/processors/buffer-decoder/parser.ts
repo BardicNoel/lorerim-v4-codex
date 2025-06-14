@@ -3,6 +3,7 @@ import { FieldSchema, ParsedRecord, StringEncoding } from './types';
 import { commonFieldSchemas, recordSpecificSchemas } from './schemas';
 import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
 import { Processor } from '../core';
+import { formatJSON } from '@lorerim/platform-types';
 
 export class BufferDecoder {
   private getFieldSchema(recordType: string, tag: string): FieldSchema | undefined {
@@ -144,7 +145,10 @@ export class BufferDecoder {
   }
 
   public parseRecord(recordType: string, buffer: Buffer): Record<string, any> {
-    console.log(`[DEBUG] Decoding ${recordType} record (${buffer.length} bytes)`);
+    console.log(`[DEBUG] Starting parseRecord for ${recordType}`);
+    console.log(`[DEBUG] Buffer length: ${buffer.length} bytes`);
+    console.log(`[DEBUG] Buffer hex: ${buffer.toString('hex')}`);
+    
     const result: Record<string, any> = {};
     let offset = 0;
     let fieldCount = 0;
@@ -154,52 +158,77 @@ export class BufferDecoder {
       const length = buffer.readUInt16LE(offset + 4);
       const schema = this.getFieldSchema(recordType, tag);
 
+      console.log(`[DEBUG] Processing field at offset ${offset}:`);
+      console.log(`[DEBUG] - Tag: ${tag}`);
+      console.log(`[DEBUG] - Length: ${length}`);
+      console.log(`[DEBUG] - Schema found: ${schema ? 'yes' : 'no'}`);
       if (schema) {
-        console.log(`[DEBUG] Processing field ${tag} (${length} bytes)`);
-        switch (schema.type) {
-          case 'string':
-            if (!('encoding' in schema)) {
-              throw new Error('String field must specify encoding');
-            }
-            result[tag] = this.parseString(buffer, offset + 6, length, schema.encoding);
-            break;
+        console.log(`[DEBUG] - Schema type: ${schema.type}`);
+      }
 
-          case 'formid':
-            result[tag] = this.parseFormId(buffer, offset + 6);
-            break;
+      if (schema) {
+        try {
+          switch (schema.type) {
+            case 'string':
+              if (!('encoding' in schema)) {
+                throw new Error('String field must specify encoding');
+              }
+              console.log(`[DEBUG] - Decoding string with encoding: ${schema.encoding}`);
+              result[tag] = this.parseString(buffer, offset + 6, length, schema.encoding);
+              console.log(`[DEBUG] - Decoded string: ${result[tag]}`);
+              break;
 
-          case 'uint8':
-          case 'uint16':
-          case 'uint32':
-          case 'float32':
-            result[tag] = this.parseNumeric(buffer, offset + 6, schema.type);
-            break;
+            case 'formid':
+              console.log(`[DEBUG] - Decoding formid`);
+              result[tag] = this.parseFormId(buffer, offset + 6);
+              console.log(`[DEBUG] - Decoded formid: ${result[tag]}`);
+              break;
 
-          case 'struct':
-            if (!('fields' in schema)) {
-              throw new Error('Struct field must specify fields');
-            }
-            result[tag] = this.parseStruct(buffer, offset + 6, length, schema.fields);
-            break;
+            case 'uint8':
+            case 'uint16':
+            case 'uint32':
+            case 'float32':
+              console.log(`[DEBUG] - Decoding numeric: ${schema.type}`);
+              result[tag] = this.parseNumeric(buffer, offset + 6, schema.type);
+              console.log(`[DEBUG] - Decoded value: ${result[tag]}`);
+              break;
 
-          case 'array':
-            if (!('element' in schema)) throw new Error('Array field must specify element');
-            result[tag] = this.parseArray(buffer, offset + 6, length, schema.element);
-            break;
+            case 'struct':
+              if (!('fields' in schema)) {
+                throw new Error('Struct field must specify fields');
+              }
+              console.log(`[DEBUG] - Decoding struct with fields:`, schema.fields);
+              result[tag] = this.parseStruct(buffer, offset + 6, length, schema.fields);
+              console.log(`[DEBUG] - Decoded struct:`, result[tag]);
+              break;
 
-          case 'unknown':
-            console.log(`[DEBUG] Skipping unknown field ${tag}`);
-            break;
+            case 'array':
+              if (!('element' in schema)) throw new Error('Array field must specify element');
+              console.log(`[DEBUG] - Decoding array with element type: ${schema.element.type}`);
+              result[tag] = this.parseArray(buffer, offset + 6, length, schema.element);
+              console.log(`[DEBUG] - Decoded array:`, result[tag]);
+              break;
+
+            case 'unknown':
+              console.log(`[DEBUG] - Skipping unknown field ${tag}`);
+              break;
+          }
+          fieldCount++;
+        } catch (error) {
+          console.error(`[ERROR] Failed to decode field ${tag}:`, error);
+          throw error;
         }
-        fieldCount++;
       } else {
         console.log(`[DEBUG] No schema found for field ${tag}, skipping`);
       }
 
-      offset += 6 + length; // 4 bytes tag + 2 bytes length + data length
+      offset += 6 + length;
+      console.log(`[DEBUG] Moving to next field at offset ${offset}`);
     }
 
-    console.log(`[DEBUG] Completed decoding ${recordType} record (${fieldCount} fields)`);
+    console.log(`[DEBUG] Completed parsing ${recordType} record:`);
+    console.log(`[DEBUG] - Total fields processed: ${fieldCount}`);
+    console.log(`[DEBUG] - Final result:`, result);
     return result;
   }
 }
@@ -216,7 +245,10 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
 
   return {
     transform(records: JsonArray): Promise<JsonArray> {
+      console.log(`\n[DEBUG] ===== Buffer Decoder Transform Start =====`);
       console.log(`[DEBUG] Starting buffer decoder for ${config.recordType} records`);
+      console.log(`[DEBUG] Input records structure:`, JSON.stringify(records[0], null, 2));
+      
       const startTime = Date.now();
       const totalRecords = records.length;
       console.log(`[DEBUG] Processing ${totalRecords} records`);
@@ -227,55 +259,82 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
       stats.totalFields = 0;
       stats.skippedFields = 0;
 
-      const processedRecords = records.map((record: ParsedRecord) => {
-        console.log(`[DEBUG] Processing record:`, record);
+      const processedRecords = records.map((record: ParsedRecord, index: number) => {
+        console.log(`\n[DEBUG] ===== Processing Record ${index + 1}/${totalRecords} =====`);
+        console.log(`[DEBUG] Record type:`, typeof record);
+        console.log(`[DEBUG] Record meta:`, record.meta);
+        console.log(`[DEBUG] Record data before processing:`, record.data);
+        console.log(`[DEBUG] Record decodedData before processing:`, record.decodedData);
+        
         try {
           if (!record.meta || !record.data || !record.header) {
             console.log(`[DEBUG] Invalid record structure, skipping`);
             return record;
           }
 
-          // Get the DATA field which contains the binary data
-          const dataField = record.data.DATA?.[0];
-          
-          if (!dataField) {
-            console.log(`[DEBUG] No DATA field found, skipping`);
-            return record;
+          // Create a new record to ensure we don't modify the original
+          const processedRecord = {
+            ...record,
+            decodedData: {} as Record<string, any>  // Type assertion to ensure it's not undefined
+          } as ParsedRecord;
+
+          // Process fields containing binary data
+          for (const [fieldName, fieldData] of Object.entries(processedRecord.data)) {
+            if (Array.isArray(fieldData) && fieldData.length > 0) {
+              const firstItem = fieldData[0] as unknown;
+              let buffer: Buffer | null = null;
+
+              // Check if it's a direct Buffer
+              if (Buffer.isBuffer(firstItem)) {
+                buffer = firstItem;
+              }
+              // Check if it's a serialized Buffer object
+              else if (typeof firstItem === 'object' && firstItem !== null && 
+                      'type' in firstItem && firstItem.type === 'Buffer' && 
+                      'data' in firstItem && Array.isArray(firstItem.data)) {
+                buffer = Buffer.from(firstItem.data as number[]);
+              }
+
+              if (buffer) {
+                console.log(`[DEBUG] Processing field ${fieldName} with binary data:`, {
+                  bufferLength: buffer.length,
+                  hexPreview: buffer.toString('hex').slice(0, 32) + '...'
+                });
+                
+                try {
+                  const decodedField = decoder.parseRecord(config.recordType, buffer);
+                  processedRecord.decodedData![fieldName] = decodedField;  // Non-null assertion
+                  console.log(`[DEBUG] Successfully decoded field ${fieldName}:`, decodedField);
+                } catch (error) {
+                  console.error(`[ERROR] Failed to decode field ${fieldName}:`, error);
+                }
+              }
+            }
           }
 
-          // Convert the data to a Buffer if it's not already
-          const binaryData = Buffer.isBuffer(dataField) ? dataField : Buffer.from(dataField);
-          console.log(`[DEBUG] Decoding ${config.recordType} record (${binaryData.length} bytes)`);
-
-          // Decode the record
-          const decodedData = decoder.parseRecord(config.recordType, binaryData);
-          console.log(`[DEBUG] Successfully decoded record`);
-
-          // Update the record: keep DATA as Buffer[], add DATA_DECODED for decoded object
-          const updatedRecord: ParsedRecord = {
-            ...record,
-            decodedData: decodedData,
-          };
-
-          stats.recordsDecoded++;
-          return updatedRecord;
+          console.log(`[DEBUG] Processed record decodedData:`, processedRecord.decodedData);
+          return processedRecord;
         } catch (error) {
           console.error(`[ERROR] Failed to process record:`, error);
           stats.errors++;
+          // Return the original record if processing fails
           return record;
         }
       });
 
       const duration = Date.now() - startTime;
+      console.log(`\n[DEBUG] ===== Buffer Decoder Transform Complete =====`);
       console.log(`[DEBUG] Buffer decoder completed in ${duration}ms`);
       console.log(`[DEBUG] Successfully decoded ${stats.recordsDecoded}/${stats.recordsProcessed} records`);
       if (stats.errors > 0) {
         console.log(`[DEBUG] Encountered ${stats.errors} errors during decoding`);
       }
+      console.log(`[DEBUG] First record after processing:`, formatJSON(processedRecords[0]));
+      console.log(`[DEBUG] First record decodedData:`, processedRecords[0]?.decodedData);
 
       return Promise.resolve(processedRecords);
     },
 
     getStats: () => stats
   };
-} 
+}

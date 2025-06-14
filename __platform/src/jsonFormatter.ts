@@ -27,20 +27,12 @@ export function formatJSON(obj: any, indent = 0): string {
       const entries = Object.entries(obj);
       if (entries.length === 0) return '{}';
       
+      // Special handling for Buffer objects
+      if (obj.type === 'Buffer' && Array.isArray(obj.data)) {
+        return `{"type":"Buffer","data":[${obj.data.join(',')}]}`;
+      }
+      
       return `{\n${entries.map(([key, value]) => {
-        // Special handling for data fields with Buffer values
-        if (key === 'data' && value && typeof value === 'object') {
-          const hasBufferValues = Object.values(value).some(v => 
-            Array.isArray(v) && v.length > 0 && Buffer.isBuffer(v[0])
-          );
-          if (hasBufferValues) {
-            // Format each Buffer field on its own line
-            const dataEntries = Object.entries(value);
-            return `${space}  "${key}": {\n${dataEntries.map(([k, v]) => 
-              `${space}    "${k}": ${JSON.stringify(v)}`
-            ).join(',\n')}\n${space}  }`;
-          }
-        }
         return `${space}  "${key}": ${formatJSON(value, indent + 1)}`;
       }).join(',\n')}\n${space}}`;
     }

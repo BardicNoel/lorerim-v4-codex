@@ -4,7 +4,7 @@ import { PipelineConfig, StageConfig } from '../types/pipeline';
 import { createPipeline } from '../processors/core';
 import { readJsonFile } from '../utils/file';
 import { loadPipelineConfig } from '../utils/yaml-loader';
-import { writeJsonFile } from '@lorerim/platform-types';
+import { formatJSON, writeJsonFile } from '@lorerim/platform-types';
 
 async function runPipelineFromConfig(configPath: string) {
     try {
@@ -61,6 +61,9 @@ async function runPipelineFromConfig(configPath: string) {
         // Process data
         console.log('\nProcessing data...');
         const result = await pipeline.transform(data);
+        console.log(`\n[DEBUG] ===== Pipeline Processing Complete =====`);
+        // console.log(`[DEBUG] First record after all stages:`, formatJSON(result[0]));
+        console.log(`[DEBUG] Checking decodedData in first record:`, result[0]?.decodedData);
 
         // Write output
         const outputPath = path.resolve(pipelineConfig.output);
