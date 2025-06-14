@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { PluginMeta } from './types';
 
-export async function resolvePlugins(pluginsTxtPath: string, extractedDir: string): Promise<PluginMeta[]> {
+export async function resolveMods(pluginsTxtPath: string, extractedDir: string): Promise<PluginMeta[]> {
   console.log(`Reading plugins from: ${pluginsTxtPath}`);
   console.log(`Looking for plugin files in: ${extractedDir}`);
 

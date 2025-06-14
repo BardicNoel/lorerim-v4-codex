@@ -6,7 +6,7 @@ This document outlines the high-level processing pipeline for Skyrim plugin file
 sequenceDiagram
     participant CLI as CLI Entry Point
     participant Config as Config Manager
-    participant Resolver as Plugin Resolver
+    participant Resolver as Mod Resolver
     participant ThreadMgr as Thread Manager
     participant Worker as Plugin Worker
     participant Parser as Record Parser
@@ -56,7 +56,7 @@ sequenceDiagram
   - Environment validation
 
 ### 2. Plugin Discovery
-- **Entry Point**: `src/pluginResolver.ts`
+- **Entry Point**: `src/modResolver.ts`
 - **Key Components**:
   - Reading plugins.txt
   - Mapping plugin names to file paths

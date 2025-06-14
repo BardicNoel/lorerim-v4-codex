@@ -4,7 +4,7 @@
 
 | Feature | Implementation | Testing | Verification | Notes |
 |---------|---------------|---------|--------------|-------|
-| Plugin Resolution | ⚠️ | ❌ | ❌ | Basic interface defined in `pluginResolver.ts` |
+| Plugin Resolution | ⚠️ | ❌ | ❌ | Basic interface defined in `modResolver.ts` |
 | Record Header Parsing | ✅ | ❌ | ❌ | Implemented in `bufferParser.ts` |
 | Subrecord Scanning | ✅ | ❌ | ❌ | Implemented in `bufferParser.ts` |
 | Extended Size (XXXX) Support | ✅ | ❌ | ❌ | Implemented in `scanSubrecords()` |
