@@ -37,15 +37,8 @@ export function createPipeline(stages: StageConfig[]): Processor {
       let result = data;
       for (const stage of stages) {
         console.log(`\n[DEBUG] ===== Processing Stage: ${stage.name} =====`);
-        console.log(`[DEBUG] Stage type: ${stage.type}`);
-        console.log(`[DEBUG] First record before stage:`, formatJSON(result[0]));
-        console.log(`[DEBUG] First record decodedData before stage:`, result[0]?.decodedData);
-        
         const processor = createProcessor(stage);
         result = await processor.transform(result);
-        
-        console.log(`[DEBUG] First record after stage:`, formatJSON(result[0]));
-        console.log(`[DEBUG] First record decodedData after stage:`, result[0]?.decodedData);
         console.log(`[DEBUG] ===== Stage Complete =====\n`);
       }
       return result;

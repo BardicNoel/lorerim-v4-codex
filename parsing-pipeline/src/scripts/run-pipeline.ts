@@ -62,8 +62,6 @@ async function runPipelineFromConfig(configPath: string) {
         console.log('\nProcessing data...');
         const result = await pipeline.transform(data);
         console.log(`\n[DEBUG] ===== Pipeline Processing Complete =====`);
-        // console.log(`[DEBUG] First record after all stages:`, formatJSON(result[0]));
-        console.log(`[DEBUG] Checking decodedData in first record:`, result[0]?.decodedData);
 
         // Write output
         const outputPath = path.resolve(pipelineConfig.output);
