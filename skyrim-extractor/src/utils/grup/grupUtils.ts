@@ -1,14 +1,11 @@
 import { parentPort } from 'worker_threads';
 import { RECORD_HEADER } from '../buffer.constants';
+import { Buffer } from 'buffer';
+import { ParsedRecord } from '../../types';
+import { parseRecordHeader, scanSubrecords } from '../recordParser';
+import { ProcessedRecordType } from '../../constants/recordTypes';
 
-// Types we care about according to design doc
-export const PROCESSED_RECORD_TYPES = new Set([
-  'PERK',  // Perks
-  'AVIF',  // Actor Value Information
-  'RACE',  // Races
-  'SPEL',  // Spells
-  'MGEF'   // Magic Effects
-]);
+  
 
 /**
  * Send a debug message to the main process
@@ -130,4 +127,67 @@ export function validateGRUPSize(header: any, buffer: Buffer, offset: number) {
   if (offset + header.size > buffer.length) {
     throw new Error(`GRUP size exceeds buffer length: ${offset + header.size} > ${buffer.length}`);
   }
+}
+
+/**
+ * Process a GRUP record
+ * @param buffer The buffer containing the GRUP record
+ * @param offset The offset to start processing from
+ * @param pluginName The name of the plugin being processed
+ * @param processedTypes Set of record types to process
+ * @returns The processed records and the new offset
+ */
+export function processGrupRecord(
+  buffer: Buffer,
+  offset: number,
+  pluginName: string,
+  processedTypes: Set<ProcessedRecordType>
+): { records: ParsedRecord[], newOffset: number } {
+  const records: ParsedRecord[] = [];
+  let currentOffset = offset;
+
+  // Read GRUP header
+  const grupHeader = buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE);
+  const header = parseRecordHeader(grupHeader);
+  currentOffset += RECORD_HEADER.TOTAL_SIZE;
+
+  // Process all records in the GRUP
+  while (currentOffset < offset + header.dataSize) {
+    const recordHeader = parseRecordHeader(buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE));
+    
+    // Skip unsupported record types
+    if (!processedTypes.has(recordHeader.type as ProcessedRecordType)) {
+      currentOffset += RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
+      continue;
+    }
+
+    const data = buffer.slice(
+      currentOffset + RECORD_HEADER.TOTAL_SIZE,
+      currentOffset + RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize
+    );
+
+    const subrecords: Record<string, Buffer[]> = {};
+    let subrecordOffset = 0;
+    for (const subrecord of scanSubrecords(data, 0).subrecords) {
+      if (!subrecords[subrecord.type]) {
+        subrecords[subrecord.type] = [];
+      }
+      subrecords[subrecord.type].push(data.slice(subrecordOffset, subrecordOffset + subrecord.size));
+      subrecordOffset += subrecord.size;
+    }
+
+    records.push({
+      meta: {
+        type: recordHeader.type,
+        formId: recordHeader.formId.toString(16).toUpperCase().padStart(8, '0'),
+        plugin: pluginName
+      },
+      data: subrecords,
+      header: buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE).toString('base64')
+    });
+
+    currentOffset += RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
+  }
+
+  return { records, newOffset: offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize };
 } 

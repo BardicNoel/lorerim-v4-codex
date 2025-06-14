@@ -1,4 +1,4 @@
-import { RECORD_HEADER, SUBRECORD_HEADER } from './buffer.constants';
+import { RECORD_HEADER, SUBRECORD_HEADER, OFFSETS } from './buffer.constants';
 import { RecordHeader, SubrecordHeader } from '../types';
 
 /**
@@ -32,8 +32,8 @@ export function parseSubrecordHeader(buffer: Buffer): SubrecordHeader {
   }
 
   return {
-    type: buffer.toString('utf8', 0, 4),
-    size: buffer.readUInt16LE(4)
+    type: buffer.toString('utf8', OFFSETS.SUBRECORD.SIGNATURE, OFFSETS.SUBRECORD.SIGNATURE + SUBRECORD_HEADER.SIGNATURE_SIZE),
+    size: buffer.readUInt16LE(OFFSETS.SUBRECORD.SIZE)
   };
 }
 

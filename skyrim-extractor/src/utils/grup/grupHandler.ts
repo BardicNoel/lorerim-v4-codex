@@ -2,7 +2,6 @@ import { ParsedRecord } from '../../types';
 import { parseRecordHeader, scanSubrecords } from '../recordParser';
 import { setDebugCallback } from '../bufferParser';
 import { 
-  PROCESSED_RECORD_TYPES, 
   debugLog, 
   dumpHex, 
   getGroupTypeName,
@@ -12,6 +11,7 @@ import {
 } from './grupUtils';
 import { RECORD_HEADER } from '../buffer.constants';
 import { processRecord } from '../../pluginProcessor';
+import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from '../../constants/recordTypes'  ;
 
 // Set up debug callback
 setDebugCallback((message: string) => {
@@ -61,7 +61,7 @@ export function processGRUP(buffer: Buffer, offset: number, pluginName: string):
     // because the label in the header tells us (e.g., RACE, PERK, etc.)
     if (header.groupType === 0) {
       const recordType = header.label.toString('ascii');
-      if (!PROCESSED_RECORD_TYPES.has(recordType)) {
+      if (!PROCESSED_RECORD_TYPES.has(recordType as ProcessedRecordType)) {
         debugLog(`  Skipping group with label ${recordType} because it's unsupported`);
         return []; // Skip this GRUP if we don't care about its type
       }
@@ -125,7 +125,14 @@ function processTopLevelGRUP(
 
       // Process the record
       const { record } = processRecord(buffer, currentOffset, pluginName);
-      records.push(record);
+      if (record) {
+        // Only add records that match the GRUP's type
+        if (record.meta.type === recordType) {
+          records.push(record);
+        } else {
+          debugLog(`  Skipping record of type ${record.meta.type} in ${recordType} GRUP`);
+        }
+      }
       
       // Advance to next record using the correct size calculation
       currentOffset += totalRecordSize;
@@ -199,15 +206,13 @@ function processNestedGRUP(
         // Dump initial record data
         dumpHex(buffer, currentOffset + RECORD_HEADER.TOTAL_SIZE, 64, 'Initial Record Data (64 bytes)');
         
-        if (!PROCESSED_RECORD_TYPES.has(recordType)) {
-          debugLog(`  Skipping record of type ${recordType} because it's unsupported`);
-          currentOffset += totalRecordSize; // Skip header + data
-          continue;
-        }
-        
         // Process supported records
         const { record } = processRecord(buffer, currentOffset, pluginName);
-        records.push(record);
+        if (record && PROCESSED_RECORD_TYPES.has(record.meta.type as ProcessedRecordType)) {
+          records.push(record);
+        } else {
+          debugLog(`  Skipping unsupported record type: ${recordType}`);
+        }
         currentOffset += totalRecordSize;
       }
 

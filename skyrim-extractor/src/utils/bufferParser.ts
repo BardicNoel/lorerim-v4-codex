@@ -121,7 +121,7 @@ export function* scanSubrecords(buffer: Buffer): Generator<Subrecord> {
     }
 
     // Extract and yield the subrecord data
-    const data = buffer.slice(dataStart, dataEnd);
+    const data = buffer.subarray(dataStart, dataEnd);
     yield { type, size, data };
 
     // Move to next subrecord

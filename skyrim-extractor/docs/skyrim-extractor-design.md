@@ -37,7 +37,7 @@ Plugins are parsed in parallel using `worker_threads`. Each worker:
 - Receives one plugin file and metadata
 - Reads binary plugin file
 - For each record:
-  - Parses 20-byte header → `parseRecordHeader()`
+  - Parses 24-byte header → `parseRecordHeader()`
   - Uses `scanSubrecords()` on body
   - Emits `ParsedRecord`
 - Returns: `{ status: 'done', plugin: string, records: ParsedRecord[] }`
@@ -74,12 +74,12 @@ export interface ParsedRecord {
     plugin: string; // e.g., 'Requiem.esp'
   };
   data: Record<string, Buffer[]>; // Subrecord content by subrecord ID
-  header: string; // Raw 20-byte record header in base64
+  header: string; // Raw 24-byte record header in base64
 }
 ```
 
 ### Record Header Format
-The record header is a **20-byte binary structure** with no field names, just fixed offsets:
+The record header is a **24-byte binary structure** with no field names, just fixed offsets:
 
 | Bytes      | Field               | Notes                         |
 |------------|---------------------|-------------------------------|
@@ -89,6 +89,7 @@ The record header is a **20-byte binary structure** with no field names, just fi
 | `0x0C-0x0F` | Flags               | UInt32LE — behavior metadata (bitfield) |
 | `0x10-0x11` | Version Control Info | UInt16LE — rarely used         |
 | `0x12-0x13` | Form Version        | UInt16LE — used by Creation Kit |
+| `0x14-0x17` | Version Control ID  | UInt32LE — additional version info |
 
 Field names are **not stored in the binary**; this layout must be interpreted by byte position.
 
@@ -101,12 +102,13 @@ export interface RecordHeader {
   flags: number;
   versionControl: number;
   formVersion: number;
-  raw: Buffer;        // original 20-byte header
+  versionControlId: number;
+  raw: Buffer;        // original 24-byte header
 }
 
 export function parseRecordHeader(headerBuf: Buffer): RecordHeader {
-  if (headerBuf.length !== 20) {
-    throw new Error(`Invalid record header size: ${headerBuf.length} (expected 20)`);
+  if (headerBuf.length !== 24) {
+    throw new Error(`Invalid record header size: ${headerBuf.length} (expected 24)`);
   }
 
   const type = headerBuf.toString('ascii', 0, 4);
@@ -115,6 +117,7 @@ export function parseRecordHeader(headerBuf: Buffer): RecordHeader {
   const flags = headerBuf.readUInt32LE(12);
   const versionControl = headerBuf.readUInt16LE(16);
   const formVersion = headerBuf.readUInt16LE(18);
+  const versionControlId = headerBuf.readUInt32LE(20);
 
   return {
     type,
@@ -123,6 +126,7 @@ export function parseRecordHeader(headerBuf: Buffer): RecordHeader {
     flags,
     versionControl,
     formVersion,
+    versionControlId,
     raw: headerBuf,
   };
 }
@@ -289,18 +293,33 @@ export function* scanSubrecords(buffer: Buffer): Generator<Subrecord> {
 
 ## Development Phases
 
-### Phase 1: Buffer Parsing Infrastructure
-- [x] Create binary header and subrecord parser
-- [x] Support `XXXX` extended size subrecords
-- [x] Define `ParsedRecord` metadata format and header preservation
+| Phase | Feature | Status | Priority | Notes |
+|-------|---------|--------|----------|-------|
+| 1 | Buffer Parsing | ✅ | High | Core parsing infrastructure |
+| 1 | Record Header Parser | ✅ | High | 24-byte header support |
+| 1 | Subrecord Scanner | ✅ | High | XXXX extended size support |
+| 1 | Record Metadata | ✅ | High | Form ID and type tracking |
+| 2 | Worker Thread System | ⚠️ | High | Basic implementation |
+| 2 | Plugin Resolution | ⚠️ | High | Path mapping and validation |
+| 2 | Record Type Parsing | ⚠️ | High | PERK, RACE, AVIF, etc. |
+| 2 | JSON Output | ⚠️ | High | Type-based file generation |
+| 3 | Memory Management | ❌ | Medium | Buffer pooling and limits |
+| 3 | Progress Tracking | ❌ | Medium | Worker status reporting |
+| 3 | Error Recovery | ❌ | Medium | Retry and fallback logic |
+| 3 | Validation | ❌ | Medium | Schema and data validation |
+| 4 | Performance Optimization | ❌ | Low | Streaming and caching |
+| 4 | Documentation | ⚠️ | Low | API and usage docs |
+| 4 | Testing | ❌ | Low | Unit and integration tests |
 
-### Phase 2: Record Definitions & Export
-- [x] Implement thread manager and worker dispatcher
-- [ ] Implement output aggregator to buffer and save grouped JSON
+### Legend
+- ✅ Complete
+- ⚠️ In Progress
+- ❌ Not Started
 
-### Phase 3: Tooling
-- [ ] Generate `.d.ts` from TypeScript types
-- [ ] Optionally add Zod schemas for later validation
+### Priority Levels
+- **High**: Core functionality required for MVP
+- **Medium**: Important for stability and reliability
+- **Low**: Nice to have, can be added later
 
 ## CLI and Configuration
 

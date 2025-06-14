@@ -1,18 +1,15 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { loadConfig, validateConfig } from './config';
-import { createThreadManager } from './thread/threadManager';
-import { ParsedRecord } from './types';
-import { PluginMeta } from './types';
-import { getEnabledPlugins } from './utils/modUtils';
-import { writeRecords } from './fileOutput';
 import { initDebugLog, closeDebugLog, debugLog } from './utils/debugUtils';
-import { Config } from './config';
+import { Config, loadConfig, validateConfig } from './config';
+import { stats, processPlugin } from './pluginProcessor';
+import { ParsedRecord } from './types';
+import * as path from 'path';
+import * as fs from 'fs/promises';
+import { getEnabledPlugins } from './utils/modUtils';
 
 function printHeader(text: string): void {
   console.log('\n' + '='.repeat(80));
   console.log(text);
-  console.log('='.repeat(80));
+  console.log('='.repeat(80) + '\n');
 }
 
 function printSubHeader(text: string): void {
@@ -23,69 +20,58 @@ function printSubHeader(text: string): void {
 
 export async function main(configPath?: string): Promise<void> {
   try {
-    printHeader('SKYRIM PLUGIN PARSER');
-
-    // Load configuration
-    printSubHeader('LOADING CONFIGURATION');
-    console.log(`Loading config from: ${configPath}`);
-    const config = await loadConfig(configPath);
-    console.log('Configuration loaded successfully:');
-    console.log(`  Mod Directory: ${config.modDirPath}`);
-    console.log(`  Output Directory: ${config.outputPath}`);
-    console.log(`  Max Threads: ${config.maxThreads}`);
-    
     // Initialize debug logging
-    initDebugLog(config.outputPath);
-    debugLog('Debug logging initialized');
-    
-    // Validate configuration
-    printSubHeader('VALIDATING CONFIGURATION');
+    const debugLogPath = path.join(process.cwd(), 'debug.log');
+    initDebugLog(debugLogPath);
+
+    // Load and validate configuration
+    const config = await loadConfig(configPath);
     const errors = validateConfig(config);
     if (errors.length > 0) {
-      console.error('Configuration errors:');
-      errors.forEach(error => console.error(`  - ${error}`));
-      throw new Error('Configuration validation failed');
+      throw new Error(`Configuration errors:\n${errors.join('\n')}`);
     }
-    console.log('Configuration validation passed');
-
-    // Resolve plugins
-    printSubHeader('RESOLVING PLUGINS');
-    console.log(`Reading plugins from mod directory: ${config.modDirPath}`);
-    const plugins = await getEnabledPlugins(config.modDirPath);
-    console.log(`Found ${plugins.length} plugins to process:`);
-    plugins.forEach(plugin => console.log(`  - ${plugin.name} (${plugin.fullPath})`));
-
-    // Create a map to store records by type
-    const recordsByType = new Map<string, ParsedRecord[]>();
-
-    // Create thread manager using factory function
-    const threadManager = createThreadManager();
 
     // Process plugins
-    await threadManager.processPlugins(plugins, config.outputPath);
+    const plugins = await getEnabledPlugins(config.modDirPath);
+    const recordsByType = new Map<string, ParsedRecord[]>();
 
-    // Get final stats
-    const stats = threadManager.getStats();
-    console.log('Processing complete. Stats:', stats);
-
-    // Output records by type
-    printSubHeader('WRITING OUTPUT');
-    for (const [type, records] of recordsByType) {
-      console.log(`Writing ${records.length} ${type} records...`);
-      await writeRecords(records, config.outputPath);
+    printHeader('Processing Plugins');
+    for (const plugin of plugins) {
+      console.log(`Processing ${plugin.name}...`);
+      
+      // Read plugin file into buffer
+      const buffer = await fs.readFile(plugin.fullPath);
+      
+      // Process the plugin
+      const records = await processPlugin(buffer, plugin.name);
+      
+      // Merge records by type
+      for (const [type, typeRecords] of Object.entries(records)) {
+        if (!recordsByType.has(type)) {
+          recordsByType.set(type, []);
+        }
+        recordsByType.get(type)!.push(...typeRecords);
+      }
     }
 
-    printHeader('PROCESSING COMPLETE');
+    // Write output files
+    printHeader('Writing Output Files');
+    for (const [type, records] of recordsByType) {
+      const outputPath = path.join(config.outputPath, `${type}.json`);
+      await fs.writeFile(outputPath, JSON.stringify(records, null, 2));
+      console.log(`Wrote ${records.length} ${type} records to ${outputPath}`);
+    }
+
     console.log(`Successfully processed ${plugins.length} plugins`);
     console.log(`Found records of types: ${Array.from(recordsByType.keys()).join(', ')}`);
 
+    // Display stats at the end
+    console.log('\n' + stats.formatStats());
+
     // Close debug log
     closeDebugLog();
-
-  } catch (error: unknown) {
-    printHeader('PROCESSING FAILED');
+  } catch (error) {
     console.error('Error:', error instanceof Error ? error.message : String(error));
-    closeDebugLog();
     process.exit(1);
   }
 }

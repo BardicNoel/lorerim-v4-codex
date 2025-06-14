@@ -4,15 +4,15 @@
 
 | Feature | Implementation | Testing | Verification | Notes |
 |---------|---------------|---------|--------------|-------|
-| Plugin Resolution | ✅ | ❌ | ❌ | Implemented in `pluginResolver.ts` |
+| Plugin Resolution | ⚠️ | ❌ | ❌ | Basic interface defined in `pluginResolver.ts` |
 | Record Header Parsing | ✅ | ❌ | ❌ | Implemented in `bufferParser.ts` |
 | Subrecord Scanning | ✅ | ❌ | ❌ | Implemented in `bufferParser.ts` |
 | Extended Size (XXXX) Support | ✅ | ❌ | ❌ | Implemented in `scanSubrecords()` |
-| Record Type Grouping | ✅ | ❌ | ❌ | Implemented in `recordParser.ts` |
-| JSON File Output | ✅ | ❌ | ❌ | Implemented in `fileOutput.ts` |
-| Worker Thread System | ✅ | ❌ | ❌ | Implemented in `thread/` directory |
-| Progress Tracking | ⚠️ | ❌ | ❌ | Basic console logging only |
-| Error Recovery | ⚠️ | ❌ | ❌ | Basic error handling in workers |
+| Record Type Grouping | ⚠️ | ❌ | ❌ | Basic implementation in `recordParser.ts` |
+| JSON File Output | ⚠️ | ❌ | ❌ | Basic implementation in `fileOutput.ts` |
+| Worker Thread System | ⚠️ | ❌ | ❌ | Basic implementation in `thread/` directory |
+| Progress Tracking | ❌ | ❌ | ❌ | No implementation yet |
+| Error Recovery | ❌ | ❌ | ❌ | No implementation yet |
 
 ## Configuration Features
 
@@ -28,11 +28,11 @@
 
 | Record Type | Implementation | Testing | Verification | Notes |
 |-------------|---------------|---------|--------------|-------|
-| PERK | ✅ | ❌ | ❌ | Full interface defined |
-| RACE | ✅ | ❌ | ❌ | Full interface defined |
-| AVIF | ✅ | ❌ | ❌ | Full interface defined |
-| SPEL | ✅ | ❌ | ❌ | Full interface defined |
-| MGEF | ✅ | ❌ | ❌ | Full interface defined |
+| PERK | ⚠️ | ❌ | ❌ | Interface defined, parsing incomplete |
+| RACE | ⚠️ | ❌ | ❌ | Interface defined, parsing incomplete |
+| AVIF | ⚠️ | ❌ | ❌ | Interface defined, parsing incomplete |
+| SPEL | ⚠️ | ❌ | ❌ | Interface defined, parsing incomplete |
+| MGEF | ⚠️ | ❌ | ❌ | Interface defined, parsing incomplete |
 
 ## Development Tools
 
@@ -48,21 +48,21 @@
 
 | Feature | Implementation | Testing | Verification | Notes |
 |---------|---------------|---------|--------------|-------|
-| Parallel Processing | ✅ | ❌ | ❌ | Worker thread system implemented |
-| Memory Management | ⚠️ | ❌ | ❌ | Basic buffer handling |
-| File Streaming | ❌ | ❌ | ❌ | Loads entire files |
-| Progress Reporting | ⚠️ | ❌ | ❌ | Basic console logging |
-| Resource Limits | ✅ | ❌ | ❌ | MAX_CONCURRENCY = 4 |
+| Parallel Processing | ⚠️ | ❌ | ❌ | Basic worker thread system implemented |
+| Memory Management | ❌ | ❌ | ❌ | No implementation yet |
+| File Streaming | ❌ | ❌ | ❌ | No implementation yet |
+| Progress Reporting | ❌ | ❌ | ❌ | No implementation yet |
+| Resource Limits | ⚠️ | ❌ | ❌ | Basic thread limit only |
 
 ## Error Handling
 
 | Feature | Implementation | Testing | Verification | Notes |
 |---------|---------------|---------|--------------|-------|
-| Worker Failures | ✅ | ❌ | ❌ | Basic error handling in workers |
-| Plugin Loading Errors | ⚠️ | ❌ | ❌ | Basic error catching |
+| Worker Failures | ⚠️ | ❌ | ❌ | Basic error handling in workers |
+| Plugin Loading Errors | ❌ | ❌ | ❌ | No implementation yet |
 | Record Parsing Errors | ⚠️ | ❌ | ❌ | Basic error catching |
 | File System Errors | ⚠️ | ❌ | ❌ | Basic error catching |
-| Retry Mechanism | ❌ | ❌ | ❌ | No retry logic |
+| Retry Mechanism | ❌ | ❌ | ❌ | No implementation yet |
 
 ## Legend
 - ✅ Complete

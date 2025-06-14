@@ -3,9 +3,14 @@ import path from 'path';
 
 let debugLogStream: fs.WriteStream | null = null;
 
-export function initDebugLog(outputDir: string): void {
-  const debugLogPath = path.join(outputDir, 'debug.log');
-  debugLogStream = fs.createWriteStream(debugLogPath, { flags: 'a' });
+export function initDebugLog(logPath: string): void {
+  // Ensure the directory exists
+  const dir = path.dirname(logPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  
+  debugLogStream = fs.createWriteStream(logPath, { flags: 'a' });
 }
 
 export function closeDebugLog(): void {
