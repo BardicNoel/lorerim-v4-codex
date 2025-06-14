@@ -1,6 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import { Config } from './types';
+
+export interface Config {
+  modDirPath: string;
+  outputPath: string;
+  maxThreads: number;
+}
 
 export async function loadConfig(configPath?: string): Promise<Config> {
   if (!configPath) {

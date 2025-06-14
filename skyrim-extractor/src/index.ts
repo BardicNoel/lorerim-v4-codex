@@ -1,12 +1,13 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { loadConfig, validateConfig } from './config';
-import { ThreadManager } from './thread/threadManager';
+import { createThreadManager } from './thread/threadManager';
 import { ParsedRecord } from './types';
 import { PluginMeta } from './types';
 import { getEnabledPlugins } from './utils/modUtils';
 import { writeRecords } from './fileOutput';
 import { initDebugLog, closeDebugLog, debugLog } from './utils/debugUtils';
+import { Config } from './config';
 
 function printHeader(text: string): void {
   console.log('\n' + '='.repeat(80));
@@ -57,39 +58,15 @@ export async function main(configPath?: string): Promise<void> {
     // Create a map to store records by type
     const recordsByType = new Map<string, ParsedRecord[]>();
 
-    // Initialize thread manager
-    printSubHeader('INITIALIZING THREAD MANAGER');
-    console.log(`Starting with ${config.maxThreads} worker threads`);
-    const threadManager = new ThreadManager(config.maxThreads, (record: ParsedRecord) => {
-      // Group records by type
-      if (!recordsByType.has(record.meta.type)) {
-        recordsByType.set(record.meta.type, []);
-      }
-      recordsByType.get(record.meta.type)!.push(record);
-    });
+    // Create thread manager using factory function
+    const threadManager = createThreadManager();
 
-    // Process each plugin
-    printSubHeader('PROCESSING PLUGINS');
-    for (const plugin of plugins) {
-      console.log(`\nProcessing ${plugin.name}...`);
-      try {
-        await threadManager.processPlugin(plugin);
-        console.log(`✓ Completed ${plugin.name}`);
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error(`✗ Failed to process ${plugin.name}: ${errorMessage}`);
-        if (error instanceof Error && error.stack) {
-          console.error('Stack trace:', error.stack);
-        }
-        throw error; // Re-throw to stop processing
-      }
-    }
+    // Process plugins
+    await threadManager.processPlugins(plugins, config.outputPath);
 
-    // Shutdown thread manager
-    printSubHeader('SHUTTING DOWN');
-    console.log('Shutting down thread manager...');
-    await threadManager.shutdown();
-    console.log('Thread manager shutdown complete');
+    // Get final stats
+    const stats = threadManager.getStats();
+    console.log('Processing complete. Stats:', stats);
 
     // Output records by type
     printSubHeader('WRITING OUTPUT');

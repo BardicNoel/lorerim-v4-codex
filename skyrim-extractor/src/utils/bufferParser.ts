@@ -1,6 +1,5 @@
 import { RecordHeader, Subrecord } from '../types';
 import { parentPort } from 'worker_threads';
-import { getRecordTypeAt } from './recordUtils';
 import { RECORD_HEADER, SUBRECORD_HEADER, BUFFER } from './buffer.constants';
 
 // Types we care about according to design doc
@@ -66,35 +65,12 @@ export function hexDump(buffer: Buffer, start: number, length: number, context: 
   return lines;
 }
 
-export function parseRecordHeader(headerBuf: Buffer): RecordHeader {
-  // Read record type using the utility function
-  const type = getRecordTypeAt(headerBuf, 0);
-
-  
-  if (headerBuf.length !== RECORD_HEADER.TOTAL_SIZE) {
-    throw new Error(`Invalid record header size: ${headerBuf.length} (expected ${RECORD_HEADER.TOTAL_SIZE})`);
+export function getRecordTypeAt(buffer: Buffer, offset: number): string {
+  if (offset + 4 > buffer.length) {
+    return 'UNKNOWN';
   }
-
-  if (type === 'UNKNOWN') {
-    throw new Error(`Invalid record type at start of header`);
-  }
-
-  // Read data size (4 bytes)
-  const dataSize = headerBuf.readUInt32LE(RECORD_HEADER.OFFSETS.DATA_SIZE);
-  const formId = headerBuf.readUInt32LE(RECORD_HEADER.OFFSETS.FORM_ID).toString(16).toUpperCase().padStart(8, '0');
-  const flags = headerBuf.readUInt32LE(RECORD_HEADER.OFFSETS.FLAGS);
-  const versionControl = headerBuf.readUInt16LE(RECORD_HEADER.OFFSETS.VERSION);
-  const formVersion = headerBuf.readUInt16LE(RECORD_HEADER.OFFSETS.VERSION + 2);
-
-  return {
-    type,
-    dataSize,
-    formId,
-    flags,
-    versionControl,
-    formVersion,
-    raw: headerBuf,
-  };
+  const type = buffer.toString('ascii', offset, offset + 4);
+  return /^[A-Z]{4}$/.test(type) ? type : 'UNKNOWN';
 }
 
 export function* scanSubrecords(buffer: Buffer): Generator<Subrecord> {

@@ -8,16 +8,16 @@ export const RECORD_HEADER = {
   DATA_SIZE: 4,         // Size of record data
   FLAGS_SIZE: 4,        // Record flags
   FORM_ID_SIZE: 4,      // Form ID
-  VERSION_SIZE: 4,      // Version control info
-  UNKNOWN_SIZE: 4,      // Unknown/Reserved
+  VERSION_SIZE: 1,      // Version control info
+  UNKNOWN_SIZE: 1,      // Unknown/Reserved
   TOTAL_SIZE: 24,       // Total header size
   OFFSETS: {
-    SIGNATURE: 0,
-    DATA_SIZE: 4,
-    FORM_ID: 8,
-    FLAGS: 12,
+    TYPE: 0,
+    SIZE: 4,
+    FLAGS: 8,
+    FORM_ID: 12,
     VERSION: 16,
-    UNKNOWN: 20
+    UNKNOWN: 17
   }
 } as const;
 
@@ -42,7 +42,8 @@ export const GRUP_HEADER = {
 // Common buffer operation sizes
 export const BUFFER = {
   RECORD_TYPE_SIZE: 4,  // Size of record type string
-  INITIAL_DATA_DUMP: 64 // Number of bytes to dump for initial data preview
+  INITIAL_DATA_DUMP: 64, // Number of bytes to dump for initial data preview
+  MAX_LOOKAHEAD: 64
 } as const;
 
 // Offsets within headers

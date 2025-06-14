@@ -2,121 +2,159 @@
 import { Worker } from 'worker_threads';
 import path from 'path';
 import { PluginMeta } from '../types';
-import { ParsedRecord } from '../types';
-import { debugLog } from '../utils/debugUtils';
+import { createRecordAggregator } from '../utils/recordAggregator';
+import { createFileWriter } from '../utils/fileWriter';
 
-export class ThreadManager {
+const MAX_CONCURRENCY = 4;
+const PROGRESS_INTERVAL = 1000; // Log progress every second
+
+export interface ThreadManager {
+  processPlugins(plugins: PluginMeta[], outputDir: string): Promise<void>;
+  getStats(): Record<string, number>;
+}
+
+class ThreadManagerImpl implements ThreadManager {
   private workers: Worker[] = [];
-  private queue: PluginMeta[] = [];
+  private aggregator = createRecordAggregator();
+  private fileWriter = createFileWriter();
   private activeWorkers = 0;
-  private maxWorkers: number;
-  private onRecord: (record: any) => void;
+  private pluginQueue: PluginMeta[] = [];
+  private processedPlugins = 0;
+  private totalPlugins = 0;
+  private lastProgressLog = 0;
+  private workerLogs: Map<string, string[]> = new Map();
 
-  constructor(maxWorkers: number, onRecord: (record: any) => void) {
-    this.maxWorkers = Math.min(maxWorkers, 8); // Cap at 8 workers
-    this.onRecord = onRecord;
+  /**
+   * Process all plugins using worker threads
+   */
+  async processPlugins(plugins: PluginMeta[], outputDir: string): Promise<void> {
+    this.pluginQueue = [...plugins];
+    this.totalPlugins = plugins.length;
+    this.processedPlugins = 0;
+    this.lastProgressLog = Date.now();
+    this.workerLogs.clear();
+    
+    console.log(`\nStarting to process ${this.totalPlugins} plugins with ${MAX_CONCURRENCY} workers`);
+    
+    // Start initial batch of workers
+    const initialBatch = Math.min(MAX_CONCURRENCY, plugins.length);
+    for (let i = 0; i < initialBatch; i++) {
+      this.startWorker();
+    }
+
+    // Wait for all plugins to be processed
+    while (this.activeWorkers > 0 || this.pluginQueue.length > 0) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      this.logProgress();
+    }
+
+    console.log('\nAll plugins processed, writing records to disk...');
+
+    // Write all records to disk
+    const records = this.aggregator.getRecords();
+    const stats = this.aggregator.getStats();
+    
+    await this.fileWriter.writeRecords(records, outputDir);
+    await this.fileWriter.writeStats(stats, outputDir);
+    
+    // Clear the aggregator after writing
+    this.aggregator.clear();
+
+    console.log('Records written to disk successfully');
   }
 
   /**
-   * Truncate plugin name to 20 characters for cleaner logging
+   * Log progress if enough time has passed
    */
-  private truncatePluginName(name: string): string {
-    return name.length > 20 ? name.substring(0, 17) + '...' : name;
+  private logProgress(): void {
+    const now = Date.now();
+    if (now - this.lastProgressLog >= PROGRESS_INTERVAL) {
+      const progress = (this.processedPlugins / this.totalPlugins) * 100;
+      console.log(`Progress: ${progress.toFixed(1)}% (${this.processedPlugins}/${this.totalPlugins} plugins)`);
+      this.lastProgressLog = now;
+    }
   }
 
-  async processPlugin(plugin: PluginMeta): Promise<void> {
-    const shortName = this.truncatePluginName(plugin.name);
-    debugLog(`\nThread Manager: Processing plugin ${shortName}`);
-    debugLog(`  Active workers: ${this.activeWorkers}/${this.maxWorkers}`);
-    debugLog(`  Queue size: ${this.queue.length}`);
-
-    return new Promise((resolve, reject) => {
-      if (this.activeWorkers >= this.maxWorkers) {
-        debugLog(`  Queueing plugin ${shortName} (max workers reached)`);
-        this.queue.push(plugin);
-        return;
+  /**
+   * Handle debug messages from workers
+   */
+  private handleWorkerMessage(worker: Worker, plugin: PluginMeta, message: any): void {
+    if (message.type === 'debug') {
+      const logs = this.workerLogs.get(plugin.name) || [];
+      logs.push(`[DEBUG] ${message.message}`);
+      this.workerLogs.set(plugin.name, logs);
+      console.log(`[${plugin.name}] ${message.message}`);
+    } else if (message.type === 'error') {
+      console.error(`[${plugin.name}] ERROR: ${message.message}`);
+      if (message.error) {
+        console.error(`[${plugin.name}] ${message.error}`);
       }
-
-      this.startWorker(plugin, resolve, reject);
-    });
+    }
   }
 
-  private async startWorker(plugin: PluginMeta, resolve: () => void, reject: (error: Error) => void): Promise<void> {
-    const shortName = this.truncatePluginName(plugin.name);
-    debugLog(`\nThread Manager: Starting worker for ${shortName}`);
-    const worker = new Worker(path.join(__dirname, 'pluginWorker.js'));
-    this.workers.push(worker);
-    this.activeWorkers++;
+  /**
+   * Start a new worker thread
+   */
+  private startWorker(): void {
+    if (this.pluginQueue.length === 0) return;
 
-    worker.on('message', (message) => {
-      if (message.type === 'debug') {
-        debugLog(`[WKR ${shortName}] ${message.message}`);
-      } else if (message.type === 'record') {
-        this.onRecord(message.record);
-      } else if (message.type === 'done') {
-        debugLog(`Thread Manager: WKR completed ${shortName}`);
-        this.cleanupWorker(worker);
-        resolve();
-        this.processNextInQueue();
-      } else if (message.type === 'error') {
-        debugLog(`Thread Manager: WKR error for ${shortName}: ${message.error}`);
-        this.cleanupWorker(worker);
-        reject(new Error(message.error));
-        this.processNextInQueue();
+    const plugin = this.pluginQueue.shift()!;
+    const worker = new Worker(path.join(__dirname, 'pluginWorker.js'));
+    this.activeWorkers++;
+    this.workerLogs.set(plugin.name, []);
+
+    console.log(`Starting worker for ${plugin.name}`);
+
+    worker.on('message', (message: any) => {
+      if (message.status === 'done') {
+        // Add records to aggregator
+        for (const record of message.records) {
+          this.aggregator.addRecord(record);
+        }
+
+        // Update progress
+        this.processedPlugins++;
+        console.log(`Completed ${plugin.name} (${message.records.length} records)`);
+
+        // Clean up worker
+        worker.terminate();
+        this.activeWorkers--;
+
+        // Start next worker if queue not empty
+        if (this.pluginQueue.length > 0) {
+          this.startWorker();
+        }
+      } else if (message.type === 'debug' || message.type === 'error') {
+        this.handleWorkerMessage(worker, plugin, message);
       }
     });
 
     worker.on('error', (error) => {
-      debugLog(`\nThread Manager: WKR crashed for ${shortName}: ${error}`);
-      this.cleanupWorker(worker);
-      reject(error);
-      this.processNextInQueue();
-    });
+      console.error(`Worker error processing ${plugin.name}:`, error);
+      worker.terminate();
+      this.activeWorkers--;
 
-    worker.on('exit', (code) => {
-      if (code !== 0) {
-        debugLog(`\nThread Manager: WKR exited with code ${code} for ${shortName}`);
+      // Start next worker if queue not empty
+      if (this.pluginQueue.length > 0) {
+        this.startWorker();
       }
     });
 
-    debugLog(`Thread Manager: Sending process message to WKR for ${shortName}`);
-    worker.postMessage({ type: 'process', plugin });
+    // Start processing
+    worker.postMessage({ plugin });
   }
 
-  private cleanupWorker(worker: Worker): void {
-    const index = this.workers.indexOf(worker);
-    if (index !== -1) {
-      this.workers.splice(index, 1);
-    }
-    this.activeWorkers--;
-    debugLog(`Thread Manager: Cleaned up worker. Active workers: ${this.activeWorkers}/${this.maxWorkers}`);
-    worker.terminate();
+  /**
+   * Get statistics about processed records
+   */
+  getStats(): Record<string, number> {
+    return this.aggregator.getStats();
   }
+}
 
-  private processNextInQueue(): void {
-    if (this.queue.length > 0 && this.activeWorkers < this.maxWorkers) {
-      const nextPlugin = this.queue.shift()!;
-      const shortName = this.truncatePluginName(nextPlugin.name);
-      debugLog(`\nThread Manager: Processing next plugin from queue: ${shortName}`);
-      this.processPlugin(nextPlugin);
-    }
-  }
-
-  async shutdown(): Promise<void> {
-    debugLog('\nThread Manager: Shutting down...');
-    debugLog(`  Active workers: ${this.activeWorkers}`);
-    debugLog(`  Queue size: ${this.queue.length}`);
-
-    const shutdownPromises = this.workers.map(worker => {
-      return new Promise<void>((resolve) => {
-        worker.on('exit', () => resolve());
-        worker.terminate();
-      });
-    });
-
-    await Promise.all(shutdownPromises);
-    this.workers = [];
-    this.activeWorkers = 0;
-    debugLog('Thread Manager: Shutdown complete');
-  }
+/**
+ * Create a new thread manager instance
+ */
+export function createThreadManager(): ThreadManager {
+  return new ThreadManagerImpl();
 }

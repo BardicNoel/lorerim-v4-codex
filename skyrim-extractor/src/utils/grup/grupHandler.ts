@@ -1,15 +1,17 @@
 import { ParsedRecord } from '../../types';
-import { parseGRUPHeader, validateGRUPSize } from '../recordUtils';
-import { parseRecord, parseRecordHeader } from '../../recordParser';
+import { parseRecordHeader, scanSubrecords } from '../recordParser';
 import { setDebugCallback } from '../bufferParser';
 import { 
   PROCESSED_RECORD_TYPES, 
   debugLog, 
   dumpHex, 
   getGroupTypeName,
-  errorLog 
+  errorLog,
+  parseGRUPHeader,
+  validateGRUPSize
 } from './grupUtils';
 import { RECORD_HEADER } from '../buffer.constants';
+import { processRecord } from '../../pluginProcessor';
 
 // Set up debug callback
 setDebugCallback((message: string) => {
@@ -52,8 +54,8 @@ export function processGRUP(buffer: Buffer, offset: number, pluginName: string):
     debugLog(`  Version: ${header.versionControl}`);
     
     // Dump GRUP header and initial data
-    dumpHex(buffer, offset, 24, 'GRUP Header Hex Dump (24 bytes)');
-    dumpHex(buffer, offset + 24, 64, 'Initial GRUP Data (64 bytes)');
+    dumpHex(buffer, offset, RECORD_HEADER.TOTAL_SIZE, 'GRUP Header Hex Dump (24 bytes)');
+    dumpHex(buffer, offset + RECORD_HEADER.TOTAL_SIZE, 64, 'Initial GRUP Data (64 bytes)');
 
     // For Top-Level GRUPs (type 0), we know exactly what type of records to expect
     // because the label in the header tells us (e.g., RACE, PERK, etc.)
@@ -103,7 +105,7 @@ function processTopLevelGRUP(
 ): ParsedRecord[] {
   try {
     const records: ParsedRecord[] = [];
-    let currentOffset = offset + 24; // Skip GRUP header
+    let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE; // Skip GRUP header
     const endOffset = offset + header.size;
 
     while (currentOffset < endOffset) {
@@ -122,7 +124,7 @@ function processTopLevelGRUP(
       dumpHex(buffer, currentOffset + RECORD_HEADER.TOTAL_SIZE, 64, 'Initial Record Data (64 bytes)');
 
       // Process the record
-      const { record } = parseRecord(buffer, currentOffset, pluginName);
+      const { record } = processRecord(buffer, currentOffset, pluginName);
       records.push(record);
       
       // Advance to next record using the correct size calculation
@@ -165,7 +167,7 @@ function processNestedGRUP(
 ): ParsedRecord[] {
   try {
     const records: ParsedRecord[] = [];
-    let currentOffset = offset + 24;
+    let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE;
     const endOffset = offset + header.size;
 
     debugLog(`\nProcessing nested GRUP from ${offset} to ${endOffset} (size: ${header.size})`);
@@ -204,7 +206,7 @@ function processNestedGRUP(
         }
         
         // Process supported records
-        const { record } = parseRecord(buffer, currentOffset, pluginName);
+        const { record } = processRecord(buffer, currentOffset, pluginName);
         records.push(record);
         currentOffset += totalRecordSize;
       }
@@ -217,4 +219,6 @@ function processNestedGRUP(
     errorLog('processNestedGRUP', `Failed to process nested GRUP at offset ${offset}: ${error.message}`);
     throw error;
   }
-} 
+}
+
+export { parseGRUPHeader, validateGRUPSize }; 

@@ -16,13 +16,17 @@ export interface ParsedRecord {
 }
 
 export interface RecordHeader {
-  type: string;       // e.g., 'PERK'
-  dataSize: number;   // size of subrecord data
-  formId: string;     // hex-formatted FormID, e.g., '00058F80'
+  type: string;
+  dataSize: number;
   flags: number;
-  versionControl: number;
-  formVersion: number;
-  raw: Buffer;        // original 20-byte header
+  formId: number;
+  version: number;
+  unknown: number;
+}
+
+export interface SubrecordHeader {
+  type: string;
+  size: number;
 }
 
 export interface Subrecord {
