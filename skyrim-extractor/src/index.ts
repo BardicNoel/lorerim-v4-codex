@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 import { getEnabledPlugins } from './utils/modUtils';
 import { createFileWriter } from './utils/fileWriter';
+import { RecordAggregator } from './aggregator';
 
 function printHeader(text: string): void {
   console.log('\n' + '='.repeat(80));
@@ -34,7 +35,7 @@ export async function main(configPath?: string): Promise<void> {
 
     // Process plugins
     const plugins = await getEnabledPlugins(config.modDirPath);
-    const recordsByType: Record<string, ParsedRecord[]> = {};
+    const aggregator = new RecordAggregator({ plugins });
 
     printHeader('Processing Plugins');
     for (const plugin of plugins) {
@@ -46,13 +47,23 @@ export async function main(configPath?: string): Promise<void> {
       // Process the plugin
       const records = await processPlugin(buffer, plugin.name);
       
-      // Merge records by type
-      for (const [type, typeRecords] of Object.entries(records)) {
-        if (!recordsByType[type]) {
-          recordsByType[type] = [];
-        }
-        recordsByType[type].push(...typeRecords);
+      // Process records through aggregator
+      for (const typeRecords of Object.values(records)) {
+        aggregator.processPluginRecords(plugin.index, typeRecords);
       }
+    }
+
+    // Get aggregated results
+    const result = aggregator.getResult();
+    const recordsByType: Record<string, ParsedRecord[]> = {};
+
+    // Group records by type
+    for (const record of result.records) {
+      const type = record.meta.type;
+      if (!recordsByType[type]) {
+        recordsByType[type] = [];
+      }
+      recordsByType[type].push(record);
     }
 
     // Write output files

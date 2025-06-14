@@ -1,0 +1,68 @@
+{
+  "record": "PERK",
+  "subrecords": [
+    {
+      "C": "+",
+      "Field": "EDID",
+      "Name": "",
+      "Type/Size": "zstring",
+      "Info": "EditorID"
+    },
+    {
+      "C": "-",
+      "Field": "VMAD",
+      "Name": "",
+      "Type/Size": "struct",
+      "Info": "Script data"
+    },
+    {
+      "C": "-",
+      "Field": "FULL",
+      "Name": "",
+      "Type/Size": "lstring",
+      "Info": "Perk Name"
+    },
+    {
+      "C": "+",
+      "Field": "DESC",
+      "Name": "",
+      "Type/Size": "dlstring",
+      "Info": "Description"
+    },
+    {
+      "C": "-",
+      "Field": "ICON",
+      "Name": "",
+      "Type/Size": "zstring",
+      "Info": "Inventory image filename"
+    },
+    {
+      "C": "*",
+      "Field": "CTDA",
+      "Name": "",
+      "Type/Size": "struct",
+      "Info": "Zero or more condition data subrecords for the perk to be available to the player"
+    },
+    {
+      "C": "+",
+      "Field": "DATA",
+      "Name": "",
+      "Type/Size": "struct",
+      "Info": "uint8[5]:\nIsTrait\nLevel\nNumRanks\nIsPlayable\nIsHidden"
+    },
+    {
+      "C": "-",
+      "Field": "NNAM",
+      "Name": "",
+      "Type/Size": "formid",
+      "Info": "If present points to the next PERK"
+    },
+    {
+      "C": "*",
+      "Field": "",
+      "Name": "",
+      "Type/Size": "Perk Sections[]",
+      "Info": "See below."
+    }
+  ]
+}

@@ -1,0 +1,177 @@
+{
+  "record": "FACT",
+  "tables": [
+    {
+      "headers": [
+        "C",
+        "V",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "V": "",
+          "Field": "EDID",
+          "Name": "editorID",
+          "Type/Size": "zstring",
+          "Info": "Faction name"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "FULL",
+          "Name": "name",
+          "Type/Size": "lstring",
+          "Info": "Full name"
+        },
+        {
+          "C": "*",
+          "V": "",
+          "Field": "XNAM",
+          "Name": "Interfaction Relations",
+          "Type/Size": "struct",
+          "Info": "formid - Faction\nint32 - Mod (appears to be unused - no longer editable in CK and only non-zero for CWDisaffectedSoldierFaction (0004BB3F))\nint32 - Combat\n0 - Neutral\n1 - Enemy\n2 - Ally\n3 - Friend"
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "DATA",
+          "Name": "flags",
+          "Type/Size": "uint32",
+          "Info": "Flags\n0x1 - Hidden from PC\n0x2 - Special Combat\n0x40 - Track Crime\n0x80 - Ignore Murder\n0x100 - Ignore Assault\n0x200 - Ignore Stealing\n0x400 - Ignore Trespass\n0x800 - Do not report crimes against members\n0x1000 - Crime Gold, Use Defaults\n0x2000 - Ignore Pickpocket\n0x4000 - Vendor\n0x8000 - Can Be Owner\n0x10000 - Ignore Werewolf"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "JAIL",
+          "Name": "Prison Marker",
+          "Type/Size": "formid",
+          "Info": "REFR formid - The exterior jail marker for the faction's prison."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "WAIT",
+          "Name": "Follower Wait Marker",
+          "Type/Size": "formid",
+          "Info": "REFR formid - Marker the player's followers are assigned to wait at."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "STOL",
+          "Name": "Evidence Chest",
+          "Type/Size": "formid",
+          "Info": "REFR formid - Stolen goods are stored in this chest."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "PLCN",
+          "Name": "Player Belongings Chest",
+          "Type/Size": "formid",
+          "Info": "REFR formid - Player's inventory is stored in this chest."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "CRGR",
+          "Name": "Crime Group",
+          "Type/Size": "formid",
+          "Info": "Crime Factions List (FLST)"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "JOUT",
+          "Name": "Jail Outfit",
+          "Type/Size": "formid",
+          "Info": "OTFT formid - Jail outfit the player is given."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "CRVA",
+          "Name": "Crime Gold",
+          "Type/Size": "struct[12/16/20]",
+          "Info": "Size varies in record versions 30 and below, additional fields are those at the end of the structure. Seems to be required normally, but one record, MS08AlikrFaction (000215D3) in Skyrim.esm, doesn't have one.\nuint8 - 1 = Arrest\nuint8 - 1 = Attack on Sight\nuint16 - Murder\nuint16 - Assault\nuint16 - Trespass\nuint16 - Pickpocket\nuint16 - Unused (usually 0, but not always, changing data has no effect in CK)\nfloat - Steal Mult.\nuint16 - Escape\nuint16 - Werewolf"
+        },
+        {
+          "C": "*",
+          "V": "",
+          "Field": "",
+          "Name": "Ranks",
+          "Type/Size": "Rank[]",
+          "Info": "Listing of ranks, if any, and their names."
+        },
+        {
+          "C": "*",
+          "V": "",
+          "Field": "RNAM",
+          "Name": "Rank ID",
+          "Type/Size": "uint32",
+          "Info": "Rank ID"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "MNAM",
+          "Name": "Male Rank Title",
+          "Type/Size": "lstring",
+          "Info": "Male title"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "FNAM",
+          "Name": "Female Rank Title",
+          "Type/Size": "lstring",
+          "Info": "Female title"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "VEND",
+          "Name": "Vendor List",
+          "Type/Size": "formid",
+          "Info": "Merchandise list (FLST)"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "VENC",
+          "Name": "Vendor Chest",
+          "Type/Size": "formid",
+          "Info": "Reference to vendor chest (REFR)"
+        },
+        {
+          "C": "-",
+          "V": "29+",
+          "Field": "VENV",
+          "Name": "",
+          "Type/Size": "struct[12]",
+          "Info": "All 0s unless vendor; always present in record versions 29 and above, never present in record versions 28 and below\nuint16 - Start hour\nuint16 - End hour\nuint32 - Radius\nuint8 - 1 = Buys stolen items (wording in CK is misleading)\nuint8 - 1 = NOT sell/buy (causes vendor to buy/sell everything except what's in the Vendor List)\nuint16 - Unused"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "PLVD",
+          "Name": "",
+          "Type/Size": "struct[12]",
+          "Info": "Where to sell goods\nuint32 - Specification type\n0 - Near Reference, REFR formID follows\n1 - In Cell, CELL formID follows\n2 - Near Package Start Location not used in original files\n3 - Near Editor Location\n6 - Linked Reference, KWYD formID follows not used in original files\n12 - Near Self\nformID - meaning depends on previous int\nuint32 - Unused"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "CTDA",
+          "Name": "",
+          "Type/Size": "CTDA",
+          "Info": "Conditions, with leading CITC field. Vendor will only buy/sell when these conditions are met."
+        }
+      ]
+    }
+  ]
+}

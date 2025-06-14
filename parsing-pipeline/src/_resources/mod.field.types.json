@@ -1,0 +1,6738 @@
+[
+  {
+    "Record": "TES4",
+    "Subrecords": [
+      {
+        "Name": "HEDR",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "INTV",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "FACT",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "VENC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "JOUT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "VENV",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CRVA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "WAIT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "PLVD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VEND",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "STOL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "PLCN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CRGR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "JAIL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CITC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 2,
+    "MinSize": 21,
+    "MaxSize": 21,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "KYWD",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 199,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 15,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "GMST",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 1583,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 15,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ENCH",
+    "Subrecords": [
+      {
+        "Name": "EFID",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EFIT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ENIT",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 604,
+    "MinSize": 32,
+    "MaxSize": 36,
+    "MinVersion": 37,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "AMMO",
+    "Subrecords": [
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ZNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 30,
+    "MinSize": 12,
+    "MaxSize": 120,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "TREE",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "PFPC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PFIG",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 32,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 39,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "DOOR",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 183,
+    "MaxSize": 183,
+    "MinVersion": 30,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ARMO",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MOD4",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MO4T",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "BIDS",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MOD2",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "MO2T",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "BODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "ZNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EITM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ETYP",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "BAMT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MO2S",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "MO4S",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 8,
+    "MinSize": 41,
+    "MaxSize": 171,
+    "MinVersion": 20,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LCRT",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 404,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 18,
+    "MaxVersion": 39,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "GLOB",
+    "Subrecords": [
+      {
+        "Name": "FLTV",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 664,
+    "MinSize": 7,
+    "MaxSize": 41,
+    "MinVersion": 14,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "AACT",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 69,
+    "MinSize": 11,
+    "MaxSize": 25,
+    "MinVersion": 15,
+    "MaxVersion": 35,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "DEBR",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 22,
+    "MinSize": 72,
+    "MaxSize": 72,
+    "MinVersion": 26,
+    "MaxVersion": 39,
+    "MinCount": 8,
+    "MaxCount": 14
+  },
+  {
+    "Record": "NAVM",
+    "Subrecords": [
+      {
+        "Name": "ONAM",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "XXXX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NVNM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NNAM",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 472,
+    "MinSize": 2,
+    "MaxSize": 132,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "TXST",
+    "Subrecords": [
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "TX05",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "TX00",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "TX01",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DODT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "TX03",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "TX07",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "TX02",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "TX04",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 110,
+    "MinSize": 41,
+    "MaxSize": 58,
+    "MinVersion": 14,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "CLAS",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 138,
+    "MinSize": 36,
+    "MaxSize": 36,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "RFCT",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 103,
+    "MinSize": 12,
+    "MaxSize": 12,
+    "MinVersion": 25,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "HDPT",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "HNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 271,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 35,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 2
+  },
+  {
+    "Record": "DUAL",
+    "Subrecords": [
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 2,
+    "MinSize": 24,
+    "MaxSize": 24,
+    "MinVersion": 25,
+    "MaxVersion": 34,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "DIAL",
+    "Subrecords": [
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "TIFC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 6945,
+    "MinSize": 7,
+    "MaxSize": 57,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "EYES",
+    "Subrecords": [
+      {
+        "Name": "ICON",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 8,
+    "MinSize": 1,
+    "MaxSize": 1,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "IDLM",
+    "Subrecords": [
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "IDLF",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "IDLT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "IDLC",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "IDLA",
+        "Attributes": "Required VariableSize"
+      }
+    ],
+    "TotalCount": 77,
+    "MinSize": 4,
+    "MaxSize": 40,
+    "MinVersion": 30,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "RACE",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "TINT",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FTSF",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TINP",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "INDX",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "RPRM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "HCLF",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "BODT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "MTNM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "VTCK",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "RPRF",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "UNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ATKD",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DFTF",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MTYP",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ATKE",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "AHCF",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "GNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PHWT",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "NAM3",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NAM4",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MPAV",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM5",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "SNMV",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SWMV",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "UNES",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ONAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "FLMV",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAME",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "VNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TINL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "HEAD",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "MPAI",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "AHCM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TINI",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TIND",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SPLO",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TINC",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TINV",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TIRS",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM8",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SPCT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM7",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "PHTN",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "WKMV",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "RNMV",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SPED",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FTSM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DFTM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "GRAS",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 27,
+    "MinSize": 32,
+    "MaxSize": 32,
+    "MinVersion": 39,
+    "MaxVersion": 39,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "TACT",
+    "Subrecords": [
+      {
+        "Name": "VNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 25,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 37,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "INGR",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EFID",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EFIT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ENIT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ZNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 124,
+    "MaxSize": 124,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SOUN",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "SDSC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SNDD",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 659,
+    "MinSize": 36,
+    "MaxSize": 36,
+    "MinVersion": 24,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ASPC",
+    "Subrecords": [
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "RDAT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 35,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 31,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "MGEF",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MDOB",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SNDD",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 242,
+    "MinSize": 28,
+    "MaxSize": 721,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LTEX",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "HNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "GNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 39,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 15,
+    "MaxVersion": 37,
+    "MinCount": 1,
+    "MaxCount": 3
+  },
+  {
+    "Record": "MUSC",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 50,
+    "MinSize": 4,
+    "MaxSize": 168,
+    "MinVersion": 30,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "MISC",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ICON",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ZNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 8,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 39,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ACTI",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DMDS",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "KNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DEST",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "DSTD",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DMDL",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "DMDT",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "DSTF",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 18,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SPEL",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EFID",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ETYP",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SPIT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EFIT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "MDOB",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 3,
+    "MinSize": 16,
+    "MaxSize": 30,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SCRL",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ETYP",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EFID",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MDOB",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SPIT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EFIT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 44,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "BOOK",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 28,
+    "MinSize": 41,
+    "MaxSize": 803,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "WOOP",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 79,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "CLMT",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "WLST",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "GNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 2,
+    "MinSize": 12,
+    "MaxSize": 12,
+    "MinVersion": 34,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "CONT",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CNTO",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "COCT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "COED",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 6,
+    "MinSize": 28,
+    "MaxSize": 853,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SHOU",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MDOB",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 72,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "APPA",
+    "Subrecords": [
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "QUAL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 45,
+    "MinSize": 8,
+    "MaxSize": 8,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LIGH",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 3,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 26,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LAND",
+    "Subrecords": [
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "VTXT",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "VHGT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "VNML",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "BTXT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "VCLR",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "ATXT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 102968,
+    "MinSize": 8,
+    "MaxSize": 8,
+    "MinVersion": 16,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 23
+  },
+  {
+    "Record": "STAT",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 971,
+    "MinSize": 25,
+    "MaxSize": 193,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "MUST",
+    "Subrecords": [
+      {
+        "Name": "FLTV",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "CITC",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 13,
+    "MinSize": 52,
+    "MaxSize": 120,
+    "MinVersion": 25,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "MATT",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "HNAM",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 49,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 34,
+    "MaxVersion": 39,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "MSTT",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "DEST",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DSTD",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DMDL",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "DMDT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DSTF",
+        "Attributes": "ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 6,
+    "MinSize": 0,
+    "MaxSize": 0,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 4
+  },
+  {
+    "Record": "FLOR",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "PFPC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PFIG",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 21,
+    "MinSize": 33,
+    "MaxSize": 38,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "FURN",
+    "Subrecords": [
+      {
+        "Name": "FNMK",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "KNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "WBDT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FNPR",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "DEST",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "XMRK",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "DSTD",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DSTF",
+        "Attributes": "ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 4,
+    "MinSize": 0,
+    "MaxSize": 0,
+    "MinVersion": 37,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 2
+  },
+  {
+    "Record": "SPGD",
+    "Subrecords": [
+      {
+        "Name": "ICON",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 16,
+    "MinSize": 40,
+    "MaxSize": 48,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "IDLE",
+    "Subrecords": [
+      {
+        "Name": "CIS1",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 2334,
+    "MinSize": 5,
+    "MaxSize": 39,
+    "MinVersion": 16,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "WEAP",
+    "Subrecords": [
+      {
+        "Name": "VNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ETYP",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EITM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "BIDS",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "EAMT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "BAMT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "NAM9",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "NAM8",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CRDT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "UNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 29,
+    "MaxSize": 29,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "PGRE",
+    "Subrecords": [
+      {
+        "Name": "XSCL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAME",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XESP",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "XOWN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 42,
+    "MinSize": 24,
+    "MaxSize": 24,
+    "MinVersion": 34,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "NPC_",
+    "Subrecords": [
+      {
+        "Name": "TINC",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SPLO",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CSDI",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DEST",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SPOR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ATKR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "ACBS",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "TPLT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "SPCT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "AIDT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SOFT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NAM5",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM6",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "TIAS",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM7",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NAM8",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PKID",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VTCK",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAMA",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DOFT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ZNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DPLT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "CSCR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CSDT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "COCT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "TINI",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PRKR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CNTO",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PRKZ",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "HCLF",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FTST",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM9",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "TINV",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CSDC",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ECOR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CRIF",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SHRT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DSTF",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ATKD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ATKE",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DSTD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "GNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 14,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LVLN",
+    "Subrecords": [
+      {
+        "Name": "COED",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "LVLD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LVLF",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LLCT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LVLO",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 3141,
+    "MinSize": 12,
+    "MaxSize": 12,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 26
+  },
+  {
+    "Record": "KEYM",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "ZNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 4,
+    "MinSize": 54,
+    "MaxSize": 97,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ALCH",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EFID",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "ENIT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EFIT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ZNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MODS",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 32,
+    "MaxSize": 32,
+    "MinVersion": 35,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "COBJ",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CNTO",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "COCT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 601,
+    "MinSize": 2,
+    "MaxSize": 2,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "PROJ",
+    "Subrecords": [
+      {
+        "Name": "VNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DEST",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DSTD",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM2",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "DSTF",
+        "Attributes": "ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 2,
+    "MinSize": 0,
+    "MaxSize": 0,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 2
+  },
+  {
+    "Record": "HAZD",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 2,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 31,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "INFO",
+    "Subrecords": [
+      {
+        "Name": "NAM3",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TRDT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM2",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "ONAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SCHR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NEXT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "TCLT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TWAT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SLGM",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "SOUL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "SLCP",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 2,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 36,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "WRLD",
+    "Subrecords": [
+      {
+        "Name": "OFST",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM4",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "XLCN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "NAM2",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "NAM3",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "WCTR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ONAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAMA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NAM9",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ZNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "UNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MHDT",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "XXXX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "LTMP",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XEZN",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 22,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LVLI",
+    "Subrecords": [
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "LVLD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LVLF",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LLCT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "LVLO",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "LVLG",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 65,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "WTHR",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "00TX",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "10TX",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "20TX",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "IMSP",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "30TX",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "C0TX",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "D0TX",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "L0TX",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "JNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "ONAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "G0TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "50TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DALC",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "MODL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "80TX",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "90TX",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "A0TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "H0TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "K0TX",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "E0TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "F0TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "40TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "60TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM2",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "70TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "B0TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "I0TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "J0TX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM3",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 35,
+    "MaxSize": 35,
+    "MinVersion": 31,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "REGN",
+    "Subrecords": [
+      {
+        "Name": "ICON",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "RCLR",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "RDWT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "RPLI",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "RDAT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "RPLD",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "RDSA",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "RDMO",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "RDOT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "RDMP",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 7,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 26,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "PHZD",
+    "Subrecords": [
+      {
+        "Name": "XSCL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAME",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XESP",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 3,
+    "MinSize": 139,
+    "MaxSize": 139,
+    "MinVersion": 31,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "NAVI",
+    "Subrecords": [
+      {
+        "Name": "NVER",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NVMI",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "NVPP",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 25696,
+    "MaxSize": 25696,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ARTO",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      }
+    ],
+    "TotalCount": 198,
+    "MinSize": 12,
+    "MaxSize": 156,
+    "MinVersion": 28,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "QUST",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "ALNT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "INDX",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NEXT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FLTR",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "SPOR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "KNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ALFL",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "QSDT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALST",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "COCT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "QOBJ",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALPC",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALID",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "ALFE",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALED",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALFD",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "VTCK",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALCA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALLS",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALUA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALSP",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALFR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALCO",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "ALCL",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCHR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "QSTA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALEA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALFA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "ALRT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALFI",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALFC",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CNTO",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALNA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "QTGL",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ECOR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALEQ",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ALDN",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCTX",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 3,
+    "MinSize": 7,
+    "MaxSize": 92,
+    "MinVersion": 25,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "COLL",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "GNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "INTV",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 55,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "CELL",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "XCMO",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "XWCN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "XCIM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "XLCN",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "TVDT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "LTMP",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XCLW",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XCLR",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "XWEM",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "XILL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XCLL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "XEZN",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "XCAS",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "XCCM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XOWN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XCWT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MHDT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XCLC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XWCU",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "XWCS",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 20,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "REFR",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "XSCL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XCZA",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XRGD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "NAME",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XTEL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XRMR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "XLRM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "XPRM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XNDP",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XCVL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XMBO",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XHTW",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLTW",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XPRD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLRT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLIB",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XPPA",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XAPR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "XACT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "PDTO",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XSPC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLOC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XEMI",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XESP",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XFVC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XAPD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XPOD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLKR",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "XRDS",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLIG",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XALP",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XOWN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XEZN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XMBR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XTRI",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "ONAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XTNM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XRNK",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLCM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XCZC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SCTX",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XCNT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XWCU",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XPWR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "XIS2",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XOCP",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XMBP",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XRGB",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLCN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XWCN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SCHR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XMRK",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 397,
+    "MinSize": 2,
+    "MaxSize": 2,
+    "MinVersion": 17,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ACHR",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "NAME",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XRGD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "XLKR",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "XLCM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "XLCN",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XPPA",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XLRT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XESP",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XAPD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "PDTO",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XAPR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "XRGB",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XSCL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XOWN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XEZN",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XPRD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XHOR",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "XIS2",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 0,
+    "MaxSize": 0,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "PACK",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "POBA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PKDT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PSDT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PLDT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PKCU",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "UNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "XNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PDTO",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "POEA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PTDA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "POCA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "PFO2",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CITC",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PRCB",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "TPIC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "PKC2",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "IDLF",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "IDLA",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "IDLC",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "IDLT",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CIS1",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCHR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCTX",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "PFOR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCDA",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 17,
+    "MaxSize": 17,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "CSTY",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CSGD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CSME",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CSCR",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "CSLR",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CSFL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "CSMD",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 8,
+    "MaxSize": 8,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LSCR",
+    "Subrecords": [
+      {
+        "Name": "NNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ONAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MOD2",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 298,
+    "MinSize": 30,
+    "MaxSize": 36,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LVSP",
+    "Subrecords": [
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "LVLD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LVLF",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LLCT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LVLO",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 82,
+    "MinSize": 12,
+    "MaxSize": 12,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 7
+  },
+  {
+    "Record": "ANIO",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 62,
+    "MinSize": 18,
+    "MaxSize": 18,
+    "MinVersion": 34,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "WATR",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "GNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 3,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 37,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "EFSH",
+    "Subrecords": [
+      {
+        "Name": "ICON",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "ICO2",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM7",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM8",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "NAM9",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 169,
+    "MinSize": 308,
+    "MaxSize": 400,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "DLVW",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 1120,
+    "MinSize": 1,
+    "MaxSize": 1,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "EXPL",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EITM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 34,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "IMGS",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "HNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 2,
+    "MinSize": 56,
+    "MaxSize": 56,
+    "MinVersion": 15,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "IMAD",
+    "Subrecords": [
+      {
+        "Name": "VNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "UNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "PIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NAM3",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM2",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "XNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM4",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "AIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "BIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "GIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "HIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "IIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "JIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "KIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "LIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "NIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "OIAD",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "QIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "RIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "SIAD",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "TIAD",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 170,
+    "MinSize": 16,
+    "MaxSize": 16,
+    "MinVersion": 15,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "FLST",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 4137,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 15,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 197
+  },
+  {
+    "Record": "PERK",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EPFT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PRKC",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EPF2",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "PRKE",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PRKF",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EPFD",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "NNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "EPF3",
+        "Attributes": "ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 9,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 5
+  },
+  {
+    "Record": "BPTD",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "BPNT",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "BPTN",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "BPNI",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "BPNN",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "BPND",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM4",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "NAM5",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 76,
+    "MinSize": 0,
+    "MaxSize": 0,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 2,
+    "MaxCount": 4
+  },
+  {
+    "Record": "ADDN",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "OBND",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 89,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 39,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "AVIF",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "AVSK",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "XNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "YNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "HNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "VNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 2,
+    "MinSize": 3,
+    "MaxSize": 3,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "CAMS",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 82,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "CPTH",
+    "Subrecords": [
+      {
+        "Name": "CIS1",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 75,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 16,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 4
+  },
+  {
+    "Record": "VTYP",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 143,
+    "MinSize": 1,
+    "MaxSize": 1,
+    "MinVersion": 16,
+    "MaxVersion": 39,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "IPCT",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM2",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DODT",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MODT",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 4,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 17,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "IPDS",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      }
+    ],
+    "TotalCount": 11636,
+    "MinSize": 8,
+    "MaxSize": 8,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 10,
+    "MaxCount": 78
+  },
+  {
+    "Record": "ARMA",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "MOD4",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "BODT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MOD3",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MOD2",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "MO2T",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "MO3T",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "MO3S",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "MO2S",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MO4S",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "SNDD",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MO5T",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MO4T",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "MOD5",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "NAM2",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM3",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 4,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 37,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ECZN",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 280,
+    "MinSize": 8,
+    "MaxSize": 12,
+    "MinVersion": 14,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LCTN",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "LCSR",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "LCEC",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "KSIZ",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "LCPR",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "KWDA",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "LCID",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "LCEP",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "LCUN",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 12,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "MESG",
+    "Subrecords": [
+      {
+        "Name": "ITXT",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "DESC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 571,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "DOBJ",
+    "Subrecords": [
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 2424,
+    "MaxSize": 2424,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "LGTM",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DALC",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 97,
+    "MinSize": 24,
+    "MaxSize": 32,
+    "MinVersion": 30,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "FSTP",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 116,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "FSTS",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "XCNT",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 35,
+    "MinSize": 16,
+    "MaxSize": 96,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SMBN",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "XNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CITC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 99,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SMQN",
+    "Subrecords": [
+      {
+        "Name": "NNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "XNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CITC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "RNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 17,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SCEN",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NEXT",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "VMAD",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "HNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DMAX",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "WNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "NAM0",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "ALID",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCTX",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "HTID",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "CIS2",
+        "Attributes": "ManyAllowed VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCDA",
+        "Attributes": "VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DMIN",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DEMO",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "DEVA",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "Required ManyAllowed FixedSize"
+      },
+      {
+        "Name": "VNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCHR",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "SCRO",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 3,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SMEN",
+    "Subrecords": [
+      {
+        "Name": "XNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "CITC",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ENAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 1,
+    "MinSize": 18,
+    "MaxSize": 18,
+    "MinVersion": 19,
+    "MaxVersion": 37,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "DLBR",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "QNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "TNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 3061,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "EQUP",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "VariableSize"
+      }
+    ],
+    "TotalCount": 3,
+    "MinSize": 4,
+    "MaxSize": 8,
+    "MinVersion": 16,
+    "MaxVersion": 30,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "RELA",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 642,
+    "MinSize": 16,
+    "MaxSize": 16,
+    "MinVersion": 16,
+    "MaxVersion": 37,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "ASTP",
+    "Subrecords": [
+      {
+        "Name": "FPRT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MPRT",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MCHT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "FCHT",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 20,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 16,
+    "MaxVersion": 34,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "OTFT",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "One/Record Required VariableSize"
+      }
+    ],
+    "TotalCount": 481,
+    "MinSize": 4,
+    "MaxSize": 24,
+    "MinVersion": 17,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "MATO",
+    "Subrecords": [
+      {
+        "Name": "MODL",
+        "Attributes": "Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DNAM",
+        "Attributes": "ManyAllowed VariableSize"
+      }
+    ],
+    "TotalCount": 17,
+    "MinSize": 124,
+    "MaxSize": 700,
+    "MinVersion": 18,
+    "MaxVersion": 39,
+    "MinCount": 0,
+    "MaxCount": 2
+  },
+  {
+    "Record": "MOVT",
+    "Subrecords": [
+      {
+        "Name": "SPED",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "INAM",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 80,
+    "MinSize": 12,
+    "MaxSize": 12,
+    "MinVersion": 19,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SNDR",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ONAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "GNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "CTDA",
+        "Attributes": "ManyAllowed FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "Required ManyAllowed VariableSize"
+      },
+      {
+        "Name": "LNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "BNAM",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 2453,
+    "MinSize": 6,
+    "MaxSize": 6,
+    "MinVersion": 30,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SNCT",
+    "Subrecords": [
+      {
+        "Name": "VNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "PNAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "UNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 4,
+    "MinSize": 2,
+    "MaxSize": 2,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "SOPM",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "NAM1",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "MNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "ANAM",
+        "Attributes": "Required FixedSize"
+      },
+      {
+        "Name": "ONAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "SNAM",
+        "Attributes": "FixedSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "FixedSize"
+      }
+    ],
+    "TotalCount": 4,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 30,
+    "MaxVersion": 40,
+    "MinCount": 0,
+    "MaxCount": 1
+  },
+  {
+    "Record": "CLFM",
+    "Subrecords": [
+      {
+        "Name": "FNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "CNAM",
+        "Attributes": "One/Record Required FixedSize"
+      },
+      {
+        "Name": "FULL",
+        "Attributes": "Required FixedSize"
+      }
+    ],
+    "TotalCount": 169,
+    "MinSize": 4,
+    "MaxSize": 4,
+    "MinVersion": 35,
+    "MaxVersion": 40,
+    "MinCount": 1,
+    "MaxCount": 1
+  },
+  {
+    "Record": "REVB",
+    "Subrecords": [
+      {
+        "Name": "EDID",
+        "Attributes": "One/Record Required VariableSize"
+      },
+      {
+        "Name": "DATA",
+        "Attributes": "One/Record Required FixedSize"
+      }
+    ],
+    "TotalCount": 10,
+    "MinSize": 14,
+    "MaxSize": 14,
+    "MinVersion": 31,
+    "MaxVersion": 37,
+    "MinCount": 1,
+    "MaxCount": 1
+  }
+]

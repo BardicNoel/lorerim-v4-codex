@@ -1,0 +1,1168 @@
+{
+  "record": "PERK",
+  "tables": [
+    {
+      "headers": [
+        "C",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "Field": "EDID",
+          "Name": "",
+          "Type/Size": "zstring",
+          "Info": "EditorID"
+        },
+        {
+          "C": "-",
+          "Field": "VMAD",
+          "Name": "",
+          "Type/Size": "struct",
+          "Info": "Script data"
+        },
+        {
+          "C": "-",
+          "Field": "FULL",
+          "Name": "",
+          "Type/Size": "lstring",
+          "Info": "Perk Name"
+        },
+        {
+          "C": "+",
+          "Field": "DESC",
+          "Name": "",
+          "Type/Size": "dlstring",
+          "Info": "Description"
+        },
+        {
+          "C": "-",
+          "Field": "ICON",
+          "Name": "",
+          "Type/Size": "zstring",
+          "Info": "Inventory image filename"
+        },
+        {
+          "C": "*",
+          "Field": "CTDA",
+          "Name": "",
+          "Type/Size": "struct",
+          "Info": "Zero or more condition data subrecords for the perk to be available to the player"
+        },
+        {
+          "C": "+",
+          "Field": "DATA",
+          "Name": "",
+          "Type/Size": "struct",
+          "Info": "uint8[5]:\nIsTrait\nLevel\nNumRanks\nIsPlayable\nIsHidden"
+        },
+        {
+          "C": "-",
+          "Field": "NNAM",
+          "Name": "",
+          "Type/Size": "formid",
+          "Info": "If present points to the next PERK"
+        },
+        {
+          "C": "*",
+          "Field": "",
+          "Name": "",
+          "Type/Size": "Perk Sections[]",
+          "Info": "See below."
+        }
+      ]
+    },
+    {
+      "headers": [
+        "C",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "Field": "PRKE",
+          "Name": "",
+          "Type/Size": "uint8[3]",
+          "Info": "uint8 - Type (See below for more details on the format of each section type)\n00: perk section is Quest section\n01: perk section is Ability section\n02: perk section is Complex Entry Point section\nuint8: Rank - Value of 0 = Rank 1\nuint8: Priority - Assumed to be how to order/iterate through perk sections"
+        },
+        {
+          "C": "-",
+          "Field": "PRKC",
+          "Name": "",
+          "Type/Size": "uint8",
+          "Info": "Type - How to apply the conditions that follow. Has values of 0-2 but the actual values depend on the effect type. See the entry point EffectTypes for details.\nPerk Owner\nTarget\nAttacker\nAttacker Weapon\nSpell\nWeapon\nItem\nEnchantment\nLocked Reference"
+        },
+        {
+          "C": "*",
+          "Field": "CTDA",
+          "Name": "",
+          "Type/Size": "struct",
+          "Info": "Condition data for the section"
+        },
+        {
+          "C": "-",
+          "Field": "EPFT",
+          "Name": "",
+          "Type/Size": "uint8",
+          "Info": "Type - The type of the perk data that follows in EPFD, EPF2, and EPF3 subrecords\n01: EPFD is a float\n02: EPFD is an 8 byte struct (float AV, float Factor)?\n03: EPFD is a formid (?)\n04:    \tEPF2 = LString \"verb\" (feed) (optional)\nEPF3 = dword? (0=No EPFD? or 3=SPEL EPFD?)\nEPFD = formid (optional)\n05: EPFD is a formid (SPEL)\n06: EPFD is a zstring (GMST editorid?)\n07: EPFD is a lstring (verb for custom activate actions)"
+        },
+        {
+          "C": "-",
+          "Field": "EPF2EPF3EPFD",
+          "Name": "",
+          "Type/Size": "",
+          "Info": "See EPFT"
+        },
+        {
+          "C": "+",
+          "Field": "PRKF",
+          "Name": "Marker",
+          "Type/Size": "null",
+          "Info": "Always the last subrecord in a perk section"
+        }
+      ]
+    },
+    {
+      "headers": [
+        "C",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "Field": "PRKE",
+          "Name": "",
+          "Type/Size": "uint8[3]",
+          "Info": "Always: 0x00, 0x00, 0x00"
+        },
+        {
+          "C": "+",
+          "Field": "DATA",
+          "Name": "Quest ID",
+          "Type/Size": "uint8[8]",
+          "Info": "formid: Quest ID\nuint8: Stage\nuint8[3]: Null - Has junk data, presumably unused"
+        },
+        {
+          "C": "+",
+          "Field": "PRKF",
+          "Name": "Marker",
+          "Type/Size": "null",
+          "Info": ""
+        }
+      ]
+    },
+    {
+      "headers": [
+        "C",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "Field": "PRKE",
+          "Name": "",
+          "Type/Size": "uint8[3]",
+          "Info": "Always: 0x01, 0x00, 0x00"
+        },
+        {
+          "C": "+",
+          "Field": "DATA",
+          "Name": "Quest ID",
+          "Type/Size": "formid",
+          "Info": "Spell ID? - Unsure if it is always a spell"
+        },
+        {
+          "C": "+",
+          "Field": "PRKF",
+          "Name": "Marker",
+          "Type/Size": "null",
+          "Info": ""
+        }
+      ]
+    },
+    {
+      "headers": [
+        "C",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "Field": "PRKE",
+          "Name": "",
+          "Type/Size": "uint8[3]",
+          "Info": "Always: 0x02, 0x00, 0x00"
+        },
+        {
+          "C": "+",
+          "Field": "DATA",
+          "Name": "",
+          "Type/Size": "uint8[3]",
+          "Info": "EffectType - What effect to apply for the section (see below)\nFunctionType - How to apply the effect? Affects what should be found in the EPFT/EPFD which follow (see below for more details)\nCondTypeCount - Number of different type of conditions to test for (01, 02 or 03). This value is presumably fixed according to the effect type and probably shouldn't be edited."
+        },
+        {
+          "C": "*",
+          "Field": "",
+          "Name": "",
+          "Type/Size": "Condition Subsections[]",
+          "Info": "(See below.)"
+        },
+        {
+          "C": "+",
+          "Field": "EPFT",
+          "Name": "",
+          "Type/Size": "uint8",
+          "Info": "DataType - Affects type of data that follows"
+        },
+        {
+          "C": "?",
+          "Field": "EPFD",
+          "Name": "",
+          "Type/Size": "variable",
+          "Info": "See the above details on EPFT for which subrecords should be found here and their format"
+        },
+        {
+          "C": "?",
+          "Field": "EPF2",
+          "Name": "",
+          "Type/Size": "uint32",
+          "Info": ""
+        },
+        {
+          "C": "?",
+          "Field": "EPF3",
+          "Name": "",
+          "Type/Size": "uint32",
+          "Info": ""
+        },
+        {
+          "C": "+",
+          "Field": "PRKF",
+          "Name": "Marker",
+          "Type/Size": "null",
+          "Info": ""
+        }
+      ]
+    },
+    {
+      "headers": [
+        "C",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "Field": "PRKC",
+          "Name": "",
+          "Type/Size": "uint8",
+          "Info": "Condition type"
+        },
+        {
+          "C": "*",
+          "Field": "CTDA",
+          "Name": "",
+          "Type/Size": "struct",
+          "Info": "Condition data for the subsection"
+        }
+      ]
+    },
+    {
+      "headers": [
+        "Effect ID",
+        "Effect Type",
+        "Functions",
+        "Additional Data",
+        "Condition Types",
+        "Condition Type Count"
+      ],
+      "rows": [
+        {
+          "Effect ID": "0E",
+          "Effect Type": "Activate",
+          "Functions": "Add Activate Choice",
+          "Additional Data": "Button Label\nRun Immediately\nReplace Default\nApply Spell\nScript Fragment?",
+          "Condition Types": "Perk Owner (0) and Target (1)",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "09",
+          "Effect Type": "Add Level List On Death",
+          "Functions": "Add Level List",
+          "Additional Data": "LevelListID",
+          "Condition Types": "Perk Owner and Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "05",
+          "Effect Type": "Adjust Book Skill Points 1",
+          "Functions": "All Value",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "04",
+          "Effect Type": "Adjust Limb Damage",
+          "Functions": "All Value",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Attacker, Attacker Weapon",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "34",
+          "Effect Type": "Apply Bashing Spell",
+          "Functions": "Select Spell",
+          "Additional Data": "SpellID",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "33",
+          "Effect Type": "Apply Combat Hit Spell",
+          "Functions": "Select Spell",
+          "Additional Data": "SpellID",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "35",
+          "Effect Type": "Apply Reanimate Spell",
+          "Functions": "Select Spell",
+          "Additional Data": "SpellID",
+          "Condition Types": "Perk Owner, Spell, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "45",
+          "Effect Type": "Apply Sneaking Spell",
+          "Functions": "Select Spell",
+          "Additional Data": "SpellID",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "43",
+          "Effect Type": "Apply Weapon Swing Spell",
+          "Functions": "Select Spell",
+          "Additional Data": "SpellID",
+          "Condition Types": "Perk Owner, Attacker, Attacker Weapon",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "03",
+          "Effect Type": "Calculate Mine Explode Chance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Item",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "01",
+          "Effect Type": "Calculate My Critical Hit Chance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "02",
+          "Effect Type": "Calculate My Critical Hit Damage",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "00",
+          "Effect Type": "Calculate Weapon Damage",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "4B",
+          "Effect Type": "Can Dual Cast Spell",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "3D",
+          "Effect Type": "Can Pickpocket Equipped Item",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target, Item",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "4A",
+          "Effect Type": "Filter Activation",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "0A",
+          "Effect Type": "Get Max Carry Weight",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "07",
+          "Effect Type": "Get Should Attack",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Attacker",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "10",
+          "Effect Type": "Ignore Broken Lock",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "0F",
+          "Effect Type": "Ignore Running During Detection",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "41",
+          "Effect Type": "Make Lockpicks Unbreakable",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "50",
+          "Effect Type": "Mod Number of Enchantments Allowed",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "20",
+          "Effect Type": "Mod Armor Weight",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Item",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "23",
+          "Effect Type": "Mod Attack Damage",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "1A",
+          "Effect Type": "Mod Bashing Damage",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "2E",
+          "Effect Type": "Mod Bribe Amount",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "2F",
+          "Effect Type": "Mod Detection Light",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "30",
+          "Effect Type": "Mod Detection Movement",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "2D",
+          "Effect Type": "Mod Favor Points",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "24",
+          "Effect Type": "Mod Incoming Damage",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Attacker, Attacker Weapon",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "2A",
+          "Effect Type": "Mod Incoming Spell Duration",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "29",
+          "Effect Type": "Mod Incoming Spell Magnitude",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "21",
+          "Effect Type": "Mod Incoming Stagger",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Attacker",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "27",
+          "Effect Type": "Mod Percent Blocked",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "2B",
+          "Effect Type": "Mod Player Intimidation",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "2C",
+          "Effect Type": "Mod Player Reputation",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "53",
+          "Effect Type": "Mod Poison Dose Count",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Spell",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "1C",
+          "Effect Type": "Mod Power Attack Damage",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "1B",
+          "Effect Type": "Mod Power Attack Stamina",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "1F",
+          "Effect Type": "Mod Secondary Value Weight",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "28",
+          "Effect Type": "Mod Shield Deflect Arrow Chance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "52",
+          "Effect Type": "Mod Shout OK",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "4F",
+          "Effect Type": "Mod Soul Gem Enchanting",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Enchantment, Item",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "31",
+          "Effect Type": "Mod Soul Gem Recharge",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Item",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "37",
+          "Effect Type": "Mod Spell Casting Sound Event",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "26",
+          "Effect Type": "Mod Spell Cost",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "1E",
+          "Effect Type": "Mod Spell Duration",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "1D",
+          "Effect Type": "Mod Spell Magnitude",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "25",
+          "Effect Type": "Mod Target Damage Resistance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "22",
+          "Effect Type": "Mod Target Stagger",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "0B",
+          "Effect Type": "Mod Addiction Chance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "42",
+          "Effect Type": "Mod Alchemy Effectiveness",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "55",
+          "Effect Type": "Mod Armor Rating",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Item",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "14",
+          "Effect Type": "Mod Bow Zoom",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "08",
+          "Effect Type": "Mod Buy Prices",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "44",
+          "Effect Type": "Mod Commanded Actor Limit",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "39",
+          "Effect Type": "Mod Detection Sneak Skill",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "4D",
+          "Effect Type": "Mod Enchantment Power",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Enchantment, Item",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "11",
+          "Effect Type": "Mod Enemy Critical Hit Chance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "3A",
+          "Effect Type": "Mod Falling Damage",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "57",
+          "Effect Type": "Mod Ingredients Harvested",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Item",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "48",
+          "Effect Type": "Mod Ingredient Effects Learned",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "3E",
+          "Effect Type": "Mod Lockpick Level Allowed",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "3B",
+          "Effect Type": "Mod Lockpick Sweet Spot",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Locked Reference",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "56",
+          "Effect Type": "Mod Lockpick Crime Chance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Locked Reference",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "5A",
+          "Effect Type": "Mod Lockpick Key Reward Chance (Wax Key)",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Locked Reference",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "13",
+          "Effect Type": "Mod Max Placeable Mines",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "38",
+          "Effect Type": "Mod Pickpocket Chance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target, Item",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "46",
+          "Effect Type": "Mod Player Magic Slowdown",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "0D",
+          "Effect Type": "Mod Positive Chem Duration",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "59",
+          "Effect Type": "Mod Potions Created (Create Duplicate Potion)",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "15",
+          "Effect Type": "Mod Recover Arrow Chance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "06",
+          "Effect Type": "Mod Recovered Health",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "3C",
+          "Effect Type": "Mod Sell Prices",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "16",
+          "Effect Type": "Mod Skill Use",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "12",
+          "Effect Type": "Mod Sneak Attack Multiplier",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon, Target",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "4E",
+          "Effect Type": "Mod Soul Percent Captured to Weapon",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target, Item",
+          "Condition Type Count": "3"
+        },
+        {
+          "Effect ID": "58",
+          "Effect Type": "Mod Spell Range to Location",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "19",
+          "Effect Type": "Mod Telekinesis Damage",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "18",
+          "Effect Type": "Mod Telekinesis Damage Multiplier",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "17",
+          "Effect Type": "Mod Telekinesis Distance",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "4C",
+          "Effect Type": "Mod Tempering Health",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Item",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "47",
+          "Effect Type": "Mod Ward Magic Absorption Percent",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Spell",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "49",
+          "Effect Type": "Purify Alchemy Ingredients",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "51",
+          "Effect Type": "Set Activate Label",
+          "Functions": "SetText",
+          "Additional Data": "Text",
+          "Condition Types": "Perk Owner, Target",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "36",
+          "Effect Type": "Set Boolean Graph Variable",
+          "Functions": "SelectText",
+          "Additional Data": "Text",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "3F",
+          "Effect Type": "Set Lockpick Start Position",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "40",
+          "Effect Type": "Set Progression Picking",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner",
+          "Condition Type Count": "1"
+        },
+        {
+          "Effect ID": "32",
+          "Effect Type": "Set Sweep Attack",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Weapon",
+          "Condition Type Count": "2"
+        },
+        {
+          "Effect ID": "54",
+          "Effect Type": "Should Apply Placed Item",
+          "Functions": "Value Types",
+          "Additional Data": "",
+          "Condition Types": "Perk Owner, Target, Item",
+          "Condition Type Count": "3"
+        }
+      ]
+    },
+    {
+      "headers": [
+        "Function ID",
+        "Function",
+        "New Value",
+        "EPFT",
+        "EPF2",
+        "EPF3",
+        "EPFD"
+      ],
+      "rows": [
+        {
+          "Function ID": "01",
+          "Function": "Set Value",
+          "New Value": "VALUE",
+          "EPFT": "0x01",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "float VALUE"
+        },
+        {
+          "Function ID": "02",
+          "Function": "Add Value",
+          "New Value": "Value + AMOUNT",
+          "EPFT": "0x01",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "float AMOUNT"
+        },
+        {
+          "Function ID": "03",
+          "Function": "Multiply Value",
+          "New Value": "Value * FACTOR",
+          "EPFT": "0x01",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "float AMOUNT"
+        },
+        {
+          "Function ID": "04",
+          "Function": "Add Range to Value",
+          "New Value": "Value + random(MIN, MAX)",
+          "EPFT": "0x02",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "float MIN, float MAX"
+        },
+        {
+          "Function ID": "05",
+          "Function": "Add Actor Value Mult",
+          "New Value": "Value + AV * FACTOR",
+          "EPFT": "0x02",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "float AV, float FACTOR"
+        },
+        {
+          "Function ID": "06",
+          "Function": "Absolute",
+          "New Value": "Abs(Value)",
+          "EPFT": "",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": ""
+        },
+        {
+          "Function ID": "07",
+          "Function": "Negative ABS Value",
+          "New Value": "-Abs(Value)",
+          "EPFT": "",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": ""
+        },
+        {
+          "Function ID": "08",
+          "Function": "Add Level List (Only EffectType 0x09)",
+          "New Value": "",
+          "EPFT": "0x03",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "formid LevelListID"
+        },
+        {
+          "Function ID": "09",
+          "Function": "Add Activate Choice (Only EffectType 0x0E)",
+          "New Value": "",
+          "EPFT": "0x04",
+          "EPF2": "lstring (button label if present)",
+          "EPF3": "uint16 - Flags1:\n0x01 = Run Immediately (No button label)\n0x02 = Replace Default\nuint16 - Flags2:\n0x03 = Spell?\n0x04 = Script Fragment? (Script fragment info added to record VMAD)",
+          "EPFD": "formid SpellID (if present)"
+        },
+        {
+          "Function ID": "0A",
+          "Function": "Select Spell(Only EffectTypes 0x33, 0x34, 0x35, 0x43, 0x45)",
+          "New Value": "",
+          "EPFT": "0x05",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "formid SpellID"
+        },
+        {
+          "Function ID": "0B",
+          "Function": "Select Text(Only EffectType 0x36)",
+          "New Value": "",
+          "EPFT": "0x06",
+          "EPF2": "zstring (usually a GMST editor ID?)",
+          "EPF3": "",
+          "EPFD": ""
+        },
+        {
+          "Function ID": "0C",
+          "Function": "Set AV Mult",
+          "New Value": "AV * FACTOR",
+          "EPFT": "0x02",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "float AV, float FACTOR"
+        },
+        {
+          "Function ID": "0D",
+          "Function": "Multiply AV Mult",
+          "New Value": "Value * AV * FACTOR",
+          "EPFT": "0x02",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "float AV, float FACTOR"
+        },
+        {
+          "Function ID": "0E",
+          "Function": "Multiply 1 + AV Mult",
+          "New Value": "Value * (1 + AV * FACTOR)",
+          "EPFT": "0x02",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "float AV, float FACTOR"
+        },
+        {
+          "Function ID": "0F",
+          "Function": "Set Text(Only EffectType 0x51)",
+          "New Value": "",
+          "EPFT": "0x07",
+          "EPF2": "",
+          "EPF3": "",
+          "EPFD": "lstring"
+        }
+      ]
+    }
+  ]
+}

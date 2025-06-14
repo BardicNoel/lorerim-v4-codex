@@ -1,0 +1,61 @@
+{
+  "record": "KYWD",
+  "tables": [
+    {
+      "headers": [
+        "C",
+        "V",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "V": "",
+          "Field": "EDID",
+          "Name": "editorID",
+          "Type/Size": "zstring",
+          "Info": "Max 0x200 bytes, including null terminator."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "CNAM",
+          "Name": "color",
+          "Type/Size": "rgb",
+          "Info": "Used to identify keywords in the editor."
+        }
+      ]
+    },
+    {
+      "headers": [
+        "C",
+        "V",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "V": "",
+          "Field": "KSIZ",
+          "Name": "KYWD count",
+          "Type/Size": "uint32",
+          "Info": "Total number of keywords."
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "KWDA",
+          "Name": "KYWD formids",
+          "Type/Size": "formid[]",
+          "Info": "End-to-end KYWD formids, numbering KSIZ uint32 in total."
+        }
+      ]
+    }
+  ]
+}

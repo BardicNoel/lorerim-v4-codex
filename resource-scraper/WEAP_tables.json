@@ -1,0 +1,545 @@
+{
+  "record": "WEAP",
+  "tables": [
+    {
+      "headers": [
+        "C",
+        "V",
+        "Field",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "-",
+          "V": "",
+          "Field": "BAMT",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Alternate block material. Points to a MATT."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "BIDS",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Block bash impact data set. Points to a IPDS."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "CNAM",
+          "Name": "template",
+          "Type/Size": "formID",
+          "Info": "Points to another WEAP record to use as a template"
+        },
+        {
+          "C": "?",
+          "V": "",
+          "Field": "CRDT",
+          "Name": "Critical Damage",
+          "Type/Size": "struct",
+          "Info": "16 byte struct\n\nuint16 - Critical Damage (0-13)\nuint16 - Unused\nfloat32 - Critical % Mult (0-1.5)\nuint32 - Flags\n0x01 Critical Effect on Death\nformID - Critical Spell Effect (SPEL)\nSSE version: 24 byte struct\n\nuint16 - Critical Damage\nuint16 - Unknown\nfloat32 - Critical % Mult\nuint32 - Flags\n0x01 Critical Effect on Death\nuint32 - Unknown\nformID - Critical Spell Effect (SPEL)\nuint32 - Unknown"
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "DATA",
+          "Name": "data",
+          "Type/Size": "struct[10]",
+          "Info": ""
+        },
+        {
+          "C": "value",
+          "V": "int32",
+          "Field": "",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "weight",
+          "V": "float",
+          "Field": "",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "damage",
+          "V": "int16",
+          "Field": "Base damage.",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "DESC",
+          "Name": "description",
+          "Type/Size": "lstring",
+          "Info": ""
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "DNAM",
+          "Name": "Weapon data",
+          "Type/Size": "struct[100]",
+          "Info": ""
+        },
+        {
+          "C": "00:Anim Type",
+          "V": "uint8",
+          "Field": "Lookup: 0=Other, 1=OneHandSword, 2=OneHandDagger, 3=OneHandAxe, 4=OneHandMace, 5=TwoHandSword, 6=TwoHandAxe, 7=Bow, 8=Staff, 9=Crossbow\n0 is used by the \"Unarmed\" weapon, the weapon versions of the knife and fork, and the unpatched woodcutter's axe.",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "01",
+          "V": "int8",
+          "Field": "unknown",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "02",
+          "V": "in16",
+          "Field": "unknown",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "04:Speed",
+          "V": "float",
+          "Field": "Speed of weapon.",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "08:Reach",
+          "V": "float",
+          "Field": "For melee weapons, this is a multiplier used in the reach formula: fCombatDistance * NPCScale * WeaponReach (where fCombatDistance is a gamesetting).",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "0C:Flags",
+          "V": "uint16",
+          "Field": "Flags.  Known flag values include:\n0x01: Ignores Normal Weapon Resistance (probably an obsolete holdover from Oblivion)\n0x02: Automatic\n0x04: Has Scope\n0x08: Can't Drop\n0x10: Hide Backpack\n0x20: Embedded Weapon\n0x40: Don't Use 1st Person IS Animations (or Don't Use 3rd Person IS Animations -- always paired with 0x100 in third set of flags)\n0x80: Unplayable (The checkbox display in the CK is \"Playable\", i.e. the inverse of this flag's value)",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "0E:Flags?",
+          "V": "uint16",
+          "Field": "Possibly more flags, but has a constant value of 145 (0x91) in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "10:Sight FOV",
+          "V": "float",
+          "Field": "(deprecated?) The angle of view when using Iron Sights. Done by zooming in.",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "14:Blank",
+          "V": "uint32",
+          "Field": "0 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "18:VATS to hit",
+          "V": "uint8",
+          "Field": "Base VATS To-Hit Chance (possibly obsolete).  Only values are 0 and 5",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "19:Unknown",
+          "V": "int8",
+          "Field": "-1 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "1A:Projectiles",
+          "V": "uint8",
+          "Field": "Number of projectiles per single ammo object (possibly obsolete).  1 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "1B",
+          "V": "int8",
+          "Field": "Embedded Weapon: Actor Value, adding 46 to the stored value gives the actor value index, CK allows (0 PerceptionCondition through 6 BrainCondition), only valid if Embedded Weapon flag is set",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "1C:Min Range",
+          "V": "float",
+          "Field": "Tells combat AI they don't need to be closer than this value.",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "20:Max Range",
+          "V": "float",
+          "Field": "Tells combat AI they don't want to be any further away than this value.",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "24:Unknown",
+          "V": "uint32",
+          "Field": "0 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "28:Flags",
+          "V": "uint32",
+          "Field": "Flags.  Known flag values include:\n0x01: Player Only\n0x02: NPCs Use Ammo\n0x04: No Jam After Reload\n0x10: Minor Crime\n0x20: Fixed Range\n0x40: Not Used in Normal Combat\n0x100: Don't Use 3rd Person IS Animations (or Don't Use 1st Person IS Animations -- always paired with 0x40 in first set of flags)\n0x200: Burst Shot\n0x400: Alternate Rumble\n0x800: Long bursts\n0x1000: Non-hostile\n0x2000: Bound Weapon",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "2C:Unknown",
+          "V": "float",
+          "Field": "1 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "30:Unknown",
+          "V": "float",
+          "Field": "Values range from 0.1 to 5, but is not displayed in CK",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "34:Rumble left",
+          "V": "float",
+          "Field": "Rumble: left motor strength",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "38:Rumble right",
+          "V": "float",
+          "Field": "Rumble: right motor strength",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "3C:Rumble duration",
+          "V": "float",
+          "Field": "Rumble: duration",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "40:Blank",
+          "V": "uint32",
+          "Field": "0 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "44:Blank",
+          "V": "uint32",
+          "Field": "0 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "48:Blank",
+          "V": "uint32",
+          "Field": "0 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "4C:Skill",
+          "V": "int32",
+          "Field": "Skill governing weapon's use (for staves, this is a magic skill, not a weapon skill, but apparently ignored in that case).  Provided as an actor value; -1 for weapons without a governing skill",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "50:Blank",
+          "V": "uint32",
+          "Field": "0 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "54:Blank",
+          "V": "uint32",
+          "Field": "0 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "58:Resist",
+          "V": "int32",
+          "Field": "Actor Value, CK allows 39 DamageResist through 44 MagicResist or -1 for None (always -1 in original files)",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "5C:Blank",
+          "V": "uint32",
+          "Field": "0 in all records",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "60:Stagger",
+          "V": "float",
+          "Field": "Stagger",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "EAMT",
+          "Name": "Enchantment Charge Amount",
+          "Type/Size": "uint16",
+          "Info": ""
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "EDID",
+          "Name": "editorID",
+          "Type/Size": "zstring",
+          "Info": "Max 0x200 bytes, including null terminator."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "EITM",
+          "Name": "Enchantment",
+          "Type/Size": "formID",
+          "Info": "Points to a ENCH."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "ETYP",
+          "Name": "Equip Type",
+          "Type/Size": "formID",
+          "Info": "Specifies which equipment slot is used by the weapon (typically \"BothHands\" or \"EitherHand\"). Points to a EQUP."
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "FULL",
+          "Name": "Name",
+          "Type/Size": "lstring",
+          "Info": ""
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "INAM",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Normal weapon swing impact set. Points to a IPDS."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "KSIZ",
+          "Name": "keywordCount",
+          "Type/Size": "uint32",
+          "Info": ""
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "KWDA",
+          "Name": "keywords",
+          "Type/Size": "formID[KSIZ.keywordCount]",
+          "Info": ""
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "OBND",
+          "Name": "objectBounds",
+          "Type/Size": "OBND",
+          "Info": ""
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "MODL",
+          "Name": "Model File Name",
+          "Type/Size": "zstring",
+          "Info": ""
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "MODS",
+          "Name": "Alternate textures",
+          "Type/Size": "Alternate Textures",
+          "Info": "Used when overriding textures in a nif file with texture sets"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "MODT",
+          "Name": "unknown",
+          "Type/Size": "Model Textures",
+          "Info": ""
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "NAM7",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Attack Loop Sound (SNDR) Not found in original files"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "NAM8",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "UnEquip Sound (SNDR)"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "NAM9",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Equip Sound (SNDR)."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "NNAM",
+          "Name": "unknown",
+          "Type/Size": "zstring",
+          "Info": "Embedded Weapon Node"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "SNAM",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Attack Sound (Trap Fire) (SNDR)"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "TNAM",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Attack Fail Sound (SNDR)."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "UNAM",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Idle Sound (SNDR)"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "VMAD",
+          "Name": "unknown",
+          "Type/Size": "VMAD",
+          "Info": ""
+        },
+        {
+          "C": "+",
+          "V": "",
+          "Field": "VNAM",
+          "Name": "Sound Detection Level",
+          "Type/Size": "uint32",
+          "Info": "The amount of sound using the weapon generates, seems to be used in determining nearby NPCs detection of the actor using the weapon. 2(0x02) = Silent, 1(0x01) = Normal, 0(0x00) = Loud, 3(0x03) = Very Loud."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "WNAM",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "1st Person Model Object. Points to a STAT. Affects the Inventory Item display."
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "XNAM",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Attack Sound (2D) (SNDR) found in Dawnguard.esm"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "YNAM",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Pickup Sound (SNDR) not found in original files"
+        },
+        {
+          "C": "-",
+          "V": "",
+          "Field": "ZNAM",
+          "Name": "unknown",
+          "Type/Size": "formID",
+          "Info": "Putdown Sound (SNDR) not found in original files"
+        }
+      ]
+    }
+  ]
+}

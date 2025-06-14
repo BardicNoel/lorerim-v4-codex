@@ -1,0 +1,27 @@
+{
+  "record": "GMST",
+  "tables": [
+    {
+      "headers": [
+        "C",
+        "Field",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "Field": "EDID",
+          "Type/Size": "zstring",
+          "Info": "Editor ID"
+        },
+        {
+          "C": "+",
+          "Field": "DATA",
+          "Type/Size": "varies",
+          "Info": "Typed Value based on first character of EDID. Both versions of Skyrim support floats, integers, and strings; original Skyrim also supports booleans but this was dropped in Skyrim SE. Boolean settings will still be loaded and saved by the Creation Kit, but will not be available to the player via console commands like GetGS and SetGS. Internally, default values will always be used."
+        }
+      ]
+    }
+  ]
+}

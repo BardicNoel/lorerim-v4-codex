@@ -1,0 +1,538 @@
+{
+  "TES4": {
+    "TotalSize": 44,
+    "TotalCount": 1,
+    "AverageSize": 44.0,
+    "MinSize": 44,
+    "MaxSize": 44,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "Subrecords": [
+      {
+        "name": "HEDR",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 1,
+        "AverageSize": 12.0,
+        "MinSize": 12,
+        "MaxSize": 12,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "CNAM",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 1,
+        "AverageSize": 10.0,
+        "MinSize": 10,
+        "MaxSize": 10,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "INTV",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 1,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      }
+    ]
+  },
+  "FACT": {
+    "TotalSize": 123032,
+    "TotalCount": 1084,
+    "AverageSize": 113.498155,
+    "MinSize": 50,
+    "MaxSize": 1604,
+    "MinVersion": 18,
+    "MaxVersion": 40,
+    "Subrecords": [
+      {
+        "name": "FNAM",
+        "type": "ManyAllowed FixedSize",
+        "TotalCount": 10,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 4
+      },
+      {
+        "name": "EDID",
+        "type": "One/Record Required VariableSize",
+        "TotalCount": 1084,
+        "AverageSize": 24.673432,
+        "MinSize": 8,
+        "MaxSize": 46,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "VENC",
+        "type": "FixedSize",
+        "TotalCount": 145,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "JOUT",
+        "type": "FixedSize",
+        "TotalCount": 33,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "XNAM",
+        "type": "Required ManyAllowed FixedSize",
+        "TotalCount": 1036,
+        "AverageSize": 12.0,
+        "MinSize": 12,
+        "MaxSize": 12,
+        "MinCount": 1,
+        "MaxCount": 85
+      },
+      {
+        "name": "DATA",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 1084,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "VENV",
+        "type": "Required FixedSize",
+        "TotalCount": 996,
+        "AverageSize": 12.0,
+        "MinSize": 12,
+        "MaxSize": 12,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "CRVA",
+        "type": "Required VariableSize",
+        "TotalCount": 1083,
+        "AverageSize": 19.571560,
+        "MinSize": 12,
+        "MaxSize": 20,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "WAIT",
+        "type": "FixedSize",
+        "TotalCount": 34,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "PLVD",
+        "type": "FixedSize",
+        "TotalCount": 150,
+        "AverageSize": 12.0,
+        "MinSize": 12,
+        "MaxSize": 12,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "FULL",
+        "type": "FixedSize",
+        "TotalCount": 435,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "VEND",
+        "type": "FixedSize",
+        "TotalCount": 149,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "STOL",
+        "type": "FixedSize",
+        "TotalCount": 12,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "PLCN",
+        "type": "FixedSize",
+        "TotalCount": 12,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "CRGR",
+        "type": "FixedSize",
+        "TotalCount": 48,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "RNAM",
+        "type": "ManyAllowed FixedSize",
+        "TotalCount": 73,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 10
+      },
+      {
+        "name": "MNAM",
+        "type": "ManyAllowed FixedSize",
+        "TotalCount": 37,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 7
+      },
+      {
+        "name": "JAIL",
+        "type": "FixedSize",
+        "TotalCount": 31,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "CITC",
+        "type": "FixedSize",
+        "TotalCount": 36,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "CTDA",
+        "type": "FixedSize",
+        "TotalCount": 36,
+        "AverageSize": 32.0,
+        "MinSize": 32,
+        "MaxSize": 32,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "CIS2",
+        "type": "FixedSize",
+        "TotalCount": 2,
+        "AverageSize": 21.0,
+        "MinSize": 21,
+        "MaxSize": 21,
+        "MinCount": 0,
+        "MaxCount": 1
+      }
+    ]
+  },
+  "KYWD": {
+    "TotalSize": 21524,
+    "TotalCount": 825,
+    "AverageSize": 26.089697,
+    "MinSize": 11,
+    "MaxSize": 81,
+    "MinVersion": 15,
+    "MaxVersion": 40,
+    "Subrecords": [
+      {
+        "name": "EDID",
+        "type": "One/Record Required VariableSize",
+        "TotalCount": 825,
+        "AverageSize": 17.677576,
+        "MinSize": 4,
+        "MaxSize": 75,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "CNAM",
+        "type": "Required FixedSize",
+        "TotalCount": 199,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      }
+    ]
+  },
+  "GMST": {
+    "TotalSize": 58789,
+    "TotalCount": 1583,
+    "AverageSize": 37.137713,
+    "MinSize": 20,
+    "MaxSize": 72,
+    "MinVersion": 15,
+    "MaxVersion": 40,
+    "Subrecords": [
+      {
+        "name": "EDID",
+        "type": "One/Record Required VariableSize",
+        "TotalCount": 1583,
+        "AverageSize": 21.137713,
+        "MinSize": 4,
+        "MaxSize": 56,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "DATA",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 1583,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      }
+    ]
+  },
+  "ENCH": {
+    "TotalSize": 86031,
+    "TotalCount": 604,
+    "AverageSize": 142.435430,
+    "MinSize": 106,
+    "MaxSize": 765,
+    "MinVersion": 37,
+    "MaxVersion": 40,
+    "Subrecords": [
+      {
+        "name": "EFID",
+        "type": "Required ManyAllowed FixedSize",
+        "TotalCount": 829,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 7
+      },
+      {
+        "name": "OBND",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 604,
+        "AverageSize": 12.0,
+        "MinSize": 12,
+        "MaxSize": 12,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "EDID",
+        "type": "One/Record Required VariableSize",
+        "TotalCount": 604,
+        "AverageSize": 25.554636,
+        "MinSize": 12,
+        "MaxSize": 52,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "CIS2",
+        "type": "ManyAllowed FixedSize",
+        "TotalCount": 8,
+        "AverageSize": 20.0,
+        "MinSize": 20,
+        "MaxSize": 20,
+        "MinCount": 0,
+        "MaxCount": 8
+      },
+      {
+        "name": "FULL",
+        "type": "Required FixedSize",
+        "TotalCount": 596,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "CTDA",
+        "type": "ManyAllowed FixedSize",
+        "TotalCount": 36,
+        "AverageSize": 32.0,
+        "MinSize": 32,
+        "MaxSize": 32,
+        "MinCount": 0,
+        "MaxCount": 8
+      },
+      {
+        "name": "EFIT",
+        "type": "Required ManyAllowed FixedSize",
+        "TotalCount": 829,
+        "AverageSize": 12.0,
+        "MinSize": 12,
+        "MaxSize": 12,
+        "MinCount": 1,
+        "MaxCount": 7
+      },
+      {
+        "name": "ENIT",
+        "type": "One/Record Required VariableSize",
+        "TotalCount": 604,
+        "AverageSize": 35.973510,
+        "MinSize": 32,
+        "MaxSize": 36,
+        "MinCount": 1,
+        "MaxCount": 1
+      }
+    ]
+  },
+  "AMMO": {
+    "TotalSize": 6786,
+    "TotalCount": 35,
+    "AverageSize": 193.885714,
+    "MinSize": 113,
+    "MaxSize": 285,
+    "MinVersion": 40,
+    "MaxVersion": 40,
+    "Subrecords": [
+      {
+        "name": "OBND",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 35,
+        "AverageSize": 12.0,
+        "MinSize": 12,
+        "MaxSize": 12,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "EDID",
+        "type": "One/Record Required VariableSize",
+        "TotalCount": 35,
+        "AverageSize": 17.114286,
+        "MinSize": 8,
+        "MaxSize": 32,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "KSIZ",
+        "type": "Required FixedSize",
+        "TotalCount": 29,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "DESC",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 35,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "FULL",
+        "type": "Required FixedSize",
+        "TotalCount": 23,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "DATA",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 35,
+        "AverageSize": 16.0,
+        "MinSize": 16,
+        "MaxSize": 16,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "KWDA",
+        "type": "Required VariableSize",
+        "TotalCount": 29,
+        "AverageSize": 4.137931,
+        "MinSize": 4,
+        "MaxSize": 8,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "YNAM",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 35,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "ZNAM",
+        "type": "One/Record Required FixedSize",
+        "TotalCount": 35,
+        "AverageSize": 4.0,
+        "MinSize": 4,
+        "MaxSize": 4,
+        "MinCount": 1,
+        "MaxCount": 1
+      },
+      {
+        "name": "MODL",
+        "type": "VariableSize",
+        "TotalCount": 30,
+        "AverageSize": 30.433333,
+        "MinSize": 27,
+        "MaxSize": 39,
+        "MinCount": 0,
+        "MaxCount": 1
+      },
+      {
+        "name": "MODT",
+        "type": "VariableSize",
+        "TotalCount": 30,
+        "AverageSize": 48.0,
+        "MinSize": 12,
+        "MaxSize": 120,
+        "MinCount": 0,
+        "MaxCount": 1
+      }
+    ]
+  }
+} 

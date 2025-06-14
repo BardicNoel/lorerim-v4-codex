@@ -1,0 +1,154 @@
+{
+    "subrecords": [
+      {
+        "name": "FULL",
+        "description": "Full name (null‑terminated string)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "EDID",
+        "description": "Editor ID (null‑terminated ASCII string)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "MODL",
+        "description": "Model filename path (null‑terminated string)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "FNAM",
+        "description": "First name (string)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "DATA",
+        "description": "General data payload — format dependent on record type",
+        "type": "BYTE_ARRAY"
+      },
+      {
+        "name": "ICON",
+        "description": "Inventory icon path (string)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "MODB",
+        "description": "Bound radius (float)",
+        "type": "FLOAT"
+      },
+      {
+        "name": "MODT",
+        "description": "Texture paths (null‑terminated string block)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "MODS",
+        "description": "Alternate texture filenames (string block)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "YNAM",
+        "description": "Male sound file name (string)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "ZNAM",
+        "description": "Female sound file name (string)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "CNAM",
+        "description": "FormID reference",
+        "type": "FORMID"
+      },
+      {
+        "name": "INTV",
+        "description": "Voice cell (FormID)",
+        "type": "FORMID"
+      },
+      {
+        "name": "DELE",
+        "description": "Flag for deletion",
+        "type": "BYTE"
+      },
+      {
+        "name": "DATA", 
+        "description": "Weapon or armor stats (varies by record)",
+        "type": "BYTE_ARRAY"
+      },
+      {
+        "name": "WNAM",
+        "description": "Sound descriptor (FormID)",
+        "type": "FORMID"
+      },
+      {
+        "name": "SCRI",
+        "description": "Script attached (FormID)",
+        "type": "FORMID"
+      },
+      {
+        "name": "VNAM",
+        "description": "Voice type (FormID)",
+        "type": "FORMID"
+      },
+      {
+        "name": "FLAG",
+        "description": "Record flags",
+        "type": "WORD"
+      },
+      {
+        "name": "FLTV",
+        "description": "Float variable for script",
+        "type": "FLOAT"
+      },
+      {
+        "name": "SCPT",
+        "description": "Script (null‑terminated string)",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "TNAM",
+        "description": "Texture set (FormID)",
+        "type": "FORMID"
+      },
+      {
+        "name": "DATA",
+        "description": "Quest or dialogue structure — varies",
+        "type": "BYTE_ARRAY"
+      },
+      {
+        "name": "LTMP",
+        "description": "Light template parameters",
+        "type": "BYTE_ARRAY"
+      },
+      {
+        "name": "ICON",
+        "description": "Icon texture for activators, etc.",
+        "type": "ZSTRING"
+      },
+      {
+        "name": "KSIZ",
+        "description": "Keyword list size (integer count)",
+        "type": "LONG"
+      },
+      {
+        "name": "ArraySubrecord",
+        "description": "Tagged repeating structure",
+        "type": "BYTE_ARRAY",
+        "repeat": "true"
+      }
+    ],
+  
+    "types": {
+      "BYTE":      {"size": 1, "signed": false},
+      "SHORT":     {"size": 2, "signed": true},
+      "WORD":      {"size": 2, "signed": false},
+      "LONG":      {"size": 4, "signed": true},
+      "DWORD":     {"size": 4, "signed": false},
+      "FLOAT":     {"size": 4},
+      "FORMID":    {"size": 4, "type": "DWORD"},
+      "ZSTRING":   {"null_terminated": true},
+      "PSTRING":   {"length_prefixed": "BYTE"},
+      "BYTE_ARRAY": {"size": "variable"}
+    }
+  }
+  

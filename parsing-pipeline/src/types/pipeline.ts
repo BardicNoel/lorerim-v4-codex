@@ -9,7 +9,8 @@ export type StageType =
   | 'filter-records'
   | 'remove-fields'
   | 'keep-fields'
-  | 'sanitize-fields';
+  | 'sanitize-fields'
+  | 'decode-buffer-fields';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -68,12 +69,28 @@ export interface SanitizeFieldsConfig extends BaseStageConfig {
   }[];
 }
 
+// Decode buffer fields stage configuration
+export interface DecodeBufferFieldsConfig extends BaseStageConfig {
+  type: 'decode-buffer-fields';
+  fieldTypes?: {
+    [fieldName: string]: {
+      type: 'string' | 'number' | 'boolean' | 'formId' | 'bytes';
+      encoding?: BufferEncoding;
+      offset?: number;
+      length?: number;
+      isArray?: boolean;
+      lengthPrefixed?: boolean;
+    };
+  };
+}
+
 // Stage configuration union type
 export type StageConfig = 
   | FilterRecordsConfig
   | RemoveFieldsConfig
   | KeepFieldsConfig
-  | SanitizeFieldsConfig;
+  | SanitizeFieldsConfig
+  | DecodeBufferFieldsConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {

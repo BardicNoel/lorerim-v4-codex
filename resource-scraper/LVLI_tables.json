@@ -1,0 +1,79 @@
+{
+  "record": "LVLI",
+  "tables": [
+    {
+      "headers": [
+        "C",
+        "SubRecord",
+        "Name",
+        "Type/Size",
+        "Info"
+      ],
+      "rows": [
+        {
+          "C": "+",
+          "SubRecord": "EDID",
+          "Name": "editorId",
+          "Type/Size": "zstring",
+          "Info": "Editor id"
+        },
+        {
+          "C": "+",
+          "SubRecord": "OBND",
+          "Name": "objectBounds",
+          "Type/Size": "OBND",
+          "Info": "Always all zeroes."
+        },
+        {
+          "C": "+",
+          "SubRecord": "LVLD",
+          "Name": "unknown",
+          "Type/Size": "int8",
+          "Info": "Chance for an item on this list to not be spawned at all (for example, 75 means there's a 25% to spawn an item)."
+        },
+        {
+          "C": "+",
+          "SubRecord": "LVLF",
+          "Name": "unknown",
+          "Type/Size": "int8",
+          "Info": "Flags:\n0x01=All levels (sets it to calculate for all entries < player level, choosing randomly from all the entries under)\n0x02=Each (sets it to repeat a check every time the list is called (if it's called multiple times), otherwise it will use the same result for all counts.)\n0x04=Use all (use all entries when the list is called)\n0x08=Special loot"
+        },
+        {
+          "C": "-",
+          "SubRecord": "LVLG",
+          "Name": "Global",
+          "Type/Size": "formID",
+          "Info": "Points to a global record. If this is set, the value of the global is used instead of LVLD for chance none."
+        },
+        {
+          "C": "-",
+          "SubRecord": "LLCT",
+          "Name": "unknown",
+          "Type/Size": "int8",
+          "Info": "The number of entries in the list (the number of LVLO entries, essentially)."
+        },
+        {
+          "C": "*",
+          "SubRecord": "LVLO",
+          "Name": "level",
+          "Type/Size": "uint32",
+          "Info": "The level set for the entry. Reference level appears to be set by player level only? Affected by level scaling multipliers?"
+        },
+        {
+          "C": "formID",
+          "SubRecord": "The item or LVLI used by the entry.",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        },
+        {
+          "C": "uint32",
+          "SubRecord": "How many items are added or used when this list is called.",
+          "Name": "",
+          "Type/Size": "",
+          "Info": ""
+        }
+      ]
+    }
+  ]
+}
