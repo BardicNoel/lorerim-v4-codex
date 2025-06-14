@@ -117,6 +117,15 @@ rules:
       - "form_id"
 ```
 
+### 5. Buffer Decoder
+Decodes binary record data using predefined schemas.
+
+```yaml
+type: "buffer-decoder"
+description: "Decode binary record data into structured format"
+recordType: "PERK"
+```
+
 ## Output
 
 The pipeline will:

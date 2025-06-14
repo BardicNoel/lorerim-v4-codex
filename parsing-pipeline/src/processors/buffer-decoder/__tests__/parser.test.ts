@@ -12,12 +12,12 @@ describe('BufferDecoder', () => {
   describe('parseRecord', () => {
     it('should parse a record with string fields', () => {
       // Create a buffer with EDID and FULL fields
-      const buffer = Buffer.alloc(20);
+      const buffer = Buffer.alloc(32); // Increased buffer size for UTF-16LE string
       buffer.write('EDID', 0); // Tag
       buffer.writeUInt16LE(4, 4); // Length
       buffer.write('Test', 6); // Data
       buffer.write('FULL', 10); // Tag
-      buffer.writeUInt16LE(8, 14); // Length
+      buffer.writeUInt16LE(16, 14); // Length (8 characters * 2 bytes for UTF-16LE)
       // Write UTF-16LE string
       buffer.write('T', 16, 2, 'utf16le');
       buffer.write('e', 18, 2, 'utf16le');
@@ -144,6 +144,77 @@ describe('BufferDecoder', () => {
       expect(result).toEqual({
         EDID: ''
       });
+    });
+
+    it('should parse a record with formId fields', () => {
+      // Create a buffer with a formId field
+      const buffer = Buffer.alloc(10); // Reduced buffer size to match actual data
+      buffer.write('NAME', 0); // Tag
+      buffer.writeUInt16LE(4, 4); // Length
+      buffer.write('ABCD', 6); // FormId data
+
+      // Add formId schema
+      const originalSchema = commonFieldSchemas.NAME;
+      commonFieldSchemas.NAME = { type: 'formid' };
+
+      const result = decoder.parseRecord('PERK', buffer);
+
+      expect(result).toEqual({
+        NAME: 'ABCD'
+      });
+
+      // Restore original schema
+      commonFieldSchemas.NAME = originalSchema;
+    });
+
+    it('should handle unknown fields', () => {
+      // Create a buffer with an unknown field
+      const buffer = Buffer.alloc(10);
+      buffer.write('UNKN', 0); // Unknown tag
+      buffer.writeUInt16LE(4, 4); // Length
+      buffer.write('Data', 6); // Data
+
+      // Add unknown schema
+      const originalSchema = commonFieldSchemas.UNKN;
+      commonFieldSchemas.UNKN = { type: 'unknown' };
+
+      const result = decoder.parseRecord('PERK', buffer);
+
+      expect(result).toEqual({});
+
+      // Restore original schema
+      commonFieldSchemas.UNKN = originalSchema;
+    });
+
+    it('should parse a struct with formId and unknown fields', () => {
+      // Create a buffer with a struct containing formId and unknown fields
+      const buffer = Buffer.alloc(20);
+      buffer.write('DATA', 0); // Tag
+      buffer.writeUInt16LE(14, 4); // Length
+      buffer.write('ABCD', 6); // FormId data
+      buffer.writeUInt16LE(4, 10); // Unknown field length
+      buffer.write('Data', 12); // Unknown field data
+
+      // Add struct schema with formId and unknown fields
+      const originalSchema = recordSpecificSchemas.PERK.DATA;
+      recordSpecificSchemas.PERK.DATA = {
+        type: 'struct',
+        fields: [
+          { name: 'formId', type: 'formid' },
+          { name: 'unknown', type: 'unknown' }
+        ]
+      };
+
+      const result = decoder.parseRecord('PERK', buffer);
+
+      expect(result).toEqual({
+        DATA: {
+          formId: 'ABCD'
+        }
+      });
+
+      // Restore original schema
+      recordSpecificSchemas.PERK.DATA = originalSchema;
     });
   });
 }); 

@@ -3,7 +3,7 @@ import { createFilterRecordsProcessor } from './filter-records';
 import { createRemoveFieldsProcessor } from './remove-fields';
 import { createKeepFieldsProcessor } from './keep-fields';
 import { createSanitizeFieldsProcessor } from './sanitize-fields';
-import { createDecodeBufferFieldsProcessor } from './decode-buffer-fields';
+import { BufferDecoderProcessor } from '../buffer-decoder/processor';
 
 // Core processor interface
 export interface Processor {
@@ -23,7 +23,9 @@ export function createProcessor(stage: StageConfig): Processor {
     case 'sanitize-fields':
       return createSanitizeFieldsProcessor(stage);
     case 'decode-buffer-fields':
-      return createDecodeBufferFieldsProcessor(stage);
+
+    case 'buffer-decoder':
+      return new BufferDecoderProcessor();
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }

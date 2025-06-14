@@ -101,18 +101,21 @@ rules:
     excludeFields?: string[] # Fields to exclude from checking
 ```
 
+### 5. Buffer Decoder
+Decodes binary record data using predefined schemas.
+
+```yaml
+type: "buffer-decoder"
+description: "Decode binary record data into structured format"
+recordType: string          # Type of record being decoded (e.g., "PERK", "SPEL")
+```
+
 Example:
 ```yaml
-- name: "Clean Null References"
-  type: "sanitize-fields"
-  description: "Remove null reference strings"
-  rules:
-    - pattern: "NULL - Null Reference"
-      action: "remove"
-      excludeFields:
-        - "plugin"
-        - "form_id"
-        - "editor_id"
+- name: "Decode Binary Records"
+  type: "buffer-decoder"
+  description: "Decode binary record data into structured format"
+  recordType: "PERK"
 ```
 
 ## Complete Example
