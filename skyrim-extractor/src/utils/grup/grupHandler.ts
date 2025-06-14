@@ -199,24 +199,19 @@ function processNestedGRUP(
         // Read the record header to get its size
         const recordHeader = parseRecordHeader(buffer.subarray(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE));
         const totalRecordSize = RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
-        
-        debugLog(`  Record size: ${recordHeader.dataSize}`);
-        debugLog(`  Total record size (header + data): ${totalRecordSize}`);
-        
-        // Dump initial record data
-        dumpHex(buffer, currentOffset + RECORD_HEADER.TOTAL_SIZE, 64, 'Initial Record Data (64 bytes)');
-        
-        // Process supported records
-        const { record } = processRecord(buffer, currentOffset, pluginName);
-        if (record && PROCESSED_RECORD_TYPES.has(record.meta.type as ProcessedRecordType)) {
-          records.push(record);
+
+        // Only process records of supported types
+        if (PROCESSED_RECORD_TYPES.has(recordHeader.type as ProcessedRecordType)) {
+          const { record } = processRecord(buffer, currentOffset, pluginName);
+          if (record) {
+            records.push(record);
+          }
         } else {
-          debugLog(`  Skipping unsupported record type: ${recordType}`);
+          debugLog(`  Skipping unsupported record type: ${recordHeader.type}`);
         }
+
         currentOffset += totalRecordSize;
       }
-
-      debugLog(`  Next offset: ${currentOffset}`);
     }
 
     return records;

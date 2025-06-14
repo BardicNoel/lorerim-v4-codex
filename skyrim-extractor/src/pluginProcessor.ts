@@ -3,6 +3,7 @@ import { ParsedRecord, RecordHeader } from './types';
 import { RECORD_HEADER } from './utils/buffer.constants';
 import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from './constants/recordTypes';
 import { StatsCollector } from './utils/stats';
+import { processGRUP } from './utils/grup/grupHandler';
 
 // Create a singleton stats collector
 const statsCollector = new StatsCollector();
@@ -95,11 +96,24 @@ export function processPlugin(pluginBuffer: Buffer, pluginName: string): Record<
     let offset = 0;
 
     while (offset + RECORD_HEADER.TOTAL_SIZE <= pluginBuffer.length) {
-      const { record, newOffset } = processRecord(pluginBuffer, offset, pluginName);
-      if (record) {
-        records.push(record);
+      const recordType = pluginBuffer.toString('ascii', offset, offset + 4);
+      
+      if (recordType === 'GRUP') {
+        // Process GRUP and get all records from it
+        const grupRecords = processGRUP(pluginBuffer, offset, pluginName);
+        records.push(...grupRecords);
+        
+        // Get the GRUP size from its header
+        const grupHeader = parseRecordHeader(pluginBuffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE));
+        offset += RECORD_HEADER.TOTAL_SIZE + grupHeader.dataSize;
+      } else {
+        // Process normal record
+        const { record, newOffset } = processRecord(pluginBuffer, offset, pluginName);
+        if (record) {
+          records.push(record);
+        }
+        offset = newOffset;
       }
-      offset = newOffset;
     }
 
     statsCollector.recordPluginProcessed();
