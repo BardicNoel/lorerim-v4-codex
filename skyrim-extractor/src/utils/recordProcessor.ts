@@ -1,6 +1,11 @@
 import { ParsedRecord, RecordHeader } from "../types";
 import { RECORD_HEADER, SUBRECORD_HEADER } from "./buffer.constants";
-import { parseRecordHeader, scanSubrecords } from "./recordParser";
+import {
+  parseRecordHeader,
+  scanSubrecords,
+  extractSubrecordDataAsBase64,
+} from "./recordParser";
+
 import {
   PROCESSED_RECORD_TYPES,
   ProcessedRecordType,
@@ -77,9 +82,11 @@ export function processRecord(
         plugin: pluginName,
       },
       data: {}, // Empty data since there are no subrecords
-      header: buffer
-        .slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
-        .toString("base64"),
+      header: JSON.stringify(
+        buffer
+          .slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
+          .toString("base64")
+      ),
     };
 
     return {
@@ -94,28 +101,20 @@ export function processRecord(
     offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize
   );
 
-  const subrecords: Record<string, Buffer[]> = {};
-  let subrecordOffset = 0;
+  const subrecords: Record<string, string[]> = {};
   for (const subrecord of scanSubrecords(data, 0).subrecords) {
     if (!subrecords[subrecord.header.type]) {
       subrecords[subrecord.header.type] = [];
     }
-    // if (subrecord.header.type === "EDID") {
-    //   const dataOffset = subrecordOffset + SUBRECORD_HEADER.TOTAL_SIZE;
-    //   const dataSize = subrecordOffset + subrecord.header.size;
-    //   debugLog(
-    //     `[recordProcessor] Found EDID subrecord at offset ${subrecordOffset}-${dataSize}: ${data
-    //       .slice(dataOffset, dataOffset + subrecord.header.size)
-    //       .toString("utf8")}`
-    //   );
-    // }
-    // Subrecord has a [header(4|2)][data(variable: header.size)] length. We need to set offsets
-    const subDataStart = subrecordOffset + SUBRECORD_HEADER.TOTAL_SIZE;
-    const subDataEnd = subDataStart + subrecord.header.size;
     subrecords[subrecord.header.type].push(
-      data.subarray(subDataStart, subDataEnd)
+      JSON.stringify(
+        extractSubrecordDataAsBase64(
+          data,
+          subrecord.offset,
+          subrecord.header.size
+        )
+      )
     );
-    subrecordOffset += SUBRECORD_HEADER.TOTAL_SIZE + subrecord.header.size;
   }
 
   const record: ParsedRecord = {
@@ -125,9 +124,9 @@ export function processRecord(
       plugin: pluginName,
     },
     data: subrecords,
-    header: buffer
-      .slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
-      .toString("base64"),
+    header: JSON.stringify(
+      buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE).toString("base64")
+    ),
   };
 
   return {

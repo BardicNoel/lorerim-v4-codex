@@ -10,14 +10,14 @@ describe('Core Processors', () => {
         type: 'MGEF',
         formId: '0x12345678',
         plugin: 'test.esp',
-        stackOrder: 0
+        stackOrder: 0,
       },
       data: {
-        'DATA': [Buffer.from('test data')],
-        'SNDD': [Buffer.from('sound data')]
+        DATA: ['test data'],
+        SNDD: ['sound data'],
       },
-      header: 'base64encodedheader'
-    }
+      header: 'base64encodedheader',
+    },
   ];
 
   describe('Filter Records Processor', () => {
@@ -29,9 +29,9 @@ describe('Core Processors', () => {
           {
             field: 'meta.type',
             operator: 'equals',
-            value: 'MGEF'
-          }
-        ]
+            value: 'MGEF',
+          },
+        ],
       };
 
       const processor = createProcessor(stage);
@@ -47,7 +47,7 @@ describe('Core Processors', () => {
       const stage: StageConfig = {
         name: 'remove-fields',
         type: 'remove-fields',
-        fields: ['data.SNDD']
+        fields: ['data.SNDD'],
       };
 
       const processor = createProcessor(stage);
@@ -65,17 +65,17 @@ describe('Core Processors', () => {
         type: 'remove-fields',
         fields: {
           data: {
-            'DATA': 'all',
-            'SNDD': 'all'
-          }
-        }
+            DATA: 'all',
+            SNDD: 'all',
+          },
+        },
       };
 
       const processor = createProcessor(stage);
       const result = await processor.transform(testData);
 
       const record = result[0] as ParsedRecord;
-      
+
       // Check that all data fields are removed
       expect(record.data).not.toHaveProperty('DATA');
       expect(record.data).not.toHaveProperty('SNDD');
@@ -87,7 +87,7 @@ describe('Core Processors', () => {
       const stage: StageConfig = {
         name: 'keep-fields',
         type: 'keep-fields',
-        fields: ['meta.type', 'meta.formId']
+        fields: ['meta.type', 'meta.formId'],
       };
 
       const processor = createProcessor(stage);
@@ -110,9 +110,9 @@ describe('Core Processors', () => {
           {
             pattern: 'test.esp',
             action: 'replace',
-            replacement: 'sanitized.esp'
-          }
-        ]
+            replacement: 'sanitized.esp',
+          },
+        ],
       };
 
       const processor = createProcessor(stage);
@@ -133,15 +133,15 @@ describe('Core Processors', () => {
             {
               field: 'meta.type',
               operator: 'equals',
-              value: 'MGEF'
-            }
-          ]
+              value: 'MGEF',
+            },
+          ],
         },
         {
           name: 'remove-fields',
           type: 'remove-fields',
-          fields: ['data.SNDD']
-        }
+          fields: ['data.SNDD'],
+        },
       ];
 
       const pipeline = createPipeline(stages);
@@ -158,10 +158,10 @@ describe('Core Processors', () => {
       const stage = {
         name: 'unknown',
         type: 'unknown-type' as any,
-        criteria: []
+        criteria: [],
       };
 
       expect(() => createProcessor(stage)).toThrow('Unknown stage type: unknown-type');
     });
   });
-}); 
+});

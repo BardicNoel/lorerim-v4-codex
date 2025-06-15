@@ -2,7 +2,11 @@ import { parentPort } from "worker_threads";
 import { RECORD_HEADER } from "../buffer.constants";
 import { Buffer } from "buffer";
 import { ParsedRecord } from "../../types";
-import { parseRecordHeader, scanSubrecords } from "../recordParser";
+import {
+  parseRecordHeader,
+  scanSubrecords,
+  extractSubrecordDataAsBase64,
+} from "../recordParser";
 import { ProcessedRecordType } from "../../constants/recordTypes";
 
 /**
@@ -190,19 +194,24 @@ export function processGrupRecord(
       continue;
     }
 
-    const data = buffer.slice(
+    const data = buffer.subarray(
       currentOffset + RECORD_HEADER.TOTAL_SIZE,
       currentOffset + RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize
     );
 
-    const subrecords: Record<string, Buffer[]> = {};
+    const subrecords: Record<string, string[]> = {};
     let subrecordOffset = 0;
     for (const subrecord of scanSubrecords(data, 0).subrecords) {
       if (!subrecords[subrecord.header.type]) {
         subrecords[subrecord.header.type] = [];
       }
+
       subrecords[subrecord.header.type].push(
-        data.slice(subrecordOffset, subrecordOffset + subrecord.header.size)
+        extractSubrecordDataAsBase64(
+          data,
+          subrecordOffset,
+          subrecord.header.size
+        )
       );
       subrecordOffset += subrecord.header.size;
     }

@@ -148,19 +148,19 @@ export function scanSubrecords(
     const remainingBytes = buffer.length - offset - SUBRECORD_HEADER.TOTAL_SIZE;
 
     // // Special handling for EDID subrecords
-    // if (header.type === "EDID") {
-    //   const dataOffset = offset + SUBRECORD_HEADER.TOTAL_SIZE;
-    //   const edidData = buffer.slice(dataOffset, dataOffset + header.size);
-    //   const edidString = edidData.toString("utf8").replace(/\0/g, "");
-    //   debugLog(`[scanSubrecords] Found EDID subrecord at offset ${offset}:`);
-    //   debugLog(`  dataSize: ${dataOffset + header.size}`);
-    //   debugLog(`  Size: ${header.size}`);
-    //   debugLog(`  Data: "${edidString}"`);
-    //   debugLog(`  raw: ${edidData.toString("utf8")}\n`);
-    //   debugLog(
-    //     `  Hex: ${getHexPreview(buffer, dataOffset, Math.min(header.size, 32))}`
-    //   );
-    // }
+    if (header.type === "FULL") {
+      const dataOffset = offset + SUBRECORD_HEADER.TOTAL_SIZE;
+      const edidData = buffer.slice(dataOffset, dataOffset + header.size);
+      const edidString = edidData.toString("utf8").replace(/\0/g, "");
+      debugLog(`[scanSubrecords] Found FULL subrecord at offset ${offset}:`);
+      debugLog(`  dataSize: ${dataOffset + header.size}`);
+      debugLog(`  Size: ${header.size}`);
+      debugLog(`  Data: "${edidString}"`);
+      debugLog(`  raw: ${edidData.toString("utf8")}\n`);
+      debugLog(
+        `  Hex: ${getHexPreview(buffer, dataOffset, Math.min(header.size, 32))}`
+      );
+    }
 
     if (isSuspiciousSize(header.size, remainingBytes)) {
       debugLog(
@@ -184,4 +184,21 @@ export function scanSubrecords(
 
   debugLog(`[scanSubrecords] Found ${subrecords.length} subrecords`);
   return { subrecords };
+}
+
+/**
+ * Extract subrecord data and convert to base64 string
+ * Used by GRUP processing
+ */
+export function extractSubrecordDataAsBase64(
+  buffer: Buffer,
+  offset: number,
+  size: number
+): string {
+  return buffer
+    .subarray(
+      offset + SUBRECORD_HEADER.TOTAL_SIZE,
+      offset + SUBRECORD_HEADER.TOTAL_SIZE + size
+    )
+    .toString("base64");
 }
