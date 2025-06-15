@@ -69,18 +69,18 @@ export class BufferDecoder {
     let currentOffset = offset;
     const endOffset = offset + length;
 
-    console.log(
-      `[DEBUG] Starting struct parse at offset ${offset}, length ${length}, endOffset ${endOffset}`
-    );
-    console.log(`[DEBUG] Buffer length: ${buffer.length}, Fields to parse: ${fields.length}`);
+    // console.log(
+    //   `[DEBUG] Starting struct parse at offset ${offset}, length ${length}, endOffset ${endOffset}`
+    // );
+    // console.log(`[DEBUG] Buffer length: ${buffer.length}, Fields to parse: ${fields.length}`);
 
     for (const field of fields) {
       if (!field.name) throw new Error('Struct field must have a name');
 
-      console.log(
-        `[DEBUG] Processing field "${field.name}" (${field.type}) at offset ${currentOffset}`
-      );
-      console.log(`[DEBUG] Remaining buffer: ${endOffset - currentOffset} bytes`);
+      // console.log(
+      //   `[DEBUG] Processing field "${field.name}" (${field.type}) at offset ${currentOffset}`
+      // );
+      // console.log(`[DEBUG] Remaining buffer: ${endOffset - currentOffset} bytes`);
 
       switch (field.type) {
         case 'string':
@@ -92,17 +92,17 @@ export class BufferDecoder {
             currentOffset += strLength;
           } else {
             strLength = buffer.readUInt16LE(currentOffset);
-            console.log(`[DEBUG] String length from buffer: ${strLength}`);
+            // console.log(`[DEBUG] String length from buffer: ${strLength}`);
             result[field.name] = this.parseString(buffer, field.encoding);
             currentOffset += 2 + strLength;
           }
-          console.log(`[DEBUG] After string: new offset ${currentOffset}`);
+          // console.log(`[DEBUG] After string: new offset ${currentOffset}`);
           break;
 
         case 'formid':
           result[field.name] = this.parseFormId(buffer, currentOffset);
           currentOffset += 4;
-          console.log(`[DEBUG] After formid: new offset ${currentOffset}`);
+          // console.log(`[DEBUG] After formid: new offset ${currentOffset}`);
           break;
 
         case 'uint8':
@@ -111,13 +111,13 @@ export class BufferDecoder {
         case 'float32':
           result[field.name] = this.parseNumeric(buffer, field.type);
           currentOffset += this.getTypeSize(field.type);
-          console.log(`[DEBUG] After ${field.type}: new offset ${currentOffset}`);
+          // console.log(`[DEBUG] After ${field.type}: new offset ${currentOffset}`);
           break;
 
         case 'struct':
           if (!('fields' in field)) throw new Error('Struct field must specify fields');
           const structLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] Nested struct length: ${structLength}`);
+          // console.log(`[DEBUG] Nested struct length: ${structLength}`);
           result[field.name] = this.parseStruct(
             buffer,
             currentOffset + 2,
@@ -126,7 +126,7 @@ export class BufferDecoder {
             false
           );
           currentOffset += 2 + structLength;
-          console.log(`[DEBUG] After nested struct: new offset ${currentOffset}`);
+          // console.log(`[DEBUG] After nested struct: new offset ${currentOffset}`);
           break;
 
         case 'array':
@@ -140,14 +140,14 @@ export class BufferDecoder {
             field.element
           );
           currentOffset += 2 + arrayLength;
-          console.log(`[DEBUG] After array: new offset ${currentOffset}`);
+          // console.log(`[DEBUG] After array: new offset ${currentOffset}`);
           break;
 
         case 'unknown':
           const unknownLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] Unknown field length: ${unknownLength}`);
+          // console.log(`[DEBUG] Unknown field length: ${unknownLength}`);
           currentOffset += 2 + unknownLength;
-          console.log(`[DEBUG] After unknown: new offset ${currentOffset}`);
+          // console.log(`[DEBUG] After unknown: new offset ${currentOffset}`);
           break;
       }
 
@@ -203,7 +203,7 @@ export class BufferDecoder {
           break;
 
         case 'formid':
-          const formId = this.parseFormId(buffer, currentOffset);
+          const formId = this.parseFormId(buffer.slice(currentOffset, currentOffset + 4), 0);
           results.push(formId);
           currentOffset += 4;
           break;
@@ -297,13 +297,13 @@ export class BufferDecoder {
         const tag = buffer.toString('ascii', offset, offset + 4);
         const length = buffer.readUInt16LE(offset + 4);
 
-        debugLog(`Processing field ${tag}:`, {
-          offset,
-          length,
-          bufferLength: buffer.length,
-          remainingBytes: buffer.length - offset,
-          hex: buffer.slice(offset, offset + 6).toString('hex'),
-        });
+        // debugLog(`Processing field ${tag}:`, {
+        //   offset,
+        //   length,
+        //   bufferLength: buffer.length,
+        //   remainingBytes: buffer.length - offset,
+        //   hex: buffer.slice(offset, offset + 6).toString('hex'),
+        // });
 
         const schema = this.getFieldSchema(recordType, tag);
 
@@ -465,7 +465,7 @@ function processRecordFields(
           break;
 
         case 'struct':
-          console.log(`[DEBUG] Struct field ${fieldName} in ${config.recordType}`);
+          // console.log(`[DEBUG] Struct field ${fieldName} in ${config.recordType}`);
           decodedField = decoder.parseStruct(buffer, 0, buffer.length, schema.fields);
           break;
 
@@ -477,7 +477,7 @@ function processRecordFields(
           decodedField = null;
       }
 
-      console.log(`[DEBUG] Successfully parsed record for ${fieldName}`);
+      // console.log(`[DEBUG] Successfully parsed record for ${fieldName}`);
 
       if (!processedRecord.decodedData) {
         processedRecord.decodedData = {};
