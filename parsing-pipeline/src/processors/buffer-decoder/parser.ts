@@ -234,15 +234,29 @@ export class BufferDecoder {
 
         case 'struct':
           if (!('fields' in elementSchema)) throw new Error('Struct element must specify fields');
-          const structLength = buffer.readUInt16LE(currentOffset);
-          const structData = this.parseStruct(
-            buffer,
-            currentOffset + 2,
-            structLength,
-            elementSchema.fields
-          );
-          results.push(structData);
-          currentOffset += 2 + structLength;
+
+          let structSize: number;
+          if ('size' in elementSchema && typeof elementSchema.size === 'number') {
+            structSize = elementSchema.size;
+            const structData = this.parseStruct(
+              buffer,
+              currentOffset,
+              structSize,
+              elementSchema.fields
+            );
+            results.push(structData);
+            currentOffset += structSize;
+          } else {
+            const structLength = buffer.readUInt16LE(currentOffset);
+            const structData = this.parseStruct(
+              buffer,
+              currentOffset + 2,
+              structLength,
+              elementSchema.fields
+            );
+            results.push(structData);
+            currentOffset += 2 + structLength;
+          }
           break;
 
         case 'formid':

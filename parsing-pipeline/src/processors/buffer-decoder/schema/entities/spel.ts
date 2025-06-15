@@ -125,6 +125,7 @@ export const spelSchema: RecordSpecificSchemas = createSchema('SPEL', {
     type: 'array',
     element: {
       type: 'struct',
+      size: 12, // fixed size: 4 bytes (float32) + 4 bytes (uint32) + 4 bytes (uint32)
       fields: [
         {
           name: 'magnitude',

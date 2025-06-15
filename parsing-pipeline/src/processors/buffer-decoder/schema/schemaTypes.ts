@@ -40,6 +40,7 @@ export interface NumericFieldSchema extends BaseFieldSchema {
 export interface StructFieldSchema extends NoPostParseSchema {
   type: 'struct';
   fields: FieldSchema[];
+  size?: number;
 }
 
 export interface UnknownFieldSchema extends BaseFieldSchema {
