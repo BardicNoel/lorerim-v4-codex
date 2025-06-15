@@ -1,5 +1,7 @@
-import { flagParserGenerator } from '../generics';
+import { flagParserGenerator, mapParserGenerator } from '../generics';
 import { RecordSpecificSchemas } from '../schemaTypes';
+import { actorValueMap } from '../actorValueMapRecord';
+import { createSchema } from '../createSchema';
 
 export const MGEFFlags: Record<number, string> = {
   0x00000001: 'Hostile',
@@ -24,52 +26,51 @@ export const MGEFFlags: Record<number, string> = {
   0x80000000: '?',
 };
 
-export const mgefSchema: RecordSpecificSchemas = {
-  MGEF: {
-    MDOB: { type: 'formid' },
-    ESCE: { type: 'formid' },
-    DATA: {
-      type: 'struct',
-      fields: [
-        { name: 'flags', type: 'uint32', parser: flagParserGenerator(MGEFFlags) },
-        { name: 'baseCost', type: 'float32' },
-        { name: 'relatedID', type: 'formid' },
-        { name: 'skill', type: 'int32' },
-        { name: 'resistanceAV', type: 'uint32' },
-        { name: 'unknown1', type: 'uint32' },
-        { name: 'castingLight', type: 'formid' },
-        { name: 'taperWeight', type: 'float32' },
-        { name: 'hitShader', type: 'formid' },
-        { name: 'enchantShader', type: 'formid' },
-        { name: 'skillLevel', type: 'uint32' },
-        { name: 'area', type: 'uint32' },
-        { name: 'castingTime', type: 'float32' },
-        { name: 'taperCurve', type: 'float32' },
-        { name: 'taperDuration', type: 'float32' },
-        { name: 'secondAVWeight', type: 'float32' },
-        { name: 'effectType', type: 'uint32' },
-        { name: 'primaryAV', type: 'int32' },
-        { name: 'projectileID', type: 'formid' },
-        { name: 'explosionID', type: 'formid' },
-        { name: 'castType', type: 'uint32' },
-        { name: 'deliveryType', type: 'uint32' },
-        { name: 'secondAV', type: 'int32' },
-        { name: 'castingArt', type: 'formid' },
-        { name: 'hitEffectArt', type: 'formid' },
-        { name: 'impactDataID', type: 'formid' },
-        { name: 'skillUsageMult', type: 'float32' },
-        { name: 'dualCastID', type: 'formid' },
-        { name: 'dualCastScale', type: 'float32' },
-        { name: 'enchantArtID', type: 'formid' },
-        { name: 'nullData1', type: 'uint32' },
-        { name: 'nullData2', type: 'uint32' },
-        { name: 'equipAbility', type: 'formid' },
-        { name: 'imageSpaceModID', type: 'formid' },
-        { name: 'perkID', type: 'formid' },
-        { name: 'soundVolume', type: 'uint32' },
-        { name: 'scriptAIDataScore', type: 'float32' },
-        { name: 'scriptAIDataDelayTime', type: 'float32' },
-      ],
-    },
+export const mgefSchema: RecordSpecificSchemas = createSchema('MGEF', {
+  MDOB: { type: 'formid' },
+  ESCE: { type: 'formid' },
+  DATA: {
+    type: 'struct',
+    fields: [
+      { name: 'flags', type: 'uint32', parser: flagParserGenerator(MGEFFlags) },
+      { name: 'baseCost', type: 'float32' },
+      { name: 'relatedID', type: 'formid' },
+      { name: 'skill', type: 'int32' },
+      { name: 'resistanceAV', type: 'uint32', parser: mapParserGenerator(actorValueMap) },
+      { name: 'unknown1', type: 'uint32' },
+      { name: 'castingLight', type: 'formid' },
+      { name: 'taperWeight', type: 'float32' },
+      { name: 'hitShader', type: 'formid' },
+      { name: 'enchantShader', type: 'formid' },
+      { name: 'skillLevel', type: 'uint32' },
+      { name: 'area', type: 'uint32' },
+      { name: 'castingTime', type: 'float32' },
+      { name: 'taperCurve', type: 'float32' },
+      { name: 'taperDuration', type: 'float32' },
+      { name: 'secondAVWeight', type: 'float32' },
+      { name: 'effectType', type: 'uint32' },
+      { name: 'primaryAV', type: 'int32', parser: mapParserGenerator(actorValueMap) },
+      { name: 'projectileID', type: 'formid' },
+      { name: 'explosionID', type: 'formid' },
+      { name: 'castType', type: 'uint32' },
+      { name: 'deliveryType', type: 'uint32' },
+      { name: 'secondAV', type: 'int32' },
+      { name: 'castingArt', type: 'formid' },
+      { name: 'hitEffectArt', type: 'formid' },
+      { name: 'impactDataID', type: 'formid' },
+      { name: 'skillUsageMult', type: 'float32' },
+      { name: 'dualCastID', type: 'formid' },
+      { name: 'dualCastScale', type: 'float32' },
+      { name: 'enchantArtID', type: 'formid' },
+      { name: 'nullData1', type: 'uint32' },
+      { name: 'nullData2', type: 'uint32' },
+      { name: 'equipAbility', type: 'formid' },
+      { name: 'imageSpaceModID', type: 'formid' },
+      { name: 'perkID', type: 'formid' },
+      { name: 'soundVolume', type: 'uint32' },
+      { name: 'scriptAIDataScore', type: 'float32' },
+      { name: 'scriptAIDataDelayTime', type: 'float32' },
+    ],
   },
-};
+  // SSND omitted
+});

@@ -5,3 +5,10 @@ export const flagParserGenerator = (flagsMap: Record<number, string>) => {
       .map(([, label]) => label);
   };
 };
+
+export const mapParserGenerator = (map: Record<number, any>) => {
+  return (value: number): any => {
+    const resolved = map[value];
+    return resolved ?? null;
+  };
+};

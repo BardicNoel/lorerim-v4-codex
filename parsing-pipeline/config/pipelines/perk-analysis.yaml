@@ -1,0 +1,35 @@
+# Import base pipeline configuration
+name: 'PERK Analysis Pipeline'
+description: 'Process PERK data for analysis'
+input: '../output/skyrim-extractor/mod-samples/PERK.json'
+# input: '../output/parsing-pipeline/1.PERK_Analysis.json'
+output: '../output/parsing-pipeline/1.PERK_Analysis.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'PERK'
+
+  - from: 'local'
+    name: 'Remove PERK Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove PERK-specific fields that are not needed for analysis'
+    fields:
+      # data: 'all'
+      header: 'all'
+      decodedData:
+        - MDOB
+        # - DATA:
+        #     - trait
+        #     - minLevel
+        #     - ranks
+        #     - playable
+        #     - hidden
+        #     - skill
+        #     - attribute
+        #     - perkConditions
+        #     - entryPoints
+        #     - perkEffects

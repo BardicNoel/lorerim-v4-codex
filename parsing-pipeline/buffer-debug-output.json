@@ -1,10 +1,10 @@
 {
-  "totalRecords": 752,
+  "totalRecords": 471,
   "sampleRecords": [
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "0403821B",
+        "type": "SPEL",
+        "formId": "041E705A",
         "plugin": "Wintersun - Faiths of Skyrim.esp",
         "stackOrder": 0
       },
@@ -14,21 +14,21 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "V1NOX0RhZWRyYV9Nb2xhZ0JhbF9Cb29uMl9FZmZlY3RfUHJvY09uVGFyZ2V0AA==",
+            "value": "V1NOX01pc2NfQmFhbkRhcl9UZW5ldHNfU3BlbGxfQWIA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"V1NOX0RhZWRyYV9Nb2xhZ0JhbF9Cb29uMl9FZmZlY3RfUHJvY09uVGFyZ2V0AA==\""
+            "stringified": "\"V1NOX01pc2NfQmFhbkRhcl9UZW5ldHNfU3BlbGxfQWIA\""
           }
         },
-        "VMAD": {
+        "OBND": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "BQACAAEAFwBXU05fQmFuaXNoTGl2aW5nX1NjcmlwdAAKABUAV1NOX1NlY29uZHNCZWZvcmVLaWxsBAEAAAA/DQBNQUdCYW5pc2hJbW9kAQEAAP//m/cGABAAV1NOX1RyYWNrZXJRdWVzdAEBAAD//wFZAAQXAEJhbmlzaFRhcmdldEZYQWN0aXZhdG9yAQEAAP//1J4MAAkAV1NOX0NoZXN0AQEAAP//HoIDBBkAV1NOX0l0ZW1fQmlyZF9FZmZlY3RfRW5jaAEBAAD//2HwJwQRAFdTTl9LZWVwT3duZXJzaGlwBQEADABXU05fRmF2b3JNb2QEAQAAcMEJAFBsYXllclJlZgEBAAD//xQAAAAXAFdTTl9TZWNvbmRzQmVmb3JlRGVsZXRlBAEAAGBA",
+            "value": "AAAAAAAAAAAAAAAA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"BQACAAEAFwBXU05fQmFuaXNoTGl2aW5nX1NjcmlwdAAKABUAV1NOX1NlY29uZHNCZWZvcmVLaWxsBAEAAAA/DQBNQUdCYW5pc2hJbW9kAQEAAP//m/cGABAAV1NOX1RyYWNrZXJRdWVzdAEBAAD//wFZAAQXAEJhbmlzaFRhcmdldEZYQWN0aXZhdG9yAQEAAP//1J4MAAkAV1NOX0NoZXN0AQEAAP//HoIDBBkAV1NOX0l0ZW1fQmlyZF9FZmZlY3RfRW5jaAEBAAD//2HwJwQRAFdTTl9LZWVwT3duZXJzaGlwBQEADABXU05fRmF2b3JNb2QEAQAAcMEJAFBsYXllclJlZgEBAAD//xQAAAAXAFdTTl9TZWNvbmRzQmVmb3JlRGVsZXRlBAEAAGBA\""
+            "stringified": "\"AAAAAAAAAAAAAAAA\""
           }
         },
         "FULL": {
@@ -36,10 +36,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "SW50byB0aGUgTWF3AA==",
+            "value": "Rm9sbG93ZXIgb2YgQmFhbiBEYXIA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"SW50byB0aGUgTWF3AA==\""
+            "stringified": "\"Rm9sbG93ZXIgb2YgQmFhbiBEYXIA\""
           }
         },
         "MDOB": {
@@ -53,23 +53,67 @@
             "stringified": "\"PPkABA==\""
           }
         },
-        "DATA": {
+        "ETYP": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "BQgAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEAAAD/////AAAAAAAAAAABAAAAAQAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+            "value": "RD8BAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"BQgAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEAAAD/////AAAAAAAAAAABAAAAAQAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\""
+            "stringified": "\"RD8BAA==\""
+          }
+        },
+        "DESC": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AA==\""
+          }
+        },
+        "SPIT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AAAAAAAAMAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAAAAAAAMAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
+          }
+        },
+        "EFID": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "WXAeBA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"WXAeBA==\""
+          }
+        },
+        "EFIT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AAAAAAAAAAAAAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAAAAAAAAAAAAAAA\""
           }
         }
       }
     },
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "04102E6F",
+        "type": "SPEL",
+        "formId": "0404756E",
         "plugin": "Wintersun - Faiths of Skyrim.esp",
         "stackOrder": 0
       },
@@ -79,21 +123,21 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "V1NOX0RpdmluZV9TdGVuZGFycl9Cb29uMV9FZmZlY3RfQWJfSXNWYW1waXJlRGV0ZWN0b3IA",
+            "value": "V1NOX0RpdmluZV9UYWxvc19Cb29uMl9TcGVsbF9DbG9ha1Byb2MA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"V1NOX0RpdmluZV9TdGVuZGFycl9Cb29uMV9FZmZlY3RfQWJfSXNWYW1waXJlRGV0ZWN0b3IA\""
+            "stringified": "\"V1NOX0RpdmluZV9UYWxvc19Cb29uMl9TcGVsbF9DbG9ha1Byb2MA\""
           }
         },
-        "VMAD": {
+        "OBND": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "BQACAAEAHABXU05fVmFtcGlyZVB1bmlzaG1lbnRfU2NyaXB0AAYACQBXU05fU3BlbGwBAQAA//9hJAQECwBXU05fTWVzc2FnZQEBAAD///ZbBgQWAFdTTl9TaG93U3RhdHVzTWVzc2FnZXMFAQEQAFdTTl9UcmFja2VyUXVlc3QBAQAA//8BWQAEDABXU05fRmF2b3JNb2QEAQAAesQVAFdTTl9VcGRhdGVJbW1lZGlhdGVseQUBAQ==",
+            "value": "AAAAAAAAAAAAAAAA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"BQACAAEAHABXU05fVmFtcGlyZVB1bmlzaG1lbnRfU2NyaXB0AAYACQBXU05fU3BlbGwBAQAA//9hJAQECwBXU05fTWVzc2FnZQEBAAD///ZbBgQWAFdTTl9TaG93U3RhdHVzTWVzc2FnZXMFAQEQAFdTTl9UcmFja2VyUXVlc3QBAQAA//8BWQAEDABXU05fRmF2b3JNb2QEAQAAesQVAFdTTl9VcGRhdGVJbW1lZGlhdGVseQUBAQ==\""
+            "stringified": "\"AAAAAAAAAAAAAAAA\""
           }
         },
         "FULL": {
@@ -101,10 +145,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "RHJhaW4gRmF2b3Igb24gQmVjb21pbmcgVW5kZWFkAA==",
+            "value": "RHJhZ29uIG9mIHRoZSBOb3J0aAA=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"RHJhaW4gRmF2b3Igb24gQmVjb21pbmcgVW5kZWFkAA==\""
+            "stringified": "\"RHJhZ29uIG9mIHRoZSBOb3J0aAA=\""
           }
         },
         "MDOB": {
@@ -118,23 +162,67 @@
             "stringified": "\"PPkABA==\""
           }
         },
-        "DATA": {
+        "ETYP": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "AIoAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////AAAAAAAAAAAAAAAAAAAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=",
+            "value": "RD8BAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AIoAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////AAAAAAAAAAAAAAAAAAAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=\""
+            "stringified": "\"RD8BAA==\""
+          }
+        },
+        "DESC": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AA==\""
+          }
+        },
+        "SPIT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AAAAAAAAOAAAAAAAAAAAPwIAAAACAAAAAAAAAAAAAAAAAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAAAAAAAOAAAAAAAAAAAPwIAAAACAAAAAAAAAAAAAAAAAAAA\""
+          }
+        },
+        "EFID": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "bXUEBA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"bXUEBA==\""
+          }
+        },
+        "EFIT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AAAgQQAAAAABAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAAgQQAAAAABAAAA\""
           }
         }
       }
     },
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "04102E71",
+        "type": "SPEL",
+        "formId": "04065BEE",
         "plugin": "Wintersun - Faiths of Skyrim.esp",
         "stackOrder": 0
       },
@@ -144,21 +232,21 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "V1NOX0RpdmluZV9TdGVuZGFycl9Cb29uMV9FZmZlY3RfQWJfU3VtbW9uRGV0ZWN0b3IA",
+            "value": "V1NOX0FsdGFyQmxlc3NpbmdfRGFlZHJhX01lcmlkaWFfU3BlbGwA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"V1NOX0RpdmluZV9TdGVuZGFycl9Cb29uMV9FZmZlY3RfQWJfU3VtbW9uRGV0ZWN0b3IA\""
+            "stringified": "\"V1NOX0FsdGFyQmxlc3NpbmdfRGFlZHJhX01lcmlkaWFfU3BlbGwA\""
           }
         },
-        "VMAD": {
+        "OBND": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "BQACAAEAEwBXU05fRmF2b3JNb2RfU2NyaXB0AAUADABXU05fRmF2b3JNb2QEAQAAIMIWAFdTTl9TaG93U3RhdHVzTWVzc2FnZXMFAQAQAFdTTl9UcmFja2VyUXVlc3QBAQAA//8BWQAECQBQbGF5ZXJSZWYBAQAA//8UAAAAFQBXU05fVXBkYXRlSW1tZWRpYXRlbHkFAQE=",
+            "value": "AAAAAAAAAAAAAAAA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"BQACAAEAEwBXU05fRmF2b3JNb2RfU2NyaXB0AAUADABXU05fRmF2b3JNb2QEAQAAIMIWAFdTTl9TaG93U3RhdHVzTWVzc2FnZXMFAQAQAFdTTl9UcmFja2VyUXVlc3QBAQAA//8BWQAECQBQbGF5ZXJSZWYBAQAA//8UAAAAFQBXU05fVXBkYXRlSW1tZWRpYXRlbHkFAQE=\""
+            "stringified": "\"AAAAAAAAAAAAAAAA\""
           }
         },
         "FULL": {
@@ -166,10 +254,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "RHJhaW4gRmF2b3Igb24gU3VtbW9uIFVuZGVhZCBvciBEYWVkcmEA",
+            "value": "Qmxlc3Npbmcgb2YgTWVyaWRpYQA=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"RHJhaW4gRmF2b3Igb24gU3VtbW9uIFVuZGVhZCBvciBEYWVkcmEA\""
+            "stringified": "\"Qmxlc3Npbmcgb2YgTWVyaWRpYQA=\""
           }
         },
         "MDOB": {
@@ -183,23 +271,78 @@
             "stringified": "\"PPkABA==\""
           }
         },
-        "DATA": {
+        "ETYP": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "AIoAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////AAAAAAAAAAAAAAAAAAAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=",
+            "value": "RD8BAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AIoAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////AAAAAAAAAAAAAAAAAAAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=\""
+            "stringified": "\"RD8BAA==\""
+          }
+        },
+        "DESC": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AA==\""
+          }
+        },
+        "SPIT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "IgAAAAAAMAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"IgAAAAAAMAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA\""
+          }
+        },
+        "EFID": {
+          "isArray": true,
+          "length": 4,
+          "firstItem": {
+            "type": "string",
+            "value": "6lsGBA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"6lsGBA==\""
+          }
+        },
+        "EFIT": {
+          "isArray": true,
+          "length": 4,
+          "firstItem": {
+            "type": "string",
+            "value": "AAAgQQAAAACAcAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAAgQQAAAACAcAAA\""
+          }
+        },
+        "CTDA": {
+          "isArray": true,
+          "length": 2,
+          "firstItem": {
+            "type": "string",
+            "value": "AAAAAAAAAADWAAAAt38QBAAAAAAAAAAAAAAAAP////8=",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAAAAAAAAADWAAAAt38QBAAAAAAAAAAAAAAAAP////8=\""
           }
         }
       }
     },
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "04102E75",
+        "type": "SPEL",
+        "formId": "04028EE2",
         "plugin": "Wintersun - Faiths of Skyrim.esp",
         "stackOrder": 0
       },
@@ -209,21 +352,21 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "V1NOX0RpdmluZV9TaG9yX0Jvb24yX0VmZmVjdF9DbG9ha1Byb2NfU3VtbW9uRXBpYwA=",
+            "value": "V1NOX01pc2NfTWFnbnVzX0Jvb24yX1NwZWxsX1Byb2NPblRhcmdldAA=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"V1NOX0RpdmluZV9TaG9yX0Jvb24yX0VmZmVjdF9DbG9ha1Byb2NfU3VtbW9uRXBpYwA=\""
+            "stringified": "\"V1NOX01pc2NfTWFnbnVzX0Jvb24yX1NwZWxsX1Byb2NPblRhcmdldAA=\""
           }
         },
-        "VMAD": {
+        "OBND": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "BQACAAEAEgBXU05fRGVzdGlueV9TY3JpcHQABAAiAFdTTl9FZmZlY3RfR2xvYmFsX0Rlc3RpbnlBY3RpdmF0ZWQBAQAA//8hyRcEMgBXU05fRWZmZWN0c19NZXNzYWdlX1NoZXphcnJfQm9vbjJfRGVzdGlueUFjdGl2YXRlZAEBAAD//yLJFwQrAFdTTl9EaXZpbmVfU2hlemFycl9Cb29uMl9LZXl3b3JkX1Byb2NPblNlbGYBAQAA//95LhAEKQBXU05fRGl2aW5lX1NoZXphcnJfQm9vbjJfU3BlbGxfUHJvY09uU2VsZgEBAAD//3wuEAQ=",
+            "value": "AAAAAAAAAAAAAAAA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"BQACAAEAEgBXU05fRGVzdGlueV9TY3JpcHQABAAiAFdTTl9FZmZlY3RfR2xvYmFsX0Rlc3RpbnlBY3RpdmF0ZWQBAQAA//8hyRcEMgBXU05fRWZmZWN0c19NZXNzYWdlX1NoZXphcnJfQm9vbjJfRGVzdGlueUFjdGl2YXRlZAEBAAD//yLJFwQrAFdTTl9EaXZpbmVfU2hlemFycl9Cb29uMl9LZXl3b3JkX1Byb2NPblNlbGYBAQAA//95LhAEKQBXU05fRGl2aW5lX1NoZXphcnJfQm9vbjJfU3BlbGxfUHJvY09uU2VsZgEBAAD//3wuEAQ=\""
+            "stringified": "\"AAAAAAAAAAAAAAAA\""
           }
         },
         "FULL": {
@@ -231,10 +374,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "RGVzdGlueQA=",
+            "value": "QmxpbmQgdG8gdGhlIFN1bgA=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"RGVzdGlueQA=\""
+            "stringified": "\"QmxpbmQgdG8gdGhlIFN1bgA=\""
           }
         },
         "MDOB": {
@@ -248,23 +391,67 @@
             "stringified": "\"PPkABA==\""
           }
         },
-        "DATA": {
+        "ETYP": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "FIwADAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////zy8BAAAAAAACAAAAAgAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=",
+            "value": "RD8BAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"FIwADAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////zy8BAAAAAAACAAAAAgAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=\""
+            "stringified": "\"RD8BAA==\""
+          }
+        },
+        "DESC": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AA==\""
+          }
+        },
+        "SPIT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AAAAAAAAMAAAAAAAAAAAAAEAAAABAAAAAAAAAAAAAAAAAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAAAAAAAMAAAAAAAAAAAAAEAAAABAAAAAAAAAAAAAAAAAAAA\""
+          }
+        },
+        "EFID": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "244CBA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"244CBA==\""
+          }
+        },
+        "EFIT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AAB6RAAAAAAPAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAB6RAAAAAAPAAAA\""
           }
         }
       }
     },
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "04102E78",
+        "type": "SPEL",
+        "formId": "040A2911",
         "plugin": "Wintersun - Faiths of Skyrim.esp",
         "stackOrder": 0
       },
@@ -274,10 +461,21 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "V1NOX0RpdmluZV9TaG9yX0Jvb24yX0VmZmVjdF9Qcm9jT25TZWxmX1N1bW1vbgA=",
+            "value": "V1NOX0RhZWRyYV9Ob2N0dXJuYWxfQm9vbjFfU3BlbGxfQWIA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"V1NOX0RpdmluZV9TaG9yX0Jvb24yX0VmZmVjdF9Qcm9jT25TZWxmX1N1bW1vbgA=\""
+            "stringified": "\"V1NOX0RhZWRyYV9Ob2N0dXJuYWxfQm9vbjFfU3BlbGxfQWIA\""
+          }
+        },
+        "OBND": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AAAAAAAAAAAAAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAAAAAAAAAAAAAAA\""
           }
         },
         "FULL": {
@@ -285,10 +483,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "RGVzdGlueQA=",
+            "value": "Rm9sbG93ZXIgb2YgTm9jdHVybmFsAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"RGVzdGlueQA=\""
+            "stringified": "\"Rm9sbG93ZXIgb2YgTm9jdHVybmFsAA==\""
           }
         },
         "MDOB": {
@@ -302,37 +500,59 @@
             "stringified": "\"PPkABA==\""
           }
         },
-        "KSIZ": {
+        "ETYP": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "AQAAAA==",
+            "value": "RD8BAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AQAAAA==\""
+            "stringified": "\"RD8BAA==\""
           }
         },
-        "KWDA": {
+        "DESC": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "KUgCAA==",
+            "value": "AA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"KUgCAA==\""
+            "stringified": "\"AA==\""
           }
         },
-        "DATA": {
+        "SPIT": {
           "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "ABxACAAAAADDrxkE//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAD/////AAAAAAAAAAABAAAAAAAAAP////8AAAAAEfgDAOmhAwAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=",
+            "value": "AAAAAAAAMAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"ABxACAAAAADDrxkE//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAD/////AAAAAAAAAAABAAAAAAAAAP////8AAAAAEfgDAOmhAwAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=\""
+            "stringified": "\"AAAAAAAAMAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\""
+          }
+        },
+        "EFID": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "ECkKBA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"ECkKBA==\""
+          }
+        },
+        "EFIT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AACgQQAAAAAAAAAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AACgQQAAAAAAAAAA\""
           }
         }
       }
@@ -343,6 +563,6 @@
     "name": "Decode Binary Records",
     "type": "buffer-decoder",
     "description": "Decode binary record data into structured format",
-    "recordType": "MGEF"
+    "recordType": "SPEL"
   }
 }

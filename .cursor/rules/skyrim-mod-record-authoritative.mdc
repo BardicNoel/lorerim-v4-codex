@@ -1,0 +1,44 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Skyrim Mod Record Schema Guidelines
+
+## Authoritative Source
+When working with Skyrim Mod Record schemas, use the authoritative source:
+https://en.uesp.net/wiki/Skyrim_Mod:Mod_File_Format/${RECORD_TYPE} | where record type is mentioned in chat such as SPEL | PERK | MGEF
+
+## Flag Parser Implementation
+When implementing flag fields in schemas:
+
+1. Define flag constants as a Record mapping hex values to descriptive names:
+```typescript
+export const MyRecordFlags: Record<number, string> = {
+  0x00000001: 'Flag One',
+  0x00000002: 'Flag Two',
+  0x00000004: 'Flag Three',
+  // ... more flags
+};
+```
+
+2. Use the flagParserGenerator in the schema definition:
+```typescript
+{
+  name: 'flags',
+  type: 'uint32',
+  parser: flagParserGenerator(MyRecordFlags)
+}
+```
+
+3. The parser will return an array of active flag names. For example:
+```typescript
+// If flags value is 0x00000003 (binary: 0011)
+// The parser will return: ['Flag One', 'Flag Two']
+```
+
+4. Flag values should be powers of 2 (1, 2, 4, 8, etc.) represented in hex
+5. Use descriptive names that match the UESP documentation
+
+
+6. For unknown flags, use '?' as the value

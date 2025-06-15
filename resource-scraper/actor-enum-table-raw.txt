@@ -1,0 +1,164 @@
+0	Aggression	AI	Enum: Unaggressive (does not initiate combat), Aggressive (attacks Enemies), Very Aggressive (attacks Enemies and Neutrals), Frenzied (attacks anyone). (0-3)	0x000004B0
+1	Confidence	AI	Willingness to fight, based on their strength vs the attacker's strength. Enum: Cowardly (always flee), Cautious, Average, Brave, Foolhardy (never flee). (0-4)	0x000004B1
+2	Energy	AI	Used by sandbox AI to determine how often to perform a different sandbox behavior. (%)	0x000004B2
+3	Morality	AI	Will this Follower comply when the player asks him/her to perform a crime? Enum: Any Crime, Violence Against Enemies, Property Crime Only, No Crime. (0-3)	0x000004B3
+4	Mood	AI	Default facial expression. May have no effect in certain cases. Enum: Neutral, Angry, Fear, Happy, Sad, Surprised, Puzzled, Disgusted. (0-7)	0x000004B4
+5	Assistance	AI	Will this actor feel compelled to help others in combat? Enum: Helps Nobody, Helps Allies, Helps Friends and Allies. (0-2)	0x000004B5
+6	OneHanded	Skill		0x0000044C
+7	TwoHanded	Skill		0x0000044D
+8	Marksman	Skill		0x0000044E
+9	Block	Skill		0x0000044F
+10	Smithing	Skill		0x00000450
+11	HeavyArmor	Skill		0x00000451
+12	LightArmor	Skill		0x00000452
+13	Pickpocket	Skill		0x00000453
+14	Lockpicking	Skill		0x00000454
+15	Sneak	Skill		0x00000455
+16	Alchemy	Skill		0x00000456
+17	Speechcraft	Skill		0x00000457
+18	Alteration	Skill		0x00000458
+19	Conjuration	Skill		0x00000459
+20	Destruction	Skill		0x0000045A
+21	Illusion	Skill		0x0000045B
+22	Restoration	Skill		0x0000045C
+23	Enchanting	Skill		0x0000045D
+24	Health	Attribute	Actual Current and Maximum Health, 0 results in death	0x000003E8
+25	Magicka	Attribute	Actual Current and Maximum Magicka, can not be lower than 0	0x000003E9
+26	Stamina	Attribute	Actual Current and Maximum Stamina, can not be lower than 0	0x000003EA
+27	HealRate	Mult	Percentage of max health to regenerate per second (default 0.7 for each player race).	0x000003EB
+28	MagickaRate	Mult	Percentage of max magicka to regenerate per second (default 3.0 for each player race).	0x000003EC
+29	StaminaRate	Mult	Percentage of max stamina to regenerate per second (default 5.0 for each player race).	0x000003ED
+30	SpeedMult	Mult	Movement speed percentage (default 100). (%)	0x000003EE
+31	InventoryWeight	Stat	Collective weight of everything in your inventory.	0x000003EF
+32	CarryWeight	Stat	Max points of weight you can carry without being forced to walk.	0x000003F0
+33	CritChance	Stat	Your chance to score a critical hit; critical hit damage is based on weapon stats, but can be increased through perks. (%)	0x000003F1
+34	MeleeDamage	Stat	Modifies the listed damage of your weapons (default 0). The modifier actually affects the damage display of the weapons in your inventory. (+points)	0x000003F2
+35	UnarmedDamage	Stat	Modifies the damage of your fists. (+points)	0x000003F3
+36	Mass	Stat	Hidden stat that affects staggering, etc.	0x000003F4
+37	VoicePoints	Obsolete	Unknown, is supposedly related to a pool of points from which NPCs tap when shouting, but seems to be always 0 for NPCs and 100 for the player. Probably unused.	0x000003F5
+38	VoiceRate	Obsolete	Unknown, is supposedly related to a pool of points from which NPCs tap when shouting. Seems to be always 5. Probably unused.	0x000003F6
+39	DamageResist	Resist	Armor rating (points, not damage reduction %).	0x000005CE
+40	PoisonResist	Resist	Poison resistance.	0x000005CF
+41	FireResist	Resist	Fire resistance.	0x000005D0
+42	ElectricResist	Resist	Shock resistance.	0x000005D1
+43	FrostResist	Resist	Frost resistance.	0x000005D2
+44	MagicResist	Resist	Magic resistance (resistance against all types of damage as well as paralysis duration).	0x000005D3
+45	DiseaseResist	Resist	Chance to not contract a disease.	0x000005D4
+46	PerceptionCondition	Obsolete		0x000005D5
+47	EnduranceCondition	Obsolete		0x000005D6
+48	LeftAttackCondition	Obsolete		0x000005D7
+49	RightAttackCondition	Obsolete		0x000005D8
+50	LeftMobilityCondition	Obsolete		0x000005D9
+51	RightMobilityCondition	Obsolete		0x000005DA
+52	BrainCondition	Obsolete		0x000005DB
+53	Paralysis	Status	When not 0, prevents movement and attacking.	0x000005DC
+54	Invisibility	Status	When not 0, grants invisibility (not the associated visuals).	0x000005DD
+55	NightEye	Obsolete?	Not actually used by the Night Eye effect.	0x000005DE
+56	DetectLifeRange	Obsolete?	Werewolf version of Detect Life applies this to NPCs with a magnitude of 20; this is the only place where this is used.	0x000005DF
+57	WaterBreathing	Status	When not 0, grants waterbreathing.	0x000005E0*
+58	WaterWalking	Status	When not 0, grants waterwalking.	0x000005E1*
+59	IgnoreCrippledLimbs	Obsolete		0x000005E2
+60	Fame	Obsolete		0x000005E3
+61	Infamy	Obsolete		0x000005E4
+62	JumpingBonus	Obsolete	No effect.	0x000005E5
+63	WardPower	Buffer	Absorbs incoming spell damage by subtracting the damage from itself, used in ward spells. Exists as a straight bonus on Spellbreaker, or "Accum. Magnitude" (charge-up) on wards.	0x000005E6*
+64	RightItemCharge/EquippedItemCharge	Stat	The number of charges remaining in an item equipped in the right hand (i.e. enchanted weapons, magical staffs, etc.).	0x000005E7
+65	ArmorPerks	Perk	Armor rating multiplier (default 0). (0.25 = +25% armor rating)	0x000005E8
+66	ShieldPerks	Obsolete?		0x000005E9
+67	WardDeflection	Obsolete?	Is 0 and does not seem to change when using wards.	0x000005EA*
+68	Variable01	User-defined	See the Creation Kit Wiki.	0x000005EB
+69	Variable02	User-defined	0x000005EC
+70	Variable03	User-defined	0x000005ED
+71	Variable04	User-defined	0x000005EE*
+72	Variable05	User-defined	0x000005EF*
+73	Variable06	User-defined	0x000005F0
+74	Variable07	User-defined	0x000005F1
+75	Variable08	User-defined	0x000005F2
+76	Variable09	User-defined	0x000005F3
+77	Variable10	User-defined	0x000005F4
+78	BowSpeedBonus	Perk	Slows time when zoomed in with a bow (1 = normal time, 0.5 = half speed).	0x000005F5
+79	FavorActive	Obsolete		0x000005F6
+80	FavorsPerDay	Obsolete		0x000005F7
+81	FavorsPerDayTimer	Obsolete		0x000005F8
+82	LeftItemCharge/EquippedStaffCharge	Stat	The number of charges remaining in an item equipped in the left hand (i.e. enchanted weapons, magical staffs, etc.).	0x000005F9
+83	AbsorbChance	Stat	Chance to negate an incoming spell and grant magicka equal to its base casting cost. (%)	0x000005FA
+84	Blindness	Stat	Affects this actor's ability to spot you while sneaking and out of combat (default 0). At maximum, you can only be detected by this actor through sound, but it does not work in combat. (%)	0x000005FB
+85	WeaponSpeedMult	Mod	Weapon attack speed, Bow draw speed. (This is an odd modifier because the default is 0 and yet it is a multiplier, meaning 1 = 100%, 0.5 = 50%, 2 = 200% but 0 = also 100%)	0x000005FC
+86	ShoutRecoveryMult	Mod	How much are you waiting for shout recovery. (1 = 100%, 0.5 = 50% of original time).	0x000005FD
+87	BowStaggerBonus	Stat	Chance to stagger enemies with bow shots. (1 = Sets the stagger bonus for a heavy stagger no matter the bow's damage or how much the bow is drawn, 0.1 = a light stagger no matter the bow's damage or how much the bow's drawn. For example, if you spend a skill point on Power Shot in the Archery skill tree, it will add to the bonus.)	0x000005FE
+88	Telekinesis	Status	Is set to 1 when the Telekinesis spell is equipped, otherwise 0. Responsible for toggling the UI to display the name and stats of distant items, as well as the ability to grab distant items with Telekinesis as opposed to being limited to pick-up range. Other values are the same as 1.	0x000005FF
+89	FavorPointsBonus	Obsolete		0x00000600
+90	LastBribedIntimidated	Obsolete		0x00000601
+91	LastFlattered	Obsolete		0x00000602
+92	MovementNoiseMult	Stat	Reduction in movement noise. (1 = no reduction, 0 = 100% reduction)	0x00000603
+93	BypassVendorStolenCheck	Status	Sell stolen items to any vendor.	0x00000604
+94	BypassVendorKeywordCheck	Status	Sell non-stolen items of any type to any vendor.	0x00000605
+95	WaitingForPlayer	AI	Returns 1 if Follower is waiting for player.	0x00000606
+96	OneHandedMod	Mod	Skill modifiers[1]	0x00000607
+97	TwoHandedMod	Mod		0x00000608
+98	MarksmanMod	Mod	Bow damage	0x00000609
+99	BlockMod	Mod		0x0000060A
+100	SmithingMod	Mod		0x0000060B*
+101	HeavyArmorMod	Mod		0x0000060C
+102	LightArmorMod	Mod		0x0000060D
+103	PickPocketMod	Mod		0x0000060E
+104	LockpickingMod	Mod		0x0000060F
+105	SneakMod	Mod		0x00000610
+106	AlchemyMod	Mod		0x00000611
+107	SpeechcraftMod	Mod	Used for price/"Haggling" enchantment calculations	0x00000612
+108	AlterationMod	Mod		0x00000613
+109	ConjurationMod	Mod		0x00000614
+110	DestructionMod	Mod		0x00000615
+111	IllusionMod	Mod		0x00000616
+112	RestorationMod	Mod		0x00000617
+113	EnchantingMod	Mod		0x00000618
+114	OneHandedSkillAdvance	Exp	These values previously controlled the skill XP for each individual skill. As of Patch 1.9, they no longer serve that purpose and have no effect.	0x00000619
+115	TwoHandedSkillAdvance	Exp	0x0000061A
+116	MarksmanSkillAdvance	Exp	0x0000061B
+117	BlockSkillAdvance	Exp	0x0000061C
+118	SmithingSkillAdvance	Exp	0x0000061D
+119	HeavyArmorSkillAdvance	Exp	0x0000061E
+120	LightArmorSkillAdvance	Exp	0x0000061F
+121	PickPocketSkillAdvance	Exp	0x00000620
+122	LockpickingSkillAdvance	Exp	0x00000621
+123	SneakSkillAdvance	Exp	0x00000622
+124	AlchemySkillAdvance	Exp	0x00000623
+125	SpeechcraftSkillAdvance	Exp	0x00000624
+126	AlterationSkillAdvance	Exp	0x00000625
+127	ConjurationSkillAdvance	Exp	0x00000626
+128	DestructionSkillAdvance	Exp	0x00000627
+129	IllusionSkillAdvance	Exp	0x00000628
+130	RestorationSkillAdvance	Exp	0x00000629
+131	EnchantingSkillAdvance	Exp	0x0000062A
+132	LeftWeaponSpeedMult	Mult		0x0000062B
+133	DragonSouls	Stat	Number of dragon souls available.	0x0000062C
+134	CombatHealthRegenMult	Mult	How much faster you heal in combat. (Default is 0, but set to 0.7 = 70% of the normal heal rate by the player ability PCHealRateCombat)	0x0000062D
+135	OneHandedPowerMod	Mod	Does not raise skill level but approximates its effects. [2]	0x0000062E
+136	TwoHandedPowerMod	Mod		0x0000062F*
+137	MarksmanPowerMod	Mod	Affects all types of weapons and unarmed damage. The Unofficial Skyrim Patch, version 1.2, fixes this bug.	0x00000630
+138	BlockPowerMod	Mod		0x00000631
+139	SmithingPowerMod	Mod	Determines stat-improvement when improving weapons, and armor.	0x00000632
+140	HeavyArmorPowerMod	Mod		0x00000633
+141	LightArmorPowerMod	Mod		0x00000634
+142	PickPocketPowerMod	Mod		0x00000635
+143	LockpickingPowerMod	Mod		0x00000636
+144	SneakPowerMod	Mod		0x00000637
+145	AlchemyPowerMod	Mod	Determines strength of player-made potions, and poisons.	0x00000638
+146	SpeechcraftPowerMod	Mod		0x00000639
+147	AlterationPowerMod	Mod		0x0000063A
+148	ConjurationPowerMod	Mod		0x0000063B
+149	DestructionPowerMod	Mod		0x0000063C*
+150	IllusionPowerMod	Mod		0x0000063D
+151	RestorationPowerMod	Mod	Increases other Fortify Skill enchantments. The Unofficial Skyrim Patch, version 1.3.0, fixes this bug.	0x0000063E
+152	EnchantingPowerMod	Mod	Determines Power of player-made enchanted items.	0x0000063F
+153	DragonRend	Toggle		0x00000640
+154	AttackDamageMult	Mult	Multiplier coefficient for all physical damage from weapons, fists, and bashing (1 = default, 2 = double damage, etc.). Affects weapon damage display in inventory screen.	0x00000641
+155	HealRateMult/CombatHealthRegenMultMod	Mult	Health regen rate multiplier. Is affected by Regenerate Health (Default 100)	0x00000642
+156	MagickaRateMult/CombatHealthRegenMultPowerMod	Mult	Magicka regen rate multiplier. Is affected by Regenerate Magicka (Default 100)	0x00000643
+157	StaminaRateMult	Mult	Stamina regen rate multiplier. Is affected by Regenerate Stamina (Default 100)	0x00000644
+158	WerewolfPerks			0x00000645
+159	VampirePerks			0x0000646
+160	GrabActorOffset		The distance in front of the caster where the target of Vampiric Grip is held. By default 0, but is set differently by Vampire Lord form.	0x00000647
+161	Grabbed	Status	Does not seem to have any effect, may be used to determine which actor has been grabbed by Vampiric Grip.	0x00000648
+162	DEPRECATED05			0x00000649*
+163	ReflectDamage	Stat	Chance to reflect all incoming melee damage back to the attacker. Does not reduce the damage you take. (%)	0x0000064A

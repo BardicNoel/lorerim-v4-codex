@@ -1,10 +1,4 @@
-import {
-  FieldSchema,
-  ParsedRecord,
-  StringEncoding,
-  commonFieldSchemas,
-  recordSpecificSchemas,
-} from './schema';
+import { FieldSchema, ParsedRecord, StringEncoding, recordSpecificSchemas } from './schema';
 import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
 import { Processor } from '../core';
 import { formatJSON } from '@lorerim/platform-types';
@@ -30,7 +24,7 @@ function errorLog(message: string, error?: any) {
 
 export class BufferDecoder {
   public getFieldSchema(recordType: string, tag: string): FieldSchema | undefined {
-    return recordSpecificSchemas[recordType]?.[tag] || commonFieldSchemas[tag];
+    return recordSpecificSchemas[recordType]?.[tag];
   }
 
   public parseString(
@@ -326,7 +320,6 @@ export class BufferDecoder {
       recordSpecific: recordSpecificSchemas[recordType]
         ? Object.keys(recordSpecificSchemas[recordType])
         : [],
-      common: Object.keys(commonFieldSchemas),
     });
 
     while (offset < buffer.length) {

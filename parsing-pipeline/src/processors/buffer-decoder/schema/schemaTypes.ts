@@ -67,10 +67,24 @@ export interface SharedFields {
   [name: string]: FieldSchema[];
 }
 
+// Define the common fields type
+export type CommonFields = {
+  EDID: StringFieldSchema;
+  FULL: StringFieldSchema;
+  DESC: StringFieldSchema;
+  ICON: StringFieldSchema;
+  DNAM: StringFieldSchema;
+  KSIZ: NumericFieldSchema;
+  KWDA: ArrayFieldSchema;
+  NNAM: FormIdFieldSchema;
+};
+
+export interface SchemaInternal {
+  [tag: string]: FieldSchema;
+}
+
 export interface RecordSpecificSchemas {
-  [recordType: string]: {
-    [tag: string]: FieldSchema;
-  };
+  [recordType: string]: CommonFields & SchemaInternal;
 }
 
 // Use the platform's ParsedRecord type
