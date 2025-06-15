@@ -42,7 +42,8 @@ export class BufferDecoder {
     return `0x${value.toString(16).padStart(8, '0')}`;
   }
 
-  public parseNumeric(buffer: Buffer, offset: number, type: string): number {
+  public parseNumeric(buffer: Buffer, type: string): number {
+    const offset = 0;
     switch (type) {
       case 'uint8':
         return buffer.readUInt8(offset);
@@ -108,7 +109,7 @@ export class BufferDecoder {
         case 'uint16':
         case 'uint32':
         case 'float32':
-          result[field.name] = this.parseNumeric(buffer, currentOffset, field.type);
+          result[field.name] = this.parseNumeric(buffer, field.type);
           currentOffset += this.getTypeSize(field.type);
           console.log(`[DEBUG] After ${field.type}: new offset ${currentOffset}`);
           break;
@@ -173,21 +174,12 @@ export class BufferDecoder {
     let currentOffset = offset;
     const endOffset = offset + length;
 
-    console.log(
-      `[DEBUG] Starting array parse at offset ${offset}, length ${length}, endOffset ${endOffset}`
-    );
-    console.log(`[DEBUG] Array element type: ${elementSchema.type}`);
-
     while (currentOffset < endOffset) {
-      console.log(`[DEBUG] Processing array element at offset ${currentOffset}`);
-      console.log(`[DEBUG] Remaining array bytes: ${endOffset - currentOffset}`);
-
       switch (elementSchema.type) {
         case 'string':
           if (!('encoding' in elementSchema))
             throw new Error('String element must specify encoding');
           const strLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] String element length: ${strLength}`);
           results.push(
             this.parseString(
               buffer.slice(currentOffset + 2, currentOffset + 2 + strLength),
@@ -200,7 +192,6 @@ export class BufferDecoder {
         case 'struct':
           if (!('fields' in elementSchema)) throw new Error('Struct element must specify fields');
           const structLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] Struct element length: ${structLength}`);
           const structData = this.parseStruct(
             buffer,
             currentOffset + 2,
@@ -212,7 +203,8 @@ export class BufferDecoder {
           break;
 
         case 'formid':
-          results.push(this.parseFormId(buffer, currentOffset));
+          const formId = this.parseFormId(buffer, currentOffset);
+          results.push(formId);
           currentOffset += 4;
           break;
 
@@ -220,7 +212,7 @@ export class BufferDecoder {
         case 'uint16':
         case 'uint32':
         case 'float32':
-          results.push(this.parseNumeric(buffer, currentOffset, elementSchema.type));
+          results.push(this.parseNumeric(buffer, elementSchema.type));
           currentOffset += this.getTypeSize(elementSchema.type);
           break;
 
@@ -228,13 +220,7 @@ export class BufferDecoder {
           throw new Error(`Unsupported array element type: ${elementSchema.type}`);
       }
 
-      console.log(`[DEBUG] After array element: new offset ${currentOffset}`);
-
       if (currentOffset > endOffset) {
-        console.error(`[ERROR] Array parsing overran bounds`);
-        console.error(`[ERROR] Current offset: ${currentOffset}, End offset: ${endOffset}`);
-        console.error(`[ERROR] Overrun by: ${currentOffset - endOffset} bytes`);
-        console.error(`[ERROR] Element type: ${elementSchema.type}`);
         throw new Error('Array parsing overran bounds');
       }
     }
@@ -338,7 +324,7 @@ export class BufferDecoder {
             case 'uint16':
             case 'uint32':
             case 'float32':
-              result[tag] = this.parseNumeric(buffer, offset, schema.type);
+              result[tag] = this.parseNumeric(buffer, schema.type);
               break;
 
             case 'struct':
@@ -475,7 +461,7 @@ function processRecordFields(
         case 'uint16':
         case 'uint32':
         case 'float32':
-          decodedField = decoder.parseNumeric(buffer, 0, schema.type);
+          decodedField = decoder.parseNumeric(buffer, schema.type);
           break;
 
         case 'struct':
