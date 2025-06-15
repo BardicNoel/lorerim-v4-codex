@@ -40,19 +40,18 @@ export function parseSubrecordHeader(buffer: Buffer): SubrecordHeader {
 /**
  * Scan subrecords in a buffer
  */
-export function scanSubrecords(buffer: Buffer, startOffset: number): { offset: number; subrecords: SubrecordHeader[] } {
-  const subrecords: SubrecordHeader[] = [];
+export function scanSubrecords(buffer: Buffer, startOffset: number): { offset: number; subrecords: { header: SubrecordHeader, offset: number }[] } {
+  const subrecords: { header: SubrecordHeader, offset: number }[] = [];
   let offset = startOffset;
 
   while (offset + SUBRECORD_HEADER.TOTAL_SIZE <= buffer.length) {
     const header = parseSubrecordHeader(buffer.slice(offset));
-    subrecords.push(header);
+    subrecords.push({ header, offset });
     offset += SUBRECORD_HEADER.TOTAL_SIZE + header.size;
   }
 
   return { offset, subrecords };
 }
-
 /**
  * Validate record size
  */

@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "dev": "ts-node src/cli.ts --config config.json",
+    "dev:debug": "ts-node src/cli.ts --config config.json --debug",
     "test": "jest",
     "extract": "node dist/cli.js --config config.json",
     "extract:debug": "node dist/cli.js --config config.json --debug"

@@ -1,10 +1,12 @@
 // src/thread/threadManager.ts
-import { Worker } from 'worker_threads';
-import path from 'path';
-import { PluginMeta } from '../types';
-import { createRecordAggregator } from '../utils/recordAggregator';
-import { createFileWriter } from '../utils/fileWriter';
-import { ProcessingStats } from '../utils/stats';
+import { Worker } from "worker_threads";
+import * as path from "path";
+import { PluginMeta } from "../types";
+import { createRecordAggregator } from "../utils/recordAggregator";
+import { createFileWriter } from "../utils/fileWriter";
+import { ProcessingStats } from "../utils/stats";
+import { RecordAggregator } from "../aggregator";
+import { createWriteStream, WriteStream } from "fs";
 
 const MAX_CONCURRENCY = 4;
 const PROGRESS_INTERVAL = 1000; // Log progress every second
@@ -24,19 +26,39 @@ class ThreadManagerImpl implements ThreadManager {
   private totalPlugins = 0;
   private lastProgressLog = 0;
   private workerLogs: Map<string, string[]> = new Map();
+  private debugLogStream: WriteStream | null = null;
+
+  constructor() {
+    // Initialize debug log file
+    const logPath = path.join(process.cwd(), "debug.log");
+    this.debugLogStream = createWriteStream(logPath, { flags: "w" });
+  }
+
+  private writeDebugLog(message: string): void {
+    if (this.debugLogStream) {
+      const timestamp = new Date().toISOString();
+      const logMessage = `[${timestamp}] ${message}\n`;
+      this.debugLogStream.write(logMessage);
+    }
+  }
 
   /**
    * Process all plugins using worker threads
    */
-  async processPlugins(plugins: PluginMeta[], outputDir: string): Promise<void> {
+  async processPlugins(
+    plugins: PluginMeta[],
+    outputDir: string
+  ): Promise<void> {
     this.pluginQueue = [...plugins];
     this.totalPlugins = plugins.length;
     this.processedPlugins = 0;
     this.lastProgressLog = Date.now();
     this.workerLogs.clear();
-    
-    console.log(`\nStarting to process ${this.totalPlugins} plugins with ${MAX_CONCURRENCY} workers`);
-    
+
+    console.log(
+      `\nStarting to process ${this.totalPlugins} plugins with ${MAX_CONCURRENCY} workers`
+    );
+
     // Start initial batch of workers
     const initialBatch = Math.min(MAX_CONCURRENCY, plugins.length);
     for (let i = 0; i < initialBatch; i++) {
@@ -45,17 +67,20 @@ class ThreadManagerImpl implements ThreadManager {
 
     // Wait for all plugins to be processed
     while (this.activeWorkers > 0 || this.pluginQueue.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       this.logProgress();
     }
 
-    console.log('\nAll plugins processed, writing records to disk...');
+    console.log("\nAll plugins processed, writing records to disk...");
 
     // Write all records to disk
     const records = this.aggregator.getRecords();
     const recordCounts = this.aggregator.getStats();
     const stats: ProcessingStats = {
-      totalRecords: Object.values(recordCounts).reduce((sum: number, count: number) => sum + count, 0),
+      totalRecords: Object.values(recordCounts).reduce(
+        (sum: number, count: number) => sum + count,
+        0
+      ),
       recordsByType: recordCounts,
       skippedRecords: 0,
       skippedTypes: new Set(),
@@ -64,17 +89,17 @@ class ThreadManagerImpl implements ThreadManager {
       pluginsProcessed: 1,
       errors: {
         count: 0,
-        types: {}
-      }
+        types: {},
+      },
     };
-    
+
     await this.fileWriter.writeRecords(records, outputDir);
     await this.fileWriter.writeStats(stats, outputDir);
-    
+
     // Clear the aggregator after writing
     this.aggregator.clear();
 
-    console.log('Records written to disk successfully');
+    console.log("Records written to disk successfully");
   }
 
   /**
@@ -84,7 +109,11 @@ class ThreadManagerImpl implements ThreadManager {
     const now = Date.now();
     if (now - this.lastProgressLog >= PROGRESS_INTERVAL) {
       const progress = (this.processedPlugins / this.totalPlugins) * 100;
-      console.log(`Progress: ${progress.toFixed(1)}% (${this.processedPlugins}/${this.totalPlugins} plugins)`);
+      console.log(
+        `Progress: ${progress.toFixed(1)}% (${this.processedPlugins}/${
+          this.totalPlugins
+        } plugins)`
+      );
       this.lastProgressLog = now;
     }
   }
@@ -92,16 +121,31 @@ class ThreadManagerImpl implements ThreadManager {
   /**
    * Handle debug messages from workers
    */
-  private handleWorkerMessage(worker: Worker, plugin: PluginMeta, message: any): void {
-    if (message.type === 'debug') {
+  private handleWorkerMessage(
+    worker: Worker,
+    plugin: PluginMeta,
+    message: any
+  ): void {
+    if (message.type === "debug") {
       const logs = this.workerLogs.get(plugin.name) || [];
-      logs.push(`[DEBUG] ${message.message}`);
+      const logMessage = message.data
+        ? `${message.message}\n${JSON.stringify(message.data, null, 2)}`
+        : message.message;
+      logs.push(logMessage);
       this.workerLogs.set(plugin.name, logs);
-      console.log(`[${plugin.name}] ${message.message}`);
-    } else if (message.type === 'error') {
-      console.error(`[${plugin.name}] ERROR: ${message.message}`);
+
+      // Write to both console and file
+      const fullMessage = `[${plugin.name}] ${logMessage}`;
+      console.log(fullMessage);
+      this.writeDebugLog(fullMessage);
+    } else if (message.type === "error") {
+      const errorMessage = `[${plugin.name}] ERROR: ${message.message}`;
+      console.error(errorMessage);
+      this.writeDebugLog(errorMessage);
       if (message.error) {
-        console.error(`[${plugin.name}] ${message.error}`);
+        const errorDetails = `[${plugin.name}] ${message.error}`;
+        console.error(errorDetails);
+        this.writeDebugLog(errorDetails);
       }
     }
   }
@@ -113,14 +157,26 @@ class ThreadManagerImpl implements ThreadManager {
     if (this.pluginQueue.length === 0) return;
 
     const plugin = this.pluginQueue.shift()!;
-    const worker = new Worker(path.join(__dirname, 'pluginWorker.js'));
+    const workerPath = path.join(
+      process.cwd(),
+      "dist",
+      "thread",
+      "pluginWorker.js"
+    );
+    console.log("Starting worker from path:", workerPath);
+    const worker = new Worker(workerPath);
     this.activeWorkers++;
     this.workerLogs.set(plugin.name, []);
 
     console.log(`Starting worker for ${plugin.name}`);
 
-    worker.on('message', (message: any) => {
-      if (message.status === 'done') {
+    worker.on("message", (message: any) => {
+      console.log(
+        `Received message from worker for ${plugin.name}:`,
+        message.type || message.status
+      );
+
+      if (message.status === "done") {
         // Add records to aggregator
         for (const record of message.records) {
           this.aggregator.addRecord(record);
@@ -128,7 +184,9 @@ class ThreadManagerImpl implements ThreadManager {
 
         // Update progress
         this.processedPlugins++;
-        console.log(`Completed ${plugin.name} (${message.records.length} records)`);
+        console.log(
+          `Completed ${plugin.name} (${message.records.length} records)`
+        );
 
         // Clean up worker
         worker.terminate();
@@ -138,12 +196,12 @@ class ThreadManagerImpl implements ThreadManager {
         if (this.pluginQueue.length > 0) {
           this.startWorker();
         }
-      } else if (message.type === 'debug' || message.type === 'error') {
+      } else if (message.type === "debug" || message.type === "error") {
         this.handleWorkerMessage(worker, plugin, message);
       }
     });
 
-    worker.on('error', (error) => {
+    worker.on("error", (error) => {
       console.error(`Worker error processing ${plugin.name}:`, error);
       worker.terminate();
       this.activeWorkers--;
