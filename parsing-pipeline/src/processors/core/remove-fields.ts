@@ -12,9 +12,11 @@ function processNestedFields(obj: Record<string, any>, fields: any, path: string
             delete obj[key];
         } else if (Array.isArray(value)) {
             // Remove specific fields from an object
-            for (const field of value) {
-                if (obj[key] && typeof obj[key] === 'object') {
-                    delete obj[key][field];
+            if (obj[key] && typeof obj[key] === 'object') {
+                for (const field of value) {
+                    if (field in obj[key]) {
+                        delete obj[key][field];
+                    }
                 }
             }
         } else if (typeof value === 'object' && value !== null) {
@@ -39,7 +41,8 @@ export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Process
                 const newRecord: ParsedRecord = {
                     ...parsedRecord
                 };
-                processNestedFields(newRecord.data, config.fields);
+                
+                processNestedFields(newRecord, config.fields);
                 return newRecord;
             });
         },
