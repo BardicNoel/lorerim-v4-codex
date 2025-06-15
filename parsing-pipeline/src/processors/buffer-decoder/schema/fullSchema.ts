@@ -1,4 +1,5 @@
-import { RecordSchema, SharedFields, RecordSpecificSchemas } from './types';
+import { RecordSchema, SharedFields, RecordSpecificSchemas } from './schemaTypes';
+import { mgefSchema } from './entities/mgef';
 
 // Common field schemas that are reused across record types
 export const commonFieldSchemas: RecordSchema = {
@@ -154,48 +155,5 @@ export const recordSpecificSchemas: RecordSpecificSchemas = {
       ],
     },
   },
-  MGEF: {
-    MDOB: { type: 'formid' },
-    ESCE: { type: 'formid' },
-    DATA: {
-      type: 'struct',
-      fields: [
-        { name: 'effectType', type: 'uint32' },
-        { name: 'baseCost', type: 'float32' },
-        { name: 'flags', type: 'uint32' },
-        { name: 'targetType', type: 'uint32' },
-        { name: 'castingLight', type: 'formid' },
-        { name: 'projectileSpeed', type: 'float32' },
-        { name: 'effectShader', type: 'formid' },
-        { name: 'enchantShader', type: 'formid' },
-        { name: 'castingSound', type: 'formid' },
-        { name: 'boltSound', type: 'formid' },
-        { name: 'hitSound', type: 'formid' },
-        { name: 'areaSound', type: 'formid' },
-        { name: 'boltSoundLoop', type: 'formid' },
-        { name: 'hitShader', type: 'formid' },
-        { name: 'castingArt', type: 'formid' },
-        { name: 'boltArt', type: 'formid' },
-        { name: 'hitArt', type: 'formid' },
-        { name: 'enchantArt', type: 'formid' },
-        { name: 'enchantSound', type: 'formid' },
-        { name: 'impactDataSet', type: 'formid' },
-        { name: 'school', type: 'uint32' },
-        { name: 'resistValue', type: 'uint32' },
-        { name: 'actorValue', type: 'formid' },
-        { name: 'rangeMin', type: 'float32' },
-        { name: 'rangeMax', type: 'float32' },
-        { name: 'durationMin', type: 'float32' },
-        { name: 'durationMax', type: 'float32' },
-        { name: 'magnitudeMin', type: 'float32' },
-        { name: 'magnitudeMax', type: 'float32' },
-        { name: 'castingType', type: 'uint32' },
-        { name: 'deliveryType', type: 'uint32' },
-        { name: 'perk', type: 'formid' },
-        { name: 'conditionForm', type: 'formid' },
-        { name: 'unused', type: 'uint32' },
-        { name: 'effectShaderFX', type: 'uint32' },
-      ],
-    },
-  },
+  ...mgefSchema,
 };

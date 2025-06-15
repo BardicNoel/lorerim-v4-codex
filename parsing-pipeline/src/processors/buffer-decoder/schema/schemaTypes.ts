@@ -2,6 +2,7 @@ import { ParsedRecord } from '@lorerim/platform-types';
 
 export type FieldType =
   | 'string'
+  | 'int32'
   | 'uint8'
   | 'uint16'
   | 'uint32'
@@ -16,6 +17,7 @@ export type StringEncoding = 'utf8' | 'utf16le' | 'ascii';
 export interface BaseFieldSchema {
   type: FieldType;
   name?: string;
+  parser?: (args: any) => any;
 }
 
 export interface StringFieldSchema extends BaseFieldSchema {
@@ -28,12 +30,13 @@ export interface FormIdFieldSchema extends BaseFieldSchema {
 }
 
 export interface NumericFieldSchema extends BaseFieldSchema {
-  type: 'uint8' | 'uint16' | 'uint32' | 'float32';
+  type: 'uint8' | 'uint16' | 'uint32' | 'float32' | 'int32';
 }
 
 export interface StructFieldSchema extends BaseFieldSchema {
   type: 'struct';
   fields: FieldSchema[];
+  parser: undefined;
 }
 
 export interface UnknownFieldSchema extends BaseFieldSchema {
@@ -43,6 +46,7 @@ export interface UnknownFieldSchema extends BaseFieldSchema {
 export interface ArrayFieldSchema extends BaseFieldSchema {
   type: 'array';
   element: FieldSchema;
+  parser: undefined;
 }
 
 export type FieldSchema =

@@ -21,18 +21,19 @@ stages:
       data: 'all'
       header: 'all'
       decodedData:
-        - DATA:
-            - effectShader
-            - enchantShader
-            - castingSound
-            - boltSound
-            - hitSound
-            - areaSound
-            - boltSoundLoop
-            - hitShader
-            - castingArt
-            - boltArt
-            - hitArt
-            - enchantArt
-            - enchantSound
-            - impactDataSet
+        - MDOB
+        # - DATA:
+        #     - effectShader
+        #     - enchantShader
+        #     - castingSound
+        #     - boltSound
+        #     - hitSound
+        #     - areaSound
+        #     - boltSoundLoop
+        #     - hitShader
+        #     - castingArt
+        #     - boltArt
+        #     - hitArt
+        #     - enchantArt
+        #     - enchantSound
+        #     - impactDataSet

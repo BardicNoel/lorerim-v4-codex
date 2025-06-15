@@ -1,6 +1,10 @@
-import { Buffer } from 'buffer';
-import { FieldSchema, ParsedRecord, StringEncoding } from './types';
-import { commonFieldSchemas, recordSpecificSchemas } from './schemas';
+import {
+  FieldSchema,
+  ParsedRecord,
+  StringEncoding,
+  commonFieldSchemas,
+  recordSpecificSchemas,
+} from './schema';
 import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
 import { Processor } from '../core';
 import { formatJSON } from '@lorerim/platform-types';
@@ -15,6 +19,13 @@ function debugLog(message: string, data?: any) {
     parentPort.postMessage({ type: 'debug', message, data });
   }
 }
+
+const applyNullableParser = (field: FieldSchema, value: any) => {
+  if (field.parser) {
+    return field.parser(value);
+  }
+  return value;
+};
 
 // Error logging function that works in both worker and main thread
 function errorLog(message: string, error?: any) {
@@ -31,31 +42,48 @@ export class BufferDecoder {
 
   public parseString(
     buffer: Buffer,
-
-    encoding: StringEncoding
+    offset: number,
+    encoding: StringEncoding,
+    postParse?: (value: string) => any
   ): string {
-    return buffer.toString(encoding).replace(/\0+$/, '');
+    const value = buffer.toString(encoding).replace(/\0+$/, '');
+    return postParse ? postParse(value) : value;
   }
 
-  public parseFormId(buffer: Buffer, offset: number): string {
+  public parseFormId(buffer: Buffer, offset: number, postParse?: (value: string) => any): string {
     const value = buffer.readUInt32LE(offset);
-    return `0x${value.toString(16).padStart(8, '0')}`;
+    const formId = `0x${value.toString(16).padStart(8, '0')}`;
+    return postParse ? postParse(formId) : formId;
   }
 
-  public parseNumeric(buffer: Buffer, type: string): number {
-    const offset = 0;
+  public parseNumeric(
+    buffer: Buffer,
+    offset: number,
+    type: string,
+    postParse?: (value: number) => any
+  ): number {
+    let value: number;
     switch (type) {
       case 'uint8':
-        return buffer.readUInt8(offset);
+        value = buffer.readUInt8(offset);
+        break;
       case 'uint16':
-        return buffer.readUInt16LE(offset);
+        value = buffer.readUInt16LE(offset);
+        break;
       case 'uint32':
-        return buffer.readUInt32LE(offset);
+        value = buffer.readUInt32LE(offset);
+        break;
       case 'float32':
-        return buffer.readFloatLE(offset);
+        value = buffer.readFloatLE(offset);
+        break;
+      case 'int32':
+        console.log(`[DEBUG] Parsing int32 at offset ${offset}`);
+        value = buffer.readInt32LE(offset);
+        break;
       default:
         throw new Error(`Unsupported numeric type: ${type}`);
     }
+    return postParse ? postParse(value) : value;
   }
 
   public parseStruct(
@@ -88,28 +116,45 @@ export class BufferDecoder {
           let strLength: number;
           if (useFieldLength) {
             strLength = length;
-            result[field.name] = this.parseString(buffer, field.encoding);
+            result[field.name] = this.parseString(
+              buffer,
+              currentOffset,
+              field.encoding,
+              field.parser
+            );
             currentOffset += strLength;
           } else {
             strLength = buffer.readUInt16LE(currentOffset);
             // console.log(`[DEBUG] String length from buffer: ${strLength}`);
-            result[field.name] = this.parseString(buffer, field.encoding);
+            result[field.name] = this.parseString(
+              buffer,
+              currentOffset,
+              field.encoding,
+              field.parser
+            );
             currentOffset += 2 + strLength;
           }
           // console.log(`[DEBUG] After string: new offset ${currentOffset}`);
           break;
 
         case 'formid':
-          result[field.name] = this.parseFormId(buffer, currentOffset);
+          result[field.name] = this.parseFormId(buffer, currentOffset, field.parser);
           currentOffset += 4;
           // console.log(`[DEBUG] After formid: new offset ${currentOffset}`);
           break;
 
+        case 'int32':
         case 'uint8':
         case 'uint16':
         case 'uint32':
         case 'float32':
-          result[field.name] = this.parseNumeric(buffer, field.type);
+          if (field.name === 'skill') {
+            console.log(`[DEBUG] Parsing skill at offset ${currentOffset}`, {
+              buffer: buffer.toString('hex', currentOffset, currentOffset + 4),
+              type: field.type,
+            });
+          }
+          result[field.name] = this.parseNumeric(buffer, currentOffset, field.type, field.parser);
           currentOffset += this.getTypeSize(field.type);
           // console.log(`[DEBUG] After ${field.type}: new offset ${currentOffset}`);
           break;
@@ -144,11 +189,20 @@ export class BufferDecoder {
           break;
 
         case 'unknown':
+          if (field.name === 'skill') {
+            console.log(
+              `[DEBUG] Parsing field "${field.name}" (${field.type}) at offset ${currentOffset}`
+            );
+          }
           const unknownLength = buffer.readUInt16LE(currentOffset);
           // console.log(`[DEBUG] Unknown field length: ${unknownLength}`);
           currentOffset += 2 + unknownLength;
           // console.log(`[DEBUG] After unknown: new offset ${currentOffset}`);
           break;
+      }
+
+      if (field.name === 'skill') {
+        console.log(`[DEBUG] Parsing field "${field.name}" (${field.type}) ${result[field.name]}`);
       }
 
       if (currentOffset > endOffset) {
@@ -183,7 +237,8 @@ export class BufferDecoder {
           results.push(
             this.parseString(
               buffer.slice(currentOffset + 2, currentOffset + 2 + strLength),
-              elementSchema.encoding
+              elementSchema.encoding,
+              elementSchema.parser
             )
           );
           currentOffset += 2 + strLength;
@@ -212,7 +267,7 @@ export class BufferDecoder {
         case 'uint16':
         case 'uint32':
         case 'float32':
-          results.push(this.parseNumeric(buffer, elementSchema.type));
+          results.push(this.parseNumeric(buffer, currentOffset, elementSchema.type));
           currentOffset += this.getTypeSize(elementSchema.type);
           break;
 
@@ -237,6 +292,7 @@ export class BufferDecoder {
       case 'uint32':
       case 'float32':
       case 'formid':
+      case 'int32':
         return 4;
       default:
         throw new Error(`Unsupported type size: ${type}`);
@@ -324,7 +380,7 @@ export class BufferDecoder {
             case 'uint16':
             case 'uint32':
             case 'float32':
-              result[tag] = this.parseNumeric(buffer, schema.type);
+              result[tag] = this.parseNumeric(buffer, offset, schema.type);
               break;
 
             case 'struct':
@@ -461,7 +517,7 @@ function processRecordFields(
         case 'uint16':
         case 'uint32':
         case 'float32':
-          decodedField = decoder.parseNumeric(buffer, schema.type);
+          decodedField = decoder.parseNumeric(buffer, 0, schema.type);
           break;
 
         case 'struct':

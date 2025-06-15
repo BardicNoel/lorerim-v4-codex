@@ -1,44 +1,40 @@
-import { commonFieldSchemas, sharedFields, recordSpecificSchemas } from '../schemas';
-import { FieldSchema, StructFieldSchema } from '../types';
+import { commonFieldSchemas, sharedFields, recordSpecificSchemas } from '../schema/fullSchema';
+import { FieldSchema, StructFieldSchema } from '../schema/schemaTypes';
 
 describe('Schemas', () => {
   describe('commonFieldSchemas', () => {
     it('should have valid string field schemas', () => {
       expect(commonFieldSchemas.EDID).toEqual({
         type: 'string',
-        encoding: 'utf8'
+        encoding: 'utf8',
       });
 
       expect(commonFieldSchemas.FULL).toEqual({
         type: 'string',
-        encoding: 'utf16le'
+        encoding: 'utf16le',
       });
 
       expect(commonFieldSchemas.DESC).toEqual({
         type: 'string',
-        encoding: 'utf16le'
+        encoding: 'utf16le',
       });
     });
   });
 
   describe('sharedFields', () => {
     it('should have valid flags8 schema', () => {
-      expect(sharedFields.flags8).toEqual([
-        { name: 'flags', type: 'uint8' }
-      ]);
+      expect(sharedFields.flags8).toEqual([{ name: 'flags', type: 'uint8' }]);
     });
 
     it('should have valid flags32 schema', () => {
-      expect(sharedFields.flags32).toEqual([
-        { name: 'flags', type: 'uint32' }
-      ]);
+      expect(sharedFields.flags32).toEqual([{ name: 'flags', type: 'uint32' }]);
     });
 
     it('should have valid conditionBlock schema', () => {
       expect(sharedFields.conditionBlock).toEqual([
         { name: 'op', type: 'uint8' },
         { name: 'value', type: 'float32' },
-        { name: 'functionIndex', type: 'uint32' }
+        { name: 'functionIndex', type: 'uint32' },
       ]);
     });
   });
@@ -69,4 +65,4 @@ describe('Schemas', () => {
       expect(spelData.fields).toContainEqual({ name: 'functionIndex', type: 'uint32' });
     });
   });
-}); 
+});

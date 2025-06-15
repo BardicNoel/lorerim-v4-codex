@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer';
 import { BufferDecoder } from '../parser';
-import { commonFieldSchemas, recordSpecificSchemas } from '../schemas';
+import { commonFieldSchemas, recordSpecificSchemas } from '../schema/fullSchema';
 
 describe('BufferDecoder', () => {
   let decoder: BufferDecoder;
@@ -32,7 +32,7 @@ describe('BufferDecoder', () => {
 
       expect(result).toEqual({
         EDID: 'Test',
-        FULL: 'TestName'
+        FULL: 'TestName',
       });
     });
 
@@ -51,8 +51,8 @@ describe('BufferDecoder', () => {
         DATA: {
           flags: 1,
           levelReq: 10,
-          numPRKE: 2
-        }
+          numPRKE: 2,
+        },
       });
     });
 
@@ -75,8 +75,8 @@ describe('BufferDecoder', () => {
           cost: 100,
           op: 2,
           value: 1.5,
-          functionIndex: 42
-        }
+          functionIndex: 42,
+        },
       });
     });
 
@@ -120,7 +120,7 @@ describe('BufferDecoder', () => {
       const originalSchema = recordSpecificSchemas.PERK.DATA;
       recordSpecificSchemas.PERK.DATA = {
         type: 'struct',
-        fields: [{ type: 'uint32' }]
+        fields: [{ type: 'uint32' }],
       };
 
       expect(() => decoder.parseRecord('PERK', buffer)).toThrow();
@@ -142,7 +142,7 @@ describe('BufferDecoder', () => {
 
       const result = decoder.parseRecord('PERK', buffer);
       expect(result).toEqual({
-        EDID: ''
+        EDID: '',
       });
     });
 
@@ -160,7 +160,7 @@ describe('BufferDecoder', () => {
       const result = decoder.parseRecord('PERK', buffer);
 
       expect(result).toEqual({
-        NAME: 'ABCD'
+        NAME: 'ABCD',
       });
 
       // Restore original schema
@@ -201,20 +201,20 @@ describe('BufferDecoder', () => {
         type: 'struct',
         fields: [
           { name: 'formId', type: 'formid' },
-          { name: 'unknown', type: 'unknown' }
-        ]
+          { name: 'unknown', type: 'unknown' },
+        ],
       };
 
       const result = decoder.parseRecord('PERK', buffer);
 
       expect(result).toEqual({
         DATA: {
-          formId: 'ABCD'
-        }
+          formId: 'ABCD',
+        },
       });
 
       // Restore original schema
       recordSpecificSchemas.PERK.DATA = originalSchema;
     });
   });
-}); 
+});
