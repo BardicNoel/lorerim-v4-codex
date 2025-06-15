@@ -6,6 +6,31 @@ import { debugLog } from "./debugUtils";
  * Low-level record parsing utilities
  */
 
+const LARGE_RECORD_TYPES = [
+  "WRLD",
+  "CELL",
+  "LAND",
+  "NAVM",
+  "NAVI",
+  "NAVQ",
+  "GRUP",
+];
+
+/**
+ * Check if a record header is valid
+ */
+function isValidRecordHeader(header: RecordHeader): boolean {
+  // For GRUP records, only check type length
+  if (LARGE_RECORD_TYPES.includes(header.type)) {
+    return header.type.length === 4;
+  }
+  // For other records, check both type length and size
+  return header.type.length === 4 && header.dataSize < 10000;
+}
+
+// Counter for invalid headers
+let invalidHeaderCount = 0;
+
 /**
  * Parse a record header from a buffer
  */
@@ -19,7 +44,7 @@ export function parseRecordHeader(buffer: Buffer): RecordHeader {
     );
   }
 
-  return {
+  const header = {
     type: buffer.toString(
       "utf8",
       RECORD_HEADER.OFFSETS.TYPE,
@@ -31,6 +56,24 @@ export function parseRecordHeader(buffer: Buffer): RecordHeader {
     version: buffer.readUInt8(RECORD_HEADER.OFFSETS.VERSION),
     unknown: buffer.readUInt8(RECORD_HEADER.OFFSETS.UNKNOWN),
   };
+
+  if (!isValidRecordHeader(header) && invalidHeaderCount < 10) {
+    invalidHeaderCount++;
+    debugLog(
+      `[parseRecordHeader] Invalid record header detected (${invalidHeaderCount}):`
+      // `[parseRecordHeader] Invalid record header detected (${invalidHeaderCount}/10):`
+    );
+    debugLog(
+      `  Type: "${header.type}" (length: ${header.type.length}, should be 4)`
+    );
+    if (!LARGE_RECORD_TYPES.includes(header.type)) {
+      debugLog(`  Size: ${header.dataSize} (should be < 10000)`);
+    }
+    debugLog(`  FormId: ${header.formId.toString(16).padStart(8, "0")}`);
+    debugLog(`  Hex preview: ${getHexPreview(buffer, 0, 32)}`);
+  }
+
+  return header;
 }
 
 /**
@@ -46,7 +89,7 @@ export function parseSubrecordHeader(buffer: Buffer): SubrecordHeader {
     );
   }
 
-  return {
+  const header = {
     type: buffer.toString(
       "utf8",
       OFFSETS.SUBRECORD.SIGNATURE,
@@ -54,6 +97,8 @@ export function parseSubrecordHeader(buffer: Buffer): SubrecordHeader {
     ),
     size: buffer.readUInt16LE(OFFSETS.SUBRECORD.SIZE),
   };
+
+  return header;
 }
 
 /**
@@ -72,6 +117,19 @@ function isSuspiciousSize(size: number, remainingBytes: number): boolean {
 }
 
 /**
+ * Get a hex preview of buffer contents
+ */
+function getHexPreview(buffer: Buffer, offset: number, length: number): string {
+  const preview = buffer.slice(offset, offset + length);
+  return (
+    preview
+      .toString("hex")
+      .match(/.{1,2}/g)
+      ?.join(" ") || ""
+  );
+}
+
+/**
  * Scan for subrecords in a buffer
  */
 export function scanSubrecords(
@@ -81,18 +139,42 @@ export function scanSubrecords(
   const subrecords: { header: SubrecordHeader; offset: number }[] = [];
   let offset = startOffset;
 
-  debugLog(
-    `[scanSubrecords] Starting scan at offset ${offset} with buffer length ${buffer.length}`
-  );
+  // debugLog(
+  //   `[scanSubrecords] Starting scan at offset ${offset} with buffer length ${buffer.length}`
+  // );
 
   while (offset + SUBRECORD_HEADER.TOTAL_SIZE <= buffer.length) {
     const header = parseSubrecordHeader(buffer.slice(offset));
     const remainingBytes = buffer.length - offset - SUBRECORD_HEADER.TOTAL_SIZE;
 
+    // // Special handling for EDID subrecords
+    // if (header.type === "EDID") {
+    //   const dataOffset = offset + SUBRECORD_HEADER.TOTAL_SIZE;
+    //   const edidData = buffer.slice(dataOffset, dataOffset + header.size);
+    //   const edidString = edidData.toString("utf8").replace(/\0/g, "");
+    //   debugLog(`[scanSubrecords] Found EDID subrecord at offset ${offset}:`);
+    //   debugLog(`  dataSize: ${dataOffset + header.size}`);
+    //   debugLog(`  Size: ${header.size}`);
+    //   debugLog(`  Data: "${edidString}"`);
+    //   debugLog(`  raw: ${edidData.toString("utf8")}\n`);
+    //   debugLog(
+    //     `  Hex: ${getHexPreview(buffer, dataOffset, Math.min(header.size, 32))}`
+    //   );
+    // }
+
     if (isSuspiciousSize(header.size, remainingBytes)) {
       debugLog(
         `[scanSubrecords] Suspicious subrecord at offset ${offset}: type=${header.type}, size=${header.size}, remaining=${remainingBytes}`
       );
+      debugLog(`  Hex preview: ${getHexPreview(buffer, offset, 32)}`);
+      break;
+    }
+
+    if (!isValidSubrecordType(header.type)) {
+      debugLog(
+        `[scanSubrecords] Invalid subrecord type at offset ${offset}: type=${header.type}`
+      );
+      debugLog(`  Hex preview: ${getHexPreview(buffer, offset, 32)}`);
       break;
     }
 

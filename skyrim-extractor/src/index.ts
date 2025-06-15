@@ -65,6 +65,7 @@ export async function main(
 
     // Group records by type
     for (const record of result.records) {
+      // This is only writing the latest copy of each record
       const type = record.meta.type;
       if (!recordsByType[type]) {
         recordsByType[type] = [];

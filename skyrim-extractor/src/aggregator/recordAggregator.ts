@@ -35,7 +35,7 @@ export class RecordAggregator {
       // Initialize array for this FormID if we haven't seen it before
       if (!this.recordMap.has(formId)) {
         this.recordMap.set(formId, []);
-        debugLog(`[recordAggregator] New FormID ${formId} (type: ${type})`);
+        // debugLog(`[recordAggregator] New FormID ${formId} (type: ${type})`);
       }
 
       // Get the current stack for this FormID
@@ -52,13 +52,13 @@ export class RecordAggregator {
         this.allRecords.push(record);
         // Update stats
         this.stats[type] = (this.stats[type] || 0) + 1;
-        debugLog(
-          `[recordAggregator] Added winning override for ${formId} (type: ${type})`
-        );
+        // debugLog(
+        //   `[recordAggregator] Added winning override for ${formId} (type: ${type})`
+        // );
       } else {
-        debugLog(
-          `[recordAggregator] Skipping override for ${formId} (type: ${type}) - not winning`
-        );
+        // debugLog(
+        //   `[recordAggregator] Skipping override for ${formId} (type: ${type}) - not winning`
+        // );
       }
     }
 
@@ -77,16 +77,5 @@ export class RecordAggregator {
       records: this.allRecords,
       recordStacks: this.recordMap,
     };
-  }
-
-  /**
-   * Get the plugin index for a given plugin name
-   */
-  private getPluginIndex(pluginName: string): number {
-    const plugin = this.plugins.find((p) => p.name === pluginName);
-    if (!plugin) {
-      throw new Error(`Plugin ${pluginName} not found in load order`);
-    }
-    return plugin.index;
   }
 }

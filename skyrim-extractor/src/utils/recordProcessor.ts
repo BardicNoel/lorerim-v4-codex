@@ -1,5 +1,5 @@
 import { ParsedRecord, RecordHeader } from "../types";
-import { RECORD_HEADER } from "./buffer.constants";
+import { RECORD_HEADER, SUBRECORD_HEADER } from "./buffer.constants";
 import { parseRecordHeader, scanSubrecords } from "./recordParser";
 import {
   PROCESSED_RECORD_TYPES,
@@ -100,10 +100,22 @@ export function processRecord(
     if (!subrecords[subrecord.header.type]) {
       subrecords[subrecord.header.type] = [];
     }
+    // if (subrecord.header.type === "EDID") {
+    //   const dataOffset = subrecordOffset + SUBRECORD_HEADER.TOTAL_SIZE;
+    //   const dataSize = subrecordOffset + subrecord.header.size;
+    //   debugLog(
+    //     `[recordProcessor] Found EDID subrecord at offset ${subrecordOffset}-${dataSize}: ${data
+    //       .slice(dataOffset, dataOffset + subrecord.header.size)
+    //       .toString("utf8")}`
+    //   );
+    // }
+    // Subrecord has a [header(4|2)][data(variable: header.size)] length. We need to set offsets
+    const subDataStart = subrecordOffset + SUBRECORD_HEADER.TOTAL_SIZE;
+    const subDataEnd = subDataStart + subrecord.header.size;
     subrecords[subrecord.header.type].push(
-      data.slice(subrecordOffset, subrecordOffset + subrecord.header.size)
+      data.subarray(subDataStart, subDataEnd)
     );
-    subrecordOffset += subrecord.header.size;
+    subrecordOffset += SUBRECORD_HEADER.TOTAL_SIZE + subrecord.header.size;
   }
 
   const record: ParsedRecord = {

@@ -3,3 +3,98 @@ description:
 globs:
 alwaysApply: false
 ---
+# Path Handling and File Operations
+
+## Overview
+
+This rule defines standardized approaches for handling paths and file operations to reduce code duplication and ensure consistency across the codebase.
+
+## Path Constants
+
+1. Define all path constants in a central location:
+```typescript
+// src/constants/paths.ts
+import { join } from 'path';
+
+export const PATHS = {
+  OUTPUT: {
+    ROOT: 'output',
+    RECORDS: 'records',
+    STATS: 'stats',
+    DEBUG: 'debug'
+  },
+  LOGS: {
+    DEBUG: 'debug.log',
+    THREAD: 'thread-debug.txt',
+    BUFFER: 'buffer-debug-output.json'
+  }
+} as const;
+
+// Helper to build paths
+export function buildPath(...parts: string[]): string {
+  return join(process.cwd(), ...parts);
+}
+```
+
+## File Operations
+
+1. Use a centralized file operations module:
+```typescript
+// src/utils/fileOperations.ts
+import { writeFile, mkdir, readFile } from 'fs/promises';
+import { buildPath, PATHS } from '../constants/paths';
+
+export const FileOps = {
+  async ensureDir(path: string): Promise<void> {
+    await mkdir(path, { recursive: true });
+  },
+
+  async writeJson(path: string, data: unknown): Promise<void> {
+    await writeFile(path, JSON.stringify(data, null, 2));
+  },
+
+  async readJson<T>(path: string): Promise<T> {
+    const content = await readFile(path, 'utf-8');
+    return JSON.parse(content);
+  }
+};
+```
+
+## Usage Examples
+
+### Good Examples
+
+```typescript
+// Using path constants
+const debugLogPath = buildPath(PATHS.OUTPUT.DEBUG, PATHS.LOGS.DEBUG);
+
+// Using file operations
+await FileOps.ensureDir(outputDir);
+await FileOps.writeJson(filePath, data);
+```
+
+### Bad Examples
+
+```typescript
+// Don't hardcode paths
+const logPath = path.join(process.cwd(), 'debug.log');
+
+// Don't duplicate file operations
+await mkdir(dir, { recursive: true });
+await writeFile(path, JSON.stringify(data));
+```
+
+## Benefits
+
+1. Single source of truth for paths
+2. Consistent file operations
+3. Easier path updates
+4. Reduced code duplication
+5. Better maintainability
+
+## Implementation Steps
+
+1. Create the constants file
+2. Create the file operations module
+3. Update existing code to use these utilities
+4. Add new paths/operations as needed
