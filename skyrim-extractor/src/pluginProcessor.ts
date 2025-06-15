@@ -10,6 +10,8 @@ import {
 } from "./constants/recordTypes";
 import { StatsCollector } from "./utils/stats";
 import { processGRUP } from "./utils/grup/grupHandler";
+import { processRecord } from "./utils/recordProcessor";
+import { debugLog } from "./utils/debugUtils";
 
 // Create a singleton stats collector
 const statsCollector = new StatsCollector();
@@ -32,6 +34,7 @@ export function shouldProcessRecordType(type: string): boolean {
   const shouldProcess = PROCESSED_RECORD_TYPES.has(type as ProcessedRecordType);
   if (!shouldProcess) {
     statsCollector.recordSkipped(type);
+    debugLog(`[pluginProcessor] Skipping unsupported record type: ${type}`);
   }
   return shouldProcess;
 }
@@ -57,67 +60,6 @@ export function validateRecordSize(
 }
 
 /**
- * Process a single record from a plugin buffer
- */
-export function processRecord(
-  buffer: Buffer,
-  offset: number,
-  pluginName: string
-): { record: ParsedRecord | null; newOffset: number } {
-  const header = parseRecordHeader(
-    buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
-  );
-
-  // Skip unsupported record types
-  if (!shouldProcessRecordType(header.type)) {
-    return {
-      record: null,
-      newOffset: offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize,
-    };
-  }
-
-  const data = buffer.slice(
-    offset + RECORD_HEADER.TOTAL_SIZE,
-    offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize
-  );
-
-  const subrecords: Record<string, Buffer[]> = {};
-  let subrecordOffset = 0;
-  for (const subrecord of scanSubrecords(data, 0).subrecords) {
-    if (!subrecords[subrecord.header.type]) {
-      subrecords[subrecord.header.type] = [];
-    }
-    subrecords[subrecord.header.type].push(
-      data.slice(subrecordOffset, subrecordOffset + subrecord.header.size)
-    );
-    subrecordOffset += subrecord.header.size;
-  }
-
-  const record: ParsedRecord = {
-    meta: {
-      type: header.type,
-      formId: header.formId.toString(16).toUpperCase().padStart(8, "0"),
-      plugin: pluginName,
-    },
-    data: subrecords,
-    header: buffer
-      .slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
-      .toString("base64"),
-  };
-
-  // Record stats for this record
-  statsCollector.recordProcessed(
-    header.type,
-    RECORD_HEADER.TOTAL_SIZE + header.dataSize
-  );
-
-  return {
-    record,
-    newOffset: offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize,
-  };
-}
-
-/**
  * Process an entire plugin file and return records grouped by type
  */
 export function processPlugin(
@@ -127,36 +69,120 @@ export function processPlugin(
   try {
     const records: ParsedRecord[] = [];
     let offset = 0;
+    let grupCount = 0;
+    let normalRecordCount = 0;
+    let endOfBufferCount = 0;
+    let lastOffset = -1;
 
-    while (offset + RECORD_HEADER.TOTAL_SIZE <= pluginBuffer.length) {
+    debugLog(`\n[pluginProcessor] Starting to process plugin: ${pluginName}`);
+    debugLog(`  Buffer length: ${pluginBuffer.length} bytes`);
+
+    while (offset < pluginBuffer.length) {
+      // Check if we're stuck at the same offset
+      if (offset === lastOffset) {
+        debugLog(
+          `[pluginProcessor] WARNING: Stuck at offset ${offset}, breaking loop`
+        );
+        break;
+      }
+      lastOffset = offset;
+
+      // Check if we have enough bytes for a record header
+      if (offset + RECORD_HEADER.TOTAL_SIZE > pluginBuffer.length) {
+        debugLog(
+          `[pluginProcessor] Not enough bytes remaining for a record header at offset ${offset}`
+        );
+        break;
+      }
+
       const recordType = pluginBuffer.toString("ascii", offset, offset + 4);
+      debugLog(
+        `[pluginProcessor] Processing at offset ${offset}/${
+          pluginBuffer.length
+        } (${Math.round(
+          (offset / pluginBuffer.length) * 100
+        )}%): type=${recordType}`
+      );
 
       if (recordType === "GRUP") {
+        grupCount++;
         // Process GRUP and get all records from it
         const grupRecords = processGRUP(pluginBuffer, offset, pluginName);
+        debugLog(
+          `[pluginProcessor] GRUP at offset ${offset} returned ${grupRecords.length} records`
+        );
         records.push(...grupRecords);
 
         // Get the GRUP size from its header
         const grupHeader = parseRecordHeader(
           pluginBuffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
         );
+        const oldOffset = offset;
         offset += RECORD_HEADER.TOTAL_SIZE + grupHeader.dataSize;
+        debugLog(
+          `[pluginProcessor] GRUP size: ${grupHeader.dataSize}, advancing offset: ${oldOffset} -> ${offset}`
+        );
       } else {
+        normalRecordCount++;
         // Process normal record
         const { record, newOffset } = processRecord(
           pluginBuffer,
           offset,
           pluginName
         );
+
+        // If we hit the end of the buffer, break out of the loop
+        if (newOffset === pluginBuffer.length) {
+          endOfBufferCount++;
+          debugLog(
+            `[pluginProcessor] Reached end of buffer at offset ${offset} (count: ${endOfBufferCount})`
+          );
+          if (endOfBufferCount > 1) {
+            debugLog(
+              `[pluginProcessor] Reached end of buffer multiple times, stopping processing`
+            );
+            break;
+          }
+        }
+
         if (record) {
           records.push(record);
+          // Record stats for this record
+          const recordSize = newOffset - offset;
+          statsCollector.recordProcessed(record.meta.type, recordSize);
+          debugLog(
+            `[pluginProcessor] Added record of type ${record.meta.type} (size: ${recordSize} bytes)`
+          );
+        } else {
+          debugLog(
+            `[pluginProcessor] Record at offset ${offset} was not processed (newOffset: ${newOffset})`
+          );
         }
         offset = newOffset;
       }
     }
 
+    debugLog(`\n[pluginProcessor] Finished processing plugin: ${pluginName}`);
+    debugLog(`  Total GRUPs found: ${grupCount}`);
+    debugLog(`  Total normal records found: ${normalRecordCount}`);
+    debugLog(`  Total records after processing: ${records.length}`);
+    debugLog(`  End of buffer reached ${endOfBufferCount} times`);
+    debugLog(
+      `  Final offset: ${offset}/${pluginBuffer.length} (${Math.round(
+        (offset / pluginBuffer.length) * 100
+      )}%)`
+    );
+
     statsCollector.recordPluginProcessed();
-    return groupRecordsByType(records);
+    const groupedRecords = groupRecordsByType(records);
+
+    // Log record counts by type
+    debugLog("\n[pluginProcessor] Records by type:");
+    Object.entries(groupedRecords).forEach(([type, typeRecords]) => {
+      debugLog(`  ${type}: ${typeRecords.length} records`);
+    });
+
+    return groupedRecords;
   } catch (error) {
     statsCollector.recordError(error instanceof Error ? error.name : "Unknown");
     throw error;

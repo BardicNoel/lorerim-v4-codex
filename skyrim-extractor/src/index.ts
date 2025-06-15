@@ -76,7 +76,24 @@ export async function main(
     printHeader("Writing Output Files");
     const fileWriter = createFileWriter();
     await fileWriter.writeRecords(recordsByType, config.outputPath);
-    await fileWriter.writeStats(stats.getStats(), config.outputPath);
+
+    // Create final stats from aggregated records
+    const finalStats = {
+      totalRecords: result.records.length,
+      recordsByType: Object.fromEntries(
+        Object.entries(recordsByType).map(([type, records]) => [
+          type,
+          records.length,
+        ])
+      ),
+      skippedRecords: stats.getStats().skippedRecords,
+      skippedTypes: stats.getStats().skippedTypes,
+      totalBytes: stats.getStats().totalBytes,
+      processingTime: stats.getStats().processingTime,
+      pluginsProcessed: plugins.length,
+      errors: stats.getStats().errors,
+    };
+    await fileWriter.writeStats(finalStats, config.outputPath);
 
     console.log(`Successfully processed ${plugins.length} plugins`);
     console.log(
@@ -84,7 +101,21 @@ export async function main(
     );
 
     // Display stats at the end
-    console.log("\n" + stats.formatStats());
+    console.log("\nProcessing complete. Stats:");
+    console.log(`  Total Records: ${finalStats.totalRecords}`);
+    console.log(
+      `  Total Bytes: ${(finalStats.totalBytes / 1024 / 1024).toFixed(2)} MB`
+    );
+    console.log(
+      `  Processing Time: ${(finalStats.processingTime / 1000).toFixed(2)}s`
+    );
+    console.log(`  Plugins Processed: ${finalStats.pluginsProcessed}`);
+    console.log("\nRecords by Type:");
+    Object.entries(finalStats.recordsByType)
+      .sort(([, a], [, b]) => b - a)
+      .forEach(([type, count]) => {
+        console.log(`  ${type}: ${count}`);
+      });
 
     // Close debug log
     closeDebugLog();

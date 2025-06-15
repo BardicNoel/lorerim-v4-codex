@@ -5,13 +5,9 @@ import { PluginMeta, ParsedRecord } from "../types";
 import { processGRUP } from "../utils/grup/grupHandler";
 import { logGRUPFields } from "../utils/debugUtils";
 import { RECORD_HEADER, GRUP_HEADER } from "../utils/buffer.constants";
-import { parseRecordHeader, scanSubrecords } from "../utils/recordParser";
+import { parseRecordHeader } from "../utils/recordParser";
+import { processRecord } from "../utils/recordProcessor";
 import { appendFileSync } from "fs";
-
-interface ProcessResult {
-  records: ParsedRecord[];
-  newOffset: number;
-}
 
 // Debug logging function
 function debugLog(message: string, data?: any) {
@@ -79,70 +75,6 @@ if (!parentPort) {
   console.log("Worker thread initialized with parentPort");
 }
 
-// Process a GRUP record
-async function processGRUPRecord(
-  buffer: Buffer,
-  offset: number,
-  pluginName: string
-): Promise<ProcessResult> {
-  debugLog(`Processing GRUP at offset ${offset}`, {
-    pluginName,
-    offset,
-    bufferSize: buffer.length,
-    headerPreview: buffer.slice(offset, offset + 24).toString("hex"),
-  });
-  const parsedRecords = await processGRUP(buffer, offset, pluginName);
-  debugLog(`GRUP processed, found ${parsedRecords.length} records`, {
-    pluginName,
-    recordCount: parsedRecords.length,
-    recordTypes: [...new Set(parsedRecords.map((r) => r.meta.type))],
-  });
-  return {
-    records: parsedRecords,
-    newOffset: offset + GRUP_HEADER.TOTAL_SIZE,
-  };
-}
-
-// Process a TES4 record
-async function processTES4Record(
-  buffer: Buffer,
-  offset: number,
-  pluginName: string
-): Promise<ProcessResult> {
-  debugLog(`Processing TES4 record at offset ${offset}`, {
-    pluginName,
-    offset,
-    bufferSize: buffer.length,
-    headerPreview: buffer.slice(offset, offset + 24).toString("hex"),
-  });
-  const records: ParsedRecord[] = [];
-  const header = buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE);
-  const size = header.readUInt32LE(RECORD_HEADER.OFFSETS.SIZE);
-  const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + size;
-  debugLog(`TES4 record processed, size: ${size}`, {
-    pluginName,
-    size,
-    newOffset,
-    headerPreview: header.toString("hex"),
-  });
-  return { records, newOffset };
-}
-
-// Process a normal record
-async function processNormalRecord(
-  buffer: Buffer,
-  offset: number,
-  pluginName: string
-): Promise<ProcessResult> {
-  debugLog(`Processing normal record at offset ${offset}`);
-  const records: ParsedRecord[] = [];
-  const header = buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE);
-  const size = header.readUInt32LE(RECORD_HEADER.OFFSETS.SIZE);
-  const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + size;
-  debugLog(`Normal record processed, size: ${size}`);
-  return { records, newOffset };
-}
-
 // Process the plugin file
 export async function processPlugin(
   plugin: PluginMeta
@@ -164,77 +96,27 @@ export async function processPlugin(
       bufferPreview: buffer.slice(offset, offset + 24).toString("hex"),
     });
 
-    const header = parseRecordHeader(buffer.slice(offset));
-    if (!header) {
-      debugLog(`Failed to parse record header at offset ${offset}`, {
-        pluginName: plugin.name,
-        offset,
-        bufferPreview: buffer.slice(offset, offset + 24).toString("hex"),
-      });
-      break;
-    }
+    const recordType = buffer.toString("ascii", offset, offset + 4);
+    debugLog(`Found record type: ${recordType}`);
 
-    debugLog(`Processing record at offset ${offset}`, {
-      pluginName: plugin.name,
-      recordType: header.type,
-      formId: header.formId.toString(16).padStart(8, "0").toUpperCase(),
-      offset,
-      size: header.dataSize,
-      headerPreview: buffer
-        .slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
-        .toString("hex"),
-    });
+    if (recordType === "GRUP") {
+      // Process GRUP and get all records from it
+      const grupRecords = processGRUP(buffer, offset, plugin.name);
+      records.push(...grupRecords);
 
-    const subrecordResult = scanSubrecords(
-      buffer.slice(offset + RECORD_HEADER.TOTAL_SIZE),
-      0
-    );
-    const record: ParsedRecord = {
-      meta: {
-        type: header.type,
-        formId: header.formId.toString(16).padStart(8, "0").toUpperCase(),
-        plugin: plugin.name,
-      },
-      data: {},
-      header: buffer
-        .slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
-        .toString("base64"),
-    };
-
-    debugLog(`Found ${subrecordResult.subrecords.length} subrecords`, {
-      pluginName: plugin.name,
-      recordType: header.type,
-      formId: record.meta.formId,
-      subrecordCount: subrecordResult.subrecords.length,
-      subrecordTypes: subrecordResult.subrecords.map((s) => s.header.type),
-    });
-
-    for (const { header, offset: subOffset } of subrecordResult.subrecords) {
-      const start = offset + RECORD_HEADER.TOTAL_SIZE + subOffset;
-      const end = start + header.size;
-      const subrecordData = buffer.slice(start, end);
-
-      if (!record.data[header.type]) {
-        record.data[header.type] = [];
+      // Get the GRUP size from its header
+      const grupHeader = parseRecordHeader(
+        buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
+      );
+      offset += RECORD_HEADER.TOTAL_SIZE + grupHeader.dataSize;
+    } else {
+      // Process normal record
+      const { record, newOffset } = processRecord(buffer, offset, plugin.name);
+      if (record) {
+        records.push(record);
       }
-
-      debugLog(`Processing subrecord`, {
-        pluginName: plugin.name,
-        recordType: record.meta.type,
-        formId: record.meta.formId,
-        subrecordType: header.type,
-        start,
-        end,
-        size: header.size,
-        actualSize: subrecordData.length,
-        bufferPreview: subrecordData.toString("hex").slice(0, 64),
-      });
-
-      record.data[header.type].push(subrecordData);
+      offset = newOffset;
     }
-
-    records.push(record);
-    offset += RECORD_HEADER.TOTAL_SIZE + header.dataSize;
   }
 
   // Log completion of plugin processing

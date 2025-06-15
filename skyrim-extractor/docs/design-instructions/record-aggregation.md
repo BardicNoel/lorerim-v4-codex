@@ -1,12 +1,12 @@
-# Record Aggregation and Winning Override Resolution
+# Record Aggregation and Stack Order Resolution
 
 ## Overview
 
-This document outlines the design of a high-performance system for aggregating parsed record metadata from Skyrim plugin binaries. The goal is to identify the winning override for each FormID based on plugin load order. This stage assumes that record scanning, plugin indexing, and ESL normalization have already been completed.
+This document outlines the design of a high-performance system for aggregating parsed record metadata from Skyrim plugin binaries. The goal is to track all records and their stack order (override order) based on plugin load order. This stage assumes that record scanning, plugin indexing, and ESL normalization have already been completed.
 
 ## Goals
 
-- Resolve winning records based on plugin load order
+- Track all records and their stack order based on plugin load order
 - Ensure thread safety during concurrent aggregation
 - Optimize for memory efficiency and speed
 
@@ -14,40 +14,45 @@ This document outlines the design of a high-performance system for aggregating p
 
 ### 1. **Initialization**
 
-- Receive a sorted list of plugins in reverse load order (i.e., last loaded first)
+- Receive a sorted list of plugins in load order
 - Each plugin is associated with a list of pre-parsed `RecordMeta` entries
 
-### 2. **Winning Records Set**
+### 2. **Record Stack Tracking**
 
-- Maintain a thread-safe map: `Map<FormID, RecordMeta>`
-- Represents the set of winning overrides for each unique FormID
+- Maintain a thread-safe map: `Map<FormID, ParsedRecord[]>`
+- Each FormID maps to an array of records in stack order
+- The first occurrence of a FormID gets stackOrder 0, subsequent overrides get 1, 2, etc.
 
 ### 3. **Aggregation Algorithm**
 
-- Iterate over plugin records in reverse load order
-- For each `RecordMeta`:
+- Iterate over plugin records in load order
+- For each record:
   ```ts
-  if (!winnerSet.has(record.formID)) {
-    record.isWinner = true;
-    winnerSet.set(record.formID, record);
-    outputList.push(record);
+  if (!recordMap.has(record.formID)) {
+    // First occurrence of this FormID
+    record.meta.stackOrder = 0;
+    recordMap.set(record.formID, [record]);
+  } else {
+    // Subsequent override
+    const stack = recordMap.get(record.formID)!;
+    record.meta.stackOrder = stack.length;
+    stack.push(record);
   }
-  // else: record is an override but not the winner, discard or ignore
+  allRecords.push(record);
   ```
 
 ### 4. **Thread Safety**
 
 - Aggregation occurs in the main thread to avoid locking
-- Worker threads scan plugin files and emit `RecordMeta` objects
-- Main thread acts as the single aggregator, ensuring atomic access to the `winnerSet`
-
+- Worker threads scan plugin files and emit `ParsedRecord` objects
+- Main thread acts as the single aggregator, ensuring atomic access to the record stacks
 
 ## Extensibility
 
-- Add support for tracking second-place overrides for diagnostics
-- Aggregate by record type if needed for filtered views
+- Track additional metadata about overrides (e.g., which plugin provides each override)
+- Aggregate by record type for filtered views
+- Support querying records by stack order
 
 ## Summary
 
-This aggregation strategy ensures that the final set of winning overrides is accurate and efficiently determined, using a reverse-ordered aggregation process and a centralized winner set maintained in the main thread.
-
+This aggregation strategy ensures that we maintain a complete history of all records and their override order, using a stack-based approach where each FormID's records are tracked in order of appearance. The stack order (0 being the first occurrence) provides a clear indication of the override sequence.

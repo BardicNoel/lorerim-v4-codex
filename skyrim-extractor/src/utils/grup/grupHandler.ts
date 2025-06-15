@@ -1,17 +1,20 @@
-import { ParsedRecord } from '../../types';
-import { parseRecordHeader, scanSubrecords } from '../recordParser';
-import { setDebugCallback } from '../bufferParser';
-import { 
-  debugLog, 
-  dumpHex, 
+import { ParsedRecord } from "../../types";
+import { parseRecordHeader, scanSubrecords } from "../recordParser";
+import { setDebugCallback } from "../bufferParser";
+import {
+  debugLog,
+  dumpHex,
   getGroupTypeName,
   errorLog,
   parseGRUPHeader,
-  validateGRUPSize
-} from './grupUtils';
-import { RECORD_HEADER } from '../buffer.constants';
-import { processRecord } from '../../pluginProcessor';
-import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from '../../constants/recordTypes'  ;
+  validateGRUPSize,
+} from "./grupUtils";
+import { RECORD_HEADER } from "../buffer.constants";
+import { processRecord } from "../recordProcessor";
+import {
+  PROCESSED_RECORD_TYPES,
+  ProcessedRecordType,
+} from "../../constants/recordTypes";
 
 // Set up debug callback
 setDebugCallback((message: string) => {
@@ -20,7 +23,7 @@ setDebugCallback((message: string) => {
 
 /**
  * Main GRUP processing function that handles all GRUP types.
- * 
+ *
  * GRUP Types:
  * 0 - Top-Level: Contains records of a single type (e.g., all RACE records)
  * 1 - World Children: Contains worldspace records
@@ -32,193 +35,233 @@ setDebugCallback((message: string) => {
  * 7 - Topic Children: Contains dialogue topic records
  * 8 - Cell Persistent Children: Contains persistent cell records
  * 9 - Cell Temporary Children: Contains temporary cell records
- * 
+ *
  * @param buffer The plugin file buffer
  * @param offset The offset in the buffer where the GRUP starts
  * @param pluginName The name of the plugin being processed
  * @returns Array of parsed records found in this GRUP
  */
-export function processGRUP(buffer: Buffer, offset: number, pluginName: string): ParsedRecord[] {
-  try {
-    const header = parseGRUPHeader(buffer, offset);
-    validateGRUPSize(header, buffer, offset);
-
-    // Log GRUP header info
-    debugLog(`\nGRUP at offset ${offset}:`);
-    debugLog(`  Type: ${header.groupType} (${getGroupTypeName(header.groupType)})`);
-    debugLog(`  Size: ${header.size} bytes`);
-    if (header.groupType === 0) {
-      debugLog(`  Label: ${header.label.toString('ascii')}`);
-    }
-    debugLog(`  Timestamp: ${header.timestamp}`);
-    debugLog(`  Version: ${header.versionControl}`);
-    
-    // Dump GRUP header and initial data
-    dumpHex(buffer, offset, RECORD_HEADER.TOTAL_SIZE, 'GRUP Header Hex Dump (24 bytes)');
-    dumpHex(buffer, offset + RECORD_HEADER.TOTAL_SIZE, 64, 'Initial GRUP Data (64 bytes)');
-
-    // For Top-Level GRUPs (type 0), we know exactly what type of records to expect
-    // because the label in the header tells us (e.g., RACE, PERK, etc.)
-    if (header.groupType === 0) {
-      const recordType = header.label.toString('ascii');
-      if (!PROCESSED_RECORD_TYPES.has(recordType as ProcessedRecordType)) {
-        debugLog(`  Skipping group with label ${recordType} because it's unsupported`);
-        return []; // Skip this GRUP if we don't care about its type
-      }
-      debugLog(`  Processing records of type: ${recordType}`);
-      return processTopLevelGRUP(buffer, offset, header, recordType, pluginName);
-    }
-
-    // For all other GRUP types, we need to check each record's type
-    // because they can contain multiple types of records and nested GRUPs
-    return processNestedGRUP(buffer, offset, header, pluginName);
-  } catch (error: any) {
-    errorLog('processGRUP', `Failed to process GRUP at offset ${offset}: ${error.message}`);
-    throw error;
-  }
-}
-
-/**
- * Processes a Top-Level GRUP (type 0) which contains records of a single known type.
- * These GRUPs are the main record groups in the plugin file and contain
- * all records of a specific type (e.g., all RACE records or all PERK records).
- * 
- * Example structure:
- * GRUP (type 0, label: RACE)
- * ├── RACE record
- * ├── RACE record
- * └── RACE record
- * 
- * @param buffer The plugin file buffer
- * @param offset The offset in the buffer where the GRUP starts
- * @param header The parsed GRUP header
- * @param recordType The type of records in this GRUP (e.g., 'RACE', 'PERK')
- * @param pluginName The name of the plugin being processed
- * @returns Array of parsed records found in this GRUP
- */
-function processTopLevelGRUP(
-  buffer: Buffer, 
-  offset: number, 
-  header: any, 
-  recordType: string,
+export function processGRUP(
+  buffer: Buffer,
+  offset: number,
   pluginName: string
 ): ParsedRecord[] {
-  try {
-    const records: ParsedRecord[] = [];
-    let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE; // Skip GRUP header
-    const endOffset = offset + header.size;
+  const records: ParsedRecord[] = [];
+  const grupHeader = parseRecordHeader(
+    buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
+  );
+  const grupSize = grupHeader.dataSize;
+  const grupType = buffer.toString("ascii", offset + 8, offset + 12);
+  const grupLabel = buffer.readUInt32LE(offset + 12);
+  const grupTimestamp = buffer.readUInt32LE(offset + 16);
 
-    while (currentOffset < endOffset) {
-      debugLog(`\nProcessing record at offset ${currentOffset}:`);
-      
-      // Parse record header
-      const recordHeader = parseRecordHeader(buffer.subarray(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE));
-      const totalRecordSize = RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
-      
-      debugLog(`  Record type: ${recordHeader.type}`);
-      debugLog(`  Data size: ${recordHeader.dataSize}`);
-      debugLog(`  Total record size (header + data): ${totalRecordSize}`);
-      
-      // Dump record header and initial data
-      dumpHex(buffer, currentOffset, RECORD_HEADER.TOTAL_SIZE, 'Record Header Hex Dump (24 bytes)');
-      dumpHex(buffer, currentOffset + RECORD_HEADER.TOTAL_SIZE, 64, 'Initial Record Data (64 bytes)');
+  debugLog(`\n[grupHandler] Processing GRUP at offset ${offset}`);
+  debugLog(`  Type: ${grupType}`);
+  debugLog(`  Label: ${grupLabel}`);
+  debugLog(`  Size: ${grupSize}`);
+  debugLog(`  Timestamp: ${grupTimestamp}`);
 
-      // Process the record
-      const { record } = processRecord(buffer, currentOffset, pluginName);
-      if (record) {
-        // Only add records that match the GRUP's type
-        if (record.meta.type === recordType) {
-          records.push(record);
-        } else {
-          debugLog(`  Skipping record of type ${record.meta.type} in ${recordType} GRUP`);
-        }
-      }
-      
-      // Advance to next record using the correct size calculation
-      currentOffset += totalRecordSize;
-      debugLog(`  Advanced to next record at offset: ${currentOffset}`);
+  let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE;
+  const endOffset = offset + RECORD_HEADER.TOTAL_SIZE + grupSize;
+  let recordCount = 0;
+
+  while (currentOffset < endOffset) {
+    // Check if we have enough bytes for a record header
+    if (currentOffset + RECORD_HEADER.TOTAL_SIZE > endOffset) {
+      debugLog(
+        `[grupHandler] Not enough bytes remaining for a record header at offset ${currentOffset} (endOffset: ${endOffset})`
+      );
+      break;
     }
 
-    return records;
-  } catch (error: any) {
-    errorLog('processTopLevelGRUP', `Failed to process top-level GRUP at offset ${offset}: ${error.message}`);
-    throw error;
+    const recordType = buffer.toString(
+      "ascii",
+      currentOffset,
+      currentOffset + 4
+    );
+    debugLog(
+      `[grupHandler] Processing at offset ${currentOffset}/${endOffset} (${Math.round(
+        (currentOffset / endOffset) * 100
+      )}%): type=${recordType}`
+    );
+
+    if (recordType === "GRUP") {
+      // Process nested GRUP
+      const nestedRecords = processNestedGRUP(
+        buffer,
+        currentOffset,
+        pluginName
+      );
+      debugLog(
+        `[grupHandler] Nested GRUP returned ${nestedRecords.length} records`
+      );
+      records.push(...nestedRecords);
+      recordCount += nestedRecords.length;
+
+      // Get the nested GRUP size
+      const nestedGrupHeader = parseRecordHeader(
+        buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
+      );
+      const oldOffset = currentOffset;
+      currentOffset += RECORD_HEADER.TOTAL_SIZE + nestedGrupHeader.dataSize;
+      debugLog(
+        `[grupHandler] GRUP size: ${nestedGrupHeader.dataSize}, advancing offset: ${oldOffset} -> ${currentOffset}`
+      );
+    } else {
+      // Process normal record
+      const { record, newOffset } = processRecord(
+        buffer,
+        currentOffset,
+        pluginName
+      );
+      if (record) {
+        records.push(record);
+        recordCount++;
+        const recordSize = newOffset - currentOffset;
+        debugLog(
+          `[grupHandler] Added record of type ${record.meta.type} (size: ${recordSize} bytes)`
+        );
+      } else {
+        debugLog(
+          `[grupHandler] Record at offset ${currentOffset} was not processed (newOffset: ${newOffset})`
+        );
+        // If we hit the end of buffer, break out
+        if (newOffset === buffer.length) {
+          debugLog(
+            `[grupHandler] Reached end of buffer, stopping GRUP processing`
+          );
+          break;
+        }
+      }
+      currentOffset = newOffset;
+    }
   }
+
+  debugLog(`[grupHandler] Finished processing GRUP at offset ${offset}`);
+  debugLog(`  Total records found: ${recordCount}`);
+  debugLog(`  Records by type:`);
+  const recordsByType = records.reduce((acc, record) => {
+    acc[record.meta.type] = (acc[record.meta.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  Object.entries(recordsByType).forEach(([type, count]) => {
+    debugLog(`    ${type}: ${count} records`);
+  });
+
+  return records;
 }
 
 /**
- * Processes a nested GRUP which can contain multiple types of records and nested GRUPs.
- * These GRUPs are used for organizing records hierarchically, like worldspaces,
- * cells, and their children.
- * 
- * Example structure:
- * GRUP (type 1, World Children)
- * ├── GRUP (type 2, Cell Block)
- * │   ├── CELL record
- * │   └── CELL record
- * └── GRUP (type 2, Cell Block)
- *     ├── CELL record
- *     └── CELL record
- * 
- * @param buffer The plugin file buffer
- * @param offset The offset in the buffer where the GRUP starts
- * @param header The parsed GRUP header
- * @param pluginName The name of the plugin being processed
- * @returns Array of parsed records found in this GRUP and its nested GRUPs
+ * Process a nested GRUP record
  */
 function processNestedGRUP(
-  buffer: Buffer, 
-  offset: number, 
-  header: any,
+  buffer: Buffer,
+  offset: number,
   pluginName: string
 ): ParsedRecord[] {
-  try {
-    const records: ParsedRecord[] = [];
-    let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE;
-    const endOffset = offset + header.size;
+  const records: ParsedRecord[] = [];
+  const grupHeader = parseRecordHeader(
+    buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
+  );
+  const grupSize = grupHeader.dataSize;
+  const grupType = buffer.toString("ascii", offset + 8, offset + 12);
+  const grupLabel = buffer.readUInt32LE(offset + 12);
+  const grupTimestamp = buffer.readUInt32LE(offset + 16);
 
-    debugLog(`\nProcessing nested GRUP from ${offset} to ${endOffset} (size: ${header.size})`);
+  debugLog(`\n[grupHandler] Processing nested GRUP at offset ${offset}`);
+  debugLog(`  Type: ${grupType}`);
+  debugLog(`  Label: ${grupLabel}`);
+  debugLog(`  Size: ${grupSize}`);
+  debugLog(`  Timestamp: ${grupTimestamp}`);
 
-    while (currentOffset < endOffset) {
-      debugLog(`\nProcessing at offset ${currentOffset}:`);
-      
-      // Dump header
-      dumpHex(buffer, currentOffset, RECORD_HEADER.TOTAL_SIZE, 'Header Hex Dump (24 bytes)');
+  let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE;
+  const endOffset = offset + RECORD_HEADER.TOTAL_SIZE + grupSize;
+  let recordCount = 0;
 
-      const recordType = buffer.toString('ascii', currentOffset, currentOffset + 4);
-      debugLog(`  Record type: ${recordType}`);
-      
-      if (recordType === 'GRUP') {
-        // Recursively process nested GRUP
-        const nestedRecords = processGRUP(buffer, currentOffset, pluginName);
-        records.push(...nestedRecords);
-        const grupHeader = parseGRUPHeader(buffer, currentOffset);
-        debugLog(`  Nested GRUP size: ${grupHeader.size}`);
-        currentOffset += grupHeader.size;
-      } else {
-        // Read the record header to get its size
-        const recordHeader = parseRecordHeader(buffer.subarray(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE));
-        const totalRecordSize = RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
-
-        // Only process records of supported types
-        if (PROCESSED_RECORD_TYPES.has(recordHeader.type as ProcessedRecordType)) {
-          const { record } = processRecord(buffer, currentOffset, pluginName);
-          if (record) {
-            records.push(record);
-          }
-        } else {
-          debugLog(`  Skipping unsupported record type: ${recordHeader.type}`);
-        }
-
-        currentOffset += totalRecordSize;
-      }
+  while (currentOffset < endOffset) {
+    // Check if we have enough bytes for a record header
+    if (currentOffset + RECORD_HEADER.TOTAL_SIZE > endOffset) {
+      debugLog(
+        `[grupHandler] Not enough bytes remaining for a record header at offset ${currentOffset} (endOffset: ${endOffset})`
+      );
+      break;
     }
 
-    return records;
-  } catch (error: any) {
-    errorLog('processNestedGRUP', `Failed to process nested GRUP at offset ${offset}: ${error.message}`);
-    throw error;
+    const recordType = buffer.toString(
+      "ascii",
+      currentOffset,
+      currentOffset + 4
+    );
+    debugLog(
+      `[grupHandler] Processing nested at offset ${currentOffset}/${endOffset} (${Math.round(
+        (currentOffset / endOffset) * 100
+      )}%): type=${recordType}`
+    );
+
+    if (recordType === "GRUP") {
+      // Process nested GRUP
+      const nestedRecords = processNestedGRUP(
+        buffer,
+        currentOffset,
+        pluginName
+      );
+      debugLog(
+        `[grupHandler] Nested GRUP returned ${nestedRecords.length} records`
+      );
+      records.push(...nestedRecords);
+      recordCount += nestedRecords.length;
+
+      // Get the nested GRUP size
+      const nestedGrupHeader = parseRecordHeader(
+        buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
+      );
+      const oldOffset = currentOffset;
+      currentOffset += RECORD_HEADER.TOTAL_SIZE + nestedGrupHeader.dataSize;
+      debugLog(
+        `[grupHandler] GRUP size: ${nestedGrupHeader.dataSize}, advancing offset: ${oldOffset} -> ${currentOffset}`
+      );
+    } else {
+      // Process normal record
+      const { record, newOffset } = processRecord(
+        buffer,
+        currentOffset,
+        pluginName
+      );
+      if (record) {
+        records.push(record);
+        recordCount++;
+        const recordSize = newOffset - currentOffset;
+        debugLog(
+          `[grupHandler] Added record of type ${record.meta.type} (size: ${recordSize} bytes)`
+        );
+      } else {
+        debugLog(
+          `[grupHandler] Record at offset ${currentOffset} was not processed (newOffset: ${newOffset})`
+        );
+        // If we hit the end of buffer, break out
+        if (newOffset === buffer.length) {
+          debugLog(
+            `[grupHandler] Reached end of buffer, stopping nested GRUP processing`
+          );
+          break;
+        }
+      }
+      currentOffset = newOffset;
+    }
   }
+
+  debugLog(`[grupHandler] Finished processing nested GRUP at offset ${offset}`);
+  debugLog(`  Total records found: ${recordCount}`);
+  debugLog(`  Records by type:`);
+  const recordsByType = records.reduce((acc, record) => {
+    acc[record.meta.type] = (acc[record.meta.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  Object.entries(recordsByType).forEach(([type, count]) => {
+    debugLog(`    ${type}: ${count} records`);
+  });
+
+  return records;
 }
 
-export { parseGRUPHeader, validateGRUPSize }; 
+export { parseGRUPHeader, validateGRUPSize };
