@@ -6,6 +6,9 @@ export const commonFieldSchemas: RecordSchema = {
   FULL: { type: 'string', encoding: 'utf8' },
   DESC: { type: 'string', encoding: 'utf8' },
   ICON: { type: 'string', encoding: 'utf8' }, // Used in many visual records
+  DNAM: { type: 'string', encoding: 'utf8' },
+  KSIZ: { type: 'uint32' },
+  KWDA: { type: 'array', element: { type: 'formid' } },
 };
 
 // Shared internal field layouts that can be composed into larger structs
@@ -152,6 +155,8 @@ export const recordSpecificSchemas: RecordSpecificSchemas = {
     },
   },
   MGEF: {
+    MDOB: { type: 'formid' },
+    ESCE: { type: 'formid' },
     DATA: {
       type: 'struct',
       fields: [

@@ -465,12 +465,6 @@ function processRecordFields(
         case 'string':
           if (!('encoding' in schema)) throw new Error('String field must specify encoding');
           decodedField = decoder.parseString(buffer, schema.encoding);
-
-          if (fieldName === 'FULL') {
-            console.log(`[DEBUG] FULL string:`, decodedField);
-            console.log(`[DEBUG] FULL buffer:`, buffer.toString('hex'));
-          }
-
           break;
 
         case 'formid':
@@ -486,11 +480,11 @@ function processRecordFields(
 
         case 'struct':
           console.log(`[DEBUG] Struct field ${fieldName} in ${config.recordType}`);
-          decodedField = decoder.parseStruct(buffer, 0, buffer.readUInt16LE(0), schema.fields);
+          decodedField = decoder.parseStruct(buffer, 0, buffer.length, schema.fields);
           break;
 
         case 'array':
-          decodedField = decoder.parseArray(buffer, 0, buffer.readUInt16LE(0), schema.element);
+          decodedField = decoder.parseArray(buffer, 0, buffer.length, schema.element);
           break;
 
         default:
