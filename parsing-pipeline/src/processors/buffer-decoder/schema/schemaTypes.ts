@@ -20,6 +20,10 @@ export interface BaseFieldSchema {
   parser?: (args: any) => any;
 }
 
+export interface NoPostParseSchema extends BaseFieldSchema {
+  parser?: undefined;
+}
+
 export interface StringFieldSchema extends BaseFieldSchema {
   type: 'string';
   encoding: StringEncoding;
@@ -33,20 +37,18 @@ export interface NumericFieldSchema extends BaseFieldSchema {
   type: 'uint8' | 'uint16' | 'uint32' | 'float32' | 'int32';
 }
 
-export interface StructFieldSchema extends BaseFieldSchema {
+export interface StructFieldSchema extends NoPostParseSchema {
   type: 'struct';
   fields: FieldSchema[];
-  parser: undefined;
 }
 
 export interface UnknownFieldSchema extends BaseFieldSchema {
   type: 'unknown';
 }
 
-export interface ArrayFieldSchema extends BaseFieldSchema {
+export interface ArrayFieldSchema extends NoPostParseSchema {
   type: 'array';
   element: FieldSchema;
-  parser: undefined;
 }
 
 export type FieldSchema =

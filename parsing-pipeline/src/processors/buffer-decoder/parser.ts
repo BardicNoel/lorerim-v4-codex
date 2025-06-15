@@ -20,13 +20,6 @@ function debugLog(message: string, data?: any) {
   }
 }
 
-const applyNullableParser = (field: FieldSchema, value: any) => {
-  if (field.parser) {
-    return field.parser(value);
-  }
-  return value;
-};
-
 // Error logging function that works in both worker and main thread
 function errorLog(message: string, error?: any) {
   console.error(`[ERROR] ${message}`, error);
@@ -237,6 +230,7 @@ export class BufferDecoder {
           results.push(
             this.parseString(
               buffer.slice(currentOffset + 2, currentOffset + 2 + strLength),
+              0,
               elementSchema.encoding,
               elementSchema.parser
             )
@@ -369,18 +363,18 @@ export class BufferDecoder {
           switch (schema.type) {
             case 'string':
               if (!('encoding' in schema)) throw new Error('String field must specify encoding');
-              result[tag] = this.parseString(buffer, schema.encoding);
+              result[tag] = this.parseString(buffer, offset, schema.encoding, schema.parser);
               break;
 
             case 'formid':
-              result[tag] = this.parseFormId(buffer, offset);
+              result[tag] = this.parseFormId(buffer, offset, schema.parser);
               break;
 
             case 'uint8':
             case 'uint16':
             case 'uint32':
             case 'float32':
-              result[tag] = this.parseNumeric(buffer, offset, schema.type);
+              result[tag] = this.parseNumeric(buffer, offset, schema.type, schema.parser);
               break;
 
             case 'struct':
@@ -506,7 +500,7 @@ function processRecordFields(
       switch (schema.type) {
         case 'string':
           if (!('encoding' in schema)) throw new Error('String field must specify encoding');
-          decodedField = decoder.parseString(buffer, schema.encoding);
+          decodedField = decoder.parseString(buffer, 0, schema.encoding, schema.parser);
           break;
 
         case 'formid':

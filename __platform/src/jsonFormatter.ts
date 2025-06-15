@@ -4,56 +4,32 @@
 export function formatJSON(obj: any, indent = 0): string {
   const space = "  ".repeat(indent);
 
+  // Special handling for Buffer objects
+  if (
+    obj &&
+    typeof obj === "object" &&
+    obj.type === "Buffer" &&
+    Array.isArray(obj.data)
+  ) {
+    return `{"type":"Buffer","data":[${obj.data.join(",")}]}`;
+  }
+
   if (Array.isArray(obj)) {
-    // For arrays, check if they contain only primitive values
-    const isPrimitiveArray = obj.every(
-      (item) =>
-        typeof item === "string" ||
-        typeof item === "number" ||
-        typeof item === "boolean" ||
-        item === null
-    );
-
-    if (isPrimitiveArray) {
-      // Compact format for primitive arrays, ensuring formids are treated as strings
-      return `[${obj
-        .map((item) => {
-          if (typeof item === "string" && item.startsWith("0x")) {
-            return `"${item}"`;
-          }
-          return item;
-        })
-        .join(", ")}]`;
-    }
-
-    // For arrays of objects, format each item
+    if (obj.length === 0) return "[]";
     return `[\n${obj
       .map((item) => space + "  " + formatJSON(item, indent + 1))
       .join(",\n")}\n${space}]`;
   }
 
   if (obj && typeof obj === "object") {
-    // For objects, format each property
     const entries = Object.entries(obj);
     if (entries.length === 0) return "{}";
-
-    // Special handling for Buffer objects
-    if (obj.type === "Buffer" && Array.isArray(obj.data)) {
-      return `{"type":"Buffer","data":[${obj.data.join(",")}]}`;
-    }
-
     return `{\n${entries
-      .map(([key, value]) => {
-        return `${space}  "${key}": ${formatJSON(value, indent + 1)}`;
-      })
+      .map(
+        ([key, value]) => `${space}  "${key}": ${formatJSON(value, indent + 1)}`
+      )
       .join(",\n")}\n${space}}`;
   }
 
-  // For primitives, handle formids specially
-  if (typeof obj === "string" && obj.startsWith("0x")) {
-    return `"${obj}"`;
-  }
-
-  // For other primitives, use standard JSON.stringify
   return JSON.stringify(obj);
 }
