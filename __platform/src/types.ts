@@ -11,6 +11,9 @@ export interface ParsedRecord {
     decodedData?:{
       [key: string]: any; // Decoded data by subrecord ID
     }
+    decodedErrors?:{
+      [key: string]: any; // Decoded data by subrecord ID
+    }
     header: string; // Raw 24-byte record header in base64
 } 
 

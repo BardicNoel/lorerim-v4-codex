@@ -14,6 +14,7 @@ interface ProcessResult {
 
 // Debug logging function
 function debugLog(message: string, data?: any) {
+  console.log(`[Debug] ${message}`, data);
   if (parentPort) {
     parentPort.postMessage({ type: 'debug', message, data });
   }
@@ -21,6 +22,7 @@ function debugLog(message: string, data?: any) {
 
 // Error logging function
 function errorLog(message: string, error?: any) {
+  console.error(`[Error] ${message}`, error);
   if (parentPort) {
     parentPort.postMessage({ type: 'error', message, error: error?.message || error });
   }
@@ -87,6 +89,19 @@ export async function processPlugin(plugin: PluginMeta): Promise<ParsedRecord[]>
       if (!record.data[subrecord.type]) {
         record.data[subrecord.type] = [];
       }
+      
+      // Add logging for MGEF records
+      if (header.type === 'MGEF' && records.length % 100 === 0) {
+        console.log(`Found MGEF record at index ${records.length}`);
+        const subrecordData = buffer.slice(offset + RECORD_HEADER.TOTAL_SIZE + subrecordResult.offset, offset + RECORD_HEADER.TOTAL_SIZE + subrecordResult.offset + subrecord.size);
+        debugLog(`MGEF Record found at offset ${offset}`, {
+          recordIndex: records.length,
+          subrecordSize: subrecord.size,
+          subrecordOffset: subrecordResult.offset,
+          bufferPreview: subrecordData.toString('hex').slice(0, 64) // Show first 32 bytes in hex
+        });
+      }
+      
       // If needed, slice data from buffer using subrecord.size and offset
       // record.data[subrecord.type].push(buffer.slice(...));
     }
