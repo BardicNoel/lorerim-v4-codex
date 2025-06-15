@@ -485,11 +485,12 @@ function processRecordFields(
           break;
 
         case 'struct':
-          decodedField = decoder.parseStruct(buffer, 0, buffer.readUInt16LE(4), schema.fields);
+          console.log(`[DEBUG] Struct field ${fieldName} in ${config.recordType}`);
+          decodedField = decoder.parseStruct(buffer, 0, buffer.readUInt16LE(0), schema.fields);
           break;
 
         case 'array':
-          decodedField = decoder.parseArray(buffer, 0, buffer.readUInt16LE(4), schema.element);
+          decodedField = decoder.parseArray(buffer, 0, buffer.readUInt16LE(0), schema.element);
           break;
 
         default:
