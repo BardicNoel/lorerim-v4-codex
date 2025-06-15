@@ -2,6 +2,7 @@
 name: 'MGEF Analysis Pipeline'
 description: 'Process MGEF data for analysis'
 input: '../output/skyrim-extractor/mod-samples/MGEF.json'
+# input: '../output/parsing-pipeline/1.MGEF_Analysis.json'
 output: '../output/parsing-pipeline/1.MGEF_Analysis.json'
 
 # Use stages from base template
