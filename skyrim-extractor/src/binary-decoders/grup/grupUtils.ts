@@ -2,7 +2,7 @@ import { parentPort } from "worker_threads";
 import { Buffer } from "buffer";
 import { ParsedRecord } from "../../types";
 import { ProcessedRecordType } from "../../constants";
-import { RECORD_HEADER } from "../../utils/buffer.constants";
+import { RECORD_HEADER } from "../buffer.constants";
 import {
   parseRecordHeader,
   scanSubrecords,

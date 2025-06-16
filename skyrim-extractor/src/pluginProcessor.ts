@@ -3,7 +3,7 @@ import {
   scanSubrecords,
 } from "./binary-decoders/recordParser";
 import { ParsedRecord, RecordHeader } from "./types";
-import { RECORD_HEADER } from "./utils/buffer.constants";
+import { RECORD_HEADER } from "./binary-decoders/buffer.constants";
 import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "./constants";
 import { StatsCollector } from "./utils/stats";
 import { processGRUP } from "./binary-decoders/grup/grupHandler";

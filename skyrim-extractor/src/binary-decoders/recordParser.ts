@@ -1,8 +1,4 @@
-import {
-  RECORD_HEADER,
-  SUBRECORD_HEADER,
-  OFFSETS,
-} from "../utils/buffer.constants";
+import { RECORD_HEADER, SUBRECORD_HEADER, OFFSETS } from "./buffer.constants";
 import { RecordHeader, SubrecordHeader } from "../types";
 import { debugLog } from "../utils/debugUtils";
 

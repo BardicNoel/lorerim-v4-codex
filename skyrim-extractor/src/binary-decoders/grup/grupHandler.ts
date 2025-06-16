@@ -8,7 +8,7 @@ import {
   parseGRUPHeader,
   validateGRUPSize,
 } from "./grupUtils";
-import { RECORD_HEADER } from "../../utils/buffer.constants";
+import { RECORD_HEADER } from "../buffer.constants";
 import { processRecord } from "../../utils/recordProcessor";
 import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "../../constants";
 

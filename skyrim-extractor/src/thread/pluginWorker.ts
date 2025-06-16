@@ -2,7 +2,10 @@
 import { parentPort } from "worker_threads";
 import { readFile } from "fs/promises";
 import { PluginMeta, ParsedRecord } from "../types";
-import { RECORD_HEADER, GRUP_HEADER } from "../utils/buffer.constants";
+import {
+  RECORD_HEADER,
+  GRUP_HEADER,
+} from "../binary-decoders/buffer.constants";
 import { parseRecordHeader } from "../binary-decoders/recordParser";
 import {
   parseGRUPHeader,

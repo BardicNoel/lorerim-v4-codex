@@ -1,5 +1,8 @@
 import { ParsedRecord, RecordHeader } from "../types";
-import { RECORD_HEADER, SUBRECORD_HEADER } from "./buffer.constants";
+import {
+  RECORD_HEADER,
+  SUBRECORD_HEADER,
+} from "../binary-decoders/buffer.constants";
 import {
   parseRecordHeader,
   scanSubrecords,
