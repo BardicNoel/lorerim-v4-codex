@@ -32,263 +32,49 @@ interface PluginMeta {
 2. Traverse `<extracted_dir>/` and map plugins to full paths by matching names
 3. Return sorted array of `PluginMeta`
 
-### 2. Plugin Processing Workers
-Plugins are parsed in parallel using `worker_threads`. Each worker:
-- Receives one plugin file and metadata
-- Reads binary plugin file
-- For each record:
-  - Parses 24-byte header → `parseRecordHeader()`
-  - Uses `scanSubrecords()` on body
-  - Emits `ParsedRecord`
-- Returns: `{ status: 'done', plugin: string, records: ParsedRecord[] }`
+### 2. Plugin Processing System
+Plugins are processed using a thread pool system:
+- Configurable number of worker threads (default: min(4, plugin_count))
+- Each worker processes one plugin at a time
+- Supports record type filtering
+- Includes debug logging capabilities
+- Returns both buffer metadata and parsed records
 
-### 3. Thread Manager
-The main process manages plugin workers:
-- Limits concurrency (e.g. max 4 at once)
-- Queues plugins for processing
-- Collects results per worker
-- Passes `ParsedRecord` to output aggregator
-
-### 4. Record Aggregator
+### 3. Record Aggregator
 The aggregator collects parsed records and:
-- Buffers or streams them grouped by `meta.type`
+- Groups them by record type
 - Outputs JSON files: `PERK.json`, `RACE.json`, etc.
-- Handles file flushing or memory limits if needed
+- Handles file writing with proper error handling
 
 ## Output Organization
-Each parsed record will be appended to a type-based array file:
+Each parsed record will be written to type-based array files:
 - `PERK.json`, `AVIF.json`, `SPEL.json`, etc.
-- Each entry in the array includes:
-  - A `meta` block: plugin name, record type, and form ID
-  - A `data` block: raw subrecord map
-  - The original binary `header` as a base64 string
+- Each entry includes metadata and parsed data
+- Records are sourced from `@lorerim/platform-types`
 
 ## TypeScript Interface Specifications
 
-### ParsedRecord
-```ts
-export interface ParsedRecord {
-  meta: {
-    type: string;   // e.g., 'PERK'
-    formId: string; // e.g., '00058F80'
-    plugin: string; // e.g., 'Requiem.esp'
-  };
-  data: Record<string, Buffer[]>; // Subrecord content by subrecord ID
-  header: string; // Raw 24-byte record header in base64
-}
-```
-
 ### Record Header Format
-The record header is a **24-byte binary structure** with no field names, just fixed offsets:
+The record header is a simplified structure:
 
-| Bytes      | Field               | Notes                         |
-|------------|---------------------|-------------------------------|
-| `0x00-0x03` | Record Type         | 4 ASCII bytes (e.g., `'PERK'`) |
-| `0x04-0x07` | Data Size           | UInt32LE — size of subrecord area only |
-| `0x08-0x0B` | Form ID             | UInt32LE — uniquely identifies the record |
-| `0x0C-0x0F` | Flags               | UInt32LE — behavior metadata (bitfield) |
-| `0x10-0x11` | Version Control Info | UInt16LE — rarely used         |
-| `0x12-0x13` | Form Version        | UInt16LE — used by Creation Kit |
-| `0x14-0x17` | Version Control ID  | UInt32LE — additional version info |
-
-Field names are **not stored in the binary**; this layout must be interpreted by byte position.
-
-### `parseRecordHeader(buffer: Buffer): RecordHeader`
 ```ts
 export interface RecordHeader {
-  type: string;       // e.g., 'PERK'
-  dataSize: number;   // size of subrecord data
-  formId: string;     // hex-formatted FormID, e.g., '00058F80'
+  type: string;
+  dataSize: number;
   flags: number;
-  versionControl: number;
-  formVersion: number;
-  versionControlId: number;
-  raw: Buffer;        // original 24-byte header
-}
-
-export function parseRecordHeader(headerBuf: Buffer): RecordHeader {
-  if (headerBuf.length !== 24) {
-    throw new Error(`Invalid record header size: ${headerBuf.length} (expected 24)`);
-  }
-
-  const type = headerBuf.toString('ascii', 0, 4);
-  const dataSize = headerBuf.readUInt32LE(4);
-  const formId = headerBuf.readUInt32LE(8).toString(16).toUpperCase().padStart(8, '0');
-  const flags = headerBuf.readUInt32LE(12);
-  const versionControl = headerBuf.readUInt16LE(16);
-  const formVersion = headerBuf.readUInt16LE(18);
-  const versionControlId = headerBuf.readUInt32LE(20);
-
-  return {
-    type,
-    dataSize,
-    formId,
-    flags,
-    versionControl,
-    formVersion,
-    versionControlId,
-    raw: headerBuf,
-  };
+  formId: number;
+  version: number;
+  unknown: number;
 }
 ```
 
-### AVIF (Actor Value Information)
+### Subrecord Format
 ```ts
-export interface RawAVIF {
-  EDID: string;
-  FULL: string;
-  DESC?: string;
-  AVSK?: {
-    useMult: number;
-    improveMult: number;
-    offsetMult: number;
-    improveOffset: number;
-  };
+export interface Subrecord {
+  type: string;
+  size: number;
+  data: Buffer;
 }
-```
-
-### PERK
-```ts
-export interface RawPERK {
-  EDID: string;
-  FULL: string;
-  DESC?: string;
-  DATA: {
-    type: number;
-    level: number;
-    numSubRanks: number;
-  };
-  PRKE: RawPerkEffect[];
-  CNAM?: RawPerkCondition[];
-}
-
-export interface RawPerkEffect {
-  entryPoint: number;
-  functionType: number;
-  perkConditionTabIndex: number;
-  EPFD: string; // function parameters or FormID
-}
-
-export interface RawPerkCondition {
-  CTDA: {
-    op: number;
-    compValue: number;
-    func: number;
-    param1: number;
-    param2: number;
-    runOn: number;
-    reference?: string;
-  };
-}
-```
-
-### RACE
-```ts
-export interface RawRACE {
-  EDID: string;
-  FULL: string;
-  DESC?: string;
-  DATA: {
-    flags: number;
-    maleHeight: number;
-    femaleHeight: number;
-    maleWeight: number;
-    femaleWeight: number;
-    baseMass: number;
-  };
-  SPLO?: string[];
-  AVSK?: SkillBonus[];
-}
-
-export interface SkillBonus {
-  skillID: number;
-  bonus: number;
-}
-```
-
-### SPEL
-```ts
-export interface RawSPEL {
-  EDID: string;
-  FULL: string;
-  SPIT: {
-    type: number;
-    cost: number;
-    flags: number;
-  };
-  EFID: string[];
-}
-```
-
-### MGEF
-```ts
-export interface RawMGEF {
-  EDID: string;
-  FULL: string;
-  DATA: {
-    archetype: number;
-    baseCost: number;
-    flags: number;
-    associatedAV: number;
-  };
-}
-```
-
-## Buffer Parsing Utility
-
-### `scanSubrecords(buffer: Buffer)`
-A generator function that yields each subrecord within a binary record buffer.
-
-- Uses `function*` for memory-efficient iteration
-- Detects and handles `XXXX` extended size subrecords automatically
-- Yields `{ type, size, data }` objects for each subrecord
-
-```ts
-export function* scanSubrecords(buffer: Buffer): Generator<Subrecord> {
-  let offset = 0;
-  let useExtendedSize = false;
-  let extendedSize = 0;
-
-  while (offset + 6 <= buffer.length) {
-    const type = buffer.toString('ascii', offset, offset + 4);
-
-    if (type === 'XXXX') {
-      extendedSize = buffer.readUInt32LE(offset + 4);
-      console.warn(`Extended subrecord size (XXXX = ${extendedSize}) encountered at offset ${offset}.`);
-      useExtendedSize = true;
-      offset += 8;
-      continue;
-    }
-
-    const size = useExtendedSize
-      ? extendedSize
-      : buffer.readUInt16LE(offset + 4);
-
-    const dataStart = offset + 6;
-    const dataEnd = dataStart + size;
-
-    if (dataEnd > buffer.length) {
-      throw new Error(`Subrecord '${type}' at offset ${offset} exceeds buffer length.`);
-    }
-
-    const data = buffer.slice(dataStart, dataEnd);
-    yield { type, size, data };
-
-    offset = dataEnd;
-    useExtendedSize = false;
-  }
-}
-```
-
-## Output File Structure
-```
-/output
-├── PERK.json       # Array of all PERK records
-├── RACE.json       # Array of all RACE records
-├── AVIF.json
-├── SPEL.json
-├── MGEF.json
-└── index.json      # Optional index or summary
 ```
 
 ## Development Phases
@@ -296,18 +82,18 @@ export function* scanSubrecords(buffer: Buffer): Generator<Subrecord> {
 | Phase | Feature | Status | Priority | Notes |
 |-------|---------|--------|----------|-------|
 | 1 | Buffer Parsing | ✅ | High | Core parsing infrastructure |
-| 1 | Record Header Parser | ✅ | High | 24-byte header support |
-| 1 | Subrecord Scanner | ✅ | High | XXXX extended size support |
+| 1 | Record Header Parser | ✅ | High | Simplified header support |
+| 1 | Subrecord Scanner | ✅ | High | Basic subrecord support |
 | 1 | Record Metadata | ✅ | High | Form ID and type tracking |
-| 2 | Worker Thread System | ⚠️ | High | Basic implementation |
-| 2 | Plugin Resolution | ⚠️ | High | Path mapping and validation |
-| 2 | Record Type Parsing | ⚠️ | High | PERK, RACE, AVIF, etc. |
-| 2 | JSON Output | ⚠️ | High | Type-based file generation |
-| 3 | Memory Management | ❌ | Medium | Buffer pooling and limits |
-| 3 | Progress Tracking | ❌ | Medium | Worker status reporting |
-| 3 | Error Recovery | ❌ | Medium | Retry and fallback logic |
-| 3 | Validation | ❌ | Medium | Schema and data validation |
-| 4 | Performance Optimization | ❌ | Low | Streaming and caching |
+| 2 | Thread Pool System | ✅ | High | Configurable worker threads |
+| 2 | Plugin Resolution | ✅ | High | Path mapping and validation |
+| 2 | Record Type Parsing | ✅ | High | PERK, RACE, AVIF, etc. |
+| 2 | JSON Output | ✅ | High | Type-based file generation |
+| 3 | Memory Management | ✅ | Medium | Basic buffer handling |
+| 3 | Progress Tracking | ✅ | Medium | Worker status reporting |
+| 3 | Error Recovery | ⚠️ | Medium | Basic error handling |
+| 3 | Validation | ✅ | Medium | Config and data validation |
+| 4 | Performance Optimization | ⚠️ | Low | Thread pool optimization |
 | 4 | Documentation | ⚠️ | Low | API and usage docs |
 | 4 | Testing | ❌ | Low | Unit and integration tests |
 
@@ -335,7 +121,8 @@ Configuration can be provided through multiple sources, with the following prece
 interface Config {
   modDirPath: string;    // Directory containing modlist.txt and plugins.txt
   outputPath: string;    // Directory for output files
-  maxThreads: number;    // Maximum number of worker threads (capped at 8)
+  maxThreads: number;    // Maximum number of worker threads
+  recordTypeFilter?: string[]; // Optional filter for record types
 }
 ```
 
@@ -346,9 +133,7 @@ skyrim-extractor [options]
 
 Options:
   -c, --config <path>        Path to config file
-  -m, --mod-dir <path>       Directory containing modlist.txt and plugins.txt
-  -o, --output-dir <path>    Directory for output files
-  -t, --threads <number>     Maximum number of worker threads (max 8)
+  --debug                    Enable debug logging
   -h, --help                 Display help information
   -V, --version              Display version information
 ```
@@ -357,35 +142,27 @@ Options:
 The following environment variables can be used to configure the tool:
 - `MOD_DIR`: Directory containing modlist.txt and plugins.txt
 - `OUTPUT_DIR`: Directory for output files
-- `MAX_THREADS`: Maximum number of worker threads (capped at 8)
-
-### Configuration Validation
-The configuration is validated before processing starts, checking for:
-1. Existence of mod directory and required files (modlist.txt, plugins.txt)
-2. Write permissions for the output directory
-3. Valid thread count (1-8)
+- `MAX_THREADS`: Maximum number of worker threads
 
 ### Example Config File
 ```json
 {
   "modDirPath": "./data/mod-samples",
   "outputPath": "./output",
-  "maxThreads": 4
+  "maxThreads": 4,
+  "recordTypeFilter": ["PERK", "RACE"]
 }
 ```
 
 ### Usage Examples
 ```bash
 # Using command line arguments
-skyrim-extractor -m ./data/mod-samples -o ./output -t 4
-
-# Using a config file
-skyrim-extractor -c config.json
+skyrim-extractor --config config.json --debug
 
 # Using environment variables
-MOD_DIR=./data/mod-samples OUTPUT_DIR=./output MAX_THREADS=4 skyrim-extractor
+MOD_DIR=./data/mod-samples OUTPUT_DIR=./output MAX_THREADS=4 skyrim-extractor --config config.json
 ```
 
 ---
 
-This spec ensures record reflection from plugin buffers is preserved exactly and consistently, enabling structured JSON output with reliable high-level metadata and raw record headers for traceability.
+This spec reflects the current state of the skyrim-extractor implementation, focusing on the core functionality of parsing and processing Skyrim plugin files.
