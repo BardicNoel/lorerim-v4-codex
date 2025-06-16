@@ -3,7 +3,8 @@ import { loadConfig, validateConfig } from "./config";
 import * as path from "path";
 import { getEnabledPlugins } from "./utils/modUtils";
 import { runPluginScan } from "./refactor/runPluginScan";
-import { reportGrupDistribution, reportPluginSummaries } from "./refactor/runReports";
+import { reportGrupDistribution, reportParsedRecords, reportPluginSummaries, reportRecordTypeDistribution } from "./refactor/runReports";
+import { createFileWriter } from "./utils/fileWriter";
 
 export function parseArgs(): { configPath: string | undefined; debug: boolean } {
   const args = process.argv.slice(2);
@@ -61,7 +62,7 @@ export async function main(
     console.log(`Found ${plugins.length} plugins to process\n`);
 
     // Process plugins using the new scanning system
-    const results = await runPluginScan(plugins, {
+    const {bufferMetas: results,  parsedRecordDict} = await runPluginScan(plugins, {
       maxThreads: Math.max(1, Math.min(4, plugins.length)),
       debug,
       onLog: (message) => {
@@ -85,22 +86,18 @@ export async function main(
     console.log(`Processing Time: ${(processingTime / 1000).toFixed(2)}s`);
     console.log(`Plugins Processed: ${plugins.length}`);
 
-    // Print records by type
-    printSubHeader("Records by Type");
-    const recordsByType = results.reduce((acc, record) => {
-      acc[record.tag] = (acc[record.tag] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    Object.entries(recordsByType)
-      .sort(([, a], [, b]) => b - a)
-      .forEach(([type, count]) => {
-        const percentage = ((count / results.length) * 100).toFixed(1);
-        console.log(`  ${type}: ${count.toLocaleString()} records (${percentage}%)`);
-      });
-
+    // Generate reports
     reportPluginSummaries(results);
-    reportGrupDistribution(results);
+    // reportGrupDistribution(results);
+    reportRecordTypeDistribution(results);
+    reportParsedRecords(parsedRecordDict);
+
+    // Write parsed records to files
+    printSubHeader("Writing Records to Files");
+    const fileWriter = createFileWriter();
+    const outputDir = path.resolve(config.outputPath);
+    await fileWriter.writeRecords(parsedRecordDict, outputDir);
+    console.log(`Records written to: ${outputDir}`);
 
     // Close debug log if enabled
     if (debug) {

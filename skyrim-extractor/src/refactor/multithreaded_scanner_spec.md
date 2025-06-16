@@ -131,3 +131,39 @@ const results = await runPluginScan(pluginList);
 - Support filtering (e.g., only specific record types)
 - Stream results for early aggregation
 
+sequenceDiagram
+    participant Main as index.ts
+    participant Config as config.ts
+    participant ModUtils as modUtils.ts
+    participant Scan as runPluginScan.ts
+    participant ThreadPool as ThreadPool.ts
+    participant Worker as PluginWorker.ts
+    participant Scanner as scanAllBlocks.ts
+    participant Reports as runReports.ts
+
+    Main->>Config: loadConfig(configPath)
+    Config-->>Main: config object
+
+    Main->>ModUtils: getEnabledPlugins(config.modDirPath)
+    ModUtils-->>Main: plugins[]
+
+    Main->>Scan: runPluginScan(plugins, options)
+    
+    Scan->>ThreadPool: new ThreadPool(config)
+    ThreadPool->>Worker: createWorker() [x4]
+    
+    loop For each plugin
+        ThreadPool->>Worker: postMessage(plugin)
+        Worker->>Scanner: scanAllBlocks(buffer, context)
+        Scanner-->>Worker: BufferMeta[]
+        Worker-->>ThreadPool: postMessage(results)
+    end
+    
+    ThreadPool-->>Scan: all results[]
+    Scan-->>Main: BufferMeta[]
+
+    Main->>Reports: reportPluginSummaries(results)
+    Main->>Reports: reportGrupDistribution(results)
+    Main->>Reports: reportRecordTypeDistribution(results)
+
+    Reports-->>Main: console output

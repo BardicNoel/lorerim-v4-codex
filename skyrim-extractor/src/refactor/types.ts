@@ -1,3 +1,5 @@
+import { ParsedRecord } from "@lorerim/platform-types";
+
 export interface BufferMeta {
   tag: string;               // Record tag or 'GRUP'
   offset: number;            // Byte offset in the file
@@ -16,7 +18,8 @@ export interface WorkerMessage {
   log?: boolean;
   level?: 'info' | 'debug';
   message?: string;
-  result?: BufferMeta[];
+  bufferMetas?: BufferMeta[];
+  parsedRecords?: ParsedRecord[];
   error?: string;
 }
 

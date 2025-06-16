@@ -1,5 +1,7 @@
 import { BufferMeta } from './types';
 import { formatGrupLabelDisplay, byteDump } from './formatter';
+import { hexDump } from '../utils/debugUtils';
+import { formatFormId } from '@lorerim/platform-types';
 
 interface ScanContext {
   sourcePlugin: string;
@@ -20,24 +22,28 @@ enum GrupOffset {
 }
 
 enum RecordOffset {
-  FormId = 8,
+  Size = 4,
+  FormId = 12,
   DataOffset = 24,
 }
 
 export async function scanAllBlocks(
   buffer: Buffer,
   context: ScanContext,
-  parentPath: string[] = []
+  parentPath: string[] = [],
+  startOffset: number = 0,
+  maxOffset: number = buffer.length
 ): Promise<BufferMeta[]> {
   const results: BufferMeta[] = [];
-  let offset = 0;
+  let offset = startOffset;
   let skippedRecords = 0;
   let processedRecords = 0;
 
-  while (offset < buffer.length) {
+  while (offset < maxOffset) {
     const tag = buffer.toString('ascii', offset, offset + 4);
     const size = buffer.readUInt32LE(offset + 4);
     const endOffset = offset + size;
+
 
     if (tag === 'GRUP') {
       const label = buffer.readUInt32LE(offset + GrupOffset.Label);
@@ -59,16 +65,39 @@ export async function scanAllBlocks(
       // Recursively scan the GRUP contents
       const groupPath = [...parentPath, `GRUP:${groupType}:${label.toString(16).toUpperCase()}`];
       const groupResults = await scanAllBlocks(
-        buffer.slice(offset + GrupOffset.EndOffset, endOffset),
+        buffer,
         context,
-        groupPath
+        groupPath,
+        offset + GrupOffset.EndOffset,
+        endOffset
       );
       results.push(...groupResults);
       offset = endOffset;
-    } else {
-      const dataSize = size;
+    } 
+    
+    else if (tag === 'TES4') {
+      const dataSize = buffer.readUInt32LE(offset + RecordOffset.Size);
       const totalSize = RecordOffset.DataOffset + dataSize;
-      
+    
+      results.push({
+        tag,
+        offset,
+        endOffset: offset + totalSize,
+        size: totalSize,
+        formId: 0,
+        parentPath: [...parentPath],
+        sourcePlugin: context.sourcePlugin,
+        modFolder: context.modFolder,
+        pluginIndex: context.pluginIndex
+      });
+    
+      offset += totalSize;
+      continue;
+    }
+    
+    else {
+      const dataSize = size;
+      const totalSize = RecordOffset.DataOffset + dataSize;      
       // Skip if record type is not in filter
       if (context.recordTypeFilter && !context.recordTypeFilter.includes(tag)) {
         skippedRecords++;
@@ -81,10 +110,14 @@ export async function scanAllBlocks(
 
       const formId = buffer.readUInt32LE(offset + RecordOffset.FormId);
       processedRecords++;
-      
+      // hexDump(buffer, offset, totalSize, `Header ${tag} ${totalSize}`);
       // if (processedRecords % 1000 === 0) {
       //   context.onLog?.('debug', `Processed ${processedRecords} records, skipped ${skippedRecords} records`);
       // }
+
+      if(formatFormId(formId) === "0x04549559"){
+        hexDump(buffer, offset, totalSize, `Scan Record ${tag} ${formatFormId(formId)} ${totalSize} ${context.sourcePlugin}`);
+      }
     
       results.push({
         tag,
@@ -97,9 +130,7 @@ export async function scanAllBlocks(
         modFolder: context.modFolder,
         pluginIndex: context.pluginIndex
       });
-    
       offset += totalSize;
-      continue;
     }
   }
 

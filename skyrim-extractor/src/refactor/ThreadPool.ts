@@ -2,11 +2,14 @@ import { Worker } from 'worker_threads';
 import { PluginMeta } from '../types';
 import { BufferMeta, WorkerMessage, ThreadPoolConfig } from './types';
 import * as path from 'path';
+import { ParsedRecord } from '@lorerim/platform-types';
+import { mergeTypeDictionaries } from './parsedRecordDataStructs';
 
 export class ThreadPool {
   private workers: Worker[] = [];
   private taskQueue: PluginMeta[] = [];
   private results: BufferMeta[] = [];
+  private parsedRecords: ParsedRecord[] = [];
   private activeWorkers = 0;
   private config: ThreadPoolConfig;
   private onLog?: (message: string) => void;
@@ -20,9 +23,10 @@ export class ThreadPool {
     this.onLog = onLog;
   }
 
-  public async processPlugins(plugins: PluginMeta[]): Promise<BufferMeta[]> {
+  public async processPlugins(plugins: PluginMeta[]): Promise<{ bufferMetas: BufferMeta[], parsedRecordDict: Record<string, ParsedRecord[]> }> {
     this.taskQueue = [...plugins];
     this.results = [];
+    this.parsedRecords = [];
     this.activeWorkers = 0;
     this.processedPlugins = 0;
     this.totalPlugins = plugins.length;
@@ -44,7 +48,10 @@ export class ThreadPool {
     await Promise.all(this.workers.map(worker => worker.terminate()));
     this.workers = [];
 
-    return this.results;
+    return {
+      bufferMetas: this.results,
+      parsedRecordDict: mergeTypeDictionaries(this.parsedRecords)
+    };
   }
 
   private async createWorker(): Promise<void> {
@@ -55,8 +62,11 @@ export class ThreadPool {
     worker.on('message', (message: WorkerMessage) => {
       if (message.log && this.onLog) {
         this.onLog(`[${message.level?.toUpperCase()}] ${message.message}`);
-      } else if (message.result) {
-        this.results.push(...message.result);
+      } else if (message.bufferMetas) {
+        this.results.push(...message.bufferMetas);
+        if (message.parsedRecords) {
+          this.parsedRecords.push(...message.parsedRecords);
+        }
         this.processedPlugins++;
         this.activeWorkers--;
         this.processNextTask();
@@ -100,4 +110,6 @@ export class ThreadPool {
       this.lastProgressLog = now;
     }
   }
+
+  
 } 

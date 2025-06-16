@@ -49,12 +49,13 @@ export function debugLog(message: string): void {
 export function hexDump(
   buffer: Buffer,
   start: number,
-  length: number = 64
+  length: number = 64,
+  prefix?: string
 ): void {
   const end = Math.min(start + length, buffer.length);
   const slice = buffer.slice(start, end);
 
-  console.log("\n[HEX DUMP] Offset: " + start);
+  console.log("\n[HEX DUMP] Offset: " + start + (prefix ? `, ${prefix}` : ""));
   for (let i = 0; i < slice.length; i += 16) {
     const row = slice.slice(i, i + 16);
     const hex =

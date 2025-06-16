@@ -1,7 +1,6 @@
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { ParsedRecord } from "@lorerim/platform-types";
-import { ProcessingStats } from "./stats";
 import { formatJSON } from "@lorerim/platform-types";
 
 interface FileWriter {
@@ -9,7 +8,6 @@ interface FileWriter {
     records: Record<string, ParsedRecord[]>,
     outputDir: string
   ): Promise<void>;
-  writeStats(stats: ProcessingStats, outputDir: string): Promise<void>;
 }
 
 class FileWriterImpl implements FileWriter {
@@ -30,29 +28,7 @@ class FileWriterImpl implements FileWriter {
     }
   }
 
-  /**
-   * Write statistics and metadata to index.json
-   */
-  async writeStats(stats: ProcessingStats, outputDir: string): Promise<void> {
-    const indexPath = path.join(outputDir, "index.json");
-    await writeFile(
-      indexPath,
-      formatJSON({
-        stats: {
-          totalRecords: stats.totalRecords,
-          recordsByType: stats.recordsByType,
-          skippedRecords: stats.skippedRecords,
-          skippedTypes: Array.from(stats.skippedTypes),
-          totalBytes: stats.totalBytes,
-          processingTime: stats.processingTime,
-          pluginsProcessed: stats.pluginsProcessed,
-          errors: stats.errors,
-        },
-        timestamp: new Date().toISOString(),
-        recordTypes: Object.keys(stats.recordsByType),
-      })
-    );
-  }
+
 }
 
 /**

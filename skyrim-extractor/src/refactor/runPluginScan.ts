@@ -1,6 +1,7 @@
 import { ThreadPool } from './ThreadPool';
 import { PluginMeta } from '../types';
 import { BufferMeta } from './types';
+import { ParsedRecord } from '@lorerim/platform-types';
 
 export interface ScanOptions {
   maxThreads?: number;
@@ -12,7 +13,7 @@ export interface ScanOptions {
 export async function runPluginScan(
   plugins: PluginMeta[],
   options: ScanOptions = {}
-): Promise<BufferMeta[]> {
+): Promise<{ bufferMetas: BufferMeta[], parsedRecordDict: Record<string, ParsedRecord[]> }> {
   const {
     maxThreads = Math.max(1, Math.min(4, plugins.length)),
     debug = false,

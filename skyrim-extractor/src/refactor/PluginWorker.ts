@@ -3,6 +3,7 @@ import { PluginMeta } from '../types';
 import { WorkerMessage } from './types';
 import * as fs from 'fs';
 import { scanAllBlocks } from './scanAllBlocks';
+import { extractParsedRecords } from './extractParsedRecords';
 
 if (!parentPort) {
   throw new Error('This module must be run as a worker thread');
@@ -25,6 +26,7 @@ async function processPlugin(task: WorkerTask): Promise<void> {
     // Read the plugin file
     const buffer = await fs.promises.readFile(plugin.fullPath);
     
+    console.log(`Scanning ${plugin.name} ${buffer.length}`);
     // Scan all blocks in the plugin
     const results = await scanAllBlocks(buffer, {
       sourcePlugin: plugin.name,
@@ -33,11 +35,12 @@ async function processPlugin(task: WorkerTask): Promise<void> {
       recordTypeFilter,
       onLog: sendLog
     });
-
+    console.log(`END:: Scanning ${plugin.name} ${buffer.length}`);
     sendLog('info', `Found ${results.length} records in ${plugin.name}`);
+    const parsedRecords = extractParsedRecords(buffer, results);
     
     // Send results back to main thread
-    parentPort!.postMessage({ result: results } as WorkerMessage);
+    parentPort!.postMessage({ bufferMetas: results, parsedRecords } as WorkerMessage);
   } catch (error) {
     parentPort!.postMessage({ 
       error: `Failed to process ${task.plugin.name}: ${error instanceof Error ? error.message : String(error)}` 
