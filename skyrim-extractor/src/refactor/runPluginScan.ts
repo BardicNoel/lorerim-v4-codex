@@ -6,6 +6,7 @@ export interface ScanOptions {
   maxThreads?: number;
   debug?: boolean;
   onLog?: (message: string) => void;
+  recordTypeFilter?: string[];
 }
 
 export async function runPluginScan(
@@ -15,11 +16,12 @@ export async function runPluginScan(
   const {
     maxThreads = Math.max(1, Math.min(4, plugins.length)),
     debug = false,
-    onLog = console.log
+    onLog = console.log,
+    recordTypeFilter
   } = options;
 
   const threadPool = new ThreadPool(
-    { maxThreads, debug },
+    { maxThreads, debug, recordTypeFilter },
     onLog
   );
 

@@ -1,5 +1,12 @@
 {
   "modDirPath": "../data/mod-samples",
   "outputPath": "../output/skyrim-extractor/mod-samples",
-  "maxThreads": 4
+  "maxThreads": 4,
+  "recordTypeFilter": [
+    "PERK",
+    "MGEF",
+    "SPEL",
+    "RACE",
+    "CLAS"
+  ]
 } 

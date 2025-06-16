@@ -69,7 +69,8 @@ export async function main(
           debugLog(message);
         }
         console.log(message);
-      }
+      },
+      recordTypeFilter: config.recordTypeFilter
     });
 
     const endTime = Date.now();

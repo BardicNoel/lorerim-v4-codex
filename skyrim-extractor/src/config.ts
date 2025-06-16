@@ -5,6 +5,7 @@ export interface Config {
   modDirPath: string;
   outputPath: string;
   maxThreads: number;
+  recordTypeFilter?: string[];
 }
 
 export async function loadConfig(configPath?: string): Promise<Config> {
@@ -29,6 +30,7 @@ export async function loadConfig(configPath?: string): Promise<Config> {
     modDirPath: configFile.modDirPath,
     outputPath: configFile.outputPath,
     maxThreads: configFile.maxThreads,
+    recordTypeFilter: configFile.recordTypeFilter,
   };
 
   // Resolve all paths relative to config file
@@ -40,6 +42,11 @@ export async function loadConfig(configPath?: string): Promise<Config> {
     throw new Error('maxThreads must be a number in the config file.');
   }
   mergedConfig.maxThreads = Math.max(1, Math.min(8, mergedConfig.maxThreads));
+
+  // Validate recordTypeFilter if present
+  if (mergedConfig.recordTypeFilter && !Array.isArray(mergedConfig.recordTypeFilter)) {
+    throw new Error('recordTypeFilter must be an array of strings.');
+  }
 
   return mergedConfig;
 }
@@ -63,6 +70,9 @@ export function validateConfig(config: Config): string[] {
   }
   if (!config.maxThreads || config.maxThreads < 1 || config.maxThreads > 8) {
     errors.push(`maxThreads must be between 1 and 8.`);
+  }
+  if (config.recordTypeFilter && !Array.isArray(config.recordTypeFilter)) {
+    errors.push(`recordTypeFilter must be an array of strings.`);
   }
   return errors;
 } 

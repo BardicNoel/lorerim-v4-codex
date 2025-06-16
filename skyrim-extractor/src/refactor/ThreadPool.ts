@@ -84,7 +84,11 @@ export class ThreadPool {
     if (this.taskQueue.length > 0) {
       const plugin = this.taskQueue.shift()!;
       const worker = this.workers[this.activeWorkers - 1];
-      worker.postMessage(plugin);
+      console.log(this.config.recordTypeFilter);
+      worker.postMessage({
+        plugin,
+        recordTypeFilter: this.config.recordTypeFilter
+      });
     }
   }
 

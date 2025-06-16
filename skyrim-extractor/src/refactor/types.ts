@@ -1,5 +1,3 @@
-
-
 export interface BufferMeta {
   tag: string;               // Record tag or 'GRUP'
   offset: number;            // Byte offset in the file
@@ -25,4 +23,5 @@ export interface WorkerMessage {
 export interface ThreadPoolConfig {
   maxThreads: number;
   debug?: boolean;
+  recordTypeFilter?: string[];
 } 

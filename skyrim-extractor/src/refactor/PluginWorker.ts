@@ -12,8 +12,14 @@ function sendLog(level: 'info' | 'debug', message: string): void {
   parentPort!.postMessage({ log: true, level, message } as WorkerMessage);
 }
 
-async function processPlugin(plugin: PluginMeta): Promise<void> {
+interface WorkerTask {
+  plugin: PluginMeta;
+  recordTypeFilter?: string[];
+}
+
+async function processPlugin(task: WorkerTask): Promise<void> {
   try {
+    const { plugin, recordTypeFilter } = task;
     sendLog('info', `Scanning ${plugin.name}`);
     
     // Read the plugin file
@@ -23,7 +29,9 @@ async function processPlugin(plugin: PluginMeta): Promise<void> {
     const results = await scanAllBlocks(buffer, {
       sourcePlugin: plugin.name,
       modFolder: plugin.modFolder,
-      pluginIndex: plugin.index
+      pluginIndex: plugin.index,
+      recordTypeFilter,
+      onLog: sendLog
     });
 
     sendLog('info', `Found ${results.length} records in ${plugin.name}`);
@@ -32,16 +40,16 @@ async function processPlugin(plugin: PluginMeta): Promise<void> {
     parentPort!.postMessage({ result: results } as WorkerMessage);
   } catch (error) {
     parentPort!.postMessage({ 
-      error: `Failed to process ${plugin.name}: ${error instanceof Error ? error.message : String(error)}` 
+      error: `Failed to process ${task.plugin.name}: ${error instanceof Error ? error.message : String(error)}` 
     } as WorkerMessage);
   }
 }
 
 // Listen for messages from the main thread
-parentPort.on('message', (plugin: PluginMeta) => {
-  processPlugin(plugin).catch(error => {
+parentPort.on('message', (task: WorkerTask) => {
+  processPlugin(task).catch(error => {
     parentPort!.postMessage({ 
-      error: `Unexpected error processing ${plugin.name}: ${error instanceof Error ? error.message : String(error)}` 
+      error: `Unexpected error processing ${task.plugin.name}: ${error instanceof Error ? error.message : String(error)}` 
     } as WorkerMessage);
   });
 }); 
