@@ -7,6 +7,7 @@ import * as fs from "fs/promises";
 import { getEnabledPlugins } from "./utils/modUtils";
 import { createFileWriter } from "./utils/fileWriter";
 import { RecordAggregator } from "./aggregator";
+import { createThreadManager } from "./thread/threadManager";
 
 function printHeader(text: string): void {
   console.log("\n" + "=".repeat(80));
@@ -46,38 +47,17 @@ export async function main(
     printHeader("Processing Plugins");
     console.log(`Found ${plugins.length} plugins to process\n`);
 
-    let totalBytes = 0;
-    for (let i = 0; i < plugins.length; i++) {
-      const plugin = plugins[i];
-
-      // Read plugin file into buffer
-      const buffer = await fs.readFile(plugin.fullPath);
-      const sizeMB = (buffer.length / 1024 / 1024).toFixed(2);
-      totalBytes += buffer.length;
-
-      console.log(
-        `[${i + 1}/${plugins.length}] Processing ${
-          plugin.name
-        } (${sizeMB} MB)...`
-      );
-
-      // Process the plugin
-      const records = await processPlugin(buffer, plugin.name);
-
-      // Process records through aggregator
-      let totalRecords = 0;
-      for (const typeRecords of Object.values(records)) {
-        aggregator.processPluginRecords(plugin.index, typeRecords);
-        totalRecords += typeRecords.length;
-      }
-      console.log(`  Processed ${totalRecords} records\n`);
-    }
+    // Create thread manager and process plugins in parallel
+    const threadManager = createThreadManager();
+    await threadManager.processPlugins(plugins, config.outputPath, debug);
 
     // Get aggregated results
     const result = aggregator.getResult();
     const recordsByType: Record<string, ParsedRecord[]> = {};
 
-    console.log("\nAggregating records...");
+    if (debug) {
+      console.log("\nAggregating records...");
+    }
     // Group records by type
     for (const record of result.records) {
       // This is only writing the latest copy of each record
@@ -104,17 +84,19 @@ export async function main(
       ),
       skippedRecords: stats.getStats().skippedRecords,
       skippedTypes: stats.getStats().skippedTypes,
-      totalBytes: totalBytes,
+      totalBytes: stats.getStats().totalBytes,
       processingTime: stats.getStats().processingTime,
       pluginsProcessed: plugins.length,
       errors: stats.getStats().errors,
     };
     await fileWriter.writeStats(finalStats, config.outputPath);
 
-    debugLog(`Successfully processed ${plugins.length} plugins`);
-    debugLog(
-      `Found records of types: ${Object.keys(recordsByType).join(", ")}`
-    );
+    if (debug) {
+      debugLog(`Successfully processed ${plugins.length} plugins`);
+      debugLog(
+        `Found records of types: ${Object.keys(recordsByType).join(", ")}`
+      );
+    }
 
     // Display stats at the end
     console.log("\nProcessing complete. Stats:");
