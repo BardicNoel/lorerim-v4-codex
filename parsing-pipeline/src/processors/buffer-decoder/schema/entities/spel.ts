@@ -116,10 +116,7 @@ export const spelSchema: RecordSpecificSchemas = createSchema('SPEL', {
   },
   // Spell Effects
   EFID: {
-    type: 'array',
-    element: {
-      type: 'formid',
-    },
+    type: 'formid',
   },
   EFIT: {
     type: 'array',
@@ -131,7 +128,7 @@ export const spelSchema: RecordSpecificSchemas = createSchema('SPEL', {
           name: 'magnitude',
           type: 'float32',
           parser: (value: number) => {
-            console.log('[DEBUG] EFIT magnitude:', { value, hex: value.toString(16) });
+            // console.log('[DEBUG] EFIT magnitude:', { value, hex: value.toString(16) });
             return value;
           },
         },
@@ -139,7 +136,7 @@ export const spelSchema: RecordSpecificSchemas = createSchema('SPEL', {
           name: 'area',
           type: 'uint32',
           parser: (value: number) => {
-            console.log('[DEBUG] EFIT area:', { value, hex: value.toString(16) });
+            // console.log('[DEBUG] EFIT area:', { value, hex: value.toString(16) });
             return value;
           },
         },
@@ -147,7 +144,7 @@ export const spelSchema: RecordSpecificSchemas = createSchema('SPEL', {
           name: 'duration',
           type: 'uint32',
           parser: (value: number) => {
-            console.log('[DEBUG] EFIT duration:', { value, hex: value.toString(16) });
+            // console.log('[DEBUG] EFIT duration:', { value, hex: value.toString(16) });
             return value;
           },
         },

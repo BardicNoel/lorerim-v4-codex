@@ -1,3 +1,3 @@
-export * from './types';
-export * from './fileOutput';
-export * from './jsonFormatter'; 
+export * from "./types";
+export * from "./fileOutput";
+export * from "./formatter";

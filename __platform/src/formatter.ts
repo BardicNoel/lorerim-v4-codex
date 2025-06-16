@@ -1,3 +1,7 @@
+export const formatFormId = (value: number) => {
+  return `0x${value.toString(16).padStart(8, "0")}`;
+};
+
 /**
  * Custom JSON formatter that makes data fields with Buffer values compact while keeping other objects readable
  */

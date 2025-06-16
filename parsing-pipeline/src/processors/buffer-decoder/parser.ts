@@ -1,7 +1,7 @@
 import { FieldSchema, ParsedRecord, StringEncoding, recordSpecificSchemas } from './schema';
 import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
 import { Processor } from '../core';
-import { formatJSON } from '@lorerim/platform-types';
+import { formatJSON, formatFormId } from '@lorerim/platform-types';
 import { parentPort } from 'worker_threads';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
@@ -38,8 +38,8 @@ export class BufferDecoder {
   }
 
   public parseFormId(buffer: Buffer, offset: number, postParse?: (value: string) => any): string {
-    const value = buffer.readUInt32LE(offset);
-    const formId = `0x${value.toString(16).padStart(8, '0')}`;
+    const formId = formatFormId(buffer.readUInt32LE(offset));
+
     return postParse ? postParse(formId) : formId;
   }
 
@@ -64,7 +64,6 @@ export class BufferDecoder {
         value = buffer.readFloatLE(offset);
         break;
       case 'int32':
-        console.log(`[DEBUG] Parsing int32 at offset ${offset}`);
         value = buffer.readInt32LE(offset);
         break;
       default:
@@ -164,7 +163,7 @@ export class BufferDecoder {
         case 'array':
           if (!('element' in field)) throw new Error('Array field must specify element');
           const arrayLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] Array length: ${arrayLength}`);
+          // console.log(`[DEBUG] Array length: ${arrayLength}`);
           result[field.name] = this.parseArray(
             buffer,
             currentOffset + 2,
