@@ -11,6 +11,7 @@ import {
   ProcessedRecordType,
 } from "../constants/recordTypes";
 import { debugLog } from "./debugUtils";
+import { formatFormId } from "@lorerim/platform-types";
 
 /**
  * Check if a record type should be processed
@@ -120,7 +121,7 @@ export function processRecord(
   const record: ParsedRecord = {
     meta: {
       type: header.type,
-      formId: header.formId.toString(16).toUpperCase().padStart(8, "0"),
+      formId: formatFormId(header.formId),
       plugin: pluginName,
     },
     data: subrecords,
