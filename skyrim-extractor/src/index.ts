@@ -46,12 +46,14 @@ export async function main(
     printHeader("Processing Plugins");
     console.log(`Found ${plugins.length} plugins to process\n`);
 
+    let totalBytes = 0;
     for (let i = 0; i < plugins.length; i++) {
       const plugin = plugins[i];
 
       // Read plugin file into buffer
       const buffer = await fs.readFile(plugin.fullPath);
       const sizeMB = (buffer.length / 1024 / 1024).toFixed(2);
+      totalBytes += buffer.length;
 
       console.log(
         `[${i + 1}/${plugins.length}] Processing ${
@@ -102,7 +104,7 @@ export async function main(
       ),
       skippedRecords: stats.getStats().skippedRecords,
       skippedTypes: stats.getStats().skippedTypes,
-      totalBytes: stats.getStats().totalBytes,
+      totalBytes: totalBytes,
       processingTime: stats.getStats().processingTime,
       pluginsProcessed: plugins.length,
       errors: stats.getStats().errors,
