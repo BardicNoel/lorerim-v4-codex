@@ -9,11 +9,13 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/cli.ts --config config.json",
-    "dev:debug": "ts-node src/cli.ts --config config.json --debug",
+    "dev": "ts-node src/cli.ts --config ./config.json",
+    "dev:debug": "ts-node src/cli.ts --config ./config.json --debug",
     "test": "jest",
-    "extract": "node dist/cli.js --config config.json",
-    "extract:debug": "node dist/cli.js --config config.json --debug"
+    "extract": "node dist/cli.js --config ./config.json",
+    "extract:debug": "node dist/cli.js --config ./config.json --debug",
+    "extract:refactor": "ts-node src/index.refactor.ts --config ./config.json",
+    "extract:refactor:debug": "ts-node src/index.refactor.ts --config ./config.json --debug"
   },
   "dependencies": {
     "@lorerim/platform-types": "file:../__platform",

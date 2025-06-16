@@ -2,7 +2,7 @@
 
 import { main } from "./index";
 
-function parseArgs(): { configPath: string | undefined; debug: boolean } {
+export function parseArgs(): { configPath: string | undefined; debug: boolean } {
   const args = process.argv.slice(2);
   let configPath: string | undefined;
   let debug = false;
