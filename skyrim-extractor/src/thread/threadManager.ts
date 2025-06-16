@@ -23,7 +23,7 @@ export interface ThreadManager {
 }
 
 class ThreadManagerImpl implements ThreadManager {
-  private workers: Worker[] = [];
+  private workers: (Worker | null)[] = [];
   private aggregator!: RecordAggregator;
   private fileWriter = createFileWriter();
   private activeWorkers = 0;
@@ -39,6 +39,8 @@ class ThreadManagerImpl implements ThreadManager {
     { plugin: PluginMeta | null; status: string }
   > = new Map();
   private startTime: number = Date.now();
+  private workerTimeouts: Map<number, NodeJS.Timeout> = new Map();
+  private readonly WORKER_TIMEOUT = 300000; // 5 minutes timeout
 
   constructor() {
     // Initialize debug log file
@@ -67,6 +69,34 @@ class ThreadManagerImpl implements ThreadManager {
     }
   }
 
+  private cleanupWorker(workerId: number, worker: Worker) {
+    // Clear any existing timeout
+    const existingTimeout = this.workerTimeouts.get(workerId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+      this.workerTimeouts.delete(workerId);
+    }
+
+    // Terminate worker if it's still running
+    if (worker) {
+      try {
+        worker.terminate();
+      } catch (error) {
+        console.error(`Error terminating worker ${workerId}:`, error);
+      }
+    }
+
+    this.activeWorkers--;
+    this.workers[workerId] = null;
+
+    // Start next worker if queue not empty
+    if (this.pluginQueue.length > 0) {
+      this.startWorker(workerId);
+    } else {
+      this.logWorkerState(workerId, "idle");
+    }
+  }
+
   /**
    * Process all plugins using worker threads
    */
@@ -82,6 +112,7 @@ class ThreadManagerImpl implements ThreadManager {
     this.lastProgressLog = Date.now();
     this.workerLogs.clear();
     this.workerStates.clear();
+    this.workerTimeouts.clear();
 
     // Initialize aggregator with plugins
     this.aggregator = new RecordAggregator({ plugins });
@@ -109,6 +140,13 @@ class ThreadManagerImpl implements ThreadManager {
     while (this.activeWorkers > 0 || this.pluginQueue.length > 0) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       this.logProgress();
+    }
+
+    // Clean up any remaining workers
+    for (let i = 0; i < this.workers.length; i++) {
+      if (this.workers[i]) {
+        this.cleanupWorker(i, this.workers[i] as Worker);
+      }
     }
 
     if (this.debug) {
@@ -224,6 +262,16 @@ class ThreadManagerImpl implements ThreadManager {
     this.activeWorkers++;
     this.workerLogs.set(plugin.name, []);
 
+    // Set timeout for worker
+    const timeout = setTimeout(() => {
+      console.error(`Worker ${workerId} timed out processing ${plugin.name}`);
+      this.aggregator.recordError(
+        `${plugin.name}: Worker timed out after ${this.WORKER_TIMEOUT}ms`
+      );
+      this.cleanupWorker(workerId, worker);
+    }, this.WORKER_TIMEOUT);
+    this.workerTimeouts.set(workerId, timeout);
+
     worker.on("message", (message: any) => {
       if (message.status === "done") {
         // Add records to aggregator using processPluginRecords
@@ -237,28 +285,11 @@ class ThreadManagerImpl implements ThreadManager {
           );
         }
 
-        // Clean up worker
-        worker.terminate();
-        this.activeWorkers--;
-
-        // Start next worker if queue not empty
-        if (this.pluginQueue.length > 0) {
-          this.startWorker(workerId);
-        } else {
-          this.logWorkerState(workerId, "idle");
-        }
+        this.cleanupWorker(workerId, worker);
       } else if (message.type === "error") {
         // Record error with plugin name and message
         this.aggregator.recordError(`${plugin.name}: ${message.message}`);
-        worker.terminate();
-        this.activeWorkers--;
-
-        // Start next worker if queue not empty
-        if (this.pluginQueue.length > 0) {
-          this.startWorker(workerId);
-        } else {
-          this.logWorkerState(workerId, "idle");
-        }
+        this.cleanupWorker(workerId, worker);
       } else if (message.type === "skip") {
         this.aggregator.recordSkipped(message.recordType, message.size);
       }
@@ -267,15 +298,7 @@ class ThreadManagerImpl implements ThreadManager {
     worker.on("error", (error) => {
       // Record error with plugin name and message
       this.aggregator.recordError(`${plugin.name}: ${error.message}`);
-      worker.terminate();
-      this.activeWorkers--;
-
-      // Start next worker if queue not empty
-      if (this.pluginQueue.length > 0) {
-        this.startWorker(workerId);
-      } else {
-        this.logWorkerState(workerId, "idle");
-      }
+      this.cleanupWorker(workerId, worker);
     });
 
     worker.on("exit", (code) => {
@@ -285,14 +308,7 @@ class ThreadManagerImpl implements ThreadManager {
           `${plugin.name}: Worker exited with code ${code}`
         );
       }
-      this.activeWorkers--;
-
-      // Start next worker if queue not empty
-      if (this.pluginQueue.length > 0) {
-        this.startWorker(workerId);
-      } else {
-        this.logWorkerState(workerId, "idle");
-      }
+      this.cleanupWorker(workerId, worker);
     });
 
     // Start processing
