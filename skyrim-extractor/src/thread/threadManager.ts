@@ -179,10 +179,23 @@ class ThreadManagerImpl implements ThreadManager {
       const errorMessage = `[${plugin.name}] ERROR: ${message.message}`;
       console.error(errorMessage);
       this.writeDebugLog(errorMessage);
+
+      // Record error in stats
+      this.aggregator.recordError(`WorkerError_${plugin.name}`);
+
       if (message.error) {
         const errorDetails = `[${plugin.name}] ${message.error}`;
         console.error(errorDetails);
         this.writeDebugLog(errorDetails);
+      }
+    } else if (message.type === "skip" && message.recordType && message.size) {
+      // Record skipped record in stats
+      this.aggregator.recordSkipped(message.recordType, message.size);
+
+      if (this.debug) {
+        console.log(
+          `[${plugin.name}] Skipped record type: ${message.recordType} (${message.size} bytes)`
+        );
       }
     }
   }
@@ -234,18 +247,25 @@ class ThreadManagerImpl implements ThreadManager {
         } else {
           this.logWorkerState(workerId, "idle");
         }
-      } else if (message.type === "debug" || message.type === "error") {
+      } else if (message.type === "error") {
+        console.error(
+          `[ThreadManager] Error in ${plugin.name}:`,
+          message.error
+        );
+        this.aggregator.recordError(`WorkerError_${plugin.name}`);
         this.handleWorkerMessage(worker, plugin, message);
+      } else if (message.type === "skip") {
+        this.aggregator.recordSkipped(message.recordType, message.size);
       }
     });
 
     worker.on("error", (error) => {
       console.error(
-        `Worker ${workerId} error processing ${plugin.name}:`,
-        error
+        `[ThreadManager] Worker error in ${plugin.name}:`,
+        error.message
       );
-      console.error(`Error stack:`, error.stack);
       this.logWorkerState(workerId, "error", plugin);
+      this.aggregator.recordError(`WorkerError_${plugin.name}`);
       worker.terminate();
       this.activeWorkers--;
 
@@ -260,8 +280,9 @@ class ThreadManagerImpl implements ThreadManager {
     worker.on("exit", (code) => {
       if (code !== 0) {
         console.error(
-          `Worker ${workerId} for ${plugin.name} exited with code ${code}`
+          `[ThreadManager] Worker for ${plugin.name} exited with code ${code}`
         );
+        this.aggregator.recordError(`WorkerExit_${plugin.name}`);
       }
       this.logWorkerState(workerId, "exited", plugin);
       this.activeWorkers--;

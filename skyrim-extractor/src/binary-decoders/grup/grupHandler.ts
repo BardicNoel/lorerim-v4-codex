@@ -11,11 +11,13 @@ import {
 import { RECORD_HEADER } from "../buffer.constants";
 import { processRecord } from "../../utils/recordProcessor";
 import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "../../constants";
+import { StatsCollector } from "../../utils/stats";
 
 export function processGRUP(
   buffer: Buffer,
   offset: number,
-  pluginName: string
+  pluginName: string,
+  statsCollector: StatsCollector
 ): ParsedRecord[] {
   const records: ParsedRecord[] = [];
   const grupHeader = parseRecordHeader(
@@ -33,6 +35,11 @@ export function processGRUP(
   if (!PROCESSED_RECORD_TYPES.has(grupLabel as ProcessedRecordType)) {
     debugLog(
       `[grupHandler.processGRUP] Skipping GRUP with unsupported record type: ${grupLabel}`
+    );
+    // Record skip in stats
+    statsCollector.recordSkipped(
+      grupLabel,
+      grupSize + RECORD_HEADER.TOTAL_SIZE
     );
     return [];
   }
@@ -66,7 +73,8 @@ export function processGRUP(
       const nestedRecords = processNestedGRUP(
         buffer,
         currentOffset,
-        pluginName
+        pluginName,
+        statsCollector
       );
       debugLog(
         `[grupHandler.processGRUP] Nested GRUP returned ${nestedRecords.length} records`
@@ -86,7 +94,8 @@ export function processGRUP(
       const { record, newOffset } = processRecord(
         buffer,
         currentOffset,
-        pluginName
+        pluginName,
+        statsCollector
       );
       if (record) {
         records.push(record);
@@ -96,6 +105,15 @@ export function processGRUP(
           `[grupHandler.processGRUP] Added record of type ${record.meta.type} (size: ${recordSize} bytes)`
         );
       } else {
+        // Record was skipped, record it in stats
+        const recordHeader = parseRecordHeader(
+          buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
+        );
+        statsCollector.recordSkipped(
+          recordType,
+          recordHeader.dataSize + RECORD_HEADER.TOTAL_SIZE
+        );
+
         debugLog(
           `[grupHandler.processGRUP] Record at offset ${currentOffset} was not processed (newOffset: ${newOffset})`
         );
@@ -129,7 +147,8 @@ export function processGRUP(
 function processNestedGRUP(
   buffer: Buffer,
   offset: number,
-  pluginName: string
+  pluginName: string,
+  statsCollector: StatsCollector
 ): ParsedRecord[] {
   const records: ParsedRecord[] = [];
   const grupHeader = parseRecordHeader(
@@ -183,6 +202,11 @@ function processNestedGRUP(
         );
         break;
       }
+      // Record skip in stats
+      statsCollector.recordSkipped(
+        recordType,
+        recordHeader.dataSize + RECORD_HEADER.TOTAL_SIZE
+      );
       currentOffset = newOffset;
       debugLog(
         `[grupHandler.processNestedGRUP] Skipping unsupported record type: ${recordType}`
@@ -209,7 +233,8 @@ function processNestedGRUP(
       const nestedRecords = processNestedGRUP(
         buffer,
         currentOffset,
-        pluginName
+        pluginName,
+        statsCollector
       );
       records.push(...nestedRecords);
       recordCount += nestedRecords.length;
@@ -218,11 +243,21 @@ function processNestedGRUP(
       const { record, newOffset } = processRecord(
         buffer,
         currentOffset,
-        pluginName
+        pluginName,
+        statsCollector
       );
       if (record) {
         records.push(record);
         recordCount++;
+      } else {
+        // Record was skipped, record it in stats
+        const recordHeader = parseRecordHeader(
+          buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
+        );
+        statsCollector.recordSkipped(
+          recordType,
+          recordHeader.dataSize + RECORD_HEADER.TOTAL_SIZE
+        );
       }
 
       if (newOffset > endOffset) {

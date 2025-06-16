@@ -58,13 +58,6 @@ export class RecordAggregator {
 
     // Record plugin processed
     this.statsCollector.recordPluginProcessed();
-
-    // Log stats after processing
-    const stats = this.statsCollector.getStats();
-    debugLog("\n[recordAggregator] Current stats:");
-    Object.entries(stats.recordsByType).forEach(([type, count]) => {
-      debugLog(`  ${type}: ${count} records`);
-    });
   }
 
   /**
@@ -88,6 +81,20 @@ export class RecordAggregator {
     this.recordMap.clear();
     this.allRecords = [];
     this.statsCollector = new StatsCollector();
+  }
+
+  /**
+   * Record an error in the stats
+   */
+  public recordError(errorType: string): void {
+    this.statsCollector.recordError(errorType);
+  }
+
+  /**
+   * Record a skipped record in the stats
+   */
+  public recordSkipped(recordType: string, size: number): void {
+    this.statsCollector.recordSkipped(recordType, size);
   }
 
   /**

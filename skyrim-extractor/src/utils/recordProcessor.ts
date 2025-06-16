@@ -12,6 +12,7 @@ import {
 import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "../constants";
 import { debugLog } from "./debugUtils";
 import { ParsedRecord } from "@lorerim/platform-types";
+import { StatsCollector } from "./stats";
 
 /**
  * Check if a record type should be processed
@@ -51,7 +52,8 @@ export function validateRecordSize(
 export function processRecord(
   buffer: Buffer,
   offset: number,
-  pluginName: string
+  pluginName: string,
+  statsCollector: StatsCollector
 ): { record: ParsedRecord | null; newOffset: number } {
   // Check if we have enough bytes for a record header
   if (offset + RECORD_HEADER.TOTAL_SIZE > buffer.length) {
@@ -66,10 +68,10 @@ export function processRecord(
   // Skip unsupported record types
   if (!shouldProcessRecordType(header.type)) {
     const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize;
-    // stats.recordSkipped(
-    //   header.type,
-    //   header.dataSize + RECORD_HEADER.TOTAL_SIZE
-    // );
+    statsCollector.recordSkipped(
+      header.type,
+      header.dataSize + RECORD_HEADER.TOTAL_SIZE
+    );
     debugLog(
       `[recordProcessor] Skipping record type ${header.type} at offset ${offset}, advancing to ${newOffset}`
     );

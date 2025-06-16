@@ -13,6 +13,7 @@ import {
 } from "../binary-decoders/grup/grupHandler";
 import { processRecord } from "../utils/recordProcessor";
 import { ParsedRecord } from "@lorerim/platform-types";
+import { StatsCollector } from "../utils/stats";
 
 // Error logging function
 function errorLog(message: string, error?: any) {
@@ -46,13 +47,21 @@ export async function processPlugin(
   const records: ParsedRecord[] = [];
   const buffer = await readFile(plugin.fullPath);
   let offset = 0;
+  const statsCollector = new StatsCollector();
+
+  console.log(`\n[Worker] Processing plugin: ${plugin.name}`);
 
   while (offset < buffer.length) {
     const recordType = buffer.toString("ascii", offset, offset + 4);
 
     if (recordType === "GRUP") {
       // Process GRUP and get all records from it
-      const grupRecords = processGRUP(buffer, offset, plugin.name);
+      const grupRecords = processGRUP(
+        buffer,
+        offset,
+        plugin.name,
+        statsCollector
+      );
       records.push(...grupRecords);
 
       // Get the GRUP size from its header
@@ -60,7 +69,12 @@ export async function processPlugin(
       offset += RECORD_HEADER.TOTAL_SIZE + grupHeader.size;
     } else {
       // Process normal record
-      const { record, newOffset } = processRecord(buffer, offset, plugin.name);
+      const { record, newOffset } = processRecord(
+        buffer,
+        offset,
+        plugin.name,
+        statsCollector
+      );
       if (record) {
         records.push(record);
       }
@@ -68,6 +82,9 @@ export async function processPlugin(
     }
   }
 
+  console.log(
+    `[Worker] Completed ${plugin.name}: ${records.length} records processed`
+  );
   return records;
 }
 
@@ -82,12 +99,25 @@ if (parentPort) {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      errorLog(`Error processing plugin ${message.plugin.name}`, errorMessage);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
+      console.error(`[Worker] Error in ${message.plugin.name}:`, errorMessage);
+
+      // Send error message to main thread
       if (parentPort) {
-        parentPort.postMessage({ status: "error", error: errorMessage });
+        parentPort.postMessage({
+          type: "error",
+          message: `Failed to process plugin ${message.plugin.name}`,
+          error: errorMessage,
+          stack: errorStack,
+        });
       }
+
+      // Exit with error code
+      process.exit(1);
     }
   });
 } else {
   console.error("CRITICAL: Cannot set up message handler - parentPort is null");
+  process.exit(1);
 }
