@@ -2,7 +2,23 @@ import { initDebugLog, closeDebugLog, debugLog } from "./utils/debugUtils";
 import { loadConfig, validateConfig } from "./config";
 import * as path from "path";
 import { getEnabledPlugins } from "./utils/modUtils";
-import { createThreadManager } from "./thread/threadManager";
+import { runPluginScan } from "./refactor/runPluginScan";
+
+export function parseArgs(): { configPath: string | undefined; debug: boolean } {
+  const args = process.argv.slice(2);
+  let configPath: string | undefined;
+  let debug = false;
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--config" && i + 1 < args.length) {
+      configPath = args[i + 1];
+    } else if (args[i] === "--debug") {
+      debug = true;
+    }
+  }
+
+  return { configPath, debug };
+}
 
 function printHeader(text: string): void {
   console.log("\n" + "=".repeat(80));
@@ -43,100 +59,43 @@ export async function main(
     printHeader("Processing Plugins");
     console.log(`Found ${plugins.length} plugins to process\n`);
 
-    // Create thread manager and process plugins in parallel
-    const threadManager = createThreadManager();
-    await threadManager.processPlugins(plugins, config.outputPath, debug);
+    // Process plugins using the new scanning system
+    const results = await runPluginScan(plugins, {
+      maxThreads: Math.max(1, Math.min(4, plugins.length)),
+      debug,
+      onLog: (message) => {
+        if (debug) {
+          debugLog(message);
+        }
+        console.log(message);
+      }
+    });
 
-    // Get stats from thread manager
-    const stats = threadManager.getStats();
+    const endTime = Date.now();
+    const processingTime = endTime - startTime;
 
     printHeader("Processing Complete");
 
-    // Basic stats
+    // Print basic stats
     printSubHeader("Basic Statistics");
-    console.log(`Total Records: ${stats.totalRecords.toLocaleString()}`);
-    console.log(
-      `Total Bytes: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`
-    );
-    console.log(
-      `Processing Time: ${(stats.processingTime / 1000).toFixed(2)}s`
-    );
-    console.log(`Plugins Processed: ${stats.pluginsProcessed}`);
+    console.log(`Total Records: ${results.length.toLocaleString()}`);
+    console.log(`Total Bytes: ${(results.reduce((sum, r) => sum + r.size, 0) / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`Processing Time: ${(processingTime / 1000).toFixed(2)}s`);
+    console.log(`Plugins Processed: ${plugins.length}`);
 
-    // Records by type with percentages
+    // Print records by type
     printSubHeader("Records by Type");
-    const totalRecords = stats.totalRecords;
-    Object.entries(stats.recordsByType)
-      .sort(([, a], [, b]) => (b as number) - (a as number))
+    const recordsByType = results.reduce((acc, record) => {
+      acc[record.tag] = (acc[record.tag] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    Object.entries(recordsByType)
+      .sort(([, a], [, b]) => b - a)
       .forEach(([type, count]) => {
-        const percentage = (((count as number) / totalRecords) * 100).toFixed(
-          1
-        );
-        console.log(
-          `  ${type}: ${(
-            count as number
-          ).toLocaleString()} records (${percentage}%)`
-        );
+        const percentage = ((count / results.length) * 100).toFixed(1);
+        console.log(`  ${type}: ${count.toLocaleString()} records (${percentage}%)`);
       });
-
-    // Skipped records with details
-    if (stats.skippedRecords > 0) {
-      printSubHeader("Skipped Records");
-      console.log(`Total Skipped: ${stats.skippedRecords.toLocaleString()}`);
-      console.log(
-        `Skipped Types: ${Array.from(stats.skippedTypes).join(", ")}`
-      );
-
-      // Show skipped records by type if available
-      if (stats.skippedByType) {
-        console.log("\nSkipped Records by Type:");
-        Object.entries(stats.skippedByType)
-          .sort(([, a], [, b]) => (b as number) - (a as number))
-          .forEach(([type, count]) => {
-            console.log(
-              `  ${type}: ${(count as number).toLocaleString()} records`
-            );
-          });
-      }
-    }
-
-    // Error statistics
-    if (stats.errors.count > 0) {
-      printSubHeader("Error Statistics");
-      console.log(`Total Errors: ${stats.errors.count.toLocaleString()}`);
-      console.log("\nErrors by Type:");
-      Object.entries(stats.errors.types)
-        .sort(([, a], [, b]) => (b as number) - (a as number))
-        .forEach(([type, count]) => {
-          console.log(
-            `  ${type}: ${(count as number).toLocaleString()} errors`
-          );
-        });
-    }
-
-    // Performance metrics
-    printSubHeader("Performance Metrics");
-    const recordsPerSecond = (
-      stats.totalRecords /
-      (stats.processingTime / 1000)
-    ).toFixed(2);
-    const mbPerSecond = (
-      stats.totalBytes /
-      1024 /
-      1024 /
-      (stats.processingTime / 1000)
-    ).toFixed(2);
-    console.log(`Processing Rate: ${recordsPerSecond} records/second`);
-    console.log(`Data Rate: ${mbPerSecond} MB/second`);
-    console.log(
-      `Average Records per Plugin: ${(
-        stats.totalRecords / stats.pluginsProcessed
-      ).toFixed(2)}`
-    );
-
-    // Clear the aggregator after all stats have been reported
-    threadManager.getStats(); // This ensures we have the latest stats
-    threadManager.clear();
 
     // Close debug log if enabled
     if (debug) {
@@ -150,5 +109,18 @@ export async function main(
 
 // Only run if this file is being executed directly
 if (require.main === module) {
-  main();
-}
+  const { configPath, debug } = parseArgs();
+  if (!configPath) {
+    console.error(
+      "Error: No config file specified. Please provide a config file with --config path/to/config.json"
+    );
+    process.exit(1);
+  }
+  main(configPath, debug).catch((error: unknown) => {
+    console.error(
+      "Fatal error:",
+      error instanceof Error ? error.message : String(error)
+    );
+    process.exit(1);
+  });
+} 
