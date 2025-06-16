@@ -6,6 +6,7 @@ export interface ProcessingStats {
   recordsByType: Record<string, number>;
   skippedRecords: number;
   skippedTypes: Set<string>;
+  skippedByType: Record<string, number>;
   totalBytes: number;
   processingTime: number;
   pluginsProcessed: number;
@@ -25,6 +26,7 @@ export class StatsCollector {
       recordsByType: {},
       skippedRecords: 0,
       skippedTypes: new Set(),
+      skippedByType: {},
       totalBytes: 0,
       processingTime: 0,
       pluginsProcessed: 0,
@@ -48,9 +50,11 @@ export class StatsCollector {
   /**
    * Record a skipped record
    */
-  recordSkipped(type: string, size: number): void {
+  recordSkipped(recordType: string, size: number): void {
     this.stats.skippedRecords++;
-    this.stats.skippedTypes.add(type);
+    this.stats.skippedTypes.add(recordType);
+    this.stats.skippedByType[recordType] =
+      (this.stats.skippedByType[recordType] || 0) + 1;
     this.stats.totalBytes += size;
   }
 

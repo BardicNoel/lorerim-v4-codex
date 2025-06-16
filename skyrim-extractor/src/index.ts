@@ -50,43 +50,89 @@ export async function main(
     // Get stats from thread manager
     const stats = threadManager.getStats();
 
-    console.log("\nProcessing complete. Stats:");
-    console.log(`  Total Records: ${stats.totalRecords}`);
-    console.log(
-      `  Total Bytes: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`
-    );
-    console.log(
-      `  Processing Time: ${(stats.processingTime / 1000).toFixed(2)}s`
-    );
-    console.log(`  Plugins Processed: ${stats.pluginsProcessed}\n`);
+    printHeader("Processing Complete");
 
-    // Records by type
-    console.log("Records by Type:");
+    // Basic stats
+    printSubHeader("Basic Statistics");
+    console.log(`Total Records: ${stats.totalRecords.toLocaleString()}`);
+    console.log(
+      `Total Bytes: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`
+    );
+    console.log(
+      `Processing Time: ${(stats.processingTime / 1000).toFixed(2)}s`
+    );
+    console.log(`Plugins Processed: ${stats.pluginsProcessed}`);
+
+    // Records by type with percentages
+    printSubHeader("Records by Type");
+    const totalRecords = stats.totalRecords;
     Object.entries(stats.recordsByType)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .forEach(([type, count]) => {
-        console.log(`  ${type}: ${count} records`);
+        const percentage = (((count as number) / totalRecords) * 100).toFixed(
+          1
+        );
+        console.log(
+          `  ${type}: ${(
+            count as number
+          ).toLocaleString()} records (${percentage}%)`
+        );
       });
 
-    // Show skipped records if any
+    // Skipped records with details
     if (stats.skippedRecords > 0) {
-      console.log("\nSkipped Records:");
-      console.log(`  Total Skipped: ${stats.skippedRecords}`);
+      printSubHeader("Skipped Records");
+      console.log(`Total Skipped: ${stats.skippedRecords.toLocaleString()}`);
       console.log(
-        `  Skipped Types: ${Array.from(stats.skippedTypes).join(", ")}`
+        `Skipped Types: ${Array.from(stats.skippedTypes).join(", ")}`
       );
+
+      // Show skipped records by type if available
+      if (stats.skippedByType) {
+        console.log("\nSkipped Records by Type:");
+        Object.entries(stats.skippedByType)
+          .sort(([, a], [, b]) => (b as number) - (a as number))
+          .forEach(([type, count]) => {
+            console.log(
+              `  ${type}: ${(count as number).toLocaleString()} records`
+            );
+          });
+      }
     }
 
-    // Show errors if any
+    // Error statistics
     if (stats.errors.count > 0) {
-      console.log("\nErrors:");
-      console.log(`  Total Errors: ${stats.errors.count}`);
+      printSubHeader("Error Statistics");
+      console.log(`Total Errors: ${stats.errors.count.toLocaleString()}`);
+      console.log("\nErrors by Type:");
       Object.entries(stats.errors.types)
-        .sort(([, a], [, b]) => b - a)
+        .sort(([, a], [, b]) => (b as number) - (a as number))
         .forEach(([type, count]) => {
-          console.log(`  ${type}: ${count} errors`);
+          console.log(
+            `  ${type}: ${(count as number).toLocaleString()} errors`
+          );
         });
     }
+
+    // Performance metrics
+    printSubHeader("Performance Metrics");
+    const recordsPerSecond = (
+      stats.totalRecords /
+      (stats.processingTime / 1000)
+    ).toFixed(2);
+    const mbPerSecond = (
+      stats.totalBytes /
+      1024 /
+      1024 /
+      (stats.processingTime / 1000)
+    ).toFixed(2);
+    console.log(`Processing Rate: ${recordsPerSecond} records/second`);
+    console.log(`Data Rate: ${mbPerSecond} MB/second`);
+    console.log(
+      `Average Records per Plugin: ${(
+        stats.totalRecords / stats.pluginsProcessed
+      ).toFixed(2)}`
+    );
 
     // Clear the aggregator after all stats have been reported
     threadManager.getStats(); // This ensures we have the latest stats
