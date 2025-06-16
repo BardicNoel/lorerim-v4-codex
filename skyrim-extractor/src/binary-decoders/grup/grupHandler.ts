@@ -20,118 +20,223 @@ export function processGRUP(
   statsCollector: StatsCollector
 ): ParsedRecord[] {
   const records: ParsedRecord[] = [];
+  try {
+    const grupHeader = parseRecordHeader(
+      buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE),
+      offset
+    );
+    const grupSize = grupHeader.dataSize;
+    const grupLabel = buffer.toString("ascii", offset + 8, offset + 12);
+    const grupTimestamp = buffer.readUInt32LE(offset + 16);
+
+    debugLog(`\n[grupHandler.processGRUP] Processing GRUP at offset ${offset}`);
+    debugLog(`  Label: ${grupLabel}`);
+    debugLog(`  Size: ${grupSize}`);
+    debugLog(`  Timestamp: ${grupTimestamp}`);
+
+    if (!PROCESSED_RECORD_TYPES.has(grupLabel as ProcessedRecordType)) {
+      debugLog(
+        `[grupHandler.processGRUP] Skipping GRUP with unsupported record type: ${grupLabel}`
+      );
+      // Record skip in stats
+      statsCollector.recordSkipped(
+        grupLabel,
+        grupSize + RECORD_HEADER.TOTAL_SIZE
+      );
+      return [];
+    }
+
+    // Process all GRUPs since the label can be corrupted by CK's ignore flag
+    // Individual record types will be checked during processing
+    let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE;
+    const endOffset = offset + RECORD_HEADER.TOTAL_SIZE + grupSize;
+    let recordCount = 0;
+
+    while (currentOffset + RECORD_HEADER.TOTAL_SIZE <= endOffset) {
+      const recordType = buffer.toString(
+        "ascii",
+        currentOffset,
+        currentOffset + 4
+      );
+      debugLog(
+        `[grupHandler.processGRUP] Processing at offset ${currentOffset}/${endOffset} (${Math.round(
+          (currentOffset / endOffset) * 100
+        )}%): type=${recordType}`
+      );
+
+      try {
+        if (recordType === "GRUP") {
+          const nestedRecords = processNestedGRUP(
+            buffer,
+            currentOffset,
+            pluginName,
+            statsCollector
+          );
+          debugLog(
+            `[grupHandler.processGRUP] Nested GRUP returned ${nestedRecords.length} records`
+          );
+          records.push(...nestedRecords);
+          recordCount += nestedRecords.length;
+
+          const nestedGrupHeader = parseRecordHeader(
+            buffer.slice(
+              currentOffset,
+              currentOffset + RECORD_HEADER.TOTAL_SIZE
+            ),
+            currentOffset
+          );
+          const oldOffset = currentOffset;
+          currentOffset += RECORD_HEADER.TOTAL_SIZE + nestedGrupHeader.dataSize;
+          debugLog(
+            `[grupHandler.processGRUP] GRUP size: ${nestedGrupHeader.dataSize}, advancing offset: ${oldOffset} -> ${currentOffset}`
+          );
+        } else {
+          const { record, newOffset } = processRecord(
+            buffer,
+            currentOffset,
+            pluginName,
+            statsCollector
+          );
+          if (record) {
+            records.push(record);
+            recordCount++;
+            const recordSize = newOffset - currentOffset;
+            debugLog(
+              `[grupHandler.processGRUP] Added record of type ${record.meta.type} (size: ${recordSize} bytes)`
+            );
+          } else {
+            // Record was skipped, record it in stats
+            const recordHeader = parseRecordHeader(
+              buffer.slice(
+                currentOffset,
+                currentOffset + RECORD_HEADER.TOTAL_SIZE
+              ),
+              currentOffset
+            );
+            statsCollector.recordSkipped(
+              recordType,
+              recordHeader.dataSize + RECORD_HEADER.TOTAL_SIZE
+            );
+
+            debugLog(
+              `[grupHandler.processGRUP] Record at offset ${currentOffset} was not processed (newOffset: ${newOffset})`
+            );
+            if (newOffset === buffer.length) {
+              debugLog(
+                `[grupHandler.processGRUP] Reached end of buffer, stopping GRUP processing`
+              );
+              break;
+            }
+          }
+          currentOffset = newOffset;
+        }
+      } catch (error) {
+        // Log error and continue processing
+        debugLog(
+          `[grupHandler.processGRUP] Error processing record at offset ${currentOffset}: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
+        // Record error in stats
+        statsCollector.recordError(`RecordError_${recordType}`);
+        // Skip to next record
+        const recordHeader = parseRecordHeader(
+          buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE),
+          currentOffset
+        );
+        currentOffset += RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
+      }
+    }
+
+    debugLog(
+      `[grupHandler.processGRUP] Finished processing GRUP at offset ${offset}`
+    );
+    debugLog(`  Total records found: ${recordCount}`);
+    debugLog(`  Records by type:`);
+    const recordsByType = records.reduce((acc, record) => {
+      acc[record.meta.type] = (acc[record.meta.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    Object.entries(recordsByType).forEach(([type, count]) => {
+      debugLog(`    ${type}: ${count} records`);
+    });
+
+    return records;
+  } catch (error) {
+    throw new Error(
+      `Failed to process GRUP at offset ${offset} in ${pluginName}: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+}
+
+function parseGrupHeaderInfo(buffer: Buffer, offset: number) {
   const grupHeader = parseRecordHeader(
     buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
   );
-  const grupSize = grupHeader.dataSize;
+  let grupSize = grupHeader.dataSize;
   const grupLabel = buffer.toString("ascii", offset + 8, offset + 12);
   const grupTimestamp = buffer.readUInt32LE(offset + 16);
 
-  debugLog(`\n[grupHandler.processGRUP] Processing GRUP at offset ${offset}`);
-  debugLog(`  Label: ${grupLabel}`);
-  debugLog(`  Size: ${grupSize}`);
-  debugLog(`  Timestamp: ${grupTimestamp}`);
-
-  if (!PROCESSED_RECORD_TYPES.has(grupLabel as ProcessedRecordType)) {
+  if (offset + RECORD_HEADER.TOTAL_SIZE + grupSize > buffer.length) {
     debugLog(
-      `[grupHandler.processGRUP] Skipping GRUP with unsupported record type: ${grupLabel}`
+      `[grupHandler.processNestedGRUP] GRUP size exceeds buffer bounds, truncating`
     );
-    // Record skip in stats
-    statsCollector.recordSkipped(
-      grupLabel,
-      grupSize + RECORD_HEADER.TOTAL_SIZE
-    );
-    return [];
+    grupSize = buffer.length - offset - RECORD_HEADER.TOTAL_SIZE;
   }
 
-  // Process all GRUPs since the label can be corrupted by CK's ignore flag
-  // Individual record types will be checked during processing
-  let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE;
-  const endOffset = offset + RECORD_HEADER.TOTAL_SIZE + grupSize;
-  let recordCount = 0;
+  return { grupHeader, grupSize, grupLabel, grupTimestamp };
+}
 
-  while (currentOffset < endOffset) {
-    if (currentOffset + RECORD_HEADER.TOTAL_SIZE > endOffset) {
-      debugLog(
-        `[grupHandler.processGRUP] Not enough bytes remaining for a record header at offset ${currentOffset} (endOffset: ${endOffset})`
-      );
-      break;
-    }
+function processRecordInGrup(
+  buffer: Buffer,
+  currentOffset: number,
+  endOffset: number,
+  pluginName: string,
+  statsCollector: StatsCollector
+): { records: ParsedRecord[] } {
+  const header = parseRecordHeader(
+    buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
+  );
+  const { record } = processRecord(
+    buffer,
+    currentOffset,
+    pluginName,
+    statsCollector
+  );
 
-    const recordType = buffer.toString(
-      "ascii",
-      currentOffset,
-      currentOffset + 4
-    );
-    debugLog(
-      `[grupHandler.processGRUP] Processing at offset ${currentOffset}/${endOffset} (${Math.round(
-        (currentOffset / endOffset) * 100
-      )}%): type=${recordType}`
-    );
+  return {
+    records: record ? [record] : [],
+  };
+}
 
-    if (recordType === "GRUP") {
-      const nestedRecords = processNestedGRUP(
-        buffer,
-        currentOffset,
-        pluginName,
-        statsCollector
-      );
-      debugLog(
-        `[grupHandler.processGRUP] Nested GRUP returned ${nestedRecords.length} records`
-      );
-      records.push(...nestedRecords);
-      recordCount += nestedRecords.length;
+function handleUnsupportedRecordType(
+  buffer: Buffer,
+  currentOffset: number,
+  endOffset: number,
+  recordType: string,
+  statsCollector: StatsCollector
+): void {
+  const recordHeader = parseRecordHeader(
+    buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
+  );
 
-      const nestedGrupHeader = parseRecordHeader(
-        buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
-      );
-      const oldOffset = currentOffset;
-      currentOffset += RECORD_HEADER.TOTAL_SIZE + nestedGrupHeader.dataSize;
-      debugLog(
-        `[grupHandler.processGRUP] GRUP size: ${nestedGrupHeader.dataSize}, advancing offset: ${oldOffset} -> ${currentOffset}`
-      );
-    } else {
-      const { record, newOffset } = processRecord(
-        buffer,
-        currentOffset,
-        pluginName,
-        statsCollector
-      );
-      if (record) {
-        records.push(record);
-        recordCount++;
-        const recordSize = newOffset - currentOffset;
-        debugLog(
-          `[grupHandler.processGRUP] Added record of type ${record.meta.type} (size: ${recordSize} bytes)`
-        );
-      } else {
-        // Record was skipped, record it in stats
-        const recordHeader = parseRecordHeader(
-          buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
-        );
-        statsCollector.recordSkipped(
-          recordType,
-          recordHeader.dataSize + RECORD_HEADER.TOTAL_SIZE
-        );
-
-        debugLog(
-          `[grupHandler.processGRUP] Record at offset ${currentOffset} was not processed (newOffset: ${newOffset})`
-        );
-        if (newOffset === buffer.length) {
-          debugLog(
-            `[grupHandler.processGRUP] Reached end of buffer, stopping GRUP processing`
-          );
-          break;
-        }
-      }
-      currentOffset = newOffset;
-    }
-  }
+  statsCollector.recordSkipped(
+    recordType,
+    recordHeader.dataSize + RECORD_HEADER.TOTAL_SIZE
+  );
 
   debugLog(
-    `[grupHandler.processGRUP] Finished processing GRUP at offset ${offset}`
+    `[grupHandler.processNestedGRUP] Skipping unsupported record type: ${recordType}`
   );
-  debugLog(`  Total records found: ${recordCount}`);
+}
+
+function logGrupProcessingResults(offset: number, records: ParsedRecord[]) {
+  debugLog(
+    `[grupHandler.processNestedGRUP] Finished processing nested GRUP at offset ${offset}`
+  );
+  debugLog(`  Total records found: ${records.length}`);
   debugLog(`  Records by type:`);
   const recordsByType = records.reduce((acc, record) => {
     acc[record.meta.type] = (acc[record.meta.type] || 0) + 1;
@@ -140,8 +245,6 @@ export function processGRUP(
   Object.entries(recordsByType).forEach(([type, count]) => {
     debugLog(`    ${type}: ${count} records`);
   });
-
-  return records;
 }
 
 function processNestedGRUP(
@@ -151,12 +254,10 @@ function processNestedGRUP(
   statsCollector: StatsCollector
 ): ParsedRecord[] {
   const records: ParsedRecord[] = [];
-  const grupHeader = parseRecordHeader(
-    buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
+  const { grupSize, grupLabel, grupTimestamp } = parseGrupHeaderInfo(
+    buffer,
+    offset
   );
-  let grupSize = grupHeader.dataSize;
-  const grupLabel = buffer.toString("ascii", offset + 8, offset + 12);
-  const grupTimestamp = buffer.readUInt32LE(offset + 16);
 
   debugLog(
     `\n[grupHandler.processNestedGRUP] Processing nested GRUP at offset ${offset}`
@@ -165,18 +266,12 @@ function processNestedGRUP(
   debugLog(`  Size: ${grupSize}`);
   debugLog(`  Timestamp: ${grupTimestamp}`);
 
-  if (offset + RECORD_HEADER.TOTAL_SIZE + grupSize > buffer.length) {
-    debugLog(
-      `[grupHandler.processNestedGRUP] GRUP size exceeds buffer bounds, truncating`
-    );
-    grupSize = buffer.length - offset - RECORD_HEADER.TOTAL_SIZE;
-  }
-
   let currentOffset = offset + RECORD_HEADER.TOTAL_SIZE;
   const endOffset = offset + RECORD_HEADER.TOTAL_SIZE + grupSize;
-  let recordCount = 0;
+  let loopCount = 0;
+  const maxIterations = 10000;
 
-  while (currentOffset < endOffset) {
+  while (currentOffset < endOffset && loopCount++ < maxIterations) {
     if (currentOffset + RECORD_HEADER.TOTAL_SIZE > endOffset) {
       debugLog(
         `[grupHandler.processNestedGRUP] Not enough bytes remaining for a record header at offset ${currentOffset} (endOffset: ${endOffset})`
@@ -190,46 +285,33 @@ function processNestedGRUP(
       currentOffset + 4
     );
 
-    if (!PROCESSED_RECORD_TYPES.has(recordType as ProcessedRecordType)) {
-      const recordHeader = parseRecordHeader(
-        buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
+    // Calculate the size of the current record/GRUP
+    const header = parseRecordHeader(
+      buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
+    );
+    const recordSize = header.dataSize + RECORD_HEADER.TOTAL_SIZE;
+    const newOffset = currentOffset + recordSize;
+
+    if (newOffset > endOffset) {
+      debugLog(
+        `[grupHandler.processNestedGRUP] Record exceeds GRUP bounds, stopping`
       );
-      const newOffset =
-        currentOffset + RECORD_HEADER.TOTAL_SIZE + recordHeader.dataSize;
-      if (newOffset > endOffset) {
-        debugLog(
-          `[grupHandler.processNestedGRUP] Record exceeds GRUP bounds, stopping`
-        );
-        break;
-      }
-      // Record skip in stats
-      statsCollector.recordSkipped(
+      break;
+    }
+
+    if (!PROCESSED_RECORD_TYPES.has(recordType as ProcessedRecordType)) {
+      handleUnsupportedRecordType(
+        buffer,
+        currentOffset,
+        endOffset,
         recordType,
-        recordHeader.dataSize + RECORD_HEADER.TOTAL_SIZE
+        statsCollector
       );
       currentOffset = newOffset;
-      debugLog(
-        `[grupHandler.processNestedGRUP] Skipping unsupported record type: ${recordType}`
-      );
       continue;
     }
 
     if (recordType === "GRUP") {
-      const nestedGrupHeader = parseRecordHeader(
-        buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
-      );
-      const nestedGrupSize = nestedGrupHeader.dataSize;
-
-      if (
-        currentOffset + RECORD_HEADER.TOTAL_SIZE + nestedGrupSize >
-        endOffset
-      ) {
-        debugLog(
-          `[grupHandler.processNestedGRUP] Nested GRUP exceeds parent GRUP bounds, stopping`
-        );
-        break;
-      }
-
       const nestedRecords = processNestedGRUP(
         buffer,
         currentOffset,
@@ -237,52 +319,28 @@ function processNestedGRUP(
         statsCollector
       );
       records.push(...nestedRecords);
-      recordCount += nestedRecords.length;
-      currentOffset += RECORD_HEADER.TOTAL_SIZE + nestedGrupSize;
     } else {
-      const { record, newOffset } = processRecord(
+      const { records: newRecords } = processRecordInGrup(
         buffer,
         currentOffset,
+        endOffset,
         pluginName,
         statsCollector
       );
-      if (record) {
-        records.push(record);
-        recordCount++;
-      } else {
-        // Record was skipped, record it in stats
-        const recordHeader = parseRecordHeader(
-          buffer.slice(currentOffset, currentOffset + RECORD_HEADER.TOTAL_SIZE)
-        );
-        statsCollector.recordSkipped(
-          recordType,
-          recordHeader.dataSize + RECORD_HEADER.TOTAL_SIZE
-        );
-      }
-
-      if (newOffset > endOffset) {
-        debugLog(
-          `[grupHandler.processNestedGRUP] Record processing exceeded GRUP bounds, stopping`
-        );
-        break;
-      }
-      currentOffset = newOffset;
+      records.push(...newRecords);
     }
+
+    currentOffset = newOffset;
   }
 
-  debugLog(
-    `[grupHandler.processNestedGRUP] Finished processing nested GRUP at offset ${offset}`
-  );
-  debugLog(`  Total records found: ${recordCount}`);
-  debugLog(`  Records by type:`);
-  const recordsByType = records.reduce((acc, record) => {
-    acc[record.meta.type] = (acc[record.meta.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  Object.entries(recordsByType).forEach(([type, count]) => {
-    debugLog(`    ${type}: ${count} records`);
-  });
+  if (loopCount >= maxIterations) {
+    debugLog(
+      `[grupHandler.processNestedGRUP] Max loop iterations exceeded at offset ${offset}`
+    );
+    statsCollector.recordError(`MaxIterationsExceeded_${grupLabel}`);
+  }
 
+  logGrupProcessingResults(offset, records);
   return records;
 }
 

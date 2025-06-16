@@ -248,24 +248,25 @@ class ThreadManagerImpl implements ThreadManager {
           this.logWorkerState(workerId, "idle");
         }
       } else if (message.type === "error") {
-        console.error(
-          `[ThreadManager] Error in ${plugin.name}:`,
-          message.error
-        );
-        this.aggregator.recordError(`WorkerError_${plugin.name}`);
-        this.handleWorkerMessage(worker, plugin, message);
+        // Record error with plugin name and message
+        this.aggregator.recordError(`${plugin.name}: ${message.message}`);
+        worker.terminate();
+        this.activeWorkers--;
+
+        // Start next worker if queue not empty
+        if (this.pluginQueue.length > 0) {
+          this.startWorker(workerId);
+        } else {
+          this.logWorkerState(workerId, "idle");
+        }
       } else if (message.type === "skip") {
         this.aggregator.recordSkipped(message.recordType, message.size);
       }
     });
 
     worker.on("error", (error) => {
-      console.error(
-        `[ThreadManager] Worker error in ${plugin.name}:`,
-        error.message
-      );
-      this.logWorkerState(workerId, "error", plugin);
-      this.aggregator.recordError(`WorkerError_${plugin.name}`);
+      // Record error with plugin name and message
+      this.aggregator.recordError(`${plugin.name}: ${error.message}`);
       worker.terminate();
       this.activeWorkers--;
 
@@ -279,12 +280,11 @@ class ThreadManagerImpl implements ThreadManager {
 
     worker.on("exit", (code) => {
       if (code !== 0) {
-        console.error(
-          `[ThreadManager] Worker for ${plugin.name} exited with code ${code}`
+        // Record error with plugin name and exit code
+        this.aggregator.recordError(
+          `${plugin.name}: Worker exited with code ${code}`
         );
-        this.aggregator.recordError(`WorkerExit_${plugin.name}`);
       }
-      this.logWorkerState(workerId, "exited", plugin);
       this.activeWorkers--;
 
       // Start next worker if queue not empty

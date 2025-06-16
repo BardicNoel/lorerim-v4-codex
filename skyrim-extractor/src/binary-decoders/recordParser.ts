@@ -34,71 +34,96 @@ let invalidHeaderCount = 0;
 /**
  * Parse a record header from a buffer
  */
-export function parseRecordHeader(buffer: Buffer): RecordHeader {
+export function parseRecordHeader(
+  buffer: Buffer,
+  offset: number = 0
+): RecordHeader {
   if (buffer.length === 0) {
-    throw new Error("Empty buffer provided to parseRecordHeader");
+    throw new Error(
+      `Empty buffer provided to parseRecordHeader at offset ${offset}`
+    );
   }
   if (buffer.length < RECORD_HEADER.TOTAL_SIZE) {
     throw new Error(
-      `Buffer too small for record header: ${buffer.length} < ${RECORD_HEADER.TOTAL_SIZE}`
+      `Buffer too small for record header at offset ${offset}: ${buffer.length} < ${RECORD_HEADER.TOTAL_SIZE}`
     );
   }
 
-  const header = {
-    type: buffer.toString(
-      "utf8",
-      RECORD_HEADER.OFFSETS.TYPE,
-      RECORD_HEADER.OFFSETS.TYPE + 4
-    ),
-    dataSize: buffer.readUInt32LE(RECORD_HEADER.OFFSETS.SIZE),
-    flags: buffer.readUInt32LE(RECORD_HEADER.OFFSETS.FLAGS),
-    formId: buffer.readUInt32LE(RECORD_HEADER.OFFSETS.FORM_ID),
-    version: buffer.readUInt8(RECORD_HEADER.OFFSETS.VERSION),
-    unknown: buffer.readUInt8(RECORD_HEADER.OFFSETS.UNKNOWN),
-  };
+  try {
+    const header = {
+      type: buffer.toString(
+        "utf8",
+        RECORD_HEADER.OFFSETS.TYPE,
+        RECORD_HEADER.OFFSETS.TYPE + 4
+      ),
+      dataSize: buffer.readUInt32LE(RECORD_HEADER.OFFSETS.SIZE),
+      flags: buffer.readUInt32LE(RECORD_HEADER.OFFSETS.FLAGS),
+      formId: buffer.readUInt32LE(RECORD_HEADER.OFFSETS.FORM_ID),
+      version: buffer.readUInt8(RECORD_HEADER.OFFSETS.VERSION),
+      unknown: buffer.readUInt8(RECORD_HEADER.OFFSETS.UNKNOWN),
+    };
 
-  if (!isValidRecordHeader(header) && invalidHeaderCount < 10) {
-    invalidHeaderCount++;
-    debugLog(
-      `[parseRecordHeader] Invalid record header detected (${invalidHeaderCount}):`
-      // `[parseRecordHeader] Invalid record header detected (${invalidHeaderCount}/10):`
-    );
-    debugLog(
-      `  Type: "${header.type}" (length: ${header.type.length}, should be 4)`
-    );
-    if (!LARGE_RECORD_TYPES.includes(header.type)) {
-      debugLog(`  Size: ${header.dataSize} (should be < 10000)`);
+    if (!isValidRecordHeader(header) && invalidHeaderCount < 10) {
+      invalidHeaderCount++;
+      debugLog(
+        `[parseRecordHeader] Invalid record header detected at offset ${offset} (${invalidHeaderCount}):`
+      );
+      debugLog(
+        `  Type: "${header.type}" (length: ${header.type.length}, should be 4)`
+      );
+      if (!LARGE_RECORD_TYPES.includes(header.type)) {
+        debugLog(`  Size: ${header.dataSize} (should be < 10000)`);
+      }
+      debugLog(`  FormId: ${header.formId.toString(16).padStart(8, "0")}`);
+      debugLog(`  Hex preview: ${getHexPreview(buffer, 0, 32)}`);
     }
-    debugLog(`  FormId: ${header.formId.toString(16).padStart(8, "0")}`);
-    debugLog(`  Hex preview: ${getHexPreview(buffer, 0, 32)}`);
-  }
 
-  return header;
+    return header;
+  } catch (error) {
+    throw new Error(
+      `Failed to parse record header at offset ${offset}: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
 }
 
 /**
  * Parse a subrecord header from a buffer
  */
-export function parseSubrecordHeader(buffer: Buffer): SubrecordHeader {
+export function parseSubrecordHeader(
+  buffer: Buffer,
+  offset: number = 0
+): SubrecordHeader {
   if (buffer.length === 0) {
-    throw new Error("Empty buffer provided to parseSubrecordHeader");
+    throw new Error(
+      `Empty buffer provided to parseSubrecordHeader at offset ${offset}`
+    );
   }
   if (buffer.length < SUBRECORD_HEADER.TOTAL_SIZE) {
     throw new Error(
-      `Buffer too small for subrecord header: ${buffer.length} < ${SUBRECORD_HEADER.TOTAL_SIZE}`
+      `Buffer too small for subrecord header at offset ${offset}: ${buffer.length} < ${SUBRECORD_HEADER.TOTAL_SIZE}`
     );
   }
 
-  const header = {
-    type: buffer.toString(
-      "utf8",
-      OFFSETS.SUBRECORD.SIGNATURE,
-      OFFSETS.SUBRECORD.SIGNATURE + SUBRECORD_HEADER.SIGNATURE_SIZE
-    ),
-    size: buffer.readUInt16LE(OFFSETS.SUBRECORD.SIZE),
-  };
+  try {
+    const header = {
+      type: buffer.toString(
+        "utf8",
+        OFFSETS.SUBRECORD.SIGNATURE,
+        OFFSETS.SUBRECORD.SIGNATURE + SUBRECORD_HEADER.SIGNATURE_SIZE
+      ),
+      size: buffer.readUInt16LE(OFFSETS.SUBRECORD.SIZE),
+    };
 
-  return header;
+    return header;
+  } catch (error) {
+    throw new Error(
+      `Failed to parse subrecord header at offset ${offset}: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
 }
 
 /**
