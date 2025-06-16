@@ -1,18 +1,17 @@
 import { ParsedRecord, PluginMeta } from "../types";
 import { AggregatorConfig, AggregationResult } from "./types";
 import { debugLog } from "../utils/debugUtils";
+import { StatsCollector, ProcessingStats } from "../utils/stats";
 
 export class RecordAggregator {
   private plugins: PluginMeta[];
-  private recordMap: Map<string, ParsedRecord[]>;
-  private allRecords: ParsedRecord[];
-  private stats: Record<string, number>;
+  private recordMap: Map<string, ParsedRecord[]> = new Map();
+  private allRecords: ParsedRecord[] = [];
+  private statsCollector: StatsCollector;
 
   constructor(config: AggregatorConfig) {
     this.plugins = config.plugins;
-    this.recordMap = new Map();
-    this.allRecords = [];
-    this.stats = {};
+    this.statsCollector = new StatsCollector();
   }
 
   /**
@@ -35,7 +34,6 @@ export class RecordAggregator {
       // Initialize array for this FormID if we haven't seen it before
       if (!this.recordMap.has(formId)) {
         this.recordMap.set(formId, []);
-        // debugLog(`[recordAggregator] New FormID ${formId} (type: ${type})`);
       }
 
       // Get the current stack for this FormID
@@ -47,26 +45,48 @@ export class RecordAggregator {
       // Add to the stack
       stack.push(record);
 
-      // Only add to allRecords if this is the winning override
-      if (stack.length === 1) {
-        this.allRecords.push(record);
-        // Update stats
-        this.stats[type] = (this.stats[type] || 0) + 1;
-        // debugLog(
-        //   `[recordAggregator] Added winning override for ${formId} (type: ${type})`
-        // );
-      } else {
-        // debugLog(
-        //   `[recordAggregator] Skipping override for ${formId} (type: ${type}) - not winning`
-        // );
-      }
+      // Add all records to allRecords, not just winning overrides
+      this.allRecords.push(record);
+
+      // Record stats with default size of 100 bytes per record
+      this.statsCollector.recordProcessed(type, 100);
+      debugLog(
+        `[recordAggregator] Added record for ${formId} (type: ${type}, stack order: ${record.meta.stackOrder})`
+      );
     }
 
+    // Record plugin processed
+    this.statsCollector.recordPluginProcessed();
+
     // Log stats after processing
+    const stats = this.statsCollector.getStats();
     debugLog("\n[recordAggregator] Current stats:");
-    Object.entries(this.stats).forEach(([type, count]) => {
+    Object.entries(stats.recordsByType).forEach(([type, count]) => {
       debugLog(`  ${type}: ${count} records`);
     });
+  }
+
+  /**
+   * Get all processed records
+   */
+  public getRecords(): ParsedRecord[] {
+    return this.allRecords;
+  }
+
+  /**
+   * Get statistics about processed records
+   */
+  public getStats(): ProcessingStats {
+    return this.statsCollector.getStats();
+  }
+
+  /**
+   * Clear all records and stats
+   */
+  public clear(): void {
+    this.recordMap.clear();
+    this.allRecords = [];
+    this.statsCollector = new StatsCollector();
   }
 
   /**

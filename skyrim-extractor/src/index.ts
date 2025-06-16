@@ -1,12 +1,7 @@
 import { initDebugLog, closeDebugLog, debugLog } from "./utils/debugUtils";
-import { Config, loadConfig, validateConfig } from "./config";
-import { stats, processPlugin } from "./pluginProcessor";
-import { ParsedRecord } from "./types";
+import { loadConfig, validateConfig } from "./config";
 import * as path from "path";
-import * as fs from "fs/promises";
 import { getEnabledPlugins } from "./utils/modUtils";
-import { createFileWriter } from "./utils/fileWriter";
-import { RecordAggregator } from "./aggregator";
 import { createThreadManager } from "./thread/threadManager";
 
 function printHeader(text: string): void {
@@ -26,6 +21,8 @@ export async function main(
   debug: boolean = false
 ): Promise<void> {
   try {
+    const startTime = Date.now();
+
     // Initialize debug logging if enabled
     if (debug) {
       const logPath = path.join(process.cwd(), "debug.log");
@@ -42,7 +39,6 @@ export async function main(
 
     // Process plugins
     const plugins = await getEnabledPlugins(config.modDirPath);
-    const aggregator = new RecordAggregator({ plugins });
 
     printHeader("Processing Plugins");
     console.log(`Found ${plugins.length} plugins to process\n`);
@@ -51,77 +47,57 @@ export async function main(
     const threadManager = createThreadManager();
     await threadManager.processPlugins(plugins, config.outputPath, debug);
 
-    // Get aggregated results
-    const result = aggregator.getResult();
-    const recordsByType: Record<string, ParsedRecord[]> = {};
+    // Get stats from thread manager
+    const stats = threadManager.getStats();
 
-    if (debug) {
-      console.log("\nAggregating records...");
-    }
-    // Group records by type
-    for (const record of result.records) {
-      // This is only writing the latest copy of each record
-      const type = record.meta.type;
-      if (!recordsByType[type]) {
-        recordsByType[type] = [];
-      }
-      recordsByType[type].push(record);
-    }
+    console.log("\nProcessing complete. Stats:");
+    console.log(`  Total Records: ${stats.totalRecords}`);
+    console.log(
+      `  Total Bytes: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`
+    );
+    console.log(
+      `  Processing Time: ${(stats.processingTime / 1000).toFixed(2)}s`
+    );
+    console.log(`  Plugins Processed: ${stats.pluginsProcessed}\n`);
 
-    // Write output files
-    printHeader("Writing Output Files");
-    const fileWriter = createFileWriter();
-    await fileWriter.writeRecords(recordsByType, config.outputPath);
+    // Records by type
+    console.log("Records by Type:");
+    Object.entries(stats.recordsByType)
+      .sort(([, a], [, b]) => b - a)
+      .forEach(([type, count]) => {
+        console.log(`  ${type}: ${count} records`);
+      });
 
-    // Create final stats from aggregated records
-    const finalStats = {
-      totalRecords: result.records.length,
-      recordsByType: Object.fromEntries(
-        Object.entries(recordsByType).map(([type, records]) => [
-          type,
-          records.length,
-        ])
-      ),
-      skippedRecords: stats.getStats().skippedRecords,
-      skippedTypes: stats.getStats().skippedTypes,
-      totalBytes: stats.getStats().totalBytes,
-      processingTime: stats.getStats().processingTime,
-      pluginsProcessed: plugins.length,
-      errors: stats.getStats().errors,
-    };
-    await fileWriter.writeStats(finalStats, config.outputPath);
-
-    if (debug) {
-      debugLog(`Successfully processed ${plugins.length} plugins`);
-      debugLog(
-        `Found records of types: ${Object.keys(recordsByType).join(", ")}`
+    // Show skipped records if any
+    if (stats.skippedRecords > 0) {
+      console.log("\nSkipped Records:");
+      console.log(`  Total Skipped: ${stats.skippedRecords}`);
+      console.log(
+        `  Skipped Types: ${Array.from(stats.skippedTypes).join(", ")}`
       );
     }
 
-    // Display stats at the end
-    console.log("\nProcessing complete. Stats:");
-    console.log(`  Total Records: ${finalStats.totalRecords}`);
-    console.log(
-      `  Total Bytes: ${(finalStats.totalBytes / 1024 / 1024).toFixed(2)} MB`
-    );
-    console.log(
-      `  Processing Time: ${(finalStats.processingTime / 1000).toFixed(2)}s`
-    );
-    console.log(`  Plugins Processed: ${finalStats.pluginsProcessed}`);
-    console.log("\nRecords by Type:");
-    Object.entries(finalStats.recordsByType)
-      .sort(([, a], [, b]) => b - a)
-      .forEach(([type, count]) => {
-        console.log(`  ${type}: ${count}`);
-      });
+    // Show errors if any
+    if (stats.errors.count > 0) {
+      console.log("\nErrors:");
+      console.log(`  Total Errors: ${stats.errors.count}`);
+      Object.entries(stats.errors.types)
+        .sort(([, a], [, b]) => b - a)
+        .forEach(([type, count]) => {
+          console.log(`  ${type}: ${count} errors`);
+        });
+    }
 
-    // Close debug log
-    closeDebugLog();
+    // Clear the aggregator after all stats have been reported
+    threadManager.getStats(); // This ensures we have the latest stats
+    threadManager.clear();
+
+    // Close debug log if enabled
+    if (debug) {
+      await closeDebugLog();
+    }
   } catch (error) {
-    console.error(
-      "Error:",
-      error instanceof Error ? error.message : String(error)
-    );
+    console.error("Error:", error);
     process.exit(1);
   }
 }

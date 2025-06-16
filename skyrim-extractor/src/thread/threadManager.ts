@@ -1,11 +1,10 @@
 // src/thread/threadManager.ts
 import { Worker } from "worker_threads";
 import * as path from "path";
-import { PluginMeta } from "../types";
-import { createRecordAggregator } from "../utils/recordAggregator";
+import { PluginMeta, ParsedRecord } from "../types";
+import { RecordAggregator } from "../aggregator";
 import { createFileWriter } from "../utils/fileWriter";
 import { ProcessingStats } from "../utils/stats";
-import { RecordAggregator } from "../aggregator";
 import { createWriteStream, WriteStream } from "fs";
 import * as fs from "fs/promises";
 
@@ -18,12 +17,13 @@ export interface ThreadManager {
     outputDir: string,
     debug?: boolean
   ): Promise<void>;
-  getStats(): Record<string, number>;
+  getStats(): ProcessingStats;
+  clear(): void;
 }
 
 class ThreadManagerImpl implements ThreadManager {
   private workers: Worker[] = [];
-  private aggregator = createRecordAggregator();
+  private aggregator!: RecordAggregator;
   private fileWriter = createFileWriter();
   private activeWorkers = 0;
   private pluginQueue: PluginMeta[] = [];
@@ -37,6 +37,7 @@ class ThreadManagerImpl implements ThreadManager {
     number,
     { plugin: PluginMeta | null; status: string }
   > = new Map();
+  private startTime: number = Date.now();
 
   constructor() {
     // Initialize debug log file
@@ -81,6 +82,9 @@ class ThreadManagerImpl implements ThreadManager {
     this.workerLogs.clear();
     this.workerStates.clear();
 
+    // Initialize aggregator with plugins
+    this.aggregator = new RecordAggregator({ plugins });
+
     // Log plugin sizes before starting
     for (let i = 0; i < plugins.length; i++) {
       const plugin = plugins[i];
@@ -112,29 +116,20 @@ class ThreadManagerImpl implements ThreadManager {
 
     // Write all records to disk
     const records = this.aggregator.getRecords();
-    const recordCounts = this.aggregator.getStats();
-    const stats: ProcessingStats = {
-      totalRecords: Object.values(recordCounts).reduce(
-        (sum: number, count: number) => sum + count,
-        0
-      ),
-      recordsByType: recordCounts,
-      skippedRecords: 0,
-      skippedTypes: new Set(),
-      totalBytes: 0,
-      processingTime: 0,
-      pluginsProcessed: 1,
-      errors: {
-        count: 0,
-        types: {},
-      },
-    };
+    const stats = this.aggregator.getStats();
 
-    await this.fileWriter.writeRecords(records, outputDir);
+    // Group records by type before writing
+    const recordsByType: Record<string, ParsedRecord[]> = {};
+    for (const record of records) {
+      const type = record.meta.type;
+      if (!recordsByType[type]) {
+        recordsByType[type] = [];
+      }
+      recordsByType[type].push(record);
+    }
+
+    await this.fileWriter.writeRecords(recordsByType, outputDir);
     await this.fileWriter.writeStats(stats, outputDir);
-
-    // Clear the aggregator after writing
-    this.aggregator.clear();
 
     if (this.debug) {
       console.log("Records written to disk successfully");
@@ -217,10 +212,8 @@ class ThreadManagerImpl implements ThreadManager {
 
     worker.on("message", (message: any) => {
       if (message.status === "done") {
-        // Add records to aggregator
-        for (const record of message.records) {
-          this.aggregator.addRecord(record);
-        }
+        // Add records to aggregator using processPluginRecords
+        this.aggregator.processPluginRecords(plugin.index, message.records);
 
         // Update progress
         this.processedPlugins++;
@@ -288,8 +281,17 @@ class ThreadManagerImpl implements ThreadManager {
   /**
    * Get statistics about processed records
    */
-  getStats(): Record<string, number> {
-    return this.aggregator.getStats();
+  getStats(): ProcessingStats {
+    const stats = this.aggregator.getStats();
+    return {
+      ...stats,
+      processingTime: Date.now() - this.startTime,
+      pluginsProcessed: this.processedPlugins,
+    };
+  }
+
+  clear(): void {
+    this.aggregator.clear();
   }
 }
 
