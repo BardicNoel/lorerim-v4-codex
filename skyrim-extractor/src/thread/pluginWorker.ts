@@ -30,10 +30,32 @@ function errorLog(message: string, error?: any) {
   }
 
   try {
+    // Create detailed error context
+    const errorContext = {
+      message,
+      error: error?.message || error,
+      stack: error?.stack,
+      timestamp: new Date().toISOString(),
+      type: error?.name || "UnknownError",
+    };
+
+    // Write detailed error to file
+    const errorLog = `[${errorContext.timestamp}] ERROR
+Type: ${errorContext.type}
+Message: ${errorContext.message}
+Error: ${errorContext.error}
+Stack: ${errorContext.stack}
+----------------------------------------\n`;
+
+    writeFile("error.log", errorLog, { flag: "a" }).catch((err) => {
+      console.error("Failed to write to error.log:", err);
+    });
+
+    // Send to main thread
     parentPort.postMessage({
       type: "error",
       message,
-      error: error?.message || error,
+      error: errorContext,
     });
   } catch (err) {
     console.error("Error sending error message:", err);
@@ -45,7 +67,23 @@ export async function processPlugin(
   plugin: PluginMeta
 ): Promise<ParsedRecord[]> {
   const records: ParsedRecord[] = [];
-  const buffer = await readFile(plugin.fullPath);
+  let buffer: Buffer;
+
+  try {
+    console.log(`[Worker] Reading file: ${plugin.fullPath}`);
+    buffer = await readFile(plugin.fullPath);
+    console.log(
+      `[Worker] Successfully read file: ${plugin.fullPath} (${buffer.length} bytes)`
+    );
+  } catch (error) {
+    console.error(`[Worker] Failed to read file: ${plugin.fullPath}`, error);
+    throw new Error(
+      `Failed to read plugin file: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+
   let offset = 0;
   const statsCollector = new StatsCollector();
 
@@ -55,6 +93,9 @@ export async function processPlugin(
     while (offset < buffer.length) {
       try {
         const recordType = buffer.toString("ascii", offset, offset + 4);
+        console.log(
+          `[Worker] Processing record at offset ${offset}: ${recordType}`
+        );
 
         if (recordType === "GRUP") {
           // Process GRUP and get all records from it
@@ -65,6 +106,9 @@ export async function processPlugin(
             statsCollector
           );
           records.push(...grupRecords);
+          console.log(
+            `[Worker] Processed GRUP at offset ${offset}: ${grupRecords.length} records`
+          );
 
           // Get the GRUP size from its header
           const grupHeader = parseRecordHeader(
@@ -82,11 +126,14 @@ export async function processPlugin(
           );
           if (record) {
             records.push(record);
+            console.log(
+              `[Worker] Processed record at offset ${offset}: ${record.meta.type}`
+            );
           }
           offset = newOffset;
         }
       } catch (error) {
-        // Log error and continue processing
+        // Create detailed error context
         const errorContext = {
           plugin: plugin.name,
           offset: offset,
@@ -97,12 +144,17 @@ export async function processPlugin(
           bufferAtOffset: buffer.slice(offset, offset + 64).toString("hex"),
           error: error instanceof Error ? error.message : "Unknown error",
           stack: error instanceof Error ? error.stack : undefined,
+          timestamp: new Date().toISOString(),
         };
 
+        console.error(
+          `[Worker] Error processing record at offset ${offset}:`,
+          error
+        );
+
         // Log detailed error to file
-        const errorLog = `[${new Date().toISOString()}] RECORD ERROR - Plugin: ${
-          errorContext.plugin
-        }
+        const errorLog = `[${errorContext.timestamp}] RECORD ERROR
+Plugin: ${errorContext.plugin}
 Offset: ${errorContext.offset}
 Record Type: ${errorContext.recordType}
 Buffer Context (32 bytes before and after offset):
@@ -119,6 +171,15 @@ Stack: ${errorContext.stack}
         // Record error in stats
         statsCollector.recordError(`RecordError_${errorContext.recordType}`);
 
+        // Send error to main thread
+        if (parentPort) {
+          parentPort.postMessage({
+            type: "error",
+            message: `Error processing record at offset ${offset}`,
+            error: errorContext,
+          });
+        }
+
         // Try to recover by finding the next record
         const nextRecordOffset = findNextRecord(buffer, offset);
         if (nextRecordOffset === -1) {
@@ -130,8 +191,13 @@ Stack: ${errorContext.stack}
         offset = nextRecordOffset;
       }
     }
+
+    console.log(
+      `[Worker] Completed ${plugin.name}: ${records.length} records processed`
+    );
+    return records;
   } catch (error) {
-    // This is for fatal errors that prevent further processing
+    // Create detailed error context for fatal errors
     const errorContext = {
       plugin: plugin.name,
       offset: offset,
@@ -142,12 +208,14 @@ Stack: ${errorContext.stack}
       bufferAtOffset: buffer.slice(offset, offset + 64).toString("hex"),
       error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
     };
 
+    console.error(`[Worker] Fatal error processing ${plugin.name}:`, error);
+
     // Log detailed error to file
-    const errorLog = `[${new Date().toISOString()}] FATAL ERROR - Plugin: ${
-      errorContext.plugin
-    }
+    const errorLog = `[${errorContext.timestamp}] FATAL ERROR
+Plugin: ${errorContext.plugin}
 Offset: ${errorContext.offset}
 Record Type: ${errorContext.recordType}
 Buffer Context (32 bytes before and after offset):
@@ -162,17 +230,16 @@ Stack: ${errorContext.stack}
     await writeFile("error.log", errorLog, { flag: "a" });
 
     // Send error to main thread
-    throw new Error(
-      `Failed to process ${plugin.name}: ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
-  }
+    if (parentPort) {
+      parentPort.postMessage({
+        type: "error",
+        message: `Failed to process ${plugin.name}`,
+        error: errorContext,
+      });
+    }
 
-  console.log(
-    `[Worker] Completed ${plugin.name}: ${records.length} records processed`
-  );
-  return records;
+    throw error; // Let the outer try-catch handle the exit
+  }
 }
 
 /**
@@ -409,10 +476,18 @@ Index: ${message.plugin.index}
 ----------------------------------------\n`;
       await writeFile("error.log", startLog, { flag: "a" });
 
+      console.log(`[Worker] Starting to process ${message.plugin.name}`);
       const records = await processPlugin(message.plugin);
+      console.log(
+        `[Worker] Successfully processed ${message.plugin.name} with ${records.length} records`
+      );
+
       if (parentPort) {
         parentPort.postMessage({ status: "done", records });
       }
+
+      // Exit with success code
+      process.exit(0);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
@@ -437,6 +512,12 @@ Stack: ${errorStack}
         parentPort.postMessage({
           type: "error",
           message: errorMessage,
+          error: {
+            message: errorMessage,
+            stack: errorStack,
+            plugin: message.plugin.name,
+            timestamp: new Date().toISOString(),
+          },
         });
       }
 

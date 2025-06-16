@@ -1,13 +1,6 @@
 import { ParsedRecord } from "@lorerim/platform-types";
 import { parseRecordHeader } from "../recordParser";
-import {
-  debugLog,
-  dumpHex,
-  getGroupTypeName,
-  errorLog,
-  parseGRUPHeader,
-  validateGRUPSize,
-} from "./grupUtils";
+import { debugLog, parseGRUPHeader, validateGRUPSize } from "./grupUtils";
 import { RECORD_HEADER } from "../buffer.constants";
 import { processRecord } from "../../utils/recordProcessor";
 import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "../../constants";
@@ -247,7 +240,7 @@ function logGrupProcessingResults(offset: number, records: ParsedRecord[]) {
   });
 }
 
-function processNestedGRUP(
+export function processNestedGRUP(
   buffer: Buffer,
   offset: number,
   pluginName: string,
