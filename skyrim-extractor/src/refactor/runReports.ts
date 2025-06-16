@@ -1,4 +1,5 @@
 import { BufferMeta } from "./types";
+import { formatGrupLabelDisplay } from "./formatter";
 
 export function reportPluginSummaries(bufferMetas: BufferMeta[]) {
     const plugins: Record<string, { count: number; size: number }> = {};
@@ -17,10 +18,12 @@ export function reportPluginSummaries(bufferMetas: BufferMeta[]) {
 
   export function reportGrupDistribution(bufferMetas: BufferMeta[]) {
     const grups = bufferMetas.filter(m => m.tag === 'GRUP' && m.parentPath.length === 0);
-    const labels = grups.map(g => Buffer.from([g.label! & 0xFF, (g.label! >> 8) & 0xFF, (g.label! >> 16) & 0xFF, (g.label! >> 24) & 0xFF]).toString('ascii'));
-    
     const result: Record<string, number> = {};
-    labels.forEach(label => result[label] = (result[label] || 0) + 1);
+  
+    grups.forEach(g => {
+      const label = formatGrupLabelDisplay(g.label!);
+      result[label] = (result[label] || 0) + 1;
+    });
   
     console.log("==== Grup Distribution ====");
     console.table(result);

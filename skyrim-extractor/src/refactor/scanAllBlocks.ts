@@ -1,4 +1,5 @@
 import { BufferMeta } from './types';
+import { formatGrupLabelDisplay, byteDump } from './formatter';
 
 interface ScanContext {
   sourcePlugin: string;
@@ -6,6 +7,16 @@ interface ScanContext {
   pluginIndex: number;
   recordTypeFilter?: string[];
   onLog?: (level: 'info' | 'debug', message: string) => void;
+}
+
+enum GrupOffset {
+  Label = 8,
+  GroupType = 12,
+  DataSize = 16,
+  TotalSize = 20,
+  EndOffset = 24,
+  FormId = 8,
+  DataOffset = 24,
 }
 
 export async function scanAllBlocks(
@@ -24,11 +35,8 @@ export async function scanAllBlocks(
     const endOffset = offset + size;
 
     if (tag === 'GRUP') {
-      const groupType = buffer.readUInt32LE(offset + 8);
-      const label = buffer.readUInt32LE(offset + 12);
-      
-      context.onLog?.('debug', `Processing GRUP ${groupType} at offset ${offset}`);
-      
+      const label = buffer.readUInt32LE(offset + GrupOffset.Label);
+      const groupType = buffer.readUInt32LE(offset + GrupOffset.GroupType);
       // Create GRUP metadata
       results.push({
         tag: 'GRUP',
@@ -46,7 +54,7 @@ export async function scanAllBlocks(
       // Recursively scan the GRUP contents
       const groupPath = [...parentPath, `GRUP:${groupType}:${label.toString(16).toUpperCase()}`];
       const groupResults = await scanAllBlocks(
-        buffer.slice(offset + 24, endOffset),
+        buffer.slice(offset + GrupOffset.EndOffset, endOffset),
         context,
         groupPath
       );
@@ -54,24 +62,24 @@ export async function scanAllBlocks(
       offset = endOffset;
     } else {
       const dataSize = size;
-      const totalSize = 24 + dataSize;
+      const totalSize = GrupOffset.EndOffset + dataSize;
       
       // Skip if record type is not in filter
       if (context.recordTypeFilter && !context.recordTypeFilter.includes(tag)) {
         skippedRecords++;
-        if (skippedRecords % 1000 === 0) {
-          context.onLog?.('debug', `Skipped ${skippedRecords} records, processed ${processedRecords} records`);
-        }
+        // if (skippedRecords % 1000 === 0) {
+        //   context.onLog?.('debug', `Skipped ${skippedRecords} records, processed ${processedRecords} records`);
+        // }
         offset += totalSize;
         continue;
       }
 
-      const formId = buffer.readUInt32LE(offset + 8);
+      const formId = buffer.readUInt32LE(offset + GrupOffset.FormId);
       processedRecords++;
       
-      if (processedRecords % 1000 === 0) {
-        context.onLog?.('debug', `Processed ${processedRecords} records, skipped ${skippedRecords} records`);
-      }
+      // if (processedRecords % 1000 === 0) {
+      //   context.onLog?.('debug', `Processed ${processedRecords} records, skipped ${skippedRecords} records`);
+      // }
     
       results.push({
         tag,
@@ -90,6 +98,6 @@ export async function scanAllBlocks(
     }
   }
 
-  context.onLog?.('info', `Finished scanning: processed ${processedRecords} records, skipped ${skippedRecords} records`);
+  // context.onLog?.('info', `Finished scanning: processed ${processedRecords} records, skipped ${skippedRecords} records`);
   return results;
 } 
