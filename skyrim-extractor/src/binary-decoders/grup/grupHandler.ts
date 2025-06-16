@@ -1,10 +1,66 @@
 import { ParsedRecord } from "@lorerim/platform-types";
 import { parseRecordHeader } from "../recordParser";
-import { debugLog, parseGRUPHeader, validateGRUPSize } from "./grupUtils";
+import {
+  debugLog,
+  getGroupTypeName,
+  errorLog,
+  dumpGrupToFile,
+} from "./grupUtils";
 import { RECORD_HEADER } from "../buffer.constants";
 import { processRecord } from "../../utils/recordProcessor";
 import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "../../constants";
 import { StatsCollector } from "../../utils/stats";
+
+/**
+ * Parse a GRUP header from a buffer
+ */
+export function parseGRUPHeader(buffer: Buffer, offset: number) {
+  if (buffer.length < offset + RECORD_HEADER.TOTAL_SIZE) {
+    throw new Error(
+      `Buffer too small for GRUP header: ${buffer.length} < ${
+        offset + RECORD_HEADER.TOTAL_SIZE
+      }`
+    );
+  }
+
+  const header = buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE);
+  const type = header.toString("ascii", 0, 4);
+  if (type !== "GRUP") {
+    throw new Error(`Invalid GRUP header type: ${type}`);
+  }
+
+  return {
+    type: "GRUP",
+    size: header.readUInt32LE(4),
+    groupType: header.readUInt32LE(8),
+    groupTypeStr: getGroupTypeName(header.readUInt32LE(8)),
+    label: header.slice(12, 16),
+    timestamp: header.readUInt32LE(16),
+    versionControl: header.readUInt32LE(20),
+  };
+}
+
+/**
+ * Validate GRUP size
+ */
+export function validateGRUPSize(
+  header: { size: number },
+  buffer: Buffer,
+  offset: number
+) {
+  if (header.size < RECORD_HEADER.TOTAL_SIZE) {
+    throw new Error(
+      `GRUP size too small: ${header.size} < ${RECORD_HEADER.TOTAL_SIZE}`
+    );
+  }
+  if (offset + header.size > buffer.length) {
+    throw new Error(
+      `GRUP size exceeds buffer length: ${offset + header.size} > ${
+        buffer.length
+      }`
+    );
+  }
+}
 
 export function processGRUP(
   buffer: Buffer,
@@ -21,6 +77,11 @@ export function processGRUP(
     const grupSize = grupHeader.dataSize;
     const grupLabel = buffer.toString("ascii", offset + 8, offset + 12);
     const grupTimestamp = buffer.readUInt32LE(offset + 16);
+
+    // Only dump GRUPs for processed record types
+    if (PROCESSED_RECORD_TYPES.has(grupLabel as ProcessedRecordType)) {
+      dumpGrupToFile(buffer, offset, grupSize, grupLabel);
+    }
 
     debugLog(`\n[grupHandler.processGRUP] Processing GRUP at offset ${offset}`);
     debugLog(`  Label: ${grupLabel}`);
@@ -336,5 +397,3 @@ export function processNestedGRUP(
   logGrupProcessingResults(offset, records);
   return records;
 }
-
-export { parseGRUPHeader, validateGRUPSize };
