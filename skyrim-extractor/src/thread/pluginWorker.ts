@@ -1,7 +1,7 @@
 // src/thread/pluginWorker.ts
 import { parentPort } from "worker_threads";
 import { readFile } from "fs/promises";
-import { PluginMeta, ParsedRecord } from "../types";
+import { PluginMeta } from "../types";
 import {
   RECORD_HEADER,
   GRUP_HEADER,
@@ -12,6 +12,7 @@ import {
   processGRUP,
 } from "../binary-decoders/grup/grupHandler";
 import { processRecord } from "../utils/recordProcessor";
+import { ParsedRecord } from "@lorerim/platform-types";
 
 // Error logging function
 function errorLog(message: string, error?: any) {

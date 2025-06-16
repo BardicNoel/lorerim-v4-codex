@@ -1,4 +1,4 @@
-import { ParsedRecord } from "../../types";
+import { ParsedRecord } from "@lorerim/platform-types";
 import { parseRecordHeader } from "../recordParser";
 import {
   debugLog,

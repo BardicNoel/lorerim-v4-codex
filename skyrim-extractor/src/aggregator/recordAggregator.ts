@@ -1,4 +1,5 @@
-import { ParsedRecord, PluginMeta } from "../types";
+import { PluginMeta } from "../types";
+import { ParsedRecord } from "@lorerim/platform-types";
 import { AggregatorConfig, AggregationResult } from "./types";
 import { debugLog } from "../utils/debugUtils";
 import { StatsCollector, ProcessingStats } from "../utils/stats";

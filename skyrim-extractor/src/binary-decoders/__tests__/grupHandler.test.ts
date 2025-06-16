@@ -1,5 +1,5 @@
 import { processGRUP } from "../grup/grupHandler";
-import { ParsedRecord } from "../../types";
+import { ParsedRecord } from "@lorerim/platform-types";
 
 describe("GRUP Handler", () => {
   // Helper to create a GRUP header buffer

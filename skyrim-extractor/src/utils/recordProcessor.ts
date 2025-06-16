@@ -1,4 +1,4 @@
-import { ParsedRecord, RecordHeader } from "../types";
+import { RecordHeader } from "../types";
 import {
   RECORD_HEADER,
   SUBRECORD_HEADER,
@@ -11,7 +11,7 @@ import {
 
 import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "../constants";
 import { debugLog } from "./debugUtils";
-import { formatFormId } from "@lorerim/platform-types";
+import { ParsedRecord } from "@lorerim/platform-types";
 
 /**
  * Check if a record type should be processed

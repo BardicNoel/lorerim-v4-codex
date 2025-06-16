@@ -1,6 +1,6 @@
 import { parentPort } from "worker_threads";
 import { Buffer } from "buffer";
-import { ParsedRecord } from "../../types";
+import { ParsedRecord } from "@lorerim/platform-types";
 import { ProcessedRecordType } from "../../constants";
 import { RECORD_HEADER } from "../buffer.constants";
 import {

@@ -1,12 +1,13 @@
 // src/thread/threadManager.ts
 import { Worker } from "worker_threads";
 import * as path from "path";
-import { PluginMeta, ParsedRecord } from "../types";
+import { PluginMeta } from "../types";
 import { RecordAggregator } from "../aggregator";
 import { createFileWriter } from "../utils/fileWriter";
 import { ProcessingStats } from "../utils/stats";
 import { createWriteStream, WriteStream } from "fs";
 import * as fs from "fs/promises";
+import { ParsedRecord } from "@lorerim/platform-types";
 
 const MAX_CONCURRENCY = 4;
 const PROGRESS_INTERVAL = 1000; // Log progress every second

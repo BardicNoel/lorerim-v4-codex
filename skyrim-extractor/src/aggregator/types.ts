@@ -1,4 +1,5 @@
-import { PluginMeta, ParsedRecord } from '../types';
+import { PluginMeta } from "../types";
+import { ParsedRecord } from "@lorerim/platform-types";
 
 export interface RecordMeta {
   recordType: string;
@@ -17,4 +18,4 @@ export interface AggregationResult {
 
 export interface AggregatorConfig {
   plugins: PluginMeta[];
-} 
+}
