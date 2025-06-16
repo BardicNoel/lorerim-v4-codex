@@ -34,7 +34,7 @@ export function shouldProcessRecordType(type: string): boolean {
   const shouldProcess = PROCESSED_RECORD_TYPES.has(type as ProcessedRecordType);
   if (!shouldProcess) {
     statsCollector.recordSkipped(type);
-    debugLog(`[pluginProcessor] Skipping unsupported record type: ${type}`);
+    // debugLog(`[pluginProcessor] Skipping unsupported record type: ${type}`);
   }
   return shouldProcess;
 }
@@ -60,6 +60,22 @@ export function validateRecordSize(
 }
 
 /**
+ * Group records by their type
+ */
+function groupRecordsByType(
+  records: ParsedRecord[]
+): Record<string, ParsedRecord[]> {
+  return records.reduce((acc, record) => {
+    const type = record.meta.type;
+    if (!acc[type]) {
+      acc[type] = [];
+    }
+    acc[type].push(record);
+    return acc;
+  }, {} as Record<string, ParsedRecord[]>);
+}
+
+/**
  * Process an entire plugin file and return records grouped by type
  */
 export function processPlugin(
@@ -73,6 +89,7 @@ export function processPlugin(
     let normalRecordCount = 0;
     let endOfBufferCount = 0;
     let lastOffset = -1;
+    let stuckCount = 0;
 
     debugLog(`\n[pluginProcessor] Starting to process plugin: ${pluginName}`);
     debugLog(`  Buffer length: ${pluginBuffer.length} bytes`);
@@ -80,12 +97,22 @@ export function processPlugin(
     while (offset < pluginBuffer.length) {
       // Check if we're stuck at the same offset
       if (offset === lastOffset) {
+        stuckCount++;
         debugLog(
-          `[pluginProcessor] WARNING: Stuck at offset ${offset}, breaking loop`
+          `[pluginProcessor] WARNING: Stuck at offset ${offset} (count: ${stuckCount})`
         );
-        break;
+        if (stuckCount > 3) {
+          debugLog(
+            `[pluginProcessor] ERROR: Stuck at offset ${offset} too many times, breaking loop`
+          );
+          break;
+        }
+        // Force advance by at least one byte to prevent infinite loop
+        offset++;
+        continue;
       }
       lastOffset = offset;
+      stuckCount = 0;
 
       // Check if we have enough bytes for a record header
       if (offset + RECORD_HEADER.TOTAL_SIZE > pluginBuffer.length) {
@@ -131,7 +158,7 @@ export function processPlugin(
           pluginName
         );
 
-        // If we hit the end of the buffer, break out of the loop
+        // If we hit the end of buffer, break out of the loop
         if (newOffset === pluginBuffer.length) {
           endOfBufferCount++;
           debugLog(
@@ -187,21 +214,6 @@ export function processPlugin(
     statsCollector.recordError(error instanceof Error ? error.name : "Unknown");
     throw error;
   }
-}
-
-/**
- * Group records by their type
- */
-export function groupRecordsByType(
-  records: ParsedRecord[]
-): Record<string, ParsedRecord[]> {
-  return records.reduce((acc, record) => {
-    if (!acc[record.meta.type]) {
-      acc[record.meta.type] = [];
-    }
-    acc[record.meta.type].push(record);
-    return acc;
-  }, {} as Record<string, ParsedRecord[]>);
 }
 
 // Export the stats collector instance

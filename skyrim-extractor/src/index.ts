@@ -29,7 +29,7 @@ export async function main(
     if (debug) {
       const logPath = path.join(process.cwd(), "debug.log");
       initDebugLog(logPath);
-      console.log(`Debug logging enabled. Log file: ${logPath}`);
+      debugLog(`Debug logging enabled. Log file: ${logPath}`);
     }
 
     // Load and validate configuration
@@ -45,7 +45,7 @@ export async function main(
 
     printHeader("Processing Plugins");
     for (const plugin of plugins) {
-      console.log(`Processing ${plugin.name}...`);
+      debugLog(`Processing ${plugin.name}...`);
 
       // Read plugin file into buffer
       const buffer = await fs.readFile(plugin.fullPath);
@@ -96,8 +96,8 @@ export async function main(
     };
     await fileWriter.writeStats(finalStats, config.outputPath);
 
-    console.log(`Successfully processed ${plugins.length} plugins`);
-    console.log(
+    debugLog(`Successfully processed ${plugins.length} plugins`);
+    debugLog(
       `Found records of types: ${Object.keys(recordsByType).join(", ")}`
     );
 

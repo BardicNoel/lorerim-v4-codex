@@ -17,7 +17,11 @@ import { formatFormId } from "@lorerim/platform-types";
  * Check if a record type should be processed
  */
 export function shouldProcessRecordType(type: string): boolean {
-  return PROCESSED_RECORD_TYPES.has(type as ProcessedRecordType);
+  const shouldProcess = PROCESSED_RECORD_TYPES.has(type as ProcessedRecordType);
+  // if (!shouldProcess) {
+  //   // debugLog(`[recordProcessor] Skipping unsupported record type: ${type}`);
+  // }
+  return shouldProcess;
 }
 
 /**
@@ -51,7 +55,7 @@ export function processRecord(
 ): { record: ParsedRecord | null; newOffset: number } {
   // Check if we have enough bytes for a record header
   if (offset + RECORD_HEADER.TOTAL_SIZE > buffer.length) {
-    debugLog(`[recordProcessor] Reached end of buffer at offset ${offset}`);
+    // debugLog(`[recordProcessor] Reached end of buffer at offset ${offset}`);
     return { record: null, newOffset: buffer.length };
   }
 
@@ -61,9 +65,13 @@ export function processRecord(
 
   // Skip unsupported record types
   if (!shouldProcessRecordType(header.type)) {
+    const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize;
+    // debugLog(
+    //   `[recordProcessor] Skipping record type ${header.type} at offset ${offset}, advancing to ${newOffset}`
+    // );
     return {
       record: null,
-      newOffset: offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize,
+      newOffset,
     };
   }
 
@@ -97,41 +105,56 @@ export function processRecord(
   }
 
   // Process records with data
-  const data = buffer.slice(
+  const recordData = buffer.slice(
     offset + RECORD_HEADER.TOTAL_SIZE,
     offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize
   );
 
-  const subrecords: Record<string, string[]> = {};
-  for (const subrecord of scanSubrecords(data, 0).subrecords) {
-    if (!subrecords[subrecord.header.type]) {
-      subrecords[subrecord.header.type] = [];
-    }
-    subrecords[subrecord.header.type].push(
-      JSON.stringify(
-        extractSubrecordDataAsBase64(
-          data,
-          subrecord.offset,
-          subrecord.header.size
-        )
-      )
+  // Scan subrecords
+  const { subrecords } = scanSubrecords(recordData, 0);
+  if (!subrecords || subrecords.length === 0) {
+    debugLog(
+      `[recordProcessor] Failed to scan subrecords at offset ${offset} (type: ${header.type})`
     );
+    return {
+      record: null,
+      newOffset: offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize,
+    };
   }
 
+  // Create record with subrecord data
   const record: ParsedRecord = {
     meta: {
       type: header.type,
-      formId: formatFormId(header.formId),
+      formId: header.formId.toString(16).toUpperCase().padStart(8, "0"),
       plugin: pluginName,
     },
-    data: subrecords,
+    data: {},
     header: JSON.stringify(
       buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE).toString("base64")
     ),
   };
 
+  // Process each subrecord
+  for (const subrecord of subrecords) {
+    const type = subrecord.header.type;
+    const subrecordData = extractSubrecordDataAsBase64(
+      recordData,
+      subrecord.offset,
+      subrecord.header.size
+    );
+    if (!record.data[type]) {
+      record.data[type] = [];
+    }
+    record.data[type].push(JSON.stringify(subrecordData));
+  }
+
+  const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize;
+  debugLog(
+    `[recordProcessor] Processed record at offset ${offset}, advancing to ${newOffset}`
+  );
   return {
     record,
-    newOffset: offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize,
+    newOffset,
   };
 }
