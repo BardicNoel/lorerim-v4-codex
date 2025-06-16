@@ -45,23 +45,29 @@ export async function scanAllBlocks(
         groupPath
       );
       results.push(...groupResults);
+      offset = endOffset;
     } else {
-      // Regular record
+      const dataSize = size;
+      const totalSize = 24 + dataSize;
       const formId = buffer.readUInt32LE(offset + 8);
+    
       results.push({
         tag,
         offset,
-        endOffset,
-        size,
+        endOffset: offset + totalSize,
+        size: totalSize,
         formId,
         parentPath: [...parentPath],
         sourcePlugin: context.sourcePlugin,
         modFolder: context.modFolder,
         pluginIndex: context.pluginIndex
       });
+    
+      offset += totalSize;
+      continue;
     }
 
-    offset = endOffset;
+
   }
 
   return results;

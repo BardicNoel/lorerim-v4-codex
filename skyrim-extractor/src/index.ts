@@ -3,6 +3,7 @@ import { loadConfig, validateConfig } from "./config";
 import * as path from "path";
 import { getEnabledPlugins } from "./utils/modUtils";
 import { runPluginScan } from "./refactor/runPluginScan";
+import { reportGrupDistribution, reportPluginSummaries } from "./refactor/runReports";
 
 export function parseArgs(): { configPath: string | undefined; debug: boolean } {
   const args = process.argv.slice(2);
@@ -96,6 +97,9 @@ export async function main(
         const percentage = ((count / results.length) * 100).toFixed(1);
         console.log(`  ${type}: ${count.toLocaleString()} records (${percentage}%)`);
       });
+
+    reportPluginSummaries(results);
+    reportGrupDistribution(results);
 
     // Close debug log if enabled
     if (debug) {

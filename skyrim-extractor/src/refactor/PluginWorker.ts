@@ -1,8 +1,8 @@
 import { parentPort } from 'worker_threads';
 import { PluginMeta } from '../types';
 import { WorkerMessage } from './types';
-import { scanAllBlocks } from './scanAllBlocks';
 import * as fs from 'fs';
+import { scanAllBlocks } from './scanAllBlocks';
 
 if (!parentPort) {
   throw new Error('This module must be run as a worker thread');
