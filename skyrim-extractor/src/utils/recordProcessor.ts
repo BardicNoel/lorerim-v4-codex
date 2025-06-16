@@ -4,15 +4,11 @@ import {
   parseRecordHeader,
   scanSubrecords,
   extractSubrecordDataAsBase64,
-} from "./recordParser";
+} from "../binary-decoders/recordParser";
 
-import {
-  PROCESSED_RECORD_TYPES,
-  ProcessedRecordType,
-} from "../constants/recordTypes";
+import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "../constants";
 import { debugLog } from "./debugUtils";
 import { formatFormId } from "@lorerim/platform-types";
-import { stats } from "../pluginProcessor";
 
 /**
  * Check if a record type should be processed
@@ -67,10 +63,10 @@ export function processRecord(
   // Skip unsupported record types
   if (!shouldProcessRecordType(header.type)) {
     const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize;
-    stats.recordSkipped(
-      header.type,
-      header.dataSize + RECORD_HEADER.TOTAL_SIZE
-    );
+    // stats.recordSkipped(
+    //   header.type,
+    //   header.dataSize + RECORD_HEADER.TOTAL_SIZE
+    // );
     debugLog(
       `[recordProcessor] Skipping record type ${header.type} at offset ${offset}, advancing to ${newOffset}`
     );

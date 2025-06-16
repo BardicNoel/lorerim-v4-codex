@@ -1,5 +1,5 @@
 import { writeFile, mkdir, readFile } from "fs/promises";
-import { buildPath, PATHS } from "../constants/paths";
+import { buildPath, PATHS } from "../utils/paths";
 import { formatJSON } from "@lorerim/platform-types";
 import { ProcessingStats } from "./stats";
 

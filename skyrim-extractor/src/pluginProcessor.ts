@@ -1,15 +1,12 @@
 import {
   parseRecordHeader as parseRecordHeaderFromBuffer,
   scanSubrecords,
-} from "./utils/recordParser";
+} from "./binary-decoders/recordParser";
 import { ParsedRecord, RecordHeader } from "./types";
 import { RECORD_HEADER } from "./utils/buffer.constants";
-import {
-  PROCESSED_RECORD_TYPES,
-  ProcessedRecordType,
-} from "./constants/recordTypes";
+import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "./constants";
 import { StatsCollector } from "./utils/stats";
-import { processGRUP } from "./utils/grup/grupHandler";
+import { processGRUP } from "./binary-decoders/grup/grupHandler";
 import { processRecord } from "./utils/recordProcessor";
 import { debugLog } from "./utils/debugUtils";
 
@@ -23,14 +20,14 @@ const statsCollector = new StatsCollector();
 /**
  * Parse a record header from a buffer
  */
-export function parseRecordHeader(buffer: Buffer): RecordHeader {
+function parseRecordHeader(buffer: Buffer): RecordHeader {
   return parseRecordHeaderFromBuffer(buffer);
 }
 
 /**
  * Check if a record type should be processed
  */
-export function shouldProcessRecordType(type: string): boolean {
+function shouldProcessRecordType(type: string): boolean {
   const shouldProcess = PROCESSED_RECORD_TYPES.has(type as ProcessedRecordType);
   if (!shouldProcess) {
     statsCollector.recordSkipped(type, 0); // We don't have size info at this point, will be updated in recordProcessor
@@ -42,7 +39,7 @@ export function shouldProcessRecordType(type: string): boolean {
 /**
  * Validate record size
  */
-export function validateRecordSize(
+function validateRecordSize(
   header: RecordHeader,
   buffer: Buffer,
   offset: number
@@ -77,8 +74,7 @@ function groupRecordsByType(
 
 /**
  * Process an entire plugin file and return records grouped by type
- */
-export function processPlugin(
+ */ function processPlugin(
   pluginBuffer: Buffer,
   pluginName: string
 ): Record<string, ParsedRecord[]> {
@@ -217,4 +213,4 @@ export function processPlugin(
 }
 
 // Export the stats collector instance
-export { statsCollector as stats };
+//  { statsCollector as stats };

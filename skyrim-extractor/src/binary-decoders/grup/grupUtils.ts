@@ -1,13 +1,13 @@
 import { parentPort } from "worker_threads";
-import { RECORD_HEADER } from "../buffer.constants";
 import { Buffer } from "buffer";
 import { ParsedRecord } from "../../types";
+import { ProcessedRecordType } from "../../constants";
+import { RECORD_HEADER } from "../../utils/buffer.constants";
 import {
   parseRecordHeader,
   scanSubrecords,
   extractSubrecordDataAsBase64,
 } from "../recordParser";
-import { ProcessedRecordType } from "../../constants/recordTypes";
 
 /**
  * Send a debug message to the main process

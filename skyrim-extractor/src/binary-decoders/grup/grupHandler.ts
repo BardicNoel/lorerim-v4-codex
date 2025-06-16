@@ -1,6 +1,5 @@
 import { ParsedRecord } from "../../types";
-import { parseRecordHeader, scanSubrecords } from "../recordParser";
-import { setDebugCallback } from "../bufferParser";
+import { parseRecordHeader } from "../recordParser";
 import {
   debugLog,
   dumpHex,
@@ -9,16 +8,9 @@ import {
   parseGRUPHeader,
   validateGRUPSize,
 } from "./grupUtils";
-import { RECORD_HEADER } from "../buffer.constants";
-import { processRecord } from "../recordProcessor";
-import {
-  PROCESSED_RECORD_TYPES,
-  ProcessedRecordType,
-} from "../../constants/recordTypes";
-
-setDebugCallback((message: string) => {
-  debugLog(message);
-});
+import { RECORD_HEADER } from "../../utils/buffer.constants";
+import { processRecord } from "../../utils/recordProcessor";
+import { PROCESSED_RECORD_TYPES, ProcessedRecordType } from "../../constants";
 
 export function processGRUP(
   buffer: Buffer,

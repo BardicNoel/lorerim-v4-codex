@@ -2,9 +2,12 @@
 import { parentPort } from "worker_threads";
 import { readFile } from "fs/promises";
 import { PluginMeta, ParsedRecord } from "../types";
-import { parseGRUPHeader, processGRUP } from "../utils/grup/grupHandler";
 import { RECORD_HEADER, GRUP_HEADER } from "../utils/buffer.constants";
-import { parseRecordHeader } from "../utils/recordParser";
+import { parseRecordHeader } from "../binary-decoders/recordParser";
+import {
+  parseGRUPHeader,
+  processGRUP,
+} from "../binary-decoders/grup/grupHandler";
 import { processRecord } from "../utils/recordProcessor";
 
 // Error logging function
