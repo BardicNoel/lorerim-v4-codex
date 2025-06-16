@@ -33,8 +33,8 @@ export function parseRecordHeader(buffer: Buffer): RecordHeader {
 export function shouldProcessRecordType(type: string): boolean {
   const shouldProcess = PROCESSED_RECORD_TYPES.has(type as ProcessedRecordType);
   if (!shouldProcess) {
-    statsCollector.recordSkipped(type);
-    // debugLog(`[pluginProcessor] Skipping unsupported record type: ${type}`);
+    statsCollector.recordSkipped(type, 0); // We don't have size info at this point, will be updated in recordProcessor
+    debugLog(`[pluginProcessor] Skipping unsupported record type: ${type}`);
   }
   return shouldProcess;
 }

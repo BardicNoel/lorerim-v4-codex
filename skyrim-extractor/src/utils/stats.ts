@@ -30,8 +30,8 @@ export class StatsCollector {
       pluginsProcessed: 0,
       errors: {
         count: 0,
-        types: {}
-      }
+        types: {},
+      },
     };
     this.startTime = Date.now();
   }
@@ -48,9 +48,10 @@ export class StatsCollector {
   /**
    * Record a skipped record
    */
-  recordSkipped(type: string): void {
+  recordSkipped(type: string, size: number): void {
     this.stats.skippedRecords++;
     this.stats.skippedTypes.add(type);
+    this.stats.totalBytes += size;
   }
 
   /**
@@ -65,7 +66,8 @@ export class StatsCollector {
    */
   recordError(errorType: string): void {
     this.stats.errors.count++;
-    this.stats.errors.types[errorType] = (this.stats.errors.types[errorType] || 0) + 1;
+    this.stats.errors.types[errorType] =
+      (this.stats.errors.types[errorType] || 0) + 1;
   }
 
   /**
@@ -86,8 +88,12 @@ export class StatsCollector {
     // Basic stats
     lines.push(`Processing complete. Stats:`);
     lines.push(`  Total Records: ${stats.totalRecords}`);
-    lines.push(`  Total Bytes: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`);
-    lines.push(`  Processing Time: ${(stats.processingTime / 1000).toFixed(2)}s`);
+    lines.push(
+      `  Total Bytes: ${(stats.totalBytes / 1024 / 1024).toFixed(2)} MB`
+    );
+    lines.push(
+      `  Processing Time: ${(stats.processingTime / 1000).toFixed(2)}s`
+    );
     lines.push(`  Plugins Processed: ${stats.pluginsProcessed}`);
 
     // Records by type
@@ -101,7 +107,7 @@ export class StatsCollector {
     // Skipped records
     if (stats.skippedRecords > 0) {
       lines.push(`\nSkipped Records: ${stats.skippedRecords}`);
-      lines.push(`Skipped Types: ${Array.from(stats.skippedTypes).join(', ')}`);
+      lines.push(`Skipped Types: ${Array.from(stats.skippedTypes).join(", ")}`);
     }
 
     // Errors
@@ -115,6 +121,6 @@ export class StatsCollector {
         });
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
-} 
+}

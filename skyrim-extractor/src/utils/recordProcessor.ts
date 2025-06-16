@@ -12,15 +12,16 @@ import {
 } from "../constants/recordTypes";
 import { debugLog } from "./debugUtils";
 import { formatFormId } from "@lorerim/platform-types";
+import { stats } from "../pluginProcessor";
 
 /**
  * Check if a record type should be processed
  */
 export function shouldProcessRecordType(type: string): boolean {
   const shouldProcess = PROCESSED_RECORD_TYPES.has(type as ProcessedRecordType);
-  // if (!shouldProcess) {
-  //   // debugLog(`[recordProcessor] Skipping unsupported record type: ${type}`);
-  // }
+  if (!shouldProcess) {
+    debugLog(`[recordProcessor] Skipping unsupported record type: ${type}`);
+  }
   return shouldProcess;
 }
 
@@ -55,7 +56,7 @@ export function processRecord(
 ): { record: ParsedRecord | null; newOffset: number } {
   // Check if we have enough bytes for a record header
   if (offset + RECORD_HEADER.TOTAL_SIZE > buffer.length) {
-    // debugLog(`[recordProcessor] Reached end of buffer at offset ${offset}`);
+    debugLog(`[recordProcessor] Reached end of buffer at offset ${offset}`);
     return { record: null, newOffset: buffer.length };
   }
 
@@ -66,9 +67,13 @@ export function processRecord(
   // Skip unsupported record types
   if (!shouldProcessRecordType(header.type)) {
     const newOffset = offset + RECORD_HEADER.TOTAL_SIZE + header.dataSize;
-    // debugLog(
-    //   `[recordProcessor] Skipping record type ${header.type} at offset ${offset}, advancing to ${newOffset}`
-    // );
+    stats.recordSkipped(
+      header.type,
+      header.dataSize + RECORD_HEADER.TOTAL_SIZE
+    );
+    debugLog(
+      `[recordProcessor] Skipping record type ${header.type} at offset ${offset}, advancing to ${newOffset}`
+    );
     return {
       record: null,
       newOffset,

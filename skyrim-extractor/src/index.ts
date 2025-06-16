@@ -44,25 +44,38 @@ export async function main(
     const aggregator = new RecordAggregator({ plugins });
 
     printHeader("Processing Plugins");
-    for (const plugin of plugins) {
-      debugLog(`Processing ${plugin.name}...`);
+    console.log(`Found ${plugins.length} plugins to process\n`);
+
+    for (let i = 0; i < plugins.length; i++) {
+      const plugin = plugins[i];
 
       // Read plugin file into buffer
       const buffer = await fs.readFile(plugin.fullPath);
+      const sizeMB = (buffer.length / 1024 / 1024).toFixed(2);
+
+      console.log(
+        `[${i + 1}/${plugins.length}] Processing ${
+          plugin.name
+        } (${sizeMB} MB)...`
+      );
 
       // Process the plugin
       const records = await processPlugin(buffer, plugin.name);
 
       // Process records through aggregator
+      let totalRecords = 0;
       for (const typeRecords of Object.values(records)) {
         aggregator.processPluginRecords(plugin.index, typeRecords);
+        totalRecords += typeRecords.length;
       }
+      console.log(`  Processed ${totalRecords} records\n`);
     }
 
     // Get aggregated results
     const result = aggregator.getResult();
     const recordsByType: Record<string, ParsedRecord[]> = {};
 
+    console.log("\nAggregating records...");
     // Group records by type
     for (const record of result.records) {
       // This is only writing the latest copy of each record
