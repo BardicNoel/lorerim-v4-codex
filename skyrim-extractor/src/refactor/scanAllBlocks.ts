@@ -19,6 +19,11 @@ enum GrupOffset {
   DataOffset = 24,
 }
 
+enum RecordOffset {
+  FormId = 8,
+  DataOffset = 24,
+}
+
 export async function scanAllBlocks(
   buffer: Buffer,
   context: ScanContext,
@@ -62,7 +67,7 @@ export async function scanAllBlocks(
       offset = endOffset;
     } else {
       const dataSize = size;
-      const totalSize = GrupOffset.EndOffset + dataSize;
+      const totalSize = RecordOffset.DataOffset + dataSize;
       
       // Skip if record type is not in filter
       if (context.recordTypeFilter && !context.recordTypeFilter.includes(tag)) {
@@ -74,7 +79,7 @@ export async function scanAllBlocks(
         continue;
       }
 
-      const formId = buffer.readUInt32LE(offset + GrupOffset.FormId);
+      const formId = buffer.readUInt32LE(offset + RecordOffset.FormId);
       processedRecords++;
       
       // if (processedRecords % 1000 === 0) {
