@@ -33,6 +33,10 @@ class ThreadManagerImpl implements ThreadManager {
   private workerLogs: Map<string, string[]> = new Map();
   private debugLogStream: WriteStream | null = null;
   private debug: boolean = false;
+  private workerStates: Map<
+    number,
+    { plugin: PluginMeta | null; status: string }
+  > = new Map();
 
   constructor() {
     // Initialize debug log file
@@ -45,6 +49,19 @@ class ThreadManagerImpl implements ThreadManager {
       const timestamp = new Date().toISOString();
       const logMessage = `[${timestamp}] ${message}\n`;
       this.debugLogStream.write(logMessage);
+    }
+  }
+
+  private logWorkerState(
+    workerId: number,
+    status: string,
+    plugin: PluginMeta | null = null
+  ): void {
+    this.workerStates.set(workerId, { plugin, status });
+    if (this.debug) {
+      console.log(
+        `Worker ${workerId}: ${status}${plugin ? ` (${plugin.name})` : ""}`
+      );
     }
   }
 
@@ -62,6 +79,7 @@ class ThreadManagerImpl implements ThreadManager {
     this.processedPlugins = 0;
     this.lastProgressLog = Date.now();
     this.workerLogs.clear();
+    this.workerStates.clear();
 
     // Log plugin sizes before starting
     for (let i = 0; i < plugins.length; i++) {
@@ -72,14 +90,14 @@ class ThreadManagerImpl implements ThreadManager {
     }
     console.log();
 
+    const workerCount = Math.min(MAX_CONCURRENCY, plugins.length);
     console.log(
-      `Starting to process ${this.totalPlugins} plugins with ${MAX_CONCURRENCY} workers`
+      `Starting to process ${this.totalPlugins} plugins with ${workerCount} workers`
     );
 
     // Start initial batch of workers
-    const initialBatch = Math.min(MAX_CONCURRENCY, plugins.length);
-    for (let i = 0; i < initialBatch; i++) {
-      this.startWorker();
+    for (let i = 0; i < workerCount; i++) {
+      this.startWorker(i);
     }
 
     // Wait for all plugins to be processed
@@ -176,8 +194,11 @@ class ThreadManagerImpl implements ThreadManager {
   /**
    * Start a new worker thread
    */
-  private startWorker(): void {
-    if (this.pluginQueue.length === 0) return;
+  private startWorker(workerId: number): void {
+    if (this.pluginQueue.length === 0) {
+      this.logWorkerState(workerId, "idle");
+      return;
+    }
 
     const plugin = this.pluginQueue.shift()!;
     const workerPath = path.join(
@@ -186,25 +207,15 @@ class ThreadManagerImpl implements ThreadManager {
       "thread",
       "pluginWorker.js"
     );
-    if (this.debug) {
-      console.log("Starting worker from path:", workerPath);
-    }
+
+    this.logWorkerState(workerId, "starting", plugin);
+
     const worker = new Worker(workerPath);
+    this.workers[workerId] = worker;
     this.activeWorkers++;
     this.workerLogs.set(plugin.name, []);
 
-    if (this.debug) {
-      console.log(`Starting worker for ${plugin.name}`);
-    }
-
     worker.on("message", (message: any) => {
-      if (this.debug) {
-        console.log(
-          `Received message from worker for ${plugin.name}:`,
-          message.type || message.status
-        );
-      }
-
       if (message.status === "done") {
         // Add records to aggregator
         for (const record of message.records) {
@@ -215,7 +226,7 @@ class ThreadManagerImpl implements ThreadManager {
         this.processedPlugins++;
         if (this.debug) {
           console.log(
-            `Completed ${plugin.name} (${message.records.length} records)`
+            `Worker ${workerId} completed ${plugin.name} (${message.records.length} records)`
           );
         }
 
@@ -225,7 +236,9 @@ class ThreadManagerImpl implements ThreadManager {
 
         // Start next worker if queue not empty
         if (this.pluginQueue.length > 0) {
-          this.startWorker();
+          this.startWorker(workerId);
+        } else {
+          this.logWorkerState(workerId, "idle");
         }
       } else if (message.type === "debug" || message.type === "error") {
         this.handleWorkerMessage(worker, plugin, message);
@@ -233,18 +246,43 @@ class ThreadManagerImpl implements ThreadManager {
     });
 
     worker.on("error", (error) => {
-      console.error(`Worker error processing ${plugin.name}:`, error);
+      console.error(
+        `Worker ${workerId} error processing ${plugin.name}:`,
+        error
+      );
+      console.error(`Error stack:`, error.stack);
+      this.logWorkerState(workerId, "error", plugin);
       worker.terminate();
       this.activeWorkers--;
 
       // Start next worker if queue not empty
       if (this.pluginQueue.length > 0) {
-        this.startWorker();
+        this.startWorker(workerId);
+      } else {
+        this.logWorkerState(workerId, "idle");
+      }
+    });
+
+    worker.on("exit", (code) => {
+      if (code !== 0) {
+        console.error(
+          `Worker ${workerId} for ${plugin.name} exited with code ${code}`
+        );
+      }
+      this.logWorkerState(workerId, "exited", plugin);
+      this.activeWorkers--;
+
+      // Start next worker if queue not empty
+      if (this.pluginQueue.length > 0) {
+        this.startWorker(workerId);
+      } else {
+        this.logWorkerState(workerId, "idle");
       }
     });
 
     // Start processing
     worker.postMessage({ plugin });
+    this.logWorkerState(workerId, "processing", plugin);
   }
 
   /**

@@ -2,7 +2,7 @@
 import { parentPort } from "worker_threads";
 import { readFile } from "fs/promises";
 import { PluginMeta, ParsedRecord } from "../types";
-import { processGRUP } from "../utils/grup/grupHandler";
+import { parseGRUPHeader, processGRUP } from "../utils/grup/grupHandler";
 import { RECORD_HEADER, GRUP_HEADER } from "../utils/buffer.constants";
 import { parseRecordHeader } from "../utils/recordParser";
 import { processRecord } from "../utils/recordProcessor";
@@ -49,10 +49,8 @@ export async function processPlugin(
       records.push(...grupRecords);
 
       // Get the GRUP size from its header
-      const grupHeader = parseRecordHeader(
-        buffer.slice(offset, offset + RECORD_HEADER.TOTAL_SIZE)
-      );
-      offset += RECORD_HEADER.TOTAL_SIZE + grupHeader.dataSize;
+      const grupHeader = parseGRUPHeader(buffer, offset);
+      offset += RECORD_HEADER.TOTAL_SIZE + grupHeader.size;
     } else {
       // Process normal record
       const { record, newOffset } = processRecord(buffer, offset, plugin.name);
