@@ -1,10 +1,11 @@
 import { initDebugLog, closeDebugLog, debugLog } from "./utils/debugUtils";
 import { loadConfig, validateConfig } from "./config";
 import * as path from "path";
-import { getEnabledPlugins } from "./utils/modUtils";
+import { getBaseGamePlugins, getEnabledPlugins } from "./utils/modUtils";
 import { runPluginScan } from "./refactor/runPluginScan";
 import { createFileWriter } from "./utils/fileWriter";
 import { StatsReporter } from "./utils/statsReporter";
+import { loadMissingFormIds } from "./utils/missingCheck";
 
 export function parseArgs(): {
   configPath: string | undefined;
@@ -42,6 +43,8 @@ export async function main(
   debug: boolean = false
 ): Promise<void> {
   try {
+    loadMissingFormIds("missing_skyrim_perk_ids.txt");
+
     const startTime = Date.now();
 
     // Initialize debug logging if enabled
@@ -59,10 +62,9 @@ export async function main(
     }
 
     // Get base game plugins
-    const plugins = await getEnabledPlugins(
-      config.modDirPath,
-      config.baseGameDir,
-      ["Skyrim.esm"] // Only scan Skyrim.esm
+    const plugins = await getBaseGamePlugins(
+      config.baseGameDir!,
+      config.baseGameFiles!
     );
 
     printHeader("Processing Skyrim.esm");
@@ -73,7 +75,7 @@ export async function main(
       bufferMetas: results,
       parsedRecordDict,
       stats,
-    } = await runPluginScan(plugins, {
+    } = await runPluginScan([plugins[0]], {
       maxThreads: 1, // Single thread for debugging
       debug,
       onLog: (message) => {

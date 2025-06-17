@@ -5,6 +5,7 @@ import * as path from "path";
 import { ParsedRecord } from "@lorerim/platform-types";
 import { mergeTypeDictionaries } from "./parsedRecordDataStructs";
 import { StatsCollector, ProcessingStats } from "../utils/statsCollector";
+import { isMissingFormId, isMissingFormIdString } from "../utils/missingCheck";
 
 export class ThreadPool {
   private workers: Worker[] = [];
@@ -57,11 +58,6 @@ export class ThreadPool {
     // Terminate all workers
     await Promise.all(this.workers.map((worker) => worker.terminate()));
     this.workers = [];
-
-    const test = this.parsedRecords.filter(
-      (r) => r.meta.formId.toLowerCase() === "0x0003af81"
-    );
-    console.log(test);
 
     return {
       bufferMetas: this.results,

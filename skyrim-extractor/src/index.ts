@@ -11,6 +11,7 @@ import {
 } from "./refactor/runReports";
 import { createFileWriter } from "./utils/fileWriter";
 import { StatsReporter } from "./utils/statsReporter";
+import { loadMissingFormIds } from "./utils/missingCheck";
 
 export function parseArgs(): {
   configPath: string | undefined;
@@ -118,7 +119,7 @@ export async function main(
     console.log(`Plugins Processed: ${plugins.length}`);
 
     // Generate reports
-    // reportRecordTypeDistribution(results);
+    reportRecordTypeDistribution(results);
 
     // Write parsed records to JSON files by type
     printSubHeader("Writing Record Files");

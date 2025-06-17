@@ -3,6 +3,7 @@ import { formatGrupLabelDisplay, byteDump } from "./formatter";
 import { hexDump } from "../utils/debugUtils";
 import { formatFormId } from "@lorerim/platform-types";
 import { StatsCollector } from "../utils/statsCollector";
+import { isMissingFormId } from "../utils/missingCheck";
 
 interface ScanContext {
   sourcePlugin: string;
@@ -75,16 +76,6 @@ export async function scanAllBlocks(
         pluginIndex: context.pluginIndex,
       };
 
-      // // Debug log
-      // if (context.onLog) {
-      //   context.onLog(
-      //     "debug",
-      //     `Created GRUP metadata at depth ${
-      //       newParentPath.length
-      //     }: ${JSON.stringify(grupMeta)}`
-      //   );
-      // }
-
       results.push(grupMeta);
 
       // Recursively scan the GRUP contents
@@ -100,18 +91,6 @@ export async function scanAllBlocks(
     } else if (tag === "TES4") {
       const dataSize = buffer.readUInt32LE(offset + RecordOffset.Size);
       const totalSize = RecordOffset.DataOffset + dataSize;
-
-      // results.push({
-      //   tag,
-      //   offset,
-      //   endOffset: offset + totalSize,
-      //   size: totalSize,
-      //   formId: 0,
-      //   parentPath: [...parentPath],
-      //   sourcePlugin: context.sourcePlugin,
-      //   modFolder: context.modFolder,
-      //   pluginIndex: context.pluginIndex,
-      // });
 
       offset += totalSize;
       continue;
@@ -144,16 +123,6 @@ export async function scanAllBlocks(
           modFolder: context.modFolder,
           pluginIndex: context.pluginIndex,
         };
-
-        // // Debug log
-        // if (context.onLog) {
-        //   context.onLog(
-        //     "debug",
-        //     `Created record metadata at depth ${
-        //       parentPath.length
-        //     }: ${JSON.stringify(recordMeta)}`
-        //   );
-        // }
 
         results.push(recordMeta);
       } catch (error) {
