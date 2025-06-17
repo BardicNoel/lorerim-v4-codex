@@ -105,6 +105,7 @@ export class ThreadPool {
       worker.postMessage({
         plugin,
         recordTypeFilter: this.config.recordTypeFilter,
+        stackOrder: this.totalPlugins - 1 - plugin.index,
       });
     }
   }
