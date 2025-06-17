@@ -15,7 +15,7 @@ stages:
     criteria:
       - field: 'meta.plugin'
         operator: 'equals'
-        value: 'Update.esm'  # You can specify the plugin name here
+        value: 'Ordinator - Perks of Skyrim.esp'  # You can specify the plugin name here
         
   - from: 'local'
     name: 'Decode Binary Records'
@@ -28,10 +28,10 @@ stages:
     type: 'remove-fields'
     description: 'Remove PERK-specific fields that are not needed for analysis'
     fields:
-      # data: 'all'
-      data:
-       - VMAD
-       - CTDA
+      data: 'all'
+      # data:
+      #  - VMAD
+      #  - CTDA
       header: 'all'
       decodedData:
         - MDOB
@@ -48,3 +48,11 @@ stages:
         #     - perkEffects
 
 
+  - from: 'local'
+    name: 'Filter ASIS Perks'
+    type: 'filter-records'
+    description: 'Filter out ASIS-specific perks based on EDID'
+    criteria:
+      - field: 'decodedData.EDID'
+        operator: 'not-contains'
+        value: 'ASISExclude'
