@@ -4,7 +4,8 @@ import { formatFormId, ParsedRecord } from '@lorerim/platform-types';
 
 export function extractParsedRecords(
   buffer: Buffer,
-  metas: BufferMeta[]
+  metas: BufferMeta[],
+  stackOrder: number
 ): ParsedRecord[] {
   const records: ParsedRecord[] = [];
 
@@ -42,7 +43,7 @@ export function extractParsedRecords(
         type: meta.tag,
         formId: formatFormId(meta.formId!),
         plugin: meta.sourcePlugin,
-        stackOrder: null
+        stackOrder
       },
       data,
       header

@@ -16,11 +16,12 @@ function sendLog(level: 'info' | 'debug', message: string): void {
 interface WorkerTask {
   plugin: PluginMeta;
   recordTypeFilter?: string[];
+  stackOrder: number;
 }
 
 async function processPlugin(task: WorkerTask): Promise<void> {
   try {
-    const { plugin, recordTypeFilter } = task;
+    const { plugin, recordTypeFilter, stackOrder } = task;
     sendLog('info', `Scanning ${plugin.name}`);
     
     // Read the plugin file
@@ -37,7 +38,7 @@ async function processPlugin(task: WorkerTask): Promise<void> {
     });
     console.log(`END:: Scanning ${plugin.name} ${buffer.length}`);
     sendLog('info', `Found ${results.length} records in ${plugin.name}`);
-    const parsedRecords = extractParsedRecords(buffer, results);
+    const parsedRecords = extractParsedRecords(buffer, results, stackOrder);
     
     // Send results back to main thread
     parentPort!.postMessage({ bufferMetas: results, parsedRecords } as WorkerMessage);

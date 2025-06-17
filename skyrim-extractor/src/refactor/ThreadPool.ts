@@ -96,7 +96,8 @@ export class ThreadPool {
       const worker = this.workers[this.activeWorkers - 1];
       worker.postMessage({
         plugin,
-        recordTypeFilter: this.config.recordTypeFilter
+        recordTypeFilter: this.config.recordTypeFilter,
+        stackOrder: this.totalPlugins - 1 - plugin.index
       });
     }
   }
