@@ -1,7 +1,8 @@
-import { ThreadPool } from './ThreadPool';
-import { PluginMeta } from '../types';
-import { BufferMeta } from './types';
-import { ParsedRecord } from '@lorerim/platform-types';
+import { ThreadPool } from "./ThreadPool";
+import { PluginMeta } from "../types";
+import { BufferMeta } from "./types";
+import { ParsedRecord } from "@lorerim/platform-types";
+import { ProcessingStats } from "../utils/statsCollector";
 
 export interface ScanOptions {
   maxThreads?: number;
@@ -13,12 +14,16 @@ export interface ScanOptions {
 export async function runPluginScan(
   plugins: PluginMeta[],
   options: ScanOptions = {}
-): Promise<{ bufferMetas: BufferMeta[], parsedRecordDict: Record<string, ParsedRecord[]> }> {
+): Promise<{
+  bufferMetas: BufferMeta[];
+  parsedRecordDict: Record<string, ParsedRecord[]>;
+  stats: ProcessingStats;
+}> {
   const {
     maxThreads = Math.max(1, Math.min(4, plugins.length)),
     debug = false,
     onLog = console.log,
-    recordTypeFilter
+    recordTypeFilter,
   } = options;
 
   const threadPool = new ThreadPool(
@@ -27,4 +32,4 @@ export async function runPluginScan(
   );
 
   return threadPool.processPlugins(plugins);
-} 
+}

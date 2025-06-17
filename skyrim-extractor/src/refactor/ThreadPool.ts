@@ -4,6 +4,7 @@ import { BufferMeta, WorkerMessage, ThreadPoolConfig } from "./types";
 import * as path from "path";
 import { ParsedRecord } from "@lorerim/platform-types";
 import { mergeTypeDictionaries } from "./parsedRecordDataStructs";
+import { StatsCollector, ProcessingStats } from "../utils/statsCollector";
 
 export class ThreadPool {
   private workers: Worker[] = [];
@@ -18,15 +19,18 @@ export class ThreadPool {
   private lastProgressLog = 0;
   private readonly PROGRESS_INTERVAL = 1000; // Log progress every second
   private availableWorkers: Worker[] = [];
+  private statsCollector: StatsCollector;
 
   constructor(config: ThreadPoolConfig, onLog?: (message: string) => void) {
     this.config = config;
     this.onLog = onLog;
+    this.statsCollector = new StatsCollector();
   }
 
   public async processPlugins(plugins: PluginMeta[]): Promise<{
     bufferMetas: BufferMeta[];
     parsedRecordDict: Record<string, ParsedRecord[]>;
+    stats: ProcessingStats;
   }> {
     this.taskQueue = [...plugins];
     this.results = [];
@@ -35,6 +39,7 @@ export class ThreadPool {
     this.processedPlugins = 0;
     this.totalPlugins = plugins.length;
     this.lastProgressLog = Date.now();
+    this.statsCollector.reset();
 
     // Create initial worker pool
     const workerCount = Math.min(this.config.maxThreads, plugins.length);
@@ -53,9 +58,15 @@ export class ThreadPool {
     await Promise.all(this.workers.map((worker) => worker.terminate()));
     this.workers = [];
 
+    const test = this.parsedRecords.filter(
+      (r) => r.meta.formId.toLowerCase() === "0x0003af81"
+    );
+    console.log(test);
+
     return {
       bufferMetas: this.results,
       parsedRecordDict: mergeTypeDictionaries(this.parsedRecords),
+      stats: this.statsCollector.getStats(),
     };
   }
 
@@ -74,9 +85,43 @@ export class ThreadPool {
       if (message.log && this.onLog) {
         this.onLog(`[${message.level?.toUpperCase()}] ${message.message}`);
       } else if (message.bufferMetas) {
-        this.results.push(...message.bufferMetas);
+        message.bufferMetas.forEach((meta) => this.results.push(meta));
+
         if (message.parsedRecords) {
-          this.parsedRecords.push(...message.parsedRecords);
+          message.parsedRecords.forEach((record) =>
+            this.parsedRecords.push(record)
+          );
+        }
+        if (message.stats) {
+          // Merge stats from worker
+          const workerStats = message.stats;
+          for (const [plugin, stats] of Object.entries(workerStats.plugins)) {
+            // Process skipped records by type
+            for (const [recordType, count] of Object.entries(
+              workerStats.skippedRecords.byType
+            )) {
+              for (let i = 0; i < count; i++) {
+                this.statsCollector.recordSkipped(
+                  plugin,
+                  recordType,
+                  "Filtered by record type"
+                );
+              }
+            }
+            // Process errors by type
+            for (const error of workerStats.errors.details) {
+              this.statsCollector.recordError(
+                plugin,
+                error.type,
+                error.message,
+                error.recordId
+              );
+            }
+            // Process successful records
+            for (let i = 0; i < stats.processed; i++) {
+              this.statsCollector.recordProcessed(plugin, "unknown");
+            }
+          }
         }
         this.processedPlugins++;
         handleWorkerDone();

@@ -10,6 +10,7 @@ import {
   reportRecordTypeDistribution,
 } from "./refactor/runReports";
 import { createFileWriter } from "./utils/fileWriter";
+import { StatsReporter } from "./utils/statsReporter";
 
 export function parseArgs(): {
   configPath: string | undefined;
@@ -30,16 +31,16 @@ export function parseArgs(): {
   return { configPath, debug };
 }
 
-function printHeader(text: string): void {
+function printHeader(title: string): void {
   console.log("\n" + "=".repeat(80));
-  console.log(text);
+  console.log(title);
   console.log("=".repeat(80) + "\n");
 }
 
-function printSubHeader(text: string): void {
+function printSubHeader(title: string): void {
   console.log("\n" + "-".repeat(80));
-  console.log(text);
-  console.log("-".repeat(80));
+  console.log(title);
+  console.log("-".repeat(80) + "\n");
 }
 
 export async function main(
@@ -74,25 +75,34 @@ export async function main(
     console.log(`Found ${plugins.length} plugins to process\n`);
 
     // Process plugins using the new scanning system
-    const { bufferMetas: results, parsedRecordDict } = await runPluginScan(
-      plugins,
-      {
-        maxThreads: Math.max(1, Math.min(4, plugins.length)),
-        debug,
-        onLog: (message) => {
-          if (debug) {
-            debugLog(message);
-          }
-          console.log(message);
-        },
-        recordTypeFilter: config.recordTypeFilter,
-      }
-    );
+    const {
+      bufferMetas: results,
+      parsedRecordDict,
+      stats,
+    } = await runPluginScan(plugins, {
+      maxThreads: Math.max(1, Math.min(4, plugins.length)),
+      debug,
+      onLog: (message) => {
+        if (debug) {
+          debugLog(message);
+        }
+        console.log(message);
+      },
+      recordTypeFilter: config.recordTypeFilter,
+    });
 
     const endTime = Date.now();
     const processingTime = endTime - startTime;
 
     printHeader("Processing Complete");
+
+    // Print processing statistics
+    // StatsReporter.report(stats);
+
+    // Generate report file
+    const reportPath = path.join(config.outputPath, "processing-stats.json");
+    StatsReporter.generateReportFile(stats, reportPath);
+    console.log(`\nDetailed report saved to: ${reportPath}`);
 
     // Print basic stats
     printSubHeader("Basic Statistics");
@@ -108,25 +118,24 @@ export async function main(
     console.log(`Plugins Processed: ${plugins.length}`);
 
     // Generate reports
-    // reportPluginSummaries(results);
-    // reportGrupDistribution(results);
-    reportRecordTypeDistribution(results);
-    reportParsedRecords(parsedRecordDict);
+    // reportRecordTypeDistribution(results);
 
-    // Write parsed records to files
-    printSubHeader("Writing Records to Files");
+    // Write parsed records to JSON files by type
+    printSubHeader("Writing Record Files");
+    const recordsDir = path.join(config.outputPath, "records");
     const fileWriter = createFileWriter();
-    const outputDir = path.resolve(config.outputPath);
-    await fileWriter.writeRecords(parsedRecordDict, outputDir);
-    console.log(`Records written to: ${outputDir}`);
-
-    // Close debug log if enabled
-    if (debug) {
-      await closeDebugLog();
-    }
+    await fileWriter.writeRecords(parsedRecordDict, recordsDir);
+    console.log(`\nRecords written to: ${recordsDir}`);
   } catch (error) {
-    console.error("Error:", error);
+    console.error(
+      "Error:",
+      error instanceof Error ? error.message : String(error)
+    );
     process.exit(1);
+  } finally {
+    if (debug) {
+      closeDebugLog();
+    }
   }
 }
 
