@@ -101,23 +101,14 @@ export async function scanAllBlocks(
       // Skip if record type is not in filter
       if (context.recordTypeFilter && !context.recordTypeFilter.includes(tag)) {
         skippedRecords++;
-        // if (skippedRecords % 1000 === 0) {
-        //   context.onLog?.('debug', `Skipped ${skippedRecords} records, processed ${processedRecords} records`);
-        // }
+
         offset += totalSize;
         continue;
       }
 
       const formId = buffer.readUInt32LE(offset + RecordOffset.FormId);
       processedRecords++;
-      // hexDump(buffer, offset, totalSize, `Header ${tag} ${totalSize}`);
-      // if (processedRecords % 1000 === 0) {
-      //   context.onLog?.('debug', `Processed ${processedRecords} records, skipped ${skippedRecords} records`);
-      // }
 
-      if(formatFormId(formId) === "0x04549559"){
-        hexDump(buffer, offset, totalSize, `Scan Record ${tag} ${formatFormId(formId)} ${totalSize} ${context.sourcePlugin}`);
-      }
     
       results.push({
         tag,
@@ -134,6 +125,5 @@ export async function scanAllBlocks(
     }
   }
 
-  // context.onLog?.('info', `Finished scanning: processed ${processedRecords} records, skipped ${skippedRecords} records`);
   return results;
 } 

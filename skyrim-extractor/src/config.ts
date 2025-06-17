@@ -6,6 +6,7 @@ export interface Config {
   outputPath: string;
   maxThreads: number;
   recordTypeFilter?: string[];
+  baseGameDir?: string;
 }
 
 export async function loadConfig(configPath?: string): Promise<Config> {
@@ -31,11 +32,15 @@ export async function loadConfig(configPath?: string): Promise<Config> {
     outputPath: configFile.outputPath,
     maxThreads: configFile.maxThreads,
     recordTypeFilter: configFile.recordTypeFilter,
+    baseGameDir: configFile.baseGameDir,
   };
 
   // Resolve all paths relative to config file
   mergedConfig.modDirPath = path.resolve(configDir, mergedConfig.modDirPath);
   mergedConfig.outputPath = path.resolve(configDir, mergedConfig.outputPath);
+  if (mergedConfig.baseGameDir) {
+    mergedConfig.baseGameDir = path.resolve(configDir, mergedConfig.baseGameDir);
+  }
 
   // Clamp maxThreads
   if (typeof mergedConfig.maxThreads !== 'number' || isNaN(mergedConfig.maxThreads)) {
@@ -73,6 +78,9 @@ export function validateConfig(config: Config): string[] {
   }
   if (config.recordTypeFilter && !Array.isArray(config.recordTypeFilter)) {
     errors.push(`recordTypeFilter must be an array of strings.`);
+  }
+  if (config.baseGameDir && !fs.existsSync(config.baseGameDir)) {
+    errors.push(`Base game directory not found: ${config.baseGameDir}`);
   }
   return errors;
 } 

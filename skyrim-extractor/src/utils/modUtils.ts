@@ -65,9 +65,9 @@ export async function getEnabledPlugins(modDirPath: string): Promise<PluginMeta[
   const mods = await readModlist(modDirPath);
   const enabledPlugins = await readPlugins(modDirPath);
 
-  const plugins: PluginMeta[] = [];
-  let index = 0;
-
+  // Create a map of all available plugins
+  const pluginMap = new Map<string, PluginMeta>();
+  
   // For each mod directory
   for (const modName of mods) {
     const modDir = join(modDirPath, modName);
@@ -75,19 +75,30 @@ export async function getEnabledPlugins(modDirPath: string): Promise<PluginMeta[
       // Find all plugin files in this mod
       const pluginFiles = await findPluginFiles(modDir);
       
-      // Add metadata for each enabled plugin found
+      // Add metadata for each plugin found
       for (const pluginFile of pluginFiles) {
-        if (enabledPlugins.includes(pluginFile)) {
-          plugins.push({
-            name: pluginFile,
-            fullPath: join(modDir, pluginFile),
-            modFolder: modName,
-            index: index++
-          });
-        }
+        pluginMap.set(pluginFile, {
+          name: pluginFile,
+          fullPath: join(modDir, pluginFile),
+          modFolder: modName,
+          index: -1 // Will be set based on plugins.txt order
+        });
       }
     } catch (error) {
       console.warn(`Warning: Could not read mod directory ${modDir}: ${error}`);
+    }
+  }
+
+  // Create final array in plugins.txt order
+  const plugins: PluginMeta[] = [];
+  for (let i = 0; i < enabledPlugins.length; i++) {
+    const pluginName = enabledPlugins[i];
+    const plugin = pluginMap.get(pluginName);
+    if (plugin) {
+      plugin.index = i;
+      plugins.push(plugin);
+    } else {
+      console.warn(`Warning: Enabled plugin ${pluginName} not found in any mod directory`);
     }
   }
 

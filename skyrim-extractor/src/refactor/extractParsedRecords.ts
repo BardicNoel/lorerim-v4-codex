@@ -12,15 +12,10 @@ export function extractParsedRecords(
     if (meta.tag === 'GRUP' || meta.tag === 'TES4') continue;
     const recordBuffer = buffer.subarray(meta.offset, meta.offset + meta.size);
 
-    // hexDump(buffer, meta.offset, 24, `Record Buffer ${meta.tag} ${meta.size}`);
     const header = recordBuffer.subarray(0, 24).toString('base64');
     const dataBuffer = recordBuffer.subarray(24);
 
-    if(formatFormId(meta.formId!) === "0x04549559"){    
-      hexDump(buffer, meta.offset, meta.size, `BufferMeta Record ${meta.tag} ${formatFormId(meta.formId!)} ${meta.size} ${meta.sourcePlugin}`);
-    }
-    // hexDump(dataBuffer, 0, dataBuffer.length, `Data Buffer ${meta.tag}`);
-    // hexDump(dataBuffer, 0, 24, `Data Buffer ${meta.tag}`);
+
 
     let offset = 0;
     const data: Record<string, string[]> = {};

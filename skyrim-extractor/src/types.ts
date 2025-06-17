@@ -31,6 +31,7 @@ interface Config {
   modDirPath: string; // Path to directory containing modlist.txt and plugins.txt
   outputPath: string;
   maxThreads: number;
+  baseGameDir?: string; // Optional path to Skyrim base game directory containing master records
 }
 
 // Re-export ParsedRecord from platform types

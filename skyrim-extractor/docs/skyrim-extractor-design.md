@@ -123,6 +123,7 @@ interface Config {
   outputPath: string;    // Directory for output files
   maxThreads: number;    // Maximum number of worker threads
   recordTypeFilter?: string[]; // Optional filter for record types
+  baseGameDir?: string;  // Optional path to Skyrim base game directory containing master records
 }
 ```
 
@@ -143,6 +144,7 @@ The following environment variables can be used to configure the tool:
 - `MOD_DIR`: Directory containing modlist.txt and plugins.txt
 - `OUTPUT_DIR`: Directory for output files
 - `MAX_THREADS`: Maximum number of worker threads
+- `BASE_GAME_DIR`: Path to Skyrim base game directory containing master records
 
 ### Example Config File
 ```json
@@ -150,7 +152,8 @@ The following environment variables can be used to configure the tool:
   "modDirPath": "./data/mod-samples",
   "outputPath": "./output",
   "maxThreads": 4,
-  "recordTypeFilter": ["PERK", "RACE"]
+  "recordTypeFilter": ["PERK", "RACE"],
+  "baseGameDir": "./data/skyrim-base"
 }
 ```
 
@@ -160,7 +163,7 @@ The following environment variables can be used to configure the tool:
 skyrim-extractor --config config.json --debug
 
 # Using environment variables
-MOD_DIR=./data/mod-samples OUTPUT_DIR=./output MAX_THREADS=4 skyrim-extractor --config config.json
+MOD_DIR=./data/mod-samples OUTPUT_DIR=./output MAX_THREADS=4 BASE_GAME_DIR=./data/skyrim-base skyrim-extractor --config config.json
 ```
 
 ---
