@@ -30,7 +30,7 @@ export interface FilterRecordsConfig extends BaseStageConfig {
   type: 'filter-records';
   criteria: {
     field: FieldPath;
-    operator: 'equals' | 'not-equals' | 'contains' | 'not-contains' | 'greater-than' | 'less-than';
+    operator: 'equals' | 'not-equals' | 'contains' | 'not-contains' | 'greater-than' | 'less-than' | 'in-list' | 'not-in-list';
     value: any;
   }[];
 }

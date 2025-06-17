@@ -25,6 +25,10 @@ function evaluateCriteria(record: ParsedRecord, criteria: FilterRecordsConfig['c
                 return typeof value === 'number' && value > criterion.value;
             case 'less-than':
                 return typeof value === 'number' && value < criterion.value;
+            case 'in-list':
+                return Array.isArray(criterion.value) && criterion.value.includes(value);
+            case 'not-in-list':
+                return Array.isArray(criterion.value) && !criterion.value.includes(value);
             default:
                 return false;
         }
