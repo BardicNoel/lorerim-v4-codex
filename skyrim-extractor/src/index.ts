@@ -3,10 +3,18 @@ import { loadConfig, validateConfig } from "./config";
 import * as path from "path";
 import { getEnabledPlugins } from "./utils/modUtils";
 import { runPluginScan } from "./refactor/runPluginScan";
-import { reportGrupDistribution, reportParsedRecords, reportPluginSummaries, reportRecordTypeDistribution } from "./refactor/runReports";
+import {
+  reportGrupDistribution,
+  reportParsedRecords,
+  reportPluginSummaries,
+  reportRecordTypeDistribution,
+} from "./refactor/runReports";
 import { createFileWriter } from "./utils/fileWriter";
 
-export function parseArgs(): { configPath: string | undefined; debug: boolean } {
+export function parseArgs(): {
+  configPath: string | undefined;
+  debug: boolean;
+} {
   const args = process.argv.slice(2);
   let configPath: string | undefined;
   let debug = false;
@@ -62,17 +70,20 @@ export async function main(
     console.log(`Found ${plugins.length} plugins to process\n`);
 
     // Process plugins using the new scanning system
-    const {bufferMetas: results,  parsedRecordDict} = await runPluginScan(plugins, {
-      maxThreads: Math.max(1, Math.min(4, plugins.length)),
-      debug,
-      onLog: (message) => {
-        if (debug) {
-          debugLog(message);
-        }
-        console.log(message);
-      },
-      recordTypeFilter: config.recordTypeFilter
-    });
+    const { bufferMetas: results, parsedRecordDict } = await runPluginScan(
+      plugins,
+      {
+        maxThreads: Math.max(1, Math.min(4, plugins.length)),
+        debug,
+        onLog: (message) => {
+          if (debug) {
+            debugLog(message);
+          }
+          console.log(message);
+        },
+        recordTypeFilter: config.recordTypeFilter,
+      }
+    );
 
     const endTime = Date.now();
     const processingTime = endTime - startTime;
@@ -82,12 +93,18 @@ export async function main(
     // Print basic stats
     printSubHeader("Basic Statistics");
     console.log(`Total Records: ${results.length.toLocaleString()}`);
-    console.log(`Total Bytes: ${(results.reduce((sum, r) => sum + r.size, 0) / 1024 / 1024).toFixed(2)} MB`);
+    console.log(
+      `Total Bytes: ${(
+        results.reduce((sum, r) => sum + r.size, 0) /
+        1024 /
+        1024
+      ).toFixed(2)} MB`
+    );
     console.log(`Processing Time: ${(processingTime / 1000).toFixed(2)}s`);
     console.log(`Plugins Processed: ${plugins.length}`);
 
     // Generate reports
-    reportPluginSummaries(results);
+    // reportPluginSummaries(results);
     // reportGrupDistribution(results);
     reportRecordTypeDistribution(results);
     reportParsedRecords(parsedRecordDict);
@@ -125,4 +142,4 @@ if (require.main === module) {
     );
     process.exit(1);
   });
-} 
+}
