@@ -64,7 +64,11 @@ export async function main(
     }
 
     // Process plugins
-    const plugins = await getEnabledPlugins(config.modDirPath);
+    const plugins = await getEnabledPlugins(
+      config.modDirPath,
+      config.baseGameDir,
+      config.baseGameFiles
+    );
 
     printHeader("Processing Plugins");
     console.log(`Found ${plugins.length} plugins to process\n`);

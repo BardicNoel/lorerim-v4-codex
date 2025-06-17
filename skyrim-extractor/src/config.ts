@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 export interface Config {
   modDirPath: string;
@@ -7,20 +7,23 @@ export interface Config {
   maxThreads: number;
   recordTypeFilter?: string[];
   baseGameDir?: string;
+  baseGameFiles?: string[]; // List of base game files to process in order
 }
 
 export async function loadConfig(configPath?: string): Promise<Config> {
   if (!configPath) {
-    throw new Error('No config file specified. Please provide a config file with --config.');
+    throw new Error(
+      "No config file specified. Please provide a config file with --config."
+    );
   }
 
   // Resolve config path relative to current working directory
   const absoluteConfigPath = path.resolve(process.cwd(), configPath);
   const configDir = path.dirname(absoluteConfigPath);
   let configFile: any = {};
-  
+
   try {
-    const raw = fs.readFileSync(absoluteConfigPath, 'utf-8');
+    const raw = fs.readFileSync(absoluteConfigPath, "utf-8");
     configFile = JSON.parse(raw);
   } catch (err) {
     throw new Error(`Failed to read config file: ${err}`);
@@ -33,24 +36,42 @@ export async function loadConfig(configPath?: string): Promise<Config> {
     maxThreads: configFile.maxThreads,
     recordTypeFilter: configFile.recordTypeFilter,
     baseGameDir: configFile.baseGameDir,
+    baseGameFiles: configFile.baseGameFiles,
   };
 
   // Resolve all paths relative to config file
   mergedConfig.modDirPath = path.resolve(configDir, mergedConfig.modDirPath);
   mergedConfig.outputPath = path.resolve(configDir, mergedConfig.outputPath);
   if (mergedConfig.baseGameDir) {
-    mergedConfig.baseGameDir = path.resolve(configDir, mergedConfig.baseGameDir);
+    mergedConfig.baseGameDir = path.resolve(
+      configDir,
+      mergedConfig.baseGameDir
+    );
   }
 
   // Clamp maxThreads
-  if (typeof mergedConfig.maxThreads !== 'number' || isNaN(mergedConfig.maxThreads)) {
-    throw new Error('maxThreads must be a number in the config file.');
+  if (
+    typeof mergedConfig.maxThreads !== "number" ||
+    isNaN(mergedConfig.maxThreads)
+  ) {
+    throw new Error("maxThreads must be a number in the config file.");
   }
   mergedConfig.maxThreads = Math.max(1, Math.min(8, mergedConfig.maxThreads));
 
   // Validate recordTypeFilter if present
-  if (mergedConfig.recordTypeFilter && !Array.isArray(mergedConfig.recordTypeFilter)) {
-    throw new Error('recordTypeFilter must be an array of strings.');
+  if (
+    mergedConfig.recordTypeFilter &&
+    !Array.isArray(mergedConfig.recordTypeFilter)
+  ) {
+    throw new Error("recordTypeFilter must be an array of strings.");
+  }
+
+  // Validate baseGameFiles if present
+  if (
+    mergedConfig.baseGameFiles &&
+    !Array.isArray(mergedConfig.baseGameFiles)
+  ) {
+    throw new Error("baseGameFiles must be an array of strings.");
   }
 
   return mergedConfig;
@@ -82,5 +103,8 @@ export function validateConfig(config: Config): string[] {
   if (config.baseGameDir && !fs.existsSync(config.baseGameDir)) {
     errors.push(`Base game directory not found: ${config.baseGameDir}`);
   }
+  if (config.baseGameFiles && !Array.isArray(config.baseGameFiles)) {
+    errors.push(`baseGameFiles must be an array of strings.`);
+  }
   return errors;
-} 
+}

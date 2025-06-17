@@ -23,12 +23,12 @@ export function extractParsedRecords(
       const tag = dataBuffer.toString("ascii", offset, offset + 4);
       const size = dataBuffer.readUInt16LE(offset + 4);
 
-      if (!/^[A-Z0-9]{4}$/.test(tag)) {
-        console.warn(
-          `[${meta.sourcePlugin}::$\{tag:${meta.tag}\}] Invalid tag '${tag}' at offset ${offset}`
-        );
-        break;
-      }
+      // if (!/^[A-Z0-9]{4}$/.test(tag)) {
+      //   console.warn(
+      //     `[${meta.sourcePlugin}::$\{tag:${meta.tag}\}] Invalid tag '${tag}' at offset ${offset}`
+      //   );
+      //   break;
+      // }
 
       const payload = dataBuffer.subarray(offset + 6, offset + 6 + size);
       if (!data[tag]) data[tag] = [];
