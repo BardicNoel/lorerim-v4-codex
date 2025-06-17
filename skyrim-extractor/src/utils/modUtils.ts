@@ -2,18 +2,31 @@ import { readFile } from "fs/promises";
 import { readdir, access } from "fs/promises";
 import { join } from "path";
 import { PluginMeta } from "../types";
+import chalk from "chalk";
 
 /**
  * Verify that required files exist in the mod directory
  */
 export async function verifyModDir(modDirPath: string): Promise<void> {
+  const missingFiles: string[] = [];
+  
   try {
     await access(join(modDirPath, "modlist.txt"));
+  } catch (error) {
+    missingFiles.push("modlist.txt");
+  }
+
+  try {
     await access(join(modDirPath, "plugins.txt"));
   } catch (error) {
+    missingFiles.push("plugins.txt");
+  }
+
+  if (missingFiles.length > 0) {
     throw new Error(
-      `Required files not found in ${modDirPath}.\n` +
-        `Please ensure modlist.txt and plugins.txt exist in this directory.`
+      `Required files not found in ${modDirPath}:\n` +
+      `Missing files: ${missingFiles.join(", ")}\n` +
+      `Please ensure all required files exist in this directory.`
     );
   }
 }
@@ -64,14 +77,19 @@ export async function getBaseGamePlugins(
 /**
  * Read modlist.txt and return array of mod names
  */
-export async function readModlist(modDirPath: string): Promise<string[]> {
+export async function readModlist(modDirPath: string): Promise<{ enabled: string[], disabled: string[] }> {
   const modlistPath = join(modDirPath, "modlist.txt");
   const content = await readFile(modlistPath, "utf-8");
-  return content
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith("+"))
-    .map((line) => line.substring(1).trim());
+  const lines = content.split("\n").map(line => line.trim());
+  
+  return {
+    enabled: lines
+      .filter(line => line.startsWith("+"))
+      .map(line => line.substring(1).trim()),
+    disabled: lines
+      .filter(line => line.startsWith("-"))
+      .map(line => line.substring(1).trim())
+  };
 }
 
 /**
@@ -115,15 +133,18 @@ export async function getEnabledPlugins(
       : [];
 
   // Get list of mods and enabled plugins
-  const mods = await readModlist(modDirPath);
+  const { enabled: mods, disabled: disabledMods } = await readModlist(modDirPath);
   const enabledPlugins = await readPlugins(modDirPath);
 
   // Create a map of all available plugins
   const pluginMap = new Map<string, PluginMeta>();
+  const foundPlugins = new Set<string>();
+  const disabledPlugins = new Set<string>();
 
   // Add base game plugins to the map
   for (const plugin of baseGamePlugins) {
     pluginMap.set(plugin.name, plugin);
+    foundPlugins.add(plugin.name);
   }
 
   // For each mod directory
@@ -141,6 +162,7 @@ export async function getEnabledPlugins(
           modFolder: modName,
           index: -1, // Will be set based on plugins.txt order
         });
+        foundPlugins.add(pluginFile);
       }
     } catch (error) {
       console.warn(`Warning: Could not read mod directory ${modDir}: ${error}`);
@@ -149,6 +171,7 @@ export async function getEnabledPlugins(
 
   // Create final array maintaining base game order and plugins.txt order for mods
   const plugins: PluginMeta[] = [];
+  const missingPlugins: string[] = [];
 
   // First add base game plugins in their original order
   plugins.push(...baseGamePlugins);
@@ -164,17 +187,56 @@ export async function getEnabledPlugins(
       plugin.index = i + baseGamePlugins.length; // Offset index by number of base game plugins
       plugins.push(plugin);
     } else {
-      console.warn(
-        `Warning: Enabled plugin ${pluginName} not found in any mod directory`
-      );
+      missingPlugins.push(pluginName);
     }
+  }
+
+  // Report missing plugins
+  if (missingPlugins.length > 0) {
+    console.warn(
+      chalk.red(
+        `Warning: The following enabled plugins were not found in any mod directory:\n` +
+        missingPlugins.map(p => `  - ${p}`).join('\n')
+      )
+    );
+  }
+
+  // Find and report disabled plugins
+  for (const plugin of pluginMap.values()) {
+    if (!enabledPlugins.includes(plugin.name) && plugin.modFolder !== "Base Game") {
+      disabledPlugins.add(plugin.name);
+    }
+  }
+
+  if (disabledPlugins.size > 0) {
+    console.warn(
+      chalk.yellow(
+        `⚠ Warning: The following plugins were found but are not enabled in plugins.txt:\n` +
+        Array.from(disabledPlugins).map(p => `  - ${p}`).join('\n')
+      )
+    );
+  }
+
+  // Report disabled mods
+  if (disabledMods.length > 0) {
+    console.warn(
+      chalk.yellow(
+        `⚠ Warning: The following mods are disabled in modlist.txt:\n` +
+        disabledMods.map(m => `  - ${m}`).join('\n')
+      )
+    );
+  }
+
+  // Report success if no issues found
+  if (missingPlugins.length === 0 && disabledPlugins.size === 0 && disabledMods.length === 0) {
+    console.log(chalk.green(`✓ All plugins found and properly enabled`));
   }
 
   if (plugins.length === 0) {
     throw new Error(
       `No enabled plugins found in mod directories.\n` +
-        `Mods: ${mods.join(", ")}\n` +
-        `Enabled plugins: ${enabledPlugins.join(", ")}`
+      `Mods: ${mods.join(", ")}\n` +
+      `Enabled plugins: ${enabledPlugins.join(", ")}`
     );
   }
 

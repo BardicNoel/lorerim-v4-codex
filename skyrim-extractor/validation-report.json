@@ -7,37 +7,37 @@
   "differences": {},
   "rawCounts": {
     "bufferMeta": {
+      "BattlemageCSF.esp": {
+        "PERK": 4
+      },
       "Conduit.esp": {
         "PERK": 2
       },
-      "Vokrii - Minimalistic Perks of Skyrim.esp": {
-        "PERK": 426
-      },
-      "BattlemageCSF.esp": {
-        "PERK": 4
+      "Ordinator - Perks of Skyrim.esp": {
+        "PERK": 828
       },
       "The Wizard Warrior.esp": {
         "PERK": 1
       },
-      "Ordinator - Perks of Skyrim.esp": {
-        "PERK": 828
+      "Vokrii - Minimalistic Perks of Skyrim.esp": {
+        "PERK": 426
       }
     },
     "parsedRecord": {
+      "BattlemageCSF.esp": {
+        "PERK": 4
+      },
       "Conduit.esp": {
         "PERK": 2
       },
-      "Vokrii - Minimalistic Perks of Skyrim.esp": {
-        "PERK": 426
-      },
-      "BattlemageCSF.esp": {
-        "PERK": 4
+      "Ordinator - Perks of Skyrim.esp": {
+        "PERK": 828
       },
       "The Wizard Warrior.esp": {
         "PERK": 1
       },
-      "Ordinator - Perks of Skyrim.esp": {
-        "PERK": 828
+      "Vokrii - Minimalistic Perks of Skyrim.esp": {
+        "PERK": 426
       }
     }
   }

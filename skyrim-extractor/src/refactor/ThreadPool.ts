@@ -145,7 +145,6 @@ export class ThreadPool {
     while (this.taskQueue.length > 0 && this.availableWorkers.length > 0) {
       const plugin = this.taskQueue.shift()!;
       const worker = this.availableWorkers.shift()!;
-      console.log(`Processing ${plugin.name} with stack order ${this.totalPlugins - 1 - plugin.index}`);
       this.activeWorkers++;
       worker.postMessage({
         plugin,
