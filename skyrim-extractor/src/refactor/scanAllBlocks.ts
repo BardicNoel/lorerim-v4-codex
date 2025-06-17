@@ -12,6 +12,7 @@ interface ScanContext {
   recordTypeFilter?: string[];
   onLog?: (level: "info" | "debug", message: string) => void;
   statsCollector?: StatsCollector;
+  tagCounts?: Map<string, number>;
 }
 
 enum GrupOffset {
@@ -30,24 +31,54 @@ enum RecordOffset {
   DataOffset = 24,
 }
 
+interface ScanReport {
+  tagCounts: Map<string, number>;
+  totalRecords: number;
+  sourcePlugin: string;
+}
+
+interface ScanResult {
+  results: BufferMeta[];
+  report: ScanReport;
+}
+
 export async function scanAllBlocks(
   buffer: Buffer,
   context: ScanContext,
   parentPath: string[] = [],
   startOffset: number = 0,
   maxOffset: number = buffer.length
-): Promise<BufferMeta[]> {
+): Promise<ScanResult> {
   const results: BufferMeta[] = [];
   let offset = startOffset;
+  
+  // Create a new Map for this level's counts
+  const localTagCounts = new Map<string, number>();
+
+  // Debug: Log start of scanning
+  context.onLog?.("debug", `Starting scan at offset ${startOffset} for ${context.sourcePlugin}`);
 
   while (offset < maxOffset) {
     const tag = buffer.toString("ascii", offset, offset + 4);
     const size = buffer.readUInt32LE(offset + 4);
     const endOffset = offset + size;
 
+    // Debug: Log each record found
+    context.onLog?.("debug", `Found record: ${tag} at offset ${offset}`);
+
+    // Increment local tag counter
+    const currentCount = localTagCounts.get(tag) || 0;
+    localTagCounts.set(tag, currentCount + 1);
+    
+    // Debug: Log tag count update
+    context.onLog?.("debug", `Updated count for ${tag}: ${currentCount + 1}`);
+
     if (tag === "GRUP") {
       const label = buffer.readUInt32LE(offset + GrupOffset.Label);
       const groupType = buffer.readUInt32LE(offset + GrupOffset.GroupType);
+
+      // Debug: Log GRUP details
+      context.onLog?.("debug", `Processing GRUP: type=${groupType}, label=${label.toString(16)}`);
 
       // Create a new parent path array with a maximum depth
       const MAX_PATH_DEPTH = 10; // Prevent excessive nesting
@@ -79,13 +110,25 @@ export async function scanAllBlocks(
       results.push(grupMeta);
 
       // Recursively scan the GRUP contents
-      const groupResults = await scanAllBlocks(
+      const { results: groupResults, report: groupReport } = await scanAllBlocks(
         buffer,
         context,
         newParentPath,
         offset + GrupOffset.EndOffset,
         endOffset
       );
+      
+      // Debug: Log group report before merging
+      context.onLog?.("debug", `Group report before merge: ${JSON.stringify(Object.fromEntries(groupReport.tagCounts))}`);
+      
+      // Merge the group's tag counts into our local counts
+      groupReport.tagCounts.forEach((count, tag) => {
+        const currentCount = localTagCounts.get(tag) || 0;
+        localTagCounts.set(tag, currentCount + count);
+        // Debug: Log count merge
+        context.onLog?.("debug", `Merged ${count} ${tag} records, new total: ${currentCount + count}`);
+      });
+      
       results.push(...groupResults);
       offset = endOffset;
     } else if (tag === "TES4") {
@@ -137,5 +180,15 @@ export async function scanAllBlocks(
     }
   }
 
-  return results;
+  // Debug: Log final counts for this level
+  context.onLog?.("debug", `Final counts for ${context.sourcePlugin}: ${JSON.stringify(Object.fromEntries(localTagCounts))}`);
+
+  return {
+    results,
+    report: {
+      tagCounts: localTagCounts,
+      totalRecords: results.length,
+      sourcePlugin: context.sourcePlugin
+    }
+  };
 }

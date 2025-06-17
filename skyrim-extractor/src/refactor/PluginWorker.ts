@@ -29,7 +29,7 @@ async function processPlugin(task: WorkerTask): Promise<void> {
     const buffer = await fs.promises.readFile(plugin.fullPath);
 
     // Scan all blocks in the plugin
-    const results = await scanAllBlocks(buffer, {
+    const {results, report} = await scanAllBlocks(buffer, {
       sourcePlugin: plugin.name,
       modFolder: plugin.modFolder,
       pluginIndex: plugin.index,
@@ -37,6 +37,8 @@ async function processPlugin(task: WorkerTask): Promise<void> {
       onLog: sendLog,
       statsCollector,
     });
+
+    sendLog("info", `Scan report: ${JSON.stringify(report)}`);
 
     // Extract parsed records from the results
     const parsedRecords = extractParsedRecords(buffer, results, stackOrder);
