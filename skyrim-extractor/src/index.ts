@@ -8,10 +8,12 @@ import {
   reportParsedRecords,
   reportPluginSummaries,
   reportRecordTypeDistribution,
+  reportBufferParserValidation,
 } from "./refactor/runReports";
 import { createFileWriter } from "./utils/fileWriter";
 import { StatsReporter } from "./utils/statsReporter";
-import { loadMissingFormIds } from "./utils/missingCheck";
+import { mergeTypeDictionaries } from "./refactor/parsedRecordDataStructs";
+import { flagWinners } from "./post-process";
 
 export function parseArgs(): {
   configPath: string | undefined;
@@ -78,7 +80,7 @@ export async function main(
     // Process plugins using the new scanning system
     const {
       bufferMetas: results,
-      parsedRecordDict,
+      parsedRecords,
       stats,
     } = await runPluginScan(plugins, {
       maxThreads: Math.max(1, Math.min(4, plugins.length)),
@@ -91,6 +93,10 @@ export async function main(
       },
       recordTypeFilter: config.recordTypeFilter,
     });
+
+    const parsedRecordDict = flagWinners(mergeTypeDictionaries(parsedRecords));
+
+    // We need to apply the isWinner flag to the parsedRecords
 
     const endTime = Date.now();
     const processingTime = endTime - startTime;
@@ -120,10 +126,11 @@ export async function main(
 
     // Generate reports
     reportRecordTypeDistribution(results);
+    reportBufferParserValidation(results, Object.values(parsedRecordDict).flat());
 
     // Write parsed records to JSON files by type
     printSubHeader("Writing Record Files");
-    const recordsDir = path.join(config.outputPath, "records");
+    const recordsDir = config.outputPath;
     const fileWriter = createFileWriter();
     await fileWriter.writeRecords(parsedRecordDict, recordsDir);
     console.log(`\nRecords written to: ${recordsDir}`);

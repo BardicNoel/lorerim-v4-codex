@@ -30,7 +30,7 @@ export class ThreadPool {
 
   public async processPlugins(plugins: PluginMeta[]): Promise<{
     bufferMetas: BufferMeta[];
-    parsedRecordDict: Record<string, ParsedRecord[]>;
+    parsedRecords: ParsedRecord[];
     stats: ProcessingStats;
   }> {
     this.taskQueue = [...plugins];
@@ -41,6 +41,7 @@ export class ThreadPool {
     this.totalPlugins = plugins.length;
     this.lastProgressLog = Date.now();
     this.statsCollector.reset();
+    console.log(`Processing ${this.totalPlugins} plugins: ${plugins.map((p) => p.name).join(", ")}`);
 
     // Create initial worker pool
     const workerCount = Math.min(this.config.maxThreads, plugins.length);
@@ -59,9 +60,11 @@ export class ThreadPool {
     await Promise.all(this.workers.map((worker) => worker.terminate()));
     this.workers = [];
 
+
+
     return {
       bufferMetas: this.results,
-      parsedRecordDict: mergeTypeDictionaries(this.parsedRecords),
+      parsedRecords: this.parsedRecords,
       stats: this.statsCollector.getStats(),
     };
   }
@@ -142,6 +145,7 @@ export class ThreadPool {
     while (this.taskQueue.length > 0 && this.availableWorkers.length > 0) {
       const plugin = this.taskQueue.shift()!;
       const worker = this.availableWorkers.shift()!;
+      console.log(`Processing ${plugin.name} with stack order ${this.totalPlugins - 1 - plugin.index}`);
       this.activeWorkers++;
       worker.postMessage({
         plugin,

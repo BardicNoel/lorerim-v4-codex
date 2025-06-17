@@ -1,9 +1,9 @@
 # Import base pipeline configuration
 name: 'PERK Analysis Pipeline'
 description: 'Process PERK data for analysis'
-input: '../output/skyrim-extractor/mod-samples/PERK.json'
+input: '../output/skyrim-extractor/lorerim/PERK.json'
 # input: '../output/parsing-pipeline/1.PERK_Analysis.json'
-output: '../output/parsing-pipeline/1.PERK_Analysis.json'
+output: '../output/parsing-pipeline/lorerim/1.PERK_Analysis.json'
 
 # Use stages from base template
 stages:

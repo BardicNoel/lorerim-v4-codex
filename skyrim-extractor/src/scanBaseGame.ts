@@ -6,6 +6,7 @@ import { runPluginScan } from "./refactor/runPluginScan";
 import { createFileWriter } from "./utils/fileWriter";
 import { StatsReporter } from "./utils/statsReporter";
 import { loadMissingFormIds } from "./utils/missingCheck";
+import { mergeTypeDictionaries } from "./refactor/parsedRecordDataStructs";
 
 export function parseArgs(): {
   configPath: string | undefined;
@@ -73,7 +74,7 @@ export async function main(
     // Process plugins using the scanning system
     const {
       bufferMetas: results,
-      parsedRecordDict,
+      parsedRecords,
       stats,
     } = await runPluginScan([plugins[0]], {
       maxThreads: 1, // Single thread for debugging
@@ -86,6 +87,8 @@ export async function main(
       },
       recordTypeFilter: config.recordTypeFilter,
     });
+
+    const parsedRecordDict = mergeTypeDictionaries(parsedRecords);
 
     const endTime = Date.now();
     const processingTime = endTime - startTime;

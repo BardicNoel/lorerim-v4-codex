@@ -16,7 +16,7 @@ export async function runPluginScan(
   options: ScanOptions = {}
 ): Promise<{
   bufferMetas: BufferMeta[];
-  parsedRecordDict: Record<string, ParsedRecord[]>;
+  parsedRecords: ParsedRecord[];
   stats: ProcessingStats;
 }> {
   const {

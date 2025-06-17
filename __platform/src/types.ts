@@ -1,5 +1,6 @@
 export interface ParsedRecord {
   meta: {
+    isWinner?: boolean; // true if this record is the winner of the stack, false if it is a loser
     type: string; // e.g., 'PERK'
     formId: string; // e.g., '00058F80'
     stackOrder?: number | null; // e.g., 0, 1, 2, (0 being the highest version of this record)

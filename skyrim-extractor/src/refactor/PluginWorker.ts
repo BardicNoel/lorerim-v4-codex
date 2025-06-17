@@ -39,7 +39,7 @@ async function processPlugin(task: WorkerTask): Promise<void> {
     });
 
     // Extract parsed records from the results
-    const parsedRecords = extractParsedRecords(buffer, results, 0);
+    const parsedRecords = extractParsedRecords(buffer, results, stackOrder);
 
     // Send results back to main thread
     const message = {
