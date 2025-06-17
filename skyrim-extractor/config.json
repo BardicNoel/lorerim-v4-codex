@@ -1,12 +1,18 @@
 {
-  "modDirPath": "../data/mod-samples",
+  "modDirPath": "C:\\Modlists\\LoreRim\\mods",
   "outputPath": "../output/skyrim-extractor/mod-samples",
   "maxThreads": 4,
   "recordTypeFilter": [
     "PERK",
-    "MGEF",
     "SPEL",
+    "MGEF",
     "RACE",
-    "CLAS"
+    "CLAS",
+    "QUST",
+    "DIAL",
+    "INFO",
+    "PACK",
+    "NPC_",
+    "FACT"
   ]
 } 
