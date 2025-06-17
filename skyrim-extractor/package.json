@@ -17,7 +17,12 @@
     "extract:debug": "ts-node src/index.ts --config ./config.json --debug",
     "extract:test": "jest",
     "extract:large": "node --max-old-space-size=8192 -r ts-node/register src/index.ts --config ./config.json",
-    "extract:large:debug": "node --max-old-space-size=8192 -r ts-node/register src/index.ts --config ./config.json --debug"
+    "extract:large:debug": "node --max-old-space-size=8192 -r ts-node/register src/index.ts --config ./config.json --debug",
+
+    "scan:skyrim": "ts-node src/scanBaseGame.ts --config ./config.json",
+    "scan:skyrim:debug": "ts-node src/scanBaseGame.ts --config ./config.json --debug",
+    "scan:skyrim:large": "node --max-old-space-size=8192 -r ts-node/register src/scanBaseGame.ts --config ./config.json",
+    "scan:skyrim:large:debug": "node --max-old-space-size=8192 -r ts-node/register src/scanBaseGame.ts --config ./config.json --debug"
   },
   "dependencies": {
     "@lorerim/platform-types": "file:../__platform",
