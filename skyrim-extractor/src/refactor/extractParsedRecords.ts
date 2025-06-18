@@ -1,6 +1,6 @@
 import { hexDump } from "../utils/debugUtils";
 import { BufferMeta } from "./types";
-import { formatFormId, ParsedRecord } from "@lorerim/platform-types";
+import { formatFormId, ParsedRecord, decompressRecordData, isRecordCompressed } from "@lorerim/platform-types";
 
 export function extractParsedRecords(
   buffer: Buffer,
@@ -16,12 +16,30 @@ export function extractParsedRecords(
     const header = recordBuffer.subarray(0, 24).toString("base64");
     const dataBuffer = recordBuffer.subarray(24);
 
+    // Check if the record is compressed
+    const isCompressed = isRecordCompressed(recordBuffer);
+    
+    let processedDataBuffer: Buffer;
+    if (isCompressed) {
+      // Decompress the data
+      const decompressionResult = decompressRecordData(recordBuffer, dataBuffer.length, true);
+      if (!decompressionResult.success) {
+        console.warn(
+          `[${meta.sourcePlugin}::${meta.tag}] Failed to decompress record: ${decompressionResult.error}`
+        );
+        continue; // Skip this record if decompression fails
+      }
+      processedDataBuffer = decompressionResult.data!;
+    } else {
+      processedDataBuffer = dataBuffer;
+    }
+
     let offset = 0;
     const data: Record<string, string[]> = {};
 
-    while (offset + 6 <= dataBuffer.length) {
-      const tag = dataBuffer.toString("ascii", offset, offset + 4);
-      const size = dataBuffer.readUInt16LE(offset + 4);
+    while (offset + 6 <= processedDataBuffer.length) {
+      const tag = processedDataBuffer.toString("ascii", offset, offset + 4);
+      const size = processedDataBuffer.readUInt16LE(offset + 4);
 
       // if (!/^[A-Z0-9]{4}$/.test(tag)) {
       //   console.warn(
@@ -30,7 +48,7 @@ export function extractParsedRecords(
       //   break;
       // }
 
-      const payload = dataBuffer.subarray(offset + 6, offset + 6 + size);
+      const payload = processedDataBuffer.subarray(offset + 6, offset + 6 + size);
       if (!data[tag]) data[tag] = [];
       data[tag].push(payload.toString("base64"));
 

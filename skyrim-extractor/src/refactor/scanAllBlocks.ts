@@ -1,9 +1,7 @@
 import { BufferMeta } from "./types";
-import { formatGrupLabelDisplay, byteDump } from "./formatter";
-import { hexDump } from "../utils/debugUtils";
 import { formatFormId } from "@lorerim/platform-types";
 import { StatsCollector } from "../utils/statsCollector";
-import { isMissingFormId } from "../utils/missingCheck";
+import { parseRecordFlags } from "@lorerim/platform-types/src/binary/header-flags";
 
 interface ScanContext {
   sourcePlugin: string;
@@ -12,7 +10,12 @@ interface ScanContext {
   recordTypeFilter?: string[];
   onLog?: (level: "info" | "debug", message: string) => void;
   statsCollector?: StatsCollector;
-  tagCounts?: Map<string, number>;
+  tagCounts?: Map<string, TagStats>;
+}
+
+interface TagStats {
+  count: number;
+  compressed: number;
 }
 
 enum GrupOffset {
@@ -32,7 +35,7 @@ enum RecordOffset {
 }
 
 interface ScanReport {
-  tagCounts: Map<string, number>;
+  tagCounts: Map<string, TagStats>;
   totalRecords: number;
   sourcePlugin: string;
 }
@@ -53,32 +56,21 @@ export async function scanAllBlocks(
   let offset = startOffset;
   
   // Create a new Map for this level's counts
-  const localTagCounts = new Map<string, number>();
-
-  // Debug: Log start of scanning
-  context.onLog?.("debug", `Starting scan at offset ${startOffset} for ${context.sourcePlugin}`);
+  const localTagCounts = new Map<string, TagStats>();
 
   while (offset < maxOffset) {
     const tag = buffer.toString("ascii", offset, offset + 4);
     const size = buffer.readUInt32LE(offset + 4);
     const endOffset = offset + size;
 
-    // Debug: Log each record found
-    context.onLog?.("debug", `Found record: ${tag} at offset ${offset}`);
-
-    // Increment local tag counter
-    const currentCount = localTagCounts.get(tag) || 0;
-    localTagCounts.set(tag, currentCount + 1);
-    
-    // Debug: Log tag count update
-    context.onLog?.("debug", `Updated count for ${tag}: ${currentCount + 1}`);
+    // Initialize or get tag stats
+    const currentStats = localTagCounts.get(tag) || { count: 0, compressed: 0 };
+    currentStats.count++;
+    localTagCounts.set(tag, currentStats);
 
     if (tag === "GRUP") {
       const label = buffer.readUInt32LE(offset + GrupOffset.Label);
       const groupType = buffer.readUInt32LE(offset + GrupOffset.GroupType);
-
-      // Debug: Log GRUP details
-      context.onLog?.("debug", `Processing GRUP: type=${groupType}, label=${label.toString(16)}`);
 
       // Create a new parent path array with a maximum depth
       const MAX_PATH_DEPTH = 10; // Prevent excessive nesting
@@ -118,15 +110,12 @@ export async function scanAllBlocks(
         endOffset
       );
       
-      // Debug: Log group report before merging
-      context.onLog?.("debug", `Group report before merge: ${JSON.stringify(Object.fromEntries(groupReport.tagCounts))}`);
-      
       // Merge the group's tag counts into our local counts
-      groupReport.tagCounts.forEach((count, tag) => {
-        const currentCount = localTagCounts.get(tag) || 0;
-        localTagCounts.set(tag, currentCount + count);
-        // Debug: Log count merge
-        context.onLog?.("debug", `Merged ${count} ${tag} records, new total: ${currentCount + count}`);
+      groupReport.tagCounts.forEach((stats, tag) => {
+        const currentStats = localTagCounts.get(tag) || { count: 0, compressed: 0 };
+        currentStats.count += stats.count;
+        currentStats.compressed += stats.compressed;
+        localTagCounts.set(tag, currentStats);
       });
       
       results.push(...groupResults);
@@ -153,6 +142,15 @@ export async function scanAllBlocks(
 
       try {
         const formId = buffer.readUInt32LE(offset + RecordOffset.FormId);
+        const flags = parseRecordFlags(buffer.subarray(offset));
+        
+        // Update compressed count if record is compressed
+        if (flags.isCompressed || flags.isObsoleteCompressed) {
+          const currentStats = localTagCounts.get(tag)!;
+          currentStats.compressed++;
+          localTagCounts.set(tag, currentStats);
+        }
+
         context.statsCollector?.recordProcessed(context.sourcePlugin, tag);
 
         const recordMeta = {
@@ -180,8 +178,16 @@ export async function scanAllBlocks(
     }
   }
 
-  // Debug: Log final counts for this level
-  context.onLog?.("debug", `Final counts for ${context.sourcePlugin}: ${JSON.stringify(Object.fromEntries(localTagCounts))}`);
+  // Format the final counts report - only log at root level
+  if (parentPath.length === 0) {
+    const formattedCounts = Object.fromEntries(
+      Array.from(localTagCounts.entries()).map(([tag, stats]) => [
+        tag,
+        `count: ${stats.count}, compressed: ${stats.compressed}`
+      ])
+    );
+    context.onLog?.("debug", `Final counts for ${context.sourcePlugin}: ${JSON.stringify(formattedCounts, null, 2)}`);
+  }
 
   return {
     results,

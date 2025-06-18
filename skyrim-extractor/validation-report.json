@@ -1,10 +1,25 @@
 {
   "summary": {
     "totalBufferMetaRecords": 1454,
-    "totalParsedRecords": 1261,
-    "pluginsWithDifferences": 0
+    "totalParsedRecords": 753,
+    "pluginsWithDifferences": 2
   },
-  "differences": {},
+  "differences": {
+    "Ordinator - Perks of Skyrim.esp": {
+      "PERK": {
+        "bufferMeta": 828,
+        "parsedRecord": 553,
+        "diff": 275
+      }
+    },
+    "Vokrii - Minimalistic Perks of Skyrim.esp": {
+      "PERK": {
+        "bufferMeta": 426,
+        "parsedRecord": 193,
+        "diff": 233
+      }
+    }
+  },
   "rawCounts": {
     "bufferMeta": {
       "Conduit.esp": {
@@ -16,11 +31,11 @@
       "The Wizard Warrior.esp": {
         "PERK": 1
       },
-      "Vokrii - Minimalistic Perks of Skyrim.esp": {
-        "PERK": 426
-      },
       "Ordinator - Perks of Skyrim.esp": {
         "PERK": 828
+      },
+      "Vokrii - Minimalistic Perks of Skyrim.esp": {
+        "PERK": 426
       }
     },
     "parsedRecord": {
@@ -33,11 +48,11 @@
       "The Wizard Warrior.esp": {
         "PERK": 1
       },
-      "Vokrii - Minimalistic Perks of Skyrim.esp": {
-        "PERK": 426
-      },
       "Ordinator - Perks of Skyrim.esp": {
-        "PERK": 828
+        "PERK": 553
+      },
+      "Vokrii - Minimalistic Perks of Skyrim.esp": {
+        "PERK": 193
       }
     }
   }

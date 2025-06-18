@@ -5,7 +5,6 @@ import * as path from "path";
 import { ParsedRecord } from "@lorerim/platform-types";
 import { mergeTypeDictionaries } from "./parsedRecordDataStructs";
 import { StatsCollector, ProcessingStats } from "../utils/statsCollector";
-import { isMissingFormId, isMissingFormIdString } from "../utils/missingCheck";
 
 export class ThreadPool {
   private workers: Worker[] = [];
