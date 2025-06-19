@@ -5,6 +5,7 @@ import { createKeepFieldsProcessor } from './keep-fields';
 import { createSanitizeFieldsProcessor } from './sanitize-fields';
 import { createBufferDecoderProcessor } from '../buffer-decoder/parser';
 import { formatJSON } from '@lorerim/platform-types';
+import { createFlattenFieldsProcessor } from './flatten-fields';
 
 // Core processor interface
 export interface Processor {
@@ -25,6 +26,8 @@ export function createProcessor(stage: StageConfig): Processor {
       return createSanitizeFieldsProcessor(stage);
     case 'buffer-decoder':
       return createBufferDecoderProcessor(stage);
+    case 'flatten-fields':
+      return createFlattenFieldsProcessor(stage as any);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }
@@ -42,6 +45,6 @@ export function createPipeline(stages: StageConfig[]): Processor {
         console.log(`[DEBUG] ===== Stage Complete =====\n`);
       }
       return result;
-    }
+    },
   };
-} 
+}

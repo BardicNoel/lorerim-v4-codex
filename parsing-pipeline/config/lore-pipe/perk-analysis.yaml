@@ -2,21 +2,10 @@
 name: 'PERK Analysis Pipeline'
 description: 'Process PERK data for analysis'
 input: '../output/skyrim-extractor/lorerim/PERK.json'
-# input: '../output/parsing-pipeline/1.PERK_Analysis.json'
-output: '../output/parsing-pipeline/lorerim/1.PERK_Analysis.json'
+output: '../output/parsing-pipeline/lorerim/perk-analysis.json'
 
 # Use stages from base template
 stages:
-
-  - from: 'local'
-    name: 'Filter by Plugin'
-    type: 'filter-records'
-    description: 'Filter records to only include those from specific plugins'
-    criteria:
-      - field: 'meta.plugin'
-        operator: 'equals'
-        value: 'Ordinator - Perks of Skyrim.esp'  # You can specify the plugin name here
-        
   - from: 'local'
     name: 'Decode Binary Records'
     type: 'buffer-decoder'
@@ -29,30 +18,4 @@ stages:
     description: 'Remove PERK-specific fields that are not needed for analysis'
     fields:
       data: 'all'
-      # data:
-      #  - VMAD
-      #  - CTDA
       header: 'all'
-      decodedData:
-        - MDOB
-        # - DATA:
-        #     - trait
-        #     - minLevel
-        #     - ranks
-        #     - playable
-        #     - hidden
-        #     - skill
-        #     - attribute
-        #     - perkConditions
-        #     - entryPoints
-        #     - perkEffects
-
-
-  - from: 'local'
-    name: 'Filter ASIS Perks'
-    type: 'filter-records'
-    description: 'Filter out ASIS-specific perks based on EDID'
-    criteria:
-      - field: 'decodedData.EDID'
-        operator: 'not-contains'
-        value: 'ASISExclude'

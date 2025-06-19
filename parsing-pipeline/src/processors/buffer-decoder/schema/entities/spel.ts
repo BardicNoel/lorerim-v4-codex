@@ -1,5 +1,4 @@
 import { RecordSpecificSchemas } from '../schemaTypes';
-import { sharedFields } from '../fullSchema';
 import { createSchema } from '../createSchema';
 import { flagParserGenerator } from '../generics';
 

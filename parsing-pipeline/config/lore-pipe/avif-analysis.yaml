@@ -1,0 +1,38 @@
+# Import base pipeline configuration
+name: 'AVIF Analysis Pipeline'
+description: 'Process AVIF data for analysis'
+input: '../output/skyrim-extractor/lorerim/AVIF.json'
+output: '../output/parsing-pipeline/lorerim/avif-analysis.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Select Winners'
+    type: 'filter-records'
+    description: 'Select records that are winners'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'AVIF'
+
+  # - from: 'local'
+  #   name: 'Remove AVIF Specific Fields'
+  #   type: 'remove-fields'
+  #   description: 'Remove AVIF-specific fields that are not needed for analysis'
+  #   fields:
+  #     data: 'all'
+  #     header: 'all'
+  #     meta: 'all'
+
+  # - from: 'local'
+  #   name: 'Flatten Decoded Data'
+  #   type: 'flatten-fields'
+  #   description: 'Flatten decodedData into the top-level record for easier analysis'
+  #   fields:
+  #     - 'decodedData'

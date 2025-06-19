@@ -1,0 +1,21 @@
+# Import base pipeline configuration
+name: 'MGEF Analysis Pipeline'
+description: 'Process MGEF data for analysis'
+input: '../output/skyrim-extractor/lorerim/MGEF.json'
+output: '../output/parsing-pipeline/lorerim/mgef-analysis.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'MGEF'
+
+  - from: 'local'
+    name: 'Remove MGEF Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove MGEF-specific fields that are not needed for analysis'
+    fields:
+      data: 'all'
+      header: 'all'

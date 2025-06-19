@@ -123,6 +123,42 @@ describe('Core Processors', () => {
     });
   });
 
+  describe('Flatten Fields Processor', () => {
+    it('should flatten decodedData into the top-level record', async () => {
+      const testData: JsonArray = [
+        {
+          meta: {
+            type: 'AVIF',
+            formId: '0x11111111',
+            plugin: 'test.esp',
+            stackOrder: 0,
+          },
+          data: {},
+          decodedData: {
+            EDID: 'AVEnchantingSkillAdvance',
+            DESC: '',
+            CNAM: 1969713004,
+          },
+          header: 'base64encodedheader',
+        },
+      ];
+      const stage: StageConfig = {
+        name: 'flatten-decodedData',
+        type: 'flatten-fields',
+        fields: ['decodedData'],
+      };
+      const processor = createProcessor(stage);
+      const result = await processor.transform(testData);
+      const record = result[0] as any;
+      expect(record.EDID).toBe('AVEnchantingSkillAdvance');
+      expect(record.DESC).toBe('');
+      expect(record.CNAM).toBe(1969713004);
+      // Should still have meta, data, header
+      expect(record.meta.type).toBe('AVIF');
+      expect(record.header).toBe('base64encodedheader');
+    });
+  });
+
   describe('Pipeline Creation', () => {
     it('should process data through multiple stages', async () => {
       const stages: StageConfig[] = [

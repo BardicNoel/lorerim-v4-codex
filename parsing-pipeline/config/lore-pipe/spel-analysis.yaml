@@ -1,0 +1,21 @@
+# Import base pipeline configuration
+name: 'SPEL Analysis Pipeline'
+description: 'Process SPEL data for analysis'
+input: '../output/skyrim-extractor/lorerim/SPEL.json'
+output: '../output/parsing-pipeline/lorerim/spel-analysis.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'SPEL'
+
+  - from: 'local'
+    name: 'Remove SPEL Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove SPEL-specific fields that are not needed for analysis'
+    fields:
+      data: 'all'
+      header: 'all'

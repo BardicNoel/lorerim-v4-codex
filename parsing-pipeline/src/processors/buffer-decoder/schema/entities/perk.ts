@@ -1,4 +1,3 @@
-import { sharedFields } from '../fullSchema';
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
 

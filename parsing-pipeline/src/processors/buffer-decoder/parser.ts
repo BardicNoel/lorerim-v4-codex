@@ -293,111 +293,6 @@ export class BufferDecoder {
         : 'none',
     });
   }
-
-  public parseRecord(recordType: string, buffer: Buffer): Record<string, any> {
-    const result: Record<string, any> = {};
-    let offset = 0;
-    let fieldCount = 0;
-
-    // Safety check - need at least 6 bytes for a field header (4 for tag, 2 for length)
-    if (buffer.length < 6) {
-      errorLog(`Buffer too small for field header:`, {
-        bufferLength: buffer.length,
-        hex: buffer.toString('hex'),
-        recordType,
-      });
-      return result;
-    }
-
-    // Log available schemas for this record type
-    debugLog(`Record type ${recordType} schemas:`, {
-      recordSpecific: recordSpecificSchemas[recordType]
-        ? Object.keys(recordSpecificSchemas[recordType])
-        : [],
-    });
-
-    while (offset < buffer.length) {
-      try {
-        // Ensure we have enough bytes remaining for a field header
-        if (buffer.length - offset < 6) {
-          errorLog(`Not enough bytes remaining for field header:`, {
-            offset,
-            bufferLength: buffer.length,
-            remainingBytes: buffer.length - offset,
-            hex: buffer.slice(offset).toString('hex'),
-            recordType,
-            parsedFields: Object.keys(result),
-          });
-          return result;
-        }
-
-        const tag = buffer.toString('ascii', offset, offset + 4);
-        const length = buffer.readUInt16LE(offset + 4);
-
-        // debugLog(`Processing field ${tag}:`, {
-        //   offset,
-        //   length,
-        //   bufferLength: buffer.length,
-        //   remainingBytes: buffer.length - offset,
-        //   hex: buffer.slice(offset, offset + 6).toString('hex'),
-        // });
-
-        const schema = this.getFieldSchema(recordType, tag);
-
-        this.logSchemaResolution(recordType, tag, schema);
-
-        if (schema) {
-          switch (schema.type) {
-            case 'string':
-              if (!('encoding' in schema)) throw new Error('String field must specify encoding');
-              result[tag] = this.parseString(buffer, offset, schema.encoding, schema.parser);
-              break;
-
-            case 'formid':
-              result[tag] = this.parseFormId(buffer, offset, schema.parser);
-              break;
-
-            case 'uint8':
-            case 'uint16':
-            case 'uint32':
-            case 'float32':
-              result[tag] = this.parseNumeric(buffer, offset, schema.type, schema.parser);
-              break;
-
-            case 'struct':
-              if (!('fields' in schema)) throw new Error('Struct field must specify fields');
-              result[tag] = this.parseStruct(buffer, offset, length, schema.fields);
-              break;
-
-            case 'array':
-              if (!('element' in schema)) throw new Error('Array field must specify element');
-              result[tag] = this.parseArray(buffer, offset, length, schema.element);
-              break;
-
-            case 'unknown':
-              break;
-          }
-          fieldCount++;
-        }
-
-        offset += length;
-      } catch (error) {
-        errorLog(`Failed to decode field at offset ${offset}:`, error);
-        errorLog(`Buffer context:`, {
-          offset,
-          bufferLength: buffer.length,
-          remainingBytes: buffer.length - offset,
-          hex: buffer.slice(offset, Math.min(offset, buffer.length)).toString('hex'),
-          recordType,
-          parsedFields: Object.keys(result),
-        });
-        // Return what we've parsed so far instead of throwing
-        return result;
-      }
-    }
-
-    return result;
-  }
 }
 
 function createBufferFromFieldData(fieldData: any[]): Buffer | null {
@@ -468,12 +363,9 @@ function processRecordFields(
       console.log(`[DEBUG] No buffer found for ${fieldName} in ${config.recordType}`);
       continue;
     }
+    console.log(`[DEBUG] Buffer found for ${fieldName} in ${config.recordType}`);
 
     try {
-      // console.log(
-      //   `[DEBUG] About to parse record for ${fieldName} in ${config.recordType}, buffer length: ${buffer.length}`
-      // );
-
       // Get the schema for this field
       const schema = decoder.getFieldSchema(config.recordType, fieldName);
 
@@ -558,23 +450,26 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
       // Write first few records to file for inspection
       const debugRecords = records.slice(0, 5).map((record) => ({
         meta: record.meta,
-        data: Object.entries(record.data).reduce((acc, [key, value]) => {
-          acc[key] = {
-            isArray: Array.isArray(value),
-            length: Array.isArray(value) ? value.length : 0,
-            firstItem:
-              Array.isArray(value) && value.length > 0
-                ? {
-                    type: typeof value[0],
-                    value: value[0],
-                    isBuffer: Buffer.isBuffer(value[0]),
-                    keys: typeof value[0] === 'object' ? Object.keys(value[0]) : null,
-                    stringified: JSON.stringify(value[0], null, 2),
-                  }
-                : null,
-          };
-          return acc;
-        }, {} as Record<string, any>),
+        data: Object.entries(record.data).reduce(
+          (acc, [key, value]) => {
+            acc[key] = {
+              isArray: Array.isArray(value),
+              length: Array.isArray(value) ? value.length : 0,
+              firstItem:
+                Array.isArray(value) && value.length > 0
+                  ? {
+                      type: typeof value[0],
+                      value: value[0],
+                      isBuffer: Buffer.isBuffer(value[0]),
+                      keys: typeof value[0] === 'object' ? Object.keys(value[0]) : null,
+                      stringified: JSON.stringify(value[0], null, 2),
+                    }
+                  : null,
+            };
+            return acc;
+          },
+          {} as Record<string, any>
+        ),
       }));
 
       const debugOutput = {
