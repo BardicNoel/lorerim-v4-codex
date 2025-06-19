@@ -83,18 +83,8 @@ export class BufferDecoder {
     let currentOffset = offset;
     const endOffset = offset + length;
 
-    // console.log(
-    //   `[DEBUG] Starting struct parse at offset ${offset}, length ${length}, endOffset ${endOffset}`
-    // );
-    // console.log(`[DEBUG] Buffer length: ${buffer.length}, Fields to parse: ${fields.length}`);
-
     for (const field of fields) {
       if (!field.name) throw new Error('Struct field must have a name');
-
-      // console.log(
-      //   `[DEBUG] Processing field "${field.name}" (${field.type}) at offset ${currentOffset}`
-      // );
-      // console.log(`[DEBUG] Remaining buffer: ${endOffset - currentOffset} bytes`);
 
       switch (field.type) {
         case 'string':
@@ -120,13 +110,11 @@ export class BufferDecoder {
             );
             currentOffset += 2 + strLength;
           }
-          // console.log(`[DEBUG] After string: new offset ${currentOffset}`);
           break;
 
         case 'formid':
           result[field.name] = this.parseFormId(buffer, currentOffset, field.parser);
           currentOffset += 4;
-          // console.log(`[DEBUG] After formid: new offset ${currentOffset}`);
           break;
 
         case 'int32':
@@ -142,13 +130,11 @@ export class BufferDecoder {
           }
           result[field.name] = this.parseNumeric(buffer, currentOffset, field.type, field.parser);
           currentOffset += this.getTypeSize(field.type);
-          // console.log(`[DEBUG] After ${field.type}: new offset ${currentOffset}`);
           break;
 
         case 'struct':
           if (!('fields' in field)) throw new Error('Struct field must specify fields');
           const structLength = buffer.readUInt16LE(currentOffset);
-          // console.log(`[DEBUG] Nested struct length: ${structLength}`);
           result[field.name] = this.parseStruct(
             buffer,
             currentOffset + 2,
@@ -157,13 +143,11 @@ export class BufferDecoder {
             false
           );
           currentOffset += 2 + structLength;
-          // console.log(`[DEBUG] After nested struct: new offset ${currentOffset}`);
           break;
 
         case 'array':
           if (!('element' in field)) throw new Error('Array field must specify element');
           const arrayLength = buffer.readUInt16LE(currentOffset);
-          // console.log(`[DEBUG] Array length: ${arrayLength}`);
           result[field.name] = this.parseArray(
             buffer,
             currentOffset + 2,
@@ -171,7 +155,6 @@ export class BufferDecoder {
             field.element
           );
           currentOffset += 2 + arrayLength;
-          // console.log(`[DEBUG] After array: new offset ${currentOffset}`);
           break;
 
         case 'unknown':
@@ -181,9 +164,7 @@ export class BufferDecoder {
             );
           }
           const unknownLength = buffer.readUInt16LE(currentOffset);
-          // console.log(`[DEBUG] Unknown field length: ${unknownLength}`);
           currentOffset += 2 + unknownLength;
-          // console.log(`[DEBUG] After unknown: new offset ${currentOffset}`);
           break;
       }
 

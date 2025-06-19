@@ -1,12 +1,13 @@
 {
-  "totalRecords": 828,
+  "totalRecords": 591,
   "sampleRecords": [
     {
       "meta": {
         "type": "PERK",
-        "formId": "0x00018e6a",
+        "formId": "0x10002e05",
         "plugin": "Ordinator - Perks of Skyrim.esp",
-        "stackOrder": 0
+        "stackOrder": 0,
+        "isWinner": true
       },
       "data": {
         "EDID": {
@@ -14,10 +15,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "T1JEX1BpYzAwX1BpY2twb2NrZXRNYXN0ZXJ5XzIwX1BlcmtfV2FzTGlnaHRGaW5nZXJzAA==",
+            "value": "T1JEX09uZTYwX1dpbmRzd2VwdF9QZXJrXzYwX09yZEFTSVNFeGNsdWRlAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"T1JEX1BpYzAwX1BpY2twb2NrZXRNYXN0ZXJ5XzIwX1BlcmtfV2FzTGlnaHRGaW5nZXJzAA==\""
+            "stringified": "\"T1JEX09uZTYwX1dpbmRzd2VwdF9QZXJrXzYwX09yZEFTSVNFeGNsdWRlAA==\""
           }
         },
         "FULL": {
@@ -25,10 +26,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "UGlja3BvY2tldCBNYXN0ZXJ5AA==",
+            "value": "V2luZHN3ZXB0AA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"UGlja3BvY2tldCBNYXN0ZXJ5AA==\""
+            "stringified": "\"V2luZHN3ZXB0AA==\""
           }
         },
         "DESC": {
@@ -36,26 +37,26 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "QWRkcyA0MCUgdG8geW91ciBwaWNrcG9ja2V0IGNoYW5jZSBhbmQgaW5jcmVhc2VzIGNhcnJ5IHdlaWdodCBieSAxMDAgcG9pbnRzLgA=",
+            "value": "U2lkZXdheXMgcG93ZXIgYXR0YWNrcyB3aXRoIGEgc3dvcmQgZmxpbmcgdGFyZ2V0cyBiYWNrd2FyZHMgdXAgdG8gNiBmZWV0LCBkZWFsaW5nIHVwIHRvIDQwJSBtb3JlIGRhbWFnZSBiYXNlZCBvbiBkaXN0YW5jZSB0cmF2ZWxlZC4A",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"QWRkcyA0MCUgdG8geW91ciBwaWNrcG9ja2V0IGNoYW5jZSBhbmQgaW5jcmVhc2VzIGNhcnJ5IHdlaWdodCBieSAxMDAgcG9pbnRzLgA=\""
+            "stringified": "\"U2lkZXdheXMgcG93ZXIgYXR0YWNrcyB3aXRoIGEgc3dvcmQgZmxpbmcgdGFyZ2V0cyBiYWNrd2FyZHMgdXAgdG8gNiBmZWV0LCBkZWFsaW5nIHVwIHRvIDQwJSBtb3JlIGRhbWFnZSBiYXNlZCBvbiBkaXN0YW5jZSB0cmF2ZWxlZC4A\""
           }
         },
         "CTDA": {
           "isArray": true,
-          "length": 2,
+          "length": 43,
           "firstItem": {
             "type": "string",
-            "value": "YAAAAAAAoEEVAQAADQAAAAAAAAAAAAAAAAAAAP////8=",
+            "value": "YAAAAAAAcEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"YAAAAAAAoEEVAQAADQAAAAAAAAAAAAAAAAAAAP////8=\""
+            "stringified": "\"YAAAAAAAcEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=\""
           }
         },
         "DATA": {
           "isArray": true,
-          "length": 3,
+          "length": 8,
           "firstItem": {
             "type": "string",
             "value": "AAABAQA=",
@@ -66,138 +67,18 @@
         },
         "PRKE": {
           "isArray": true,
-          "length": 2,
+          "length": 7,
           "firstItem": {
             "type": "string",
-            "value": "AgDI",
+            "value": "AgCJ",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AgDI\""
-          }
-        },
-        "EPFT": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AQ==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AQ==\""
-          }
-        },
-        "EPFD": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AAAgQg==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AAAgQg==\""
-          }
-        },
-        "PRKF": {
-          "isArray": true,
-          "length": 2,
-          "firstItem": {
-            "type": "string",
-            "value": "",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"\""
-          }
-        }
-      }
-    },
-    {
-      "meta": {
-        "type": "PERK",
-        "formId": "0x00018e6b",
-        "plugin": "Ordinator - Perks of Skyrim.esp",
-        "stackOrder": 0
-      },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "T1JEX1BpY0RFUF9MaWdodEZpbmdlcnNfNDBfUGVya19XYXNMaWdodEZpbmdlcnNfT3JkQVNJU0V4Y2x1ZGUA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"T1JEX1BpY0RFUF9MaWdodEZpbmdlcnNfNDBfUGVya19XYXNMaWdodEZpbmdlcnNfT3JkQVNJU0V4Y2x1ZGUA\""
-          }
-        },
-        "FULL": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "TGlnaHQgRmluZ2VycwA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"TGlnaHQgRmluZ2VycwA=\""
-          }
-        },
-        "DESC": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "UGlja3BvY2tldGluZyBib251cyBvZiA2MCUuIEl0ZW0gd2VpZ2h0IGFuZCB2YWx1ZSByZWR1Y2UgcGlja3BvY2tldGluZyBvZGRzLgA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"UGlja3BvY2tldGluZyBib251cyBvZiA2MCUuIEl0ZW0gd2VpZ2h0IGFuZCB2YWx1ZSByZWR1Y2UgcGlja3BvY2tldGluZyBvZGRzLgA=\""
-          }
-        },
-        "CTDA": {
-          "isArray": true,
-          "length": 2,
-          "firstItem": {
-            "type": "string",
-            "value": "YAAAAAAAIEIVAQAADQAAAAAAAAAAAAAAAAAAAP////8=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"YAAAAAAAIEIVAQAADQAAAAAAAAAAAAAAAAAAAP////8=\""
-          }
-        },
-        "DATA": {
-          "isArray": true,
-          "length": 2,
-          "firstItem": {
-            "type": "string",
-            "value": "AAAFAQA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AAAFAQA=\""
-          }
-        },
-        "NNAM": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "bI4BAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"bI4BAA==\""
-          }
-        },
-        "PRKE": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AgAA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AgAA\""
+            "stringified": "\"AgCJ\""
           }
         },
         "PRKC": {
           "isArray": true,
-          "length": 1,
+          "length": 18,
           "firstItem": {
             "type": "string",
             "value": "AA==",
@@ -208,29 +89,29 @@
         },
         "EPFT": {
           "isArray": true,
-          "length": 1,
+          "length": 7,
           "firstItem": {
             "type": "string",
-            "value": "AQ==",
+            "value": "BQ==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AQ==\""
+            "stringified": "\"BQ==\""
           }
         },
         "EPFD": {
           "isArray": true,
-          "length": 1,
+          "length": 7,
           "firstItem": {
             "type": "string",
-            "value": "AABwQg==",
+            "value": "xbYAEA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AABwQg==\""
+            "stringified": "\"xbYAEA==\""
           }
         },
         "PRKF": {
           "isArray": true,
-          "length": 1,
+          "length": 7,
           "firstItem": {
             "type": "string",
             "value": "",
@@ -244,9 +125,10 @@
     {
       "meta": {
         "type": "PERK",
-        "formId": "0x00018e6c",
+        "formId": "0x10002e07",
         "plugin": "Ordinator - Perks of Skyrim.esp",
-        "stackOrder": 0
+        "stackOrder": 0,
+        "isWinner": true
       },
       "data": {
         "EDID": {
@@ -254,10 +136,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "T1JEX1BpY0RFUF9MaWdodEZpbmdlcnNfNjBfUGVya19XYXNMaWdodEZpbmdlcnNfT3JkQVNJU0V4Y2x1ZGUA",
+            "value": "T1JEX09uZTUwX1NwbGl0VGhlSGVhdmVuc19QZXJrXzUwX09yZEFTSVNFeGNsdWRlAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"T1JEX1BpY0RFUF9MaWdodEZpbmdlcnNfNjBfUGVya19XYXNMaWdodEZpbmdlcnNfT3JkQVNJU0V4Y2x1ZGUA\""
+            "stringified": "\"T1JEX09uZTUwX1NwbGl0VGhlSGVhdmVuc19QZXJrXzUwX09yZEFTSVNFeGNsdWRlAA==\""
           }
         },
         "FULL": {
@@ -265,10 +147,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "TGlnaHQgRmluZ2VycwA=",
+            "value": "RmFsbGluZyBTd29yZAA=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"TGlnaHQgRmluZ2VycwA=\""
+            "stringified": "\"RmFsbGluZyBTd29yZAA=\""
           }
         },
         "DESC": {
@@ -276,70 +158,59 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "UGlja3BvY2tldGluZyBib251cyBvZiA4MCUuIEl0ZW0gd2VpZ2h0IGFuZCB2YWx1ZSByZWR1Y2UgcGlja3BvY2tldGluZyBvZGRzLgA=",
+            "value": "Rm9yd2FyZHMgcG93ZXIgYXR0YWNrcyB3aXRoIGEgc3dvcmQgY2F1c2UgdGFyZ2V0cyB0byBibGVlZCBmb3IgMjAgc2Vjb25kcy4gV2hlbiBhIGJsZWVkaW5nIHRhcmdldCBmYWxscyBiZWxvdyAyNSUgSGVhbHRoLCB5b3VyIGF0dGFja3MgYWdhaW5zdCB0aGF0IHRhcmdldCBhcmUgY3JpdGljYWwgc3RyaWtlcyB0aGF0IGRlYWxzIHRlbiB0aW1lcyBjcml0aWNhbCBkYW1hZ2UuAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"UGlja3BvY2tldGluZyBib251cyBvZiA4MCUuIEl0ZW0gd2VpZ2h0IGFuZCB2YWx1ZSByZWR1Y2UgcGlja3BvY2tldGluZyBvZGRzLgA=\""
+            "stringified": "\"Rm9yd2FyZHMgcG93ZXIgYXR0YWNrcyB3aXRoIGEgc3dvcmQgY2F1c2UgdGFyZ2V0cyB0byBibGVlZCBmb3IgMjAgc2Vjb25kcy4gV2hlbiBhIGJsZWVkaW5nIHRhcmdldCBmYWxscyBiZWxvdyAyNSUgSGVhbHRoLCB5b3VyIGF0dGFja3MgYWdhaW5zdCB0aGF0IHRhcmdldCBhcmUgY3JpdGljYWwgc3RyaWtlcyB0aGF0IGRlYWxzIHRlbiB0aW1lcyBjcml0aWNhbCBkYW1hZ2UuAA==\""
           }
         },
         "CTDA": {
           "isArray": true,
-          "length": 3,
+          "length": 12,
           "firstItem": {
             "type": "string",
-            "value": "YAAAAAAAcEIVAQAADQAAAAAAAAAAAAAAAAAAAP////8=",
+            "value": "YAAAAAAASEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"YAAAAAAAcEIVAQAADQAAAAAAAAAAAAAAAAAAAP////8=\""
+            "stringified": "\"YAAAAAAASEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=\""
           }
         },
         "DATA": {
           "isArray": true,
-          "length": 2,
+          "length": 6,
           "firstItem": {
             "type": "string",
-            "value": "AAAFAQA=",
+            "value": "AAABAQA=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AAAFAQA=\""
-          }
-        },
-        "NNAM": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "bY4BAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"bY4BAA==\""
+            "stringified": "\"AAABAQA=\""
           }
         },
         "PRKE": {
           "isArray": true,
-          "length": 1,
+          "length": 5,
           "firstItem": {
             "type": "string",
-            "value": "AgAA",
+            "value": "AgCC",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AgAA\""
+            "stringified": "\"AgCC\""
           }
         },
         "PRKC": {
           "isArray": true,
-          "length": 1,
+          "length": 8,
           "firstItem": {
             "type": "string",
-            "value": "AA==",
+            "value": "Ag==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AA==\""
+            "stringified": "\"Ag==\""
           }
         },
         "EPFT": {
           "isArray": true,
-          "length": 1,
+          "length": 5,
           "firstItem": {
             "type": "string",
             "value": "AQ==",
@@ -350,116 +221,7 @@
         },
         "EPFD": {
           "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AACgQg==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AACgQg==\""
-          }
-        },
-        "PRKF": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"\""
-          }
-        }
-      }
-    },
-    {
-      "meta": {
-        "type": "PERK",
-        "formId": "0x00018e6d",
-        "plugin": "Ordinator - Perks of Skyrim.esp",
-        "stackOrder": 0
-      },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "T1JEX1BpY0RFUF9MaWdodEZpbmdlcnNfODBfUGVya19XYXNMaWdodEZpbmdlcnNfT3JkQVNJU0V4Y2x1ZGUA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"T1JEX1BpY0RFUF9MaWdodEZpbmdlcnNfODBfUGVya19XYXNMaWdodEZpbmdlcnNfT3JkQVNJU0V4Y2x1ZGUA\""
-          }
-        },
-        "FULL": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "TGlnaHQgRmluZ2VycwA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"TGlnaHQgRmluZ2VycwA=\""
-          }
-        },
-        "DESC": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "UGlja3BvY2tldGluZyBib251cyBvZiAxMDAlLiBJdGVtIHdlaWdodCBhbmQgdmFsdWUgcmVkdWNlIHBpY2twb2NrZXRpbmcgb2Rkcy4A",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"UGlja3BvY2tldGluZyBib251cyBvZiAxMDAlLiBJdGVtIHdlaWdodCBhbmQgdmFsdWUgcmVkdWNlIHBpY2twb2NrZXRpbmcgb2Rkcy4A\""
-          }
-        },
-        "CTDA": {
-          "isArray": true,
-          "length": 2,
-          "firstItem": {
-            "type": "string",
-            "value": "YAAAAAAAoEIVAQAADQAAAAAAAAAAAAAAAAAAAP////8=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"YAAAAAAAoEIVAQAADQAAAAAAAAAAAAAAAAAAAP////8=\""
-          }
-        },
-        "DATA": {
-          "isArray": true,
-          "length": 2,
-          "firstItem": {
-            "type": "string",
-            "value": "AAAFAQA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AAAFAQA=\""
-          }
-        },
-        "PRKE": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AgAA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AgAA\""
-          }
-        },
-        "EPFT": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AQ==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AQ==\""
-          }
-        },
-        "EPFD": {
-          "isArray": true,
-          "length": 1,
+          "length": 5,
           "firstItem": {
             "type": "string",
             "value": "AADIQg==",
@@ -470,6 +232,138 @@
         },
         "PRKF": {
           "isArray": true,
+          "length": 5,
+          "firstItem": {
+            "type": "string",
+            "value": "",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"\""
+          }
+        }
+      }
+    },
+    {
+      "meta": {
+        "type": "PERK",
+        "formId": "0x10002e0d",
+        "plugin": "Ordinator - Perks of Skyrim.esp",
+        "stackOrder": 0,
+        "isWinner": true
+      },
+      "data": {
+        "EDID": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "T1JEX09uZTMwX0JsZWVkTGlrZUFMYW1iX1BlcmtfMzAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"T1JEX09uZTMwX0JsZWVkTGlrZUFMYW1iX1BlcmtfMzAA\""
+          }
+        },
+        "FULL": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "QmxlZWQgTGlrZSBhIExhbWIA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"QmxlZWQgTGlrZSBhIExhbWIA\""
+          }
+        },
+        "DESC": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "QXR0YWNrcyB3aXRoIHdhciBheGVzIGRlYWwgYW4gYWRkaXRpb25hbCAxIHBvaW50IG9mIGRhbWFnZSBwZXIgc2Vjb25kIGZvciAzIHNlY29uZHMgdG8gbGl2aW5nIHRhcmdldHMuIFdoZW4gdGhlIGJsZWVkaW5nIHN0b3BzLCB0aGV5IHRha2UgZGFtYWdlIGVxdWFsIHRvIDE1JSBvZiB0aGUgSGVhbHRoIHRoZXkgbG9zdCB3aGlsZSBibGVlZGluZy4A",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"QXR0YWNrcyB3aXRoIHdhciBheGVzIGRlYWwgYW4gYWRkaXRpb25hbCAxIHBvaW50IG9mIGRhbWFnZSBwZXIgc2Vjb25kIGZvciAzIHNlY29uZHMgdG8gbGl2aW5nIHRhcmdldHMuIFdoZW4gdGhlIGJsZWVkaW5nIHN0b3BzLCB0aGV5IHRha2UgZGFtYWdlIGVxdWFsIHRvIDE1JSBvZiB0aGUgSGVhbHRoIHRoZXkgbG9zdCB3aGlsZSBibGVlZGluZy4A\""
+          }
+        },
+        "CTDA": {
+          "isArray": true,
+          "length": 4,
+          "firstItem": {
+            "type": "string",
+            "value": "YAAAAAAA8EEVAQAABgAAAAAAAAAAAAAAAAAAAP////8=",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"YAAAAAAA8EEVAQAABgAAAAAAAAAAAAAAAAAAAP////8=\""
+          }
+        },
+        "DATA": {
+          "isArray": true,
+          "length": 2,
+          "firstItem": {
+            "type": "string",
+            "value": "AAABAQA=",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAABAQA=\""
+          }
+        },
+        "NNAM": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "EC4AEA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"EC4AEA==\""
+          }
+        },
+        "PRKE": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AgDL",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AgDL\""
+          }
+        },
+        "PRKC": {
+          "isArray": true,
+          "length": 2,
+          "firstItem": {
+            "type": "string",
+            "value": "AA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AA==\""
+          }
+        },
+        "EPFT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "BQ==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"BQ==\""
+          }
+        },
+        "EPFD": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "Cy4AEA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"Cy4AEA==\""
+          }
+        },
+        "PRKF": {
+          "isArray": true,
           "length": 1,
           "firstItem": {
             "type": "string",
@@ -484,9 +378,10 @@
     {
       "meta": {
         "type": "PERK",
-        "formId": "0x0003af81",
+        "formId": "0x10002e10",
         "plugin": "Ordinator - Perks of Skyrim.esp",
-        "stackOrder": 0
+        "stackOrder": 0,
+        "isWinner": true
       },
       "data": {
         "EDID": {
@@ -494,10 +389,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "T1JEX09uZTQwX0Z1cmlvdXNTdHJlbmd0aF9QZXJrXzQwX1dhc1NhdmFnZVN0cmlrZQA=",
+            "value": "T1JEX09uZTMwX0JsZWVkTGlrZUFMYW1iX1BlcmtfNjAA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"T1JEX09uZTQwX0Z1cmlvdXNTdHJlbmd0aF9QZXJrXzQwX1dhc1NhdmFnZVN0cmlrZQA=\""
+            "stringified": "\"T1JEX09uZTMwX0JsZWVkTGlrZUFMYW1iX1BlcmtfNjAA\""
           }
         },
         "FULL": {
@@ -505,10 +400,10 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "RnVyaW91cyBTdHJlbmd0aAA=",
+            "value": "QmxlZWQgTGlrZSBhIExhbWIA",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"RnVyaW91cyBTdHJlbmd0aAA=\""
+            "stringified": "\"QmxlZWQgTGlrZSBhIExhbWIA\""
           }
         },
         "DESC": {
@@ -516,26 +411,158 @@
           "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "UG93ZXIgYXR0YWNrIGRhbWFnZSB3aXRoIG9uZS1oYW5kZWQgd2VhcG9ucyBpbmNyZWFzZWQgYnkgMTUlIHBsdXMgMC4xJSBwZXIgcG9pbnQgb2YgU3RhbWluYS4gVW5sb2NrcyBkZWNhcGl0YXRpb25zLgA=",
+            "value": "QXR0YWNrcyB3aXRoIHdhciBheGVzIGRlYWwgYW4gYWRkaXRpb25hbCAyIHBvaW50cyBvZiBkYW1hZ2UgcGVyIHNlY29uZCBmb3IgMyBzZWNvbmRzIHRvIGxpdmluZyB0YXJnZXRzLiBXaGVuIHRoZSBibGVlZGluZyBzdG9wcywgdGhleSB0YWtlIGRhbWFnZSBlcXVhbCB0byAyMCUgb2YgdGhlIEhlYWx0aCB0aGV5IGxvc3Qgd2hpbGUgYmxlZWRpbmcuAA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"UG93ZXIgYXR0YWNrIGRhbWFnZSB3aXRoIG9uZS1oYW5kZWQgd2VhcG9ucyBpbmNyZWFzZWQgYnkgMTUlIHBsdXMgMC4xJSBwZXIgcG9pbnQgb2YgU3RhbWluYS4gVW5sb2NrcyBkZWNhcGl0YXRpb25zLgA=\""
+            "stringified": "\"QXR0YWNrcyB3aXRoIHdhciBheGVzIGRlYWwgYW4gYWRkaXRpb25hbCAyIHBvaW50cyBvZiBkYW1hZ2UgcGVyIHNlY29uZCBmb3IgMyBzZWNvbmRzIHRvIGxpdmluZyB0YXJnZXRzLiBXaGVuIHRoZSBibGVlZGluZyBzdG9wcywgdGhleSB0YWtlIGRhbWFnZSBlcXVhbCB0byAyMCUgb2YgdGhlIEhlYWx0aCB0aGV5IGxvc3Qgd2hpbGUgYmxlZWRpbmcuAA==\""
           }
         },
         "CTDA": {
           "isArray": true,
-          "length": 10,
+          "length": 4,
           "firstItem": {
             "type": "string",
-            "value": "YAAAAAAAIEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=",
+            "value": "YAAAAAAAcEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"YAAAAAAAIEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=\""
+            "stringified": "\"YAAAAAAAcEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=\""
           }
         },
         "DATA": {
           "isArray": true,
+          "length": 2,
+          "firstItem": {
+            "type": "string",
+            "value": "AAABAQA=",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AAABAQA=\""
+          }
+        },
+        "NNAM": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "Ey4AEA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"Ey4AEA==\""
+          }
+        },
+        "PRKE": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "AgDL",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AgDL\""
+          }
+        },
+        "PRKC": {
+          "isArray": true,
+          "length": 2,
+          "firstItem": {
+            "type": "string",
+            "value": "AA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"AA==\""
+          }
+        },
+        "EPFT": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "BQ==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"BQ==\""
+          }
+        },
+        "EPFD": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "ES4AEA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"ES4AEA==\""
+          }
+        },
+        "PRKF": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"\""
+          }
+        }
+      }
+    },
+    {
+      "meta": {
+        "type": "PERK",
+        "formId": "0x10002e13",
+        "plugin": "Ordinator - Perks of Skyrim.esp",
+        "stackOrder": 0,
+        "isWinner": true
+      },
+      "data": {
+        "EDID": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "T1JEX09uZTMwX0JsZWVkTGlrZUFMYW1iX1BlcmtfOTAA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"T1JEX09uZTMwX0JsZWVkTGlrZUFMYW1iX1BlcmtfOTAA\""
+          }
+        },
+        "FULL": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "QmxlZWQgTGlrZSBhIExhbWIA",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"QmxlZWQgTGlrZSBhIExhbWIA\""
+          }
+        },
+        "DESC": {
+          "isArray": true,
+          "length": 1,
+          "firstItem": {
+            "type": "string",
+            "value": "QXR0YWNrcyB3aXRoIHdhciBheGVzIGRlYWwgYW4gYWRkaXRpb25hbCAzIHBvaW50cyBvZiBkYW1hZ2UgcGVyIHNlY29uZCBmb3IgMyBzZWNvbmRzIHRvIGxpdmluZyB0YXJnZXRzLiBXaGVuIHRoZSBibGVlZGluZyBzdG9wcywgdGhleSB0YWtlIGRhbWFnZSBlcXVhbCB0byAyNSUgb2YgdGhlIEhlYWx0aCB0aGV5IGxvc3Qgd2hpbGUgYmxlZWRpbmcuAA==",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"QXR0YWNrcyB3aXRoIHdhciBheGVzIGRlYWwgYW4gYWRkaXRpb25hbCAzIHBvaW50cyBvZiBkYW1hZ2UgcGVyIHNlY29uZCBmb3IgMyBzZWNvbmRzIHRvIGxpdmluZyB0YXJnZXRzLiBXaGVuIHRoZSBibGVlZGluZyBzdG9wcywgdGhleSB0YWtlIGRhbWFnZSBlcXVhbCB0byAyNSUgb2YgdGhlIEhlYWx0aCB0aGV5IGxvc3Qgd2hpbGUgYmxlZWRpbmcuAA==\""
+          }
+        },
+        "CTDA": {
+          "isArray": true,
           "length": 3,
+          "firstItem": {
+            "type": "string",
+            "value": "YAAAAAAAtEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=",
+            "isBuffer": false,
+            "keys": null,
+            "stringified": "\"YAAAAAAAtEIVAQAABgAAAAAAAAAAAAAAAAAAAP////8=\""
+          }
+        },
+        "DATA": {
+          "isArray": true,
+          "length": 2,
           "firstItem": {
             "type": "string",
             "value": "AAABAQA=",
@@ -546,18 +573,18 @@
         },
         "PRKE": {
           "isArray": true,
-          "length": 2,
+          "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "AgB4",
+            "value": "AgDL",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AgB4\""
+            "stringified": "\"AgDL\""
           }
         },
         "PRKC": {
           "isArray": true,
-          "length": 2,
+          "length": 1,
           "firstItem": {
             "type": "string",
             "value": "AQ==",
@@ -568,29 +595,29 @@
         },
         "EPFT": {
           "isArray": true,
-          "length": 2,
+          "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "AQ==",
+            "value": "BQ==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"AQ==\""
+            "stringified": "\"BQ==\""
           }
         },
         "EPFD": {
           "isArray": true,
-          "length": 2,
+          "length": 1,
           "firstItem": {
             "type": "string",
-            "value": "MzOTPw==",
+            "value": "FC4AEA==",
             "isBuffer": false,
             "keys": null,
-            "stringified": "\"MzOTPw==\""
+            "stringified": "\"FC4AEA==\""
           }
         },
         "PRKF": {
           "isArray": true,
-          "length": 2,
+          "length": 1,
           "firstItem": {
             "type": "string",
             "value": "",

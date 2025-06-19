@@ -54,7 +54,7 @@ export async function scanAllBlocks(
 ): Promise<ScanResult> {
   const results: BufferMeta[] = [];
   let offset = startOffset;
-  
+
   // Create a new Map for this level's counts
   const localTagCounts = new Map<string, TagStats>();
 
@@ -102,22 +102,26 @@ export async function scanAllBlocks(
       results.push(grupMeta);
 
       // Recursively scan the GRUP contents
-      const { results: groupResults, report: groupReport } = await scanAllBlocks(
-        buffer,
-        context,
-        newParentPath,
-        offset + GrupOffset.EndOffset,
-        endOffset
-      );
-      
+      const { results: groupResults, report: groupReport } =
+        await scanAllBlocks(
+          buffer,
+          context,
+          newParentPath,
+          offset + GrupOffset.EndOffset,
+          endOffset
+        );
+
       // Merge the group's tag counts into our local counts
       groupReport.tagCounts.forEach((stats, tag) => {
-        const currentStats = localTagCounts.get(tag) || { count: 0, compressed: 0 };
+        const currentStats = localTagCounts.get(tag) || {
+          count: 0,
+          compressed: 0,
+        };
         currentStats.count += stats.count;
         currentStats.compressed += stats.compressed;
         localTagCounts.set(tag, currentStats);
       });
-      
+
       results.push(...groupResults);
       offset = endOffset;
     } else if (tag === "TES4") {
@@ -143,7 +147,7 @@ export async function scanAllBlocks(
       try {
         const formId = buffer.readUInt32LE(offset + RecordOffset.FormId);
         const flags = parseRecordFlags(buffer.subarray(offset));
-        
+
         // Update compressed count if record is compressed
         if (flags.isCompressed || flags.isObsoleteCompressed) {
           const currentStats = localTagCounts.get(tag)!;
@@ -178,23 +182,23 @@ export async function scanAllBlocks(
     }
   }
 
-  // Format the final counts report - only log at root level
-  if (parentPath.length === 0) {
-    const formattedCounts = Object.fromEntries(
-      Array.from(localTagCounts.entries()).map(([tag, stats]) => [
-        tag,
-        `count: ${stats.count}, compressed: ${stats.compressed}`
-      ])
-    );
-    context.onLog?.("debug", `Final counts for ${context.sourcePlugin}: ${JSON.stringify(formattedCounts, null, 2)}`);
-  }
+  // // Format the final counts report - only log at root level
+  // if (parentPath.length === 0) {
+  //   const formattedCounts = Object.fromEntries(
+  //     Array.from(localTagCounts.entries()).map(([tag, stats]) => [
+  //       tag,
+  //       `count: ${stats.count}, compressed: ${stats.compressed}`
+  //     ])
+  //   );
+  //   context.onLog?.("debug", `Final counts for ${context.sourcePlugin}: ${JSON.stringify(formattedCounts, null, 2)}`);
+  // }
 
   return {
     results,
     report: {
       tagCounts: localTagCounts,
       totalRecords: results.length,
-      sourcePlugin: context.sourcePlugin
-    }
+      sourcePlugin: context.sourcePlugin,
+    },
   };
 }

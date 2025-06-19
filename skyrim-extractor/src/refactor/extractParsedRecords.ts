@@ -1,6 +1,11 @@
 import { hexDump } from "../utils/debugUtils";
 import { BufferMeta } from "./types";
-import { formatFormId, ParsedRecord, decompressRecordData, isRecordCompressed } from "@lorerim/platform-types";
+import {
+  formatFormId,
+  ParsedRecord,
+  decompressRecordData,
+  isRecordCompressed,
+} from "@lorerim/platform-types";
 
 export function extractParsedRecords(
   buffer: Buffer,
@@ -18,11 +23,15 @@ export function extractParsedRecords(
 
     // Check if the record is compressed
     const isCompressed = isRecordCompressed(recordBuffer);
-    
+
     let processedDataBuffer: Buffer;
-    if (isCompressed) {
+    if (isCompressed && meta.tag === "PERK") {
       // Decompress the data
-      const decompressionResult = decompressRecordData(recordBuffer, dataBuffer.length, true);
+      const decompressionResult = decompressRecordData(
+        recordBuffer,
+        dataBuffer.length,
+        true
+      );
       if (!decompressionResult.success) {
         console.warn(
           `[${meta.sourcePlugin}::${meta.tag}] Failed to decompress record: ${decompressionResult.error}`
@@ -41,14 +50,10 @@ export function extractParsedRecords(
       const tag = processedDataBuffer.toString("ascii", offset, offset + 4);
       const size = processedDataBuffer.readUInt16LE(offset + 4);
 
-      // if (!/^[A-Z0-9]{4}$/.test(tag)) {
-      //   console.warn(
-      //     `[${meta.sourcePlugin}::$\{tag:${meta.tag}\}] Invalid tag '${tag}' at offset ${offset}`
-      //   );
-      //   break;
-      // }
-
-      const payload = processedDataBuffer.subarray(offset + 6, offset + 6 + size);
+      const payload = processedDataBuffer.subarray(
+        offset + 6,
+        offset + 6 + size
+      );
       if (!data[tag]) data[tag] = [];
       data[tag].push(payload.toString("base64"));
 

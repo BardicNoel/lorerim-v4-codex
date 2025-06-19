@@ -1,4 +1,21 @@
-import { RecordSpecificSchemas, CommonFields, RecordSchema, SchemaInternal } from './schemaTypes';
+import {
+  RecordSpecificSchemas,
+  CommonFields,
+  RecordSchema,
+  SchemaInternal,
+  SharedFields,
+} from './schemaTypes';
+
+// Shared internal field layouts that can be composed into larger structs
+export const sharedFields: SharedFields = {
+  flags8: [{ name: 'flags', type: 'uint8' }],
+  flags32: [{ name: 'flags', type: 'uint32' }],
+  conditionBlock: [
+    { name: 'op', type: 'uint8' },
+    { name: 'value', type: 'float32' },
+    { name: 'functionIndex', type: 'uint32' },
+  ],
+};
 
 // Common field schemas that are reused across record types
 export const commonFieldSchemas: RecordSchema = {

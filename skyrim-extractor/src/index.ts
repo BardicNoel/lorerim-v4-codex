@@ -1,7 +1,7 @@
 import { initDebugLog, closeDebugLog, debugLog } from "./utils/debugUtils";
 import { loadConfig, validateConfig } from "./config";
 import * as path from "path";
-import { getEnabledPlugins } from "./utils/modUtils";
+import { getRecordFiles } from "./utils/modUtilsV2";
 import { runPluginScan } from "./refactor/runPluginScan";
 import {
   reportGrupDistribution,
@@ -62,17 +62,16 @@ export async function main(
 
     // Load and validate configuration
     const config = await loadConfig(configPath);
+    console.log("Loaded config paths:", config.paths);
     const errors = validateConfig(config);
     if (errors.length > 0) {
       throw new Error(`Configuration errors:\n${errors.join("\n")}`);
     }
 
     // Process plugins
-    const plugins = await getEnabledPlugins(
-      config.modDirPath,
-      config.baseGameDir,
-      config.baseGameFiles
-    );
+    const pluginPathMap = await getRecordFiles(config);
+    console.log(pluginPathMap.get("Ordinator - Perks of Skyrim.esp"));
+    const plugins = Array.from(pluginPathMap.values());
 
     printHeader("Processing Plugins");
     console.log(`Found ${plugins.length} plugins to process\n`);
@@ -107,7 +106,10 @@ export async function main(
     // StatsReporter.report(stats);
 
     // Generate report file
-    const reportPath = path.join(config.outputPath, "processing-stats.json");
+    const reportPath = path.join(
+      config.paths.outputDir,
+      "processing-stats.json"
+    );
     StatsReporter.generateReportFile(stats, reportPath);
     console.log(`\nDetailed report saved to: ${reportPath}`);
 
@@ -126,11 +128,14 @@ export async function main(
 
     // Generate reports
     reportRecordTypeDistribution(results);
-    reportBufferParserValidation(results, Object.values(parsedRecordDict).flat());
+    reportBufferParserValidation(
+      results,
+      Object.values(parsedRecordDict).flat()
+    );
 
     // Write parsed records to JSON files by type
     printSubHeader("Writing Record Files");
-    const recordsDir = config.outputPath;
+    const recordsDir = config.paths.outputDir;
     const fileWriter = createFileWriter();
     await fileWriter.writeRecords(parsedRecordDict, recordsDir);
     console.log(`\nRecords written to: ${recordsDir}`);

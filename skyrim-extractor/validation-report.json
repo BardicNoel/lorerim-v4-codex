@@ -1,58 +1,8153 @@
 {
   "summary": {
-    "totalBufferMetaRecords": 1454,
-    "totalParsedRecords": 753,
-    "pluginsWithDifferences": 2
+    "totalBufferMetaRecords": 408440,
+    "totalParsedRecords": 47109,
+    "pluginsWithDifferences": 0
   },
-  "differences": {
-    "Ordinator - Perks of Skyrim.esp": {
-      "PERK": {
-        "bufferMeta": 828,
-        "parsedRecord": 553,
-        "diff": 275
-      }
-    },
-    "Vokrii - Minimalistic Perks of Skyrim.esp": {
-      "PERK": {
-        "bufferMeta": 426,
-        "parsedRecord": 193,
-        "diff": 233
-      }
-    }
-  },
+  "differences": {},
   "rawCounts": {
     "bufferMeta": {
-      "Conduit.esp": {
-        "PERK": 2
-      },
-      "BattlemageCSF.esp": {
-        "PERK": 4
-      },
-      "The Wizard Warrior.esp": {
+      "HearthFires.esm": {
+        "GLOB": 114,
+        "CLAS": 1,
+        "FACT": 141,
+        "MGEF": 46,
+        "ENCH": 43,
+        "SPEL": 3,
+        "FLST": 65,
         "PERK": 1
       },
-      "Ordinator - Perks of Skyrim.esp": {
-        "PERK": 828
+      "Update.esm": {
+        "GLOB": 16,
+        "FACT": 3,
+        "RACE": 27,
+        "MGEF": 52,
+        "ENCH": 6,
+        "SPEL": 30,
+        "FLST": 15,
+        "PERK": 16,
+        "AVIF": 1
       },
-      "Vokrii - Minimalistic Perks of Skyrim.esp": {
-        "PERK": 426
+      "ccafdsse001-dwesanctuary.esm": {
+        "GLOB": 10,
+        "FACT": 5,
+        "RACE": 2
+      },
+      "ccasvsse001-almsivi.esm": {
+        "GLOB": 6,
+        "CLAS": 1,
+        "FACT": 10,
+        "MGEF": 10,
+        "ENCH": 4,
+        "SPEL": 8,
+        "FLST": 7,
+        "PERK": 5
+      },
+      "ccBGSSSE001-Fish.esm": {
+        "GLOB": 66,
+        "FACT": 6,
+        "RACE": 4,
+        "MGEF": 12,
+        "ENCH": 13,
+        "SPEL": 9,
+        "FLST": 153
+      },
+      "ccbgssse002-exoticarrows.esl": {
+        "GLOB": 2,
+        "MGEF": 5,
+        "ENCH": 5,
+        "SPEL": 2,
+        "PERK": 2
+      },
+      "ccbgssse003-zombies.esl": {
+        "GLOB": 1,
+        "RACE": 1,
+        "MGEF": 5,
+        "SPEL": 10
+      },
+      "ccbgssse004-ruinsedge.esl": {
+        "MGEF": 7,
+        "ENCH": 1,
+        "SPEL": 7
+      },
+      "ccbgssse005-goldbrand.esl": {
+        "GLOB": 5,
+        "FACT": 1
+      },
+      "ccbgssse006-stendarshammer.esl": {
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "ccbgssse007-chrysamere.esl": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 4
+      },
+      "ccbgssse008-wraithguard.esl": {
+        "GLOB": 1,
+        "MGEF": 16,
+        "ENCH": 2,
+        "SPEL": 6,
+        "PERK": 2
+      },
+      "ccbgssse010-petdwarvenarmoredmudcrab.esl": {
+        "RACE": 1,
+        "MGEF": 2,
+        "SPEL": 3
+      },
+      "ccbgssse011-hrsarmrelvn.esl": {
+        "GLOB": 2
+      },
+      "ccbgssse012-hrsarmrstl.esl": {
+        "GLOB": 2
+      },
+      "ccbgssse013-dawnfang.esl": {
+        "GLOB": 3,
+        "MGEF": 14,
+        "ENCH": 2,
+        "SPEL": 7,
+        "PERK": 2
+      },
+      "ccbgssse014-spellpack01.esl": {
+        "MGEF": 26,
+        "ENCH": 14,
+        "SPEL": 22,
+        "PERK": 1
+      },
+      "ccbgssse016-umbra.esm": {
+        "GLOB": 6,
+        "FACT": 2,
+        "MGEF": 3,
+        "ENCH": 2,
+        "SPEL": 2,
+        "FLST": 2
+      },
+      "ccbgssse018-shadowrend.esl": {
+        "RACE": 5,
+        "MGEF": 5,
+        "ENCH": 2,
+        "SPEL": 2,
+        "FLST": 1
+      },
+      "ccbgssse019-staffofsheogorath.esl": {
+        "MGEF": 4,
+        "ENCH": 3,
+        "SPEL": 1,
+        "PERK": 4
+      },
+      "ccbgssse020-graycowl.esl": {
+        "FACT": 1,
+        "MGEF": 9,
+        "ENCH": 2,
+        "SPEL": 3,
+        "PERK": 2
+      },
+      "ccbgssse021-lordsmail.esl": {
+        "MGEF": 9,
+        "ENCH": 2,
+        "SPEL": 2
+      },
+      "ccBGSSSE025-AdvDSGS.esm": {
+        "GLOB": 14,
+        "FACT": 4,
+        "RACE": 6,
+        "MGEF": 17,
+        "ENCH": 1,
+        "SPEL": 17,
+        "FLST": 19,
+        "PERK": 3
+      },
+      "ccbgssse031-advcyrus.esm": {
+        "GLOB": 1,
+        "FACT": 5
+      },
+      "ccbgssse034-mntuni.esl": {
+        "GLOB": 1,
+        "FACT": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "ccbgssse035-petnhound.esl": {
+        "RACE": 2,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "ccbgssse036-petbwolf.esl": {
+        "RACE": 1,
+        "MGEF": 3,
+        "SPEL": 4,
+        "PERK": 1
+      },
+      "ccBGSSSE037-Curios.esl": {
+        "MGEF": 4,
+        "PERK": 2
+      },
+      "ccbgssse038-bowofshadows.esl": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 4,
+        "PERK": 2
+      },
+      "ccbgssse040-advobgobs.esl": {
+        "FACT": 4,
+        "RACE": 2,
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 5
+      },
+      "ccbgssse041-netchleather.esl": {
+        "GLOB": 1,
+        "FACT": 4,
+        "MGEF": 2,
+        "ENCH": 1
+      },
+      "ccbgssse043-crosselv.esl": {
+        "GLOB": 3
+      },
+      "ccbgssse045-hasedoki.esl": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "ccbgssse051-ba_daedricmail.esl": {
+        "GLOB": 1,
+        "ENCH": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "ccbgssse055-ba_orcishscaled.esl": {
+        "PERK": 3
+      },
+      "ccbgssse056-ba_silver.esl": {
+        "PERK": 2
+      },
+      "ccbgssse058-ba_steel.esl": {
+        "FACT": 1,
+        "PERK": 1
+      },
+      "ccbgssse059-ba_dragonplate.esl": {
+        "FACT": 2,
+        "ENCH": 2,
+        "PERK": 1
+      },
+      "ccbgssse062-ba_dwarvenmail.esl": {
+        "PERK": 1
+      },
+      "ccbgssse063-ba_ebony.esl": {
+        "FACT": 1
+      },
+      "ccbgssse066-staves.esl": {
+        "MGEF": 10,
+        "ENCH": 42
+      },
+      "Dawnguard.esm": {
+        "GLOB": 176,
+        "CLAS": 5,
+        "FACT": 82,
+        "RACE": 46,
+        "MGEF": 261,
+        "ENCH": 28,
+        "SPEL": 308,
+        "FLST": 76,
+        "PERK": 57,
+        "AVIF": 2
+      },
+      "ccbgssse067-daedinv.esm": {
+        "GLOB": 8,
+        "FACT": 2,
+        "RACE": 1,
+        "MGEF": 15,
+        "ENCH": 4,
+        "SPEL": 12,
+        "FLST": 5,
+        "PERK": 1
+      },
+      "ccbgssse068-bloodfall.esl": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "ccbgssse069-contest.esl": {
+        "RACE": 1,
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "cccbhsse001-gaunt.esl": {
+        "ENCH": 7
+      },
+      "ccedhsse001-norjewel.esl": {
+        "GLOB": 3,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "ccedhsse002-splkntset.esl": {
+        "FLST": 1
+      },
+      "ccedhsse003-redguard.esl": {
+        "GLOB": 6,
+        "FACT": 3,
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "cceejsse002-tower.esl": {
+        "FACT": 5,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "cceejsse001-hstead.esm": {
+        "GLOB": 1,
+        "FACT": 5
+      },
+      "cceejsse003-hollow.esl": {
+        "FACT": 5,
+        "FLST": 3
+      },
+      "cceejsse004-hall.esl": {
+        "FACT": 5,
+        "FLST": 5
+      },
+      "cceejsse005-cave.esm": {
+        "GLOB": 1,
+        "FACT": 7,
+        "SPEL": 1,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "ccffbsse002-crossbowpack.esl": {
+        "GLOB": 8
+      },
+      "ccffbsse001-imperialdragon.esl": {
+        "GLOB": 2,
+        "FACT": 4,
+        "MGEF": 37,
+        "ENCH": 14,
+        "SPEL": 12,
+        "PERK": 5
+      },
+      "ccfsvsse001-backpacks.esl": {
+        "ENCH": 5
+      },
+      "ccmtysse001-knightsofthenine.esl": {
+        "GLOB": 5,
+        "MGEF": 7,
+        "ENCH": 9,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "cckrtsse001_altar.esl": {
+        "GLOB": 2,
+        "FACT": 2,
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 2,
+        "PERK": 4
+      },
+      "ccpewsse002-armsofchaos.esl": {
+        "GLOB": 1,
+        "CLAS": 1,
+        "MGEF": 23,
+        "ENCH": 7,
+        "SPEL": 8
+      },
+      "ccqdrsse002-firewood.esl": {
+        "GLOB": 5,
+        "MGEF": 3,
+        "SPEL": 2,
+        "FLST": 3
+      },
+      "ccrmssse001-necrohouse.esl": {
+        "GLOB": 2,
+        "FACT": 5,
+        "MGEF": 8,
+        "ENCH": 3,
+        "SPEL": 3,
+        "FLST": 1,
+        "PERK": 3
+      },
+      "ccQDRSSE001-SurvivalMode.esl": {
+        "GLOB": 61,
+        "MGEF": 146,
+        "SPEL": 94,
+        "FLST": 25,
+        "PERK": 4
+      },
+      "ccvsvsse001-winter.esl": {
+        "GLOB": 1,
+        "FACT": 2,
+        "RACE": 1
+      },
+      "cctwbsse001-puzzledungeon.esm": {
+        "GLOB": 8,
+        "FACT": 1,
+        "MGEF": 35,
+        "ENCH": 17,
+        "SPEL": 22,
+        "PERK": 1
+      },
+      "ccvsvsse002-pets.esl": {
+        "GLOB": 13,
+        "RACE": 5,
+        "MGEF": 9,
+        "ENCH": 1,
+        "SPEL": 8,
+        "FLST": 9
+      },
+      "ccvsvsse003-necroarts.esl": {
+        "CLAS": 1,
+        "FACT": 3,
+        "RACE": 4,
+        "MGEF": 73,
+        "ENCH": 14,
+        "SPEL": 50,
+        "FLST": 2,
+        "PERK": 5
+      },
+      "_ResourcePack.esl": {
+        "GLOB": 2
+      },
+      "ccvsvsse004-beafarmer.esl": {
+        "GLOB": 18,
+        "FACT": 10,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "unofficial skyrim creation club content patch.esl": {
+        "FACT": 1,
+        "RACE": 5,
+        "MGEF": 26,
+        "ENCH": 4,
+        "SPEL": 23,
+        "FLST": 1,
+        "PERK": 2
+      },
+      "Bittercup - Tweaks and Enhancements.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "CC Farming - Tweaks and Enhancements.esp": {
+        "GLOB": 28,
+        "FACT": 12,
+        "FLST": 4,
+        "PERK": 2
+      },
+      "Myrwatch - Tweaks and Enhancements.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "myrwatchhomefixer.esp": {
+        "FACT": 5
+      },
+      "Hendraheim - Tweaks and Enhancements.esp": {
+        "GLOB": 3,
+        "FACT": 26
+      },
+      "CauseTweakAllowClose.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Civil War Champions - Reduced Cut.esp": {
+        "FLST": 1
+      },
+      "Unofficial Skyrim Special Edition Patch.esp": {
+        "GLOB": 20,
+        "CLAS": 16,
+        "FACT": 66,
+        "RACE": 28,
+        "MGEF": 354,
+        "ENCH": 53,
+        "SPEL": 171,
+        "FLST": 27,
+        "PERK": 85,
+        "AVIF": 1
+      },
+      "Unofficial Skyrim Modders Patch.esp": {
+        "GLOB": 2,
+        "FACT": 147,
+        "RACE": 34,
+        "MGEF": 21,
+        "SPEL": 9,
+        "FLST": 16,
+        "PERK": 1
+      },
+      "PickpocketReset.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Vanilla Eating Animation Fix.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Dragonborn.esm": {
+        "GLOB": 147,
+        "CLAS": 15,
+        "FACT": 102,
+        "RACE": 32,
+        "MGEF": 321,
+        "ENCH": 71,
+        "SPEL": 272,
+        "FLST": 150,
+        "PERK": 74
+      },
+      "zeroBountyHostilityFix.esp": {
+        "FLST": 1
+      },
+      "bleedoutFix.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "AdoptionAndMovingFix.esp": {
+        "PERK": 1
+      },
+      "Unaggressive Dragon Priests Fix.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "KillMiraakSpellFix.esp": {
+        "SPEL": 1
+      },
+      "WERoad02Fix.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "UIExtensions.esp": {
+        "FLST": 1
+      },
+      "Butterflies.esp": {
+        "FLST": 1
+      },
+      "Pick Up Radius.esp": {
+        "FLST": 46,
+        "PERK": 1
+      },
+      "TrueHUD.esl": {
+        "GLOB": 2
+      },
+      "AHZmoreHUD.esl": {
+        "GLOB": 40
+      },
+      "TrueDirectionalMovement.esp": {
+        "GLOB": 5,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "skymoji.esp": {
+        "PERK": 1
+      },
+      "PhotoMode.esp": {
+        "GLOB": 1,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "UltimateImmersionToggle.esp": {
+        "GLOB": 1
+      },
+      "Quick Follower Commands.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 4
+      },
+      "HotKeySkill.esp": {
+        "GLOB": 17,
+        "MGEF": 35,
+        "SPEL": 2
+      },
+      "RotolsMoreIcons.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "OCF.esp": {
+        "FLST": 238
+      },
+      "Standing Stones - I4.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Racial Abilities - I4.esp": {
+        "MGEF": 4,
+        "SPEL": 3
+      },
+      "Racial Abilities Survival Mode - I4.esp": {
+        "MGEF": 10,
+        "SPEL": 8
+      },
+      "hideQuestItems.esp": {
+        "GLOB": 1
+      },
+      "Upgradable Spells UI.esp": {
+        "FLST": 8
+      },
+      "Quick Item Transfer.esp": {
+        "FLST": 8
+      },
+      "SkySigns.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "FLST": 1
+      },
+      "Audio Overhaul Skyrim.esp": {
+        "RACE": 1,
+        "MGEF": 1,
+        "FLST": 3
+      },
+      "Immersive Sounds - Compendium.esp": {
+        "MGEF": 66
+      },
+      "sanguinum sfx vanilla.esp": {
+        "MGEF": 7
+      },
+      "Dynamic Things Alternative.esp": {
+        "FLST": 5
+      },
+      "ENB Light.esp": {
+        "MGEF": 10
+      },
+      "Rainbows Remade.esp": {
+        "GLOB": 2,
+        "MGEF": 3,
+        "SPEL": 1
+      },
+      "Morning Fogs SSE.esp": {
+        "GLOB": 4
+      },
+      "StormLightning.esp": {
+        "GLOB": 41,
+        "MGEF": 58,
+        "SPEL": 58,
+        "FLST": 16
+      },
+      "Landscape and Water Fixes.esp": {
+        "FACT": 1,
+        "FLST": 2
+      },
+      "Skyrim.esm": {
+        "GLOB": 664,
+        "CLAS": 138,
+        "FACT": 1084,
+        "RACE": 99,
+        "MGEF": 950,
+        "ENCH": 604,
+        "SPEL": 827,
+        "FLST": 726,
+        "PERK": 375,
+        "AVIF": 149
+      },
+      "Snowman Secrets.esp": {
+        "FLST": 1
+      },
+      "Pseudoloaddoors for Walled Cities.esp": {
+        "GLOB": 91,
+        "FLST": 3
+      },
+      "Stendarr Rising.esp": {
+        "GLOB": 20,
+        "FACT": 2,
+        "FLST": 1
+      },
+      "Riverwood Trader Is A Mess.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "SkyrimHouseRemodel.esp": {
+        "FLST": 4
+      },
+      "Unmarked Locations Pack - All In One.esp": {
+        "SPEL": 4
+      },
+      "Environs - Greenwood Shack.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "Environs - Shrines of Talos.esp": {
+        "FACT": 2
+      },
+      "Environs - Hroggars House.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Environs - Riften Warehouse.esp": {
+        "GLOB": 1,
+        "FACT": 2,
+        "FLST": 1
+      },
+      "Environs - Tundra Farmhouse.esp": {
+        "GLOB": 1,
+        "FACT": 2,
+        "FLST": 2
+      },
+      "Environs - Kolskeggr.esp": {
+        "GLOB": 2,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Environs - Whiterun Watchtower.esp": {
+        "GLOB": 1,
+        "FACT": 2
+      },
+      "Evolving Locations - Cliffside Retreat.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "Evolving Locations - Lucky Shack.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "Evolving Locations - Riverside Shack.esp": {
+        "GLOB": 1,
+        "FACT": 2
+      },
+      "JK's Septimus Signus's Outpost.esp": {
+        "FACT": 1
+      },
+      "JK's Castle Dour.esp": {
+        "FACT": 2
+      },
+      "JK's Blue Palace.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "JK's Jorrvaskr.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "JK's High Hrothgar.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "JK's Understone Keep.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "JK's Haelga's Bunkhouse.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "Snazzy Interiors - Markarth Endon's House.esp": {
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Snazzy Interiors - Riften Black-Briar Manor.esp": {
+        "FACT": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Snazzy Black Briar Lodge.esp": {
+        "FACT": 1
+      },
+      "Fort Greymoor.esp": {
+        "FACT": 2
+      },
+      "Fort Dunstad.esp": {
+        "FACT": 6,
+        "FLST": 2
+      },
+      "Ryn's Saarthal.esp": {
+        "RACE": 1
+      },
+      "Ryn's Karthspire.esp": {
+        "CLAS": 1
+      },
+      "Ryn's Crabber's Shanty.esp": {
+        "RACE": 1,
+        "SPEL": 1
+      },
+      "Ryn's Snazzy Last Vigil - Ebony Warrior Overhaul.esp": {
+        "CLAS": 1,
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 5
+      },
+      "Ryn's Snazzy Last Vigil.esp": {
+        "FACT": 1
+      },
+      "earthquakes - MCM.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "SkaalFishingCamp.esp": {
+        "FACT": 1
+      },
+      "Undriel_QuaintRavenRock.esp": {
+        "FACT": 4,
+        "RACE": 2,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 3
+      },
+      "Orc Strongholds - Mor Khazgur.esp": {
+        "FACT": 1
+      },
+      "Resources - The Great Cities.esp": {
+        "FACT": 1,
+        "FLST": 1
+      },
+      "CFTO.esp": {
+        "GLOB": 9,
+        "FACT": 6
+      },
+      "The Great Village of Old Hroldan.esp": {
+        "FACT": 2
+      },
+      "The Great Village of Kynesgrove.esp": {
+        "FACT": 4,
+        "FLST": 3
+      },
+      "The Great Town of Shor's Stone.esp": {
+        "FACT": 5,
+        "FLST": 1
+      },
+      "The Great Town of Karthwasten.esp": {
+        "FACT": 7
+      },
+      "The Great Town of Ivarstead.esp": {
+        "FACT": 4,
+        "FLST": 1
+      },
+      "The Great Village of Mixwater Mill.esp": {
+        "FACT": 1,
+        "FLST": 1
+      },
+      "The Great City of Dragon Bridge.esp": {
+        "FACT": 3,
+        "FLST": 1
+      },
+      "Gonz - Stonehills ReRe-imagined.esp": {
+        "FACT": 1
+      },
+      "TGC Winterhold - No ForceGreet.esp": {
+        "GLOB": 1
+      },
+      "The Great City of Morthal.esp": {
+        "FACT": 2,
+        "FLST": 1
+      },
+      "The Great City of Winterhold v4.esp": {
+        "FACT": 14,
+        "FLST": 2
+      },
+      "COTN - Falkreath.esp": {
+        "FACT": 2,
+        "FLST": 2
+      },
+      "The Great City of Dawnstar.esp": {
+        "FACT": 2,
+        "FLST": 1
+      },
+      "Kynareth Replaces Talos - Civil War Consequence.esp": {
+        "GLOB": 3,
+        "MGEF": 3,
+        "SPEL": 1
+      },
+      "RedBag's Solitude [PATCH - TGCoS].esp": {
+        "FLST": 2
+      },
+      "SurWR.esp": {
+        "CLAS": 2,
+        "FACT": 17,
+        "RACE": 3,
+        "MGEF": 6,
+        "ENCH": 2,
+        "SPEL": 12,
+        "FLST": 7
+      },
+      "The Great City of Solitude.esp": {
+        "FACT": 16,
+        "FLST": 2
+      },
+      "RedBag's Solitude.esp": {
+        "FACT": 23,
+        "FLST": 16
+      },
+      "Sky City.esp": {
+        "FACT": 4,
+        "FLST": 5
+      },
+      "Lux Via - Markarth Entrance and Farm Overhaul.esp": {
+        "FACT": 17,
+        "FLST": 1
+      },
+      "RTDocks - Animated Ships.esp": {
+        "FLST": 2
+      },
+      "Riften Docks Overhaul.esp": {
+        "FACT": 2,
+        "FLST": 1
+      },
+      "GG's Thieves Guild Headquarters.esp": {
+        "FACT": 2
+      },
+      "Unique Border Gates - Fixes.esp": {
+        "FACT": 1
+      },
+      "Eli_Dovah Vault.esp": {
+        "FLST": 3
+      },
+      "Arena - Markarth Side.esp": {
+        "FACT": 17,
+        "FLST": 5
+      },
+      "aaaGraniteHill.esp": {
+        "FACT": 10,
+        "RACE": 1,
+        "FLST": 6
+      },
+      "WindhelmSSE.esp": {
+        "GLOB": 1,
+        "FACT": 31,
+        "MGEF": 3,
+        "ENCH": 4,
+        "SPEL": 10,
+        "FLST": 13,
+        "PERK": 3
+      },
+      "EasierRidersDungeonPackSSE.esp": {
+        "MGEF": 3,
+        "ENCH": 3,
+        "SPEL": 1
+      },
+      "UniqueBarbas.esp": {
+        "RACE": 1
+      },
+      "RealRabbitsHD.esp": {
+        "RACE": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "DynamicAnimalVariantsPlus.esp": {
+        "MGEF": 29,
+        "SPEL": 29,
+        "FLST": 29
+      },
+      "ShinyHorkerVariants.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "DiverseMammothBabies-MBM.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "JELBettyNetch.esp": {
+        "RACE": 1
+      },
+      "Bears of the North.esp": {
+        "RACE": 3
+      },
+      "AnimatedShips.esl": {
+        "GLOB": 1,
+        "FACT": 18,
+        "SPEL": 1,
+        "FLST": 51
+      },
+      "Use Those Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 18
+      },
+      "Ignoble Beds - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 13
+      },
+      "Deep Slumber - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 3
+      },
+      "Bedroll Alternative - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 4
+      },
+      "Reclusive Respite - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 4
+      },
+      "Cozy Cots - Use Those Blankets Patch.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 7
+      },
+      "Redoran Reverie - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 7
+      },
+      "Dunmer Dreams - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 7
+      },
+      "Rustic Repose Distributed - Use Those Variant Blankets.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "FLST": 14
+      },
+      "Sleipnir Beds - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 7
+      },
+      "RiverStaff.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "ArteFake.esp": {
+        "MGEF": 3,
+        "ENCH": 5,
+        "SPEL": 1,
+        "PERK": 2
+      },
+      "Sanguine Symphony.esp": {
+        "GLOB": 66,
+        "MGEF": 9,
+        "SPEL": 9
+      },
+      "VAEReborn.esp": {
+        "MGEF": 55,
+        "ENCH": 16
+      },
+      "Humanoid Dragon Priest.esp": {
+        "RACE": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Embers XD - Patch - Survival Mode Improved.esp": {
+        "FLST": 1
+      },
+      "Elytra ENB Light.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Sprites or Specters ENB Light.esp": {
+        "MGEF": 8,
+        "SPEL": 8
+      },
+      "Little Prince.esp": {
+        "SPEL": 1
+      },
+      "AdditionalHearthfireDolls.esp": {
+        "FLST": 1
+      },
+      "AdditionalHearthfireDollsFixesPass.esp": {
+        "MGEF": 4,
+        "SPEL": 12
+      },
+      "AdditionalHFDollsPassivesPatch.esp": {
+        "MGEF": 21,
+        "SPEL": 24
+      },
+      "cs_hf_trophypatch_BOS.esp": {
+        "FLST": 2
+      },
+      "DTA - Diverse Archery Targets Patch.esp": {
+        "FLST": 1
+      },
+      "ClimbableDoorLadder.esp": {
+        "FLST": 1,
+        "PERK": 1
+      },
+      "War Horns.esp": {
+        "GLOB": 1,
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "More Silver and Dwemer Kitchenware.esp": {
+        "FLST": 1
+      },
+      "3BBB.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "BosmersHaveAntlers.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "ScarifiedDunmer.esp": {
+        "RACE": 2
+      },
+      "FacegenForKids.esp": {
+        "FLST": 1
+      },
+      "SimpleChildren.esp": {
+        "RACE": 1
+      },
+      "Kidmer - Adoptable Elf Children 1_2.esp": {
+        "FACT": 1,
+        "RACE": 4,
+        "FLST": 2
+      },
+      "Additional Dremora Faces.esp": {
+        "RACE": 2,
+        "FLST": 2
+      },
+      "Helmet Toggle 2.esp": {
+        "GLOB": 29,
+        "MGEF": 5,
+        "SPEL": 10,
+        "FLST": 4
+      },
+      "BeastHHBB - Adoptable Beast Children.esp": {
+        "RACE": 5
+      },
+      "Project ja-Kha'jay- Khajiit Diversity.esp": {
+        "RACE": 10,
+        "FLST": 17
+      },
+      "PrinceandPauperRefine.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 2
+      },
+      "PrinceandPauperRefine_CC_Cave.esp": {
+        "FLST": 2
+      },
+      "WeddingBand.esp": {
+        "MGEF": 4,
+        "ENCH": 2
+      },
+      "NPCsWearWeddingBands.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Soul Withdrawal Is a Disease.esp": {
+        "SPEL": 1
+      },
+      "Windcaller.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "Soul Devourer.esp": {
+        "MGEF": 7,
+        "ENCH": 1,
+        "SPEL": 6,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "Ring of Draconic Burdon.esp": {
+        "GLOB": 1,
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Cultural Bards.esp": {
+        "ENCH": 1
+      },
+      "evgnnsmpaccessories.esp": {
+        "MGEF": 37,
+        "ENCH": 9,
+        "SPEL": 32,
+        "FLST": 1
+      },
+      "Kad_MoonMonkRobes.esp": {
+        "MGEF": 1,
+        "ENCH": 3,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "Artifacts of the Lore(Rim).esp": {
+        "FACT": 7,
+        "MGEF": 11,
+        "ENCH": 22,
+        "SPEL": 4,
+        "FLST": 1,
+        "PERK": 5
+      },
+      "Apex_Khajiit.esp": {
+        "SPEL": 1,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "DIS_Armor_Fractions.esp": {
+        "CLAS": 1,
+        "ENCH": 4
+      },
+      "Armors of the Velothi Pt2 - Travelling Merchant Travels.esp": {
+        "GLOB": 1
+      },
+      "Armors of the Velothi Pt2.esl": {
+        "FACT": 1,
+        "MGEF": 1,
+        "ENCH": 2,
+        "FLST": 1
+      },
+      "Armors of the Velothi 2 - Reqtificated.esp": {
+        "ENCH": 2
+      },
+      "Press E To Heal Followers.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "SweetestRoll.esp": {
+        "RACE": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "SetHome.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "MoiraFollowerMod.esp": {
+        "GLOB": 4,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Missing Follower Dialogue Fix.esp": {
+        "FLST": 3
+      },
+      "Chatty NPCs.esp": {
+        "GLOB": 3,
+        "FLST": 77
+      },
+      "FDE Aranea.esp": {
+        "GLOB": 2
+      },
+      "FDE Uthgerd.esp": {
+        "GLOB": 4
+      },
+      "FDE Faendal.esp": {
+        "GLOB": 3
+      },
+      "FDE Ysolda.esp": {
+        "MGEF": 4,
+        "SPEL": 2
+      },
+      "FDE Camilla.esp": {
+        "GLOB": 1
+      },
+      "FDE Sapphire.esp": {
+        "GLOB": 4
+      },
+      "FDE Jordis.esp": {
+        "GLOB": 1
+      },
+      "FDE Erik.esp": {
+        "GLOB": 3
+      },
+      "FDE Lydia.esp": {
+        "GLOB": 5
+      },
+      "FDE Brelyna.esp": {
+        "GLOB": 2
+      },
+      "FDE Borgakh.esp": {
+        "GLOB": 4
+      },
+      "FDE Illia.esp": {
+        "GLOB": 24,
+        "FLST": 1
+      },
+      "FDE Aela.esp": {
+        "GLOB": 31
+      },
+      "FDE Rayya.esp": {
+        "GLOB": 8
+      },
+      "FDE Jenassa.esp": {
+        "GLOB": 35
+      },
+      "Requiem of the Green.esp": {
+        "RACE": 1
+      },
+      "FDE Mjoll - Auri.esp": {
+        "GLOB": 1
+      },
+      "018Auri.esp": {
+        "GLOB": 20,
+        "CLAS": 1,
+        "RACE": 1,
+        "MGEF": 2,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "Inigo Official Patch SE (ESPFE).esp": {
+        "PERK": 1
+      },
+      "Katana Raven LoreCut - Reqtificated.esp": {
+        "GLOB": 1,
+        "RACE": 1,
+        "MGEF": 5,
+        "ENCH": 3,
+        "SPEL": 32
+      },
+      "FDE Mjoll Remiel.esp": {
+        "GLOB": 1
+      },
+      "Inigo.esp": {
+        "CLAS": 1,
+        "FACT": 8,
+        "RACE": 1,
+        "MGEF": 6,
+        "ENCH": 2,
+        "SPEL": 2,
+        "FLST": 2
+      },
+      "Press E to heal Gore.esp": {
+        "FLST": 2
+      },
+      "Gore - SaSEC.esp": {
+        "GLOB": 1
+      },
+      "GORE.esp": {
+        "GLOB": 251,
+        "FACT": 8,
+        "RACE": 1,
+        "MGEF": 12,
+        "SPEL": 5,
+        "FLST": 2
+      },
+      "HLIORemi.esp": {
+        "GLOB": 158,
+        "CLAS": 1,
+        "FACT": 12,
+        "RACE": 3,
+        "MGEF": 20,
+        "ENCH": 1,
+        "SPEL": 17,
+        "FLST": 6,
+        "PERK": 4
+      },
+      "00Taliesin.esp": {
+        "GLOB": 4,
+        "CLAS": 1,
+        "FACT": 2,
+        "RACE": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Katana.esp": {
+        "GLOB": 120,
+        "CLAS": 4,
+        "FACT": 10,
+        "RACE": 2,
+        "MGEF": 82,
+        "ENCH": 3,
+        "SPEL": 84,
+        "FLST": 11,
+        "PERK": 7
+      },
+      "Aurea Umbra - SerketHetyt's Taliesin Overhaul.esp": {
+        "FLST": 2
+      },
+      "GuardTalesFollowerMod.esp": {
+        "GLOB": 1,
+        "CLAS": 1,
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "HSFBabyDragon.esp": {
+        "GLOB": 5,
+        "RACE": 5,
+        "MGEF": 6,
+        "SPEL": 9,
+        "FLST": 1
+      },
+      "InsanitySilverBow.esp": {
+        "FLST": 3
+      },
+      "Noct_LostRelicsOfTamriel.esp": {
+        "MGEF": 6,
+        "ENCH": 8,
+        "SPEL": 1
+      },
+      "UniqueBows.esp": {
+        "MGEF": 16,
+        "ENCH": 10
+      },
+      "PrvtIRoyalArmory.esp": {
+        "MGEF": 15,
+        "ENCH": 25,
+        "SPEL": 7,
+        "FLST": 1,
+        "PERK": 4
+      },
+      "Vampire Hunter's Stake.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "SkyrimSpearMechanic.esp": {
+        "MGEF": 11,
+        "SPEL": 11,
+        "FLST": 4,
+        "PERK": 3
+      },
+      "Unique Thane Weapons.esp": {
+        "MGEF": 6,
+        "ENCH": 12
+      },
+      "Scholar's Sting.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "mihailcrescent.esp": {
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "FGCWyrmheart.esp": {
+        "MGEF": 6,
+        "SPEL": 2
+      },
+      "Arcane Arsenal.esp": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "NewArmoury.esp": {
+        "GLOB": 10,
+        "MGEF": 33,
+        "ENCH": 26,
+        "SPEL": 13,
+        "FLST": 11,
+        "PERK": 1
+      },
+      "Sandwiches of Skyrim.esp": {
+        "GLOB": 1
+      },
+      "FGCSamTheBattlePan.esp": {
+        "MGEF": 2,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "FGCGleamstrike-ESL-AAVersion.esp": {
+        "MGEF": 23,
+        "ENCH": 4,
+        "SPEL": 12,
+        "PERK": 4
+      },
+      "FGCDraugrslayerGreatsword.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "FGCVerdantAxe.esp": {
+        "MGEF": 18,
+        "ENCH": 2,
+        "SPEL": 3
+      },
+      "FGCGreatmaceOfBlasphemy.esp": {
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "FGCVolkiharRelicSword.esp": {
+        "MGEF": 6,
+        "SPEL": 6,
+        "PERK": 2
+      },
+      "Karasumi's Leviathan Axe.esp": {
+        "ENCH": 1
+      },
+      "Granite Maul SE - Johnskyrim.esp": {
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "Spikey.esp": {
+        "MGEF": 3,
+        "ENCH": 2,
+        "SPEL": 1
+      },
+      "Grand Cleaver.esp": {
+        "ENCH": 1
+      },
+      "ZD_RB_Daggers.esp": {
+        "ENCH": 2
+      },
+      "RiilungolzStaff AA Edition.esp": {
+        "MGEF": 11,
+        "ENCH": 2
+      },
+      "Ice Breath.esp": {
+        "ENCH": 1
+      },
+      "Timeless spear.esp": {
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "WidowmakerBattleaxe_SE_ENG.esp": {
+        "MGEF": 1,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "Use Telekinesis on Traps.esp": {
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "FGCDrakeKnightSwordReborn.esp": {
+        "MGEF": 6,
+        "SPEL": 8,
+        "PERK": 5
+      },
+      "Requiem - Wizarding Traversal - Magic Redone Patch.esp": {
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "WizardingTraversal.esl": {
+        "CLAS": 1,
+        "RACE": 1,
+        "MGEF": 11,
+        "SPEL": 10,
+        "PERK": 1
+      },
+      "Lightpower.esl": {
+        "MGEF": 35,
+        "ENCH": 1,
+        "SPEL": 15
+      },
+      "Requiem - Holy Templar Magic - Magic Redone Patch.esp": {
+        "MGEF": 29,
+        "SPEL": 13
+      },
+      "RunemasterMagic.esl": {
+        "MGEF": 60,
+        "ENCH": 16,
+        "SPEL": 29
+      },
+      "KittySpellPack02.esl": {
+        "CLAS": 1,
+        "RACE": 1,
+        "MGEF": 25,
+        "SPEL": 17,
+        "PERK": 1
+      },
+      "WildwakerMagic.esl": {
+        "MGEF": 23,
+        "SPEL": 17,
+        "PERK": 1
+      },
+      "Wildwaker Magic - Requiem Magic Redone Patch.esp": {
+        "MGEF": 23,
+        "SPEL": 16
+      },
+      "Frostbitten Dreams - Magic Redone Patch.esp": {
+        "MGEF": 13,
+        "SPEL": 10
+      },
+      "IceBloomNightmare.esl": {
+        "RACE": 1,
+        "MGEF": 22,
+        "SPEL": 14,
+        "PERK": 2
+      },
+      "Requiem - Dark Hierophant Magic - Magic Redone Patch.esp": {
+        "MGEF": 33,
+        "SPEL": 18
+      },
+      "Ghostlight.esl": {
+        "MGEF": 33,
+        "ENCH": 1,
+        "SPEL": 20
+      },
+      "AncientBloodII.esl": {
+        "CLAS": 1,
+        "RACE": 5,
+        "MGEF": 69,
+        "SPEL": 51,
+        "PERK": 3
+      },
+      "Ancient Blood - Magic Redone Patch.esp": {
+        "RACE": 5,
+        "MGEF": 36,
+        "SPEL": 51
+      },
+      "Requiem - Obscure Magic - Magic Redone Patch.esp": {
+        "MGEF": 31,
+        "ENCH": 1,
+        "SPEL": 18
+      },
+      "Shockwave.esl": {
+        "FACT": 1,
+        "RACE": 1,
+        "MGEF": 20,
+        "SPEL": 13,
+        "PERK": 6
+      },
+      "Requiem - Sonic Mage - Magic Redone Patch.esp": {
+        "MGEF": 18,
+        "SPEL": 7
+      },
+      "KittySpellPack01.esl": {
+        "MGEF": 31,
+        "ENCH": 1,
+        "SPEL": 18,
+        "PERK": 1
+      },
+      "Supernova.esl": {
+        "MGEF": 15,
+        "SPEL": 9
+      },
+      "Requiem - Constellation Magic - Magic Redone Patch.esp": {
+        "MGEF": 13,
+        "SPEL": 5
+      },
+      "Aqua.esl": {
+        "RACE": 1,
+        "MGEF": 21,
+        "SPEL": 15,
+        "PERK": 3
+      },
+      "Requiem - Abyssal Tides - Magic Redone Patch.esp": {
+        "MGEF": 17,
+        "SPEL": 12
+      },
+      "Runemaster Magic - Magic Redone Patch.esp": {
+        "MGEF": 60,
+        "SPEL": 9,
+        "PERK": 3
+      },
+      "DEST_ISL.esp": {
+        "GLOB": 14,
+        "FLST": 2
+      },
+      "OcatosRecitalCostsMagicka.esp": {
+        "MGEF": 2
+      },
+      "Triumvirate - Magic Redone Patch.esp": {
+        "RACE": 7,
+        "MGEF": 105,
+        "ENCH": 31,
+        "SPEL": 101,
+        "PERK": 5
+      },
+      "survival_spells.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Requiem - Survival Spells.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Magicka Surge.esp": {
+        "GLOB": 3,
+        "MGEF": 17,
+        "SPEL": 12,
+        "PERK": 1
+      },
+      "Spell Organizer.esp": {
+        "FLST": 2
+      },
+      "NightingalePowersRedone.esp": {
+        "MGEF": 6,
+        "SPEL": 5
+      },
+      "DeadByDining.esp": {
+        "GLOB": 8,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "SpellAbsorptionRework.esp": {
+        "MGEF": 6,
+        "SPEL": 5,
+        "PERK": 5
+      },
+      "SpellAbsorptionRework_75Cap.esp": {
+        "PERK": 2
+      },
+      "Apocalypse - Requiem & Magic Redone Patch.esp": {
+        "GLOB": 2,
+        "RACE": 6,
+        "MGEF": 246,
+        "ENCH": 65,
+        "SPEL": 197,
+        "FLST": 71,
+        "PERK": 15
+      },
+      "Triumvirate - Mage Archetypes.esp": {
+        "GLOB": 31,
+        "CLAS": 1,
+        "FACT": 18,
+        "RACE": 16,
+        "MGEF": 362,
+        "ENCH": 31,
+        "SPEL": 185,
+        "FLST": 23,
+        "PERK": 11
+      },
+      "SubclassesOfSkyrim.esp": {
+        "GLOB": 6,
+        "MGEF": 90,
+        "SPEL": 61,
+        "FLST": 1,
+        "PERK": 53
+      },
+      "SubclassesOfSkyrim_ADXP_Patch.esp": {
+        "MGEF": 2,
+        "SPEL": 1,
+        "PERK": 2
+      },
+      "StaticSkillLeveling.esp": {
+        "GLOB": 11
+      },
+      "Severin Manor Has A Price.esp": {
+        "GLOB": 3
+      },
+      "Fish Anywhere.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "CC_Backpacks_Rebalanced.esl": {
+        "ENCH": 16
+      },
+      "Sell Stones of Barenziah.esp": {
+        "GLOB": 2
+      },
+      "SkyrimsGotTalent - Free Movement.esp": {
+        "GLOB": 1,
+        "MGEF": 3
+      },
+      "Skyrim Got Talent - UI.esp": {
+        "FLST": 3
+      },
+      "SkyrimsGotTalent-Bards.esp": {
+        "GLOB": 9,
+        "FACT": 1,
+        "MGEF": 15,
+        "SPEL": 3,
+        "FLST": 3
+      },
+      "SkyrimsGotTalent_AnimAddon.esp": {
+        "GLOB": 1,
+        "MGEF": 3
+      },
+      "Apocalypse - Magic of Skyrim.esp": {
+        "GLOB": 98,
+        "CLAS": 2,
+        "FACT": 2,
+        "RACE": 9,
+        "MGEF": 717,
+        "ENCH": 65,
+        "SPEL": 404,
+        "FLST": 133,
+        "PERK": 46
+      },
+      "trade & barter.esp": {
+        "GLOB": 75,
+        "FLST": 1,
+        "PERK": 57
+      },
+      "DiplomaticDragons.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Beneficial Speech Checks.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "LittleLessons.esp": {
+        "GLOB": 2,
+        "MGEF": 20,
+        "SPEL": 15,
+        "PERK": 12
+      },
+      "Nocturnal's Favor.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Temper&Recharge.esp": {
+        "FLST": 8
+      },
+      "eve - critical damage fixes for perk mods.esp": {
+        "MGEF": 3,
+        "SPEL": 1,
+        "PERK": 6
+      },
+      "Dynamic Activation Key.esp": {
+        "GLOB": 3
+      },
+      "Atronach Forge Expanded.esp": {
+        "GLOB": 1,
+        "MGEF": 5,
+        "ENCH": 6,
+        "FLST": 33
+      },
+      "suspiciouscityguards.esp": {
+        "GLOB": 9,
+        "MGEF": 6,
+        "SPEL": 6,
+        "PERK": 1
+      },
+      "Dynamic Activation Key - Addons Collection.esp": {
+        "GLOB": 7,
+        "FLST": 3,
+        "PERK": 20
+      },
+      "FollowerInteractWithGestures.esp": {
+        "GLOB": 2,
+        "FACT": 2
+      },
+      "Take a Nap.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "ArrowsIgnite.esp": {
+        "MGEF": 6,
+        "SPEL": 4,
+        "FLST": 1
+      },
+      "Alchemical Appraisal Services.esp": {
+        "FLST": 2
+      },
+      "SimpleFunctionalApiary.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Afterlife.esp": {
+        "GLOB": 7,
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Neutral Whiterun Guards.esp": {
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 1,
+        "FLST": 2
+      },
+      "Guards Attack Hostiles.esp": {
+        "FACT": 14
+      },
+      "RealisticRoomRental-Basic.esp": {
+        "GLOB": 20
+      },
+      "Xtended Stay.esp": {
+        "GLOB": 7,
+        "FLST": 1
+      },
+      "Aetherium Forge Destroys Items.esp": {
+        "GLOB": 26,
+        "MGEF": 2,
+        "SPEL": 1,
+        "FLST": 3
+      },
+      "AmuletEvangelism.esp": {
+        "GLOB": 1,
+        "FLST": 6
+      },
+      "Scared of Shootings.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "Footprints.esp": {
+        "GLOB": 8,
+        "MGEF": 44,
+        "SPEL": 36,
+        "FLST": 7
+      },
+      "C.O.I.N.esp": {
+        "GLOB": 2,
+        "FLST": 3
+      },
+      "AI Overhaul.esp": {
+        "FACT": 3,
+        "FLST": 4
+      },
+      "SL99Exchanger.esp": {
+        "GLOB": 2,
+        "FACT": 11,
+        "MGEF": 4
+      },
+      "Simple Fishing Overhaul.esp": {
+        "GLOB": 26,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "WaitCarriageInns.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Bring Meeko to Lod.esp": {
+        "GLOB": 2
+      },
+      "JPNocturnalMoths.esp": {
+        "GLOB": 1,
+        "FLST": 1
+      },
+      "Sit on Stuff - Take a Nap Patch.esp": {
+        "PERK": 1
+      },
+      "Sit on Stuff.esp": {
+        "FLST": 2
+      },
+      "Give Beggars Food.esp": {
+        "GLOB": 1
+      },
+      "Animals Swim.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "VampireFeedingTweaks.esp": {
+        "GLOB": 4,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "VampireLordsCanFly.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Undeath Litch Can Fly.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "SeranasTombBloodCurse.esp": {
+        "MGEF": 3,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "HuntersLoot.esp": {
+        "MGEF": 1,
+        "SPEL": 4
+      },
+      "Hunters Sell Fish And More Animal Parts.esp": {
+        "FACT": 1,
+        "FLST": 2
+      },
+      "Hunters Sell Fish And More Animal Parts - CC Fishing.esp": {
+        "FLST": 1
+      },
+      "VampiresHaveClaws.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "NPCs_Wear_Amulets_Of_Mara.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "SkyforgeImmersionAddon.esp": {
+        "MGEF": 4,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "The Gildergreen Grows.esp": {
+        "GLOB": 4,
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "Assassin of Old - Remastered.esp": {
+        "RACE": 1
+      },
+      "Better Difficulty Options.esp": {
+        "GLOB": 2,
+        "PERK": 5
+      },
+      "SetDifficultyGlobal.esp": {
+        "GLOB": 3
+      },
+      "Survival Mode Improved Embers XD Rest By Campfire - Kyne's Devotion Patch.esp": {
+        "FLST": 1
+      },
+      "Camping Expansion.esp": {
+        "GLOB": 11,
+        "MGEF": 3
+      },
+      "Camping Expansion - Wintersun shrines.esp": {
+        "GLOB": 8,
+        "FLST": 1
+      },
+      "SurvivalModeImproved.esp": {
+        "GLOB": 58,
+        "MGEF": 34,
+        "SPEL": 69,
+        "FLST": 6,
+        "PERK": 3
+      },
+      "FastTravelCost.esp": {
+        "GLOB": 4
+      },
+      "AlchEquipment - complex alembic + retort.esp": {
+        "GLOB": 1
+      },
+      "AlchEquipment - Stronger Master Equipment.esp": {
+        "PERK": 3
+      },
+      "More Sensible Quartermasters.esp": {
+        "FACT": 2
+      },
+      "AlchEquipment.esp": {
+        "GLOB": 8,
+        "MGEF": 6,
+        "SPEL": 2,
+        "PERK": 6
+      },
+      "Simple Hunting Overhaul.esp": {
+        "GLOB": 26,
+        "FLST": 11,
+        "PERK": 1
+      },
+      "ImmersiveHunting.esp": {
+        "GLOB": 47,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "Dynamic Weather And Time Based Detection.esp": {
+        "MGEF": 4,
+        "SPEL": 3
+      },
+      "JustBlood.esp": {
+        "MGEF": 4,
+        "SPEL": 1
+      },
+      "Smart_NPC_Potions.esp": {
+        "GLOB": 6,
+        "MGEF": 3,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "DynamicMercenaryFees.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "alchemy helper.esp": {
+        "GLOB": 1
+      },
+      "Waterskin.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "PERK": 1
+      },
+      "Alchemy Requires Bottles Redux.esp": {
+        "FLST": 1
+      },
+      "CameraSwitchDuringDialogue.esp": {
+        "GLOB": 1
+      },
+      "Portable Enchanting.esp": {
+        "PERK": 1
+      },
+      "NPCs Take Cover.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Portable Cooking.esp": {
+        "GLOB": 1,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "Respawn - Death Overhaul.esp": {
+        "SPEL": 2,
+        "FLST": 8
+      },
+      "Shouts of Stallholders.esp": {
+        "FLST": 1
+      },
+      "Naked Comments Overhaul.esp": {
+        "GLOB": 2,
+        "FLST": 21
+      },
+      "Collision Dialogue Overhaul.esp": {
+        "GLOB": 3,
+        "FLST": 4
+      },
+      "Nightmares of Skyrim.esp": {
+        "GLOB": 1,
+        "FLST": 3
+      },
+      "Andrealphus Scene Tweaks.esp": {
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "moretodo.esp": {
+        "GLOB": 4,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "moretosaycityguards.esp": {
+        "FLST": 1
+      },
+      "moretosaygeneric.esp": {
+        "FLST": 4
+      },
+      "moretosayfalkreath.esp": {
+        "GLOB": 3,
+        "FLST": 1
+      },
+      "moretosaywinterhold.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "Racial Body Morphs.esp": {
+        "RACE": 26
+      },
+      "Guard Dialogue Overhaul.esp": {
+        "GLOB": 8
+      },
+      "Dremora Lines Expansion.esp": {
+        "PERK": 1
+      },
+      "Falmer Servant Lines Expansion.esp": {
+        "FLST": 1
+      },
+      "FSLE - More Locations.esp": {
+        "FACT": 1
+      },
+      "FSLE - Unique Abilities.esp": {
+        "MGEF": 1,
+        "ENCH": 3,
+        "SPEL": 1
+      },
+      "Extended Bandit Dialogue.esp": {
+        "GLOB": 112
+      },
+      "NPCsReactToFrenzy.esp": {
+        "FLST": 6
+      },
+      "Extended Guard Dialogue.esp": {
+        "GLOB": 168
+      },
+      "NPCs React To Invisibility - Bow of Shadows Patch.esp": {
+        "MGEF": 2
+      },
+      "NPCs React To Invisibility.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 2
+      },
+      "PirateBarks.esp": {
+        "FLST": 1
+      },
+      "NPCs React To Necromancy.esp": {
+        "GLOB": 1
+      },
+      "Companions at Mirmulnir.esp": {
+        "GLOB": 1,
+        "FLST": 2
+      },
+      "Companions Dialogue Bundle.esp": {
+        "GLOB": 2,
+        "SPEL": 1
+      },
+      "bloodbond - alternative player dialogue.esp": {
+        "MGEF": 4,
+        "SPEL": 2
+      },
+      "VampiresHaveClaws - Player Version.esp": {
+        "RACE": 20
+      },
+      "bloodbond.esp": {
+        "GLOB": 1,
+        "MGEF": 5,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Hunters Mark Animal Den on Map.esp": {
+        "GLOB": 11,
+        "FLST": 2
+      },
+      "GoodnightSkyrim.esp": {
+        "FLST": 4
+      },
+      "mihailrooster.esp": {
+        "RACE": 1
+      },
+      "mihailmammothbaby.esp": {
+        "RACE": 1
+      },
+      "mihailchicks.esp": {
+        "RACE": 1
+      },
+      "mihailcliffracer_FLY.esp": {
+        "RACE": 1,
+        "MGEF": 3,
+        "SPEL": 4
+      },
+      "mihailgiantfamily.esp": {
+        "RACE": 3
+      },
+      "Extended Encounters.esp": {
+        "GLOB": 358,
+        "FACT": 6
+      },
+      "mihailnixcreatures.esp": {
+        "FACT": 1,
+        "RACE": 1,
+        "MGEF": 2,
+        "SPEL": 3
+      },
+      "mihailkagoutiandguar.esp": {
+        "FACT": 1,
+        "RACE": 4,
+        "MGEF": 1,
+        "SPEL": 3
+      },
+      "mihailringneckedpheasant.esp": {
+        "RACE": 1
+      },
+      "mihailscutler.esp": {
+        "RACE": 1
+      },
+      "mihailundeadwerewolf.esp": {
+        "RACE": 2,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "mihailwraiths.esp": {
+        "RACE": 1,
+        "MGEF": 5,
+        "SPEL": 5
+      },
+      "mihailudefryktereplacer.esp": {
+        "RACE": 2,
+        "MGEF": 2,
+        "SPEL": 3
+      },
+      "mihailhousecat - Immersive Interactions patch.esp": {
+        "FLST": 1
+      },
+      "mihailhousecat.esp": {
+        "RACE": 1
+      },
+      "mihailmudcrabmerchant.esp": {
+        "FACT": 1,
+        "RACE": 1
+      },
+      "mihailfrogs.esp": {
+        "RACE": 1
+      },
+      "mihailtrollcub.esp": {
+        "RACE": 1,
+        "SPEL": 2
+      },
+      "Zeus.esp": {
+        "RACE": 1
+      },
+      "mihailseagiants.esp": {
+        "RACE": 5,
+        "MGEF": 6,
+        "ENCH": 2,
+        "SPEL": 9
+      },
+      "WormpleHagravens.esp": {
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "spookier ghosts.esp": {
+        "MGEF": 3,
+        "SPEL": 12
+      },
+      "FireTonguedDaedroth_Integration.esp": {
+        "RACE": 2,
+        "MGEF": 2,
+        "SPEL": 3
+      },
+      "tdgsseGoblinsAroundSkyrim.esl": {
+        "GLOB": 8,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "BIRDS.esl": {
+        "RACE": 2
+      },
+      "Shalks.esp": {
+        "FACT": 1,
+        "RACE": 2,
+        "MGEF": 2,
+        "SPEL": 4
+      },
+      "1Minotaurs.esp": {
+        "RACE": 2
+      },
+      "Alit.esp": {
+        "FACT": 1,
+        "RACE": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Shroom Beetles.esp": {
+        "FACT": 1,
+        "RACE": 2,
+        "MGEF": 4
+      },
+      "Vvardvark.esp": {
+        "RACE": 1
+      },
+      "Khajiit Caravan Mules.esp": {
+        "CLAS": 1,
+        "FACT": 3,
+        "RACE": 2
+      },
+      "StridingSiltStrider.esl": {
+        "FLST": 1
+      },
+      "Crowded Streets.esp": {
+        "GLOB": 23
+      },
+      "DEER.esp": {
+        "RACE": 3
+      },
+      "melyfairy.esl": {
+        "RACE": 1,
+        "MGEF": 1,
+        "SPEL": 2
+      },
+      "CompanionsTweaks.esp": {
+        "SPEL": 1
+      },
+      "Alternate Perspective -- New Beginnings.esp": {
+        "FACT": 1,
+        "MGEF": 1,
+        "FLST": 1
+      },
+      "AP - Missile Additional Starts.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "CollegeEntry.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "SPEL": 2,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "DragonHunting.esp": {
+        "GLOB": 3,
+        "MGEF": 4,
+        "SPEL": 3,
+        "FLST": 1,
+        "PERK": 4
+      },
+      "TomeTrials.esp": {
+        "FACT": 1,
+        "FLST": 4
+      },
+      "AlternatePerspective.esp": {
+        "GLOB": 4,
+        "FACT": 11,
+        "RACE": 1,
+        "MGEF": 5,
+        "ENCH": 1,
+        "SPEL": 4,
+        "FLST": 5,
+        "PERK": 2
+      },
+      "TasteOfDeath_Addon_Dialogue.esp": {
+        "FACT": 1,
+        "FLST": 1
+      },
+      "TasteOfDeath_Addon_Boss.esp": {
+        "MGEF": 7,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 2
+      },
+      "TasteOfDeath_Addon_RingCurse_SMI.esp": {
+        "MGEF": 4
+      },
+      "HarvestYourFriendsBlood.esp": {
+        "GLOB": 1
+      },
+      "HarvestYourBlood.esp": {
+        "GLOB": 1
+      },
+      "Clue Scrolls In Skyrim.esp": {
+        "GLOB": 17,
+        "MGEF": 4,
+        "SPEL": 2,
+        "FLST": 7
+      },
+      "Additional Contracts For the Dark Brotherhood.esp": {
+        "GLOB": 3,
+        "MGEF": 4,
+        "SPEL": 1
+      },
+      "BoethiahCalling_AlternativeQuest.esp": {
+        "CLAS": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "TheChoiceIsYours.esp": {
+        "GLOB": 3,
+        "MGEF": 5,
+        "ENCH": 2,
+        "SPEL": 2,
+        "FLST": 1,
+        "PERK": 2
+      },
+      "World Eater's Influence.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "ImmersiveMiraakDifficulty.esp": {
+        "MGEF": 3,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "LeapsOfFaith.esp": {
+        "GLOB": 2,
+        "PERK": 1
+      },
+      "BuyableGoldenClaw.esp": {
+        "GLOB": 1,
+        "FLST": 1
+      },
+      "SaveTheIcerunner.esp": {
+        "GLOB": 3,
+        "FACT": 1
+      },
+      "Destroy the Dark Brotherhood - Quest Expansion.esp": {
+        "GLOB": 1
+      },
+      "Infiltration - Quest Expansion.esp": {
+        "FACT": 2
+      },
+      "The Heart Of Dibella - Quest Expansion.esp": {
+        "GLOB": 2,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Caught Red Handed - Quest Expansion.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Innocence Lost - Quest Expansion.esp": {
+        "GLOB": 4,
+        "MGEF": 2,
+        "SPEL": 2,
+        "FLST": 1
+      },
+      "College Of Winterhold - Quest Expansion.esp": {
+        "GLOB": 6,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "TheOnlyCureQuestExpansion.esp": {
+        "GLOB": 1,
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "DestroyTheDarkBrotherhoodEnhanced.esp": {
+        "GLOB": 48,
+        "FACT": 10,
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 3
+      },
+      "The Whispering Door - Quest Expansion.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "HouseOfHorrorsQuestExpansion.esp": {
+        "GLOB": 3,
+        "SPEL": 2,
+        "FLST": 1
+      },
+      "EbonyBladeCurse_Requiem.esp": {
+        "RACE": 1,
+        "SPEL": 1
+      },
+      "EbonyBladeCurse.esp": {
+        "RACE": 1,
+        "MGEF": 2,
+        "SPEL": 3
+      },
+      "Brawling - No Hitting Bystanders.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Taunt Your Enemies.esp": {
+        "GLOB": 3,
+        "MGEF": 3,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Remote Interactions.esp": {
+        "GLOB": 2,
+        "MGEF": 3,
+        "SPEL": 2
+      },
+      "CWRepairs.esp": {
+        "GLOB": 6
+      },
+      "Listen.esp": {
+        "GLOB": 3,
+        "FLST": 5
+      },
+      "RisingAtDawnQuestOverhaul.esp": {
+        "MGEF": 1
+      },
+      "Forlorn Hope.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "FLST": 1
+      },
+      "SeranaCureQuestPlus.esp": {
+        "GLOB": 2
+      },
+      "TypographyTraining.esp": {
+        "GLOB": 1
+      },
+      "dvEdda.esp": {
+        "GLOB": 2,
+        "FACT": 1
+      },
+      "MorihausRefugeStandalone.esp": {
+        "FACT": 1,
+        "RACE": 2,
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "Poetic Duels.esp": {
+        "GLOB": 6,
+        "FLST": 1
+      },
+      "ConditionalMaxPickpocketChance.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Respectful Ravyn.esp": {
+        "GLOB": 1
+      },
+      "olenveldfixpack.esp": {
+        "SPEL": 3
+      },
+      "Knight of the North.esp": {
+        "GLOB": 9,
+        "MGEF": 8,
+        "SPEL": 7,
+        "FLST": 2
+      },
+      "Belethor's Sister.esp": {
+        "GLOB": 6
+      },
+      "Unmasking Sybille.esp": {
+        "FACT": 1
+      },
+      "Revealing Rune.esp": {
+        "GLOB": 1
+      },
+      "Finding_VelehkSain.esp": {
+        "MGEF": 5,
+        "ENCH": 2,
+        "FLST": 4
+      },
+      "Skyrim On Skooma.esp": {
+        "GLOB": 6,
+        "RACE": 8,
+        "MGEF": 45,
+        "ENCH": 4,
+        "SPEL": 10,
+        "FLST": 7,
+        "PERK": 2
+      },
+      "Cidhna Mine Expanded.esp": {
+        "MGEF": 7,
+        "SPEL": 5
+      },
+      "TheGiftOfSaturalia_CC_Patch.esp": {
+        "GLOB": 1
+      },
+      "TheGiftOfSaturalia_SGT_Patch.esp": {
+        "GLOB": 1
+      },
+      "TheGiftOfSaturalia_Skooma_Patch.esp": {
+        "GLOB": 1
+      },
+      "MoreToDoSoulCairn.esp": {
+        "FACT": 1,
+        "SPEL": 1
+      },
+      "TheGiftofSaturalia.esp": {
+        "GLOB": 4,
+        "FACT": 1,
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 5,
+        "FLST": 3
+      },
+      "Ascend - Hidden Peaks of Skyrim.esp": {
+        "GLOB": 4,
+        "MGEF": 7,
+        "ENCH": 2,
+        "SPEL": 4,
+        "PERK": 2
+      },
+      "ksws04_quest.esp": {
+        "GLOB": 32,
+        "FACT": 4,
+        "FLST": 2
+      },
+      "RuneDreamstrides.esp": {
+        "FACT": 1,
+        "RACE": 4,
+        "MGEF": 10,
+        "ENCH": 3,
+        "SPEL": 13
+      },
+      "Siege at Icemoth.esp": {
+        "GLOB": 3,
+        "MGEF": 11,
+        "ENCH": 4,
+        "SPEL": 8,
+        "PERK": 1
+      },
+      "FalkreathShades.esp": {
+        "FACT": 5,
+        "RACE": 10,
+        "MGEF": 40,
+        "ENCH": 3,
+        "SPEL": 37,
+        "PERK": 1
+      },
+      "Fists of Fury - Skyrim.esp": {
+        "GLOB": 9,
+        "CLAS": 2,
+        "FACT": 4,
+        "MGEF": 13,
+        "ENCH": 1,
+        "SPEL": 8,
+        "PERK": 1
+      },
+      "Requiem - Heart of the Reach.esp": {
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "HeartOfTheReach.esp": {
+        "GLOB": 4,
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "evgSIRENROOT.esm": {
+        "GLOB": 36,
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "Meridia.esp": {
+        "FACT": 23,
+        "MGEF": 3,
+        "ENCH": 5,
+        "SPEL": 5
+      },
+      "Requiem - Tools of Kagrenac Patch.esp": {
+        "RACE": 14,
+        "ENCH": 3
+      },
+      "LegendsOfAetherium.esp": {
+        "MGEF": 17,
+        "ENCH": 18,
+        "SPEL": 2,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "Tools of Kagrenac.esp": {
+        "GLOB": 25,
+        "FACT": 5,
+        "RACE": 14,
+        "MGEF": 120,
+        "ENCH": 13,
+        "SPEL": 85,
+        "FLST": 4,
+        "PERK": 4
+      },
+      "NightmarePlane.esp": {
+        "FACT": 1,
+        "MGEF": 17,
+        "ENCH": 20,
+        "SPEL": 4
+      },
+      "Missives - Wyrmstooth.esp": {
+        "GLOB": 31,
+        "FACT": 4,
+        "FLST": 4
+      },
+      "JELWyrmstoothCausePatch.esp": {
+        "FLST": 1
+      },
+      "Requiem - Wyrmstooth.esp": {
+        "GLOB": 1,
+        "RACE": 2,
+        "MGEF": 4,
+        "ENCH": 5,
+        "SPEL": 8
+      },
+      "Olenveld.esp": {
+        "GLOB": 61,
+        "FACT": 9,
+        "RACE": 16,
+        "MGEF": 29,
+        "SPEL": 22,
+        "FLST": 23,
+        "PERK": 1
+      },
+      "Journey to Baan Malur.esp": {
+        "FACT": 122,
+        "RACE": 45,
+        "MGEF": 80,
+        "ENCH": 15,
+        "SPEL": 73,
+        "FLST": 107
+      },
+      "Dwarfsphere.esp": {
+        "GLOB": 8,
+        "CLAS": 1,
+        "FACT": 28,
+        "RACE": 27,
+        "MGEF": 32,
+        "ENCH": 2,
+        "SPEL": 18,
+        "FLST": 56,
+        "PERK": 2
+      },
+      "Wyrmstooth.esp": {
+        "GLOB": 27,
+        "FACT": 38,
+        "RACE": 2,
+        "MGEF": 27,
+        "ENCH": 10,
+        "SPEL": 34,
+        "FLST": 16
+      },
+      "DwarfsphereImprovedPatch.esp": {
+        "MGEF": 4,
+        "SPEL": 4
+      },
+      "ProjectAHO - StartWhenYouWant.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "ClockworkInterestingInhabitants.esp": {
+        "FACT": 1
+      },
+      "ClockworkWoodWhimWR.esp": {
+        "GLOB": 20
+      },
+      "ClockworkBugFixes.esp": {
+        "RACE": 2,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Requiem - DwarfSphere.esp": {
+        "RACE": 25,
+        "SPEL": 8
+      },
+      "ECSS - Staff of Sheogorath Patch.esp": {
+        "GLOB": 4,
+        "MGEF": 5,
+        "ENCH": 3,
+        "SPEL": 1
+      },
+      "Requiem - Clockwork.esp": {
+        "RACE": 2,
+        "SPEL": 1
+      },
+      "Requiem - ECSS.esp": {
+        "RACE": 11,
+        "MGEF": 3,
+        "ENCH": 3,
+        "SPEL": 22,
+        "PERK": 1
+      },
+      "Trad_SaintsSeducers025Curios037_Requiem_Patch.esp": {
+        "RACE": 5,
+        "MGEF": 27,
+        "ENCH": 1,
+        "SPEL": 27,
+        "PERK": 7,
+        "AVIF": 1
+      },
+      "Forgotten City Music Fix.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Clockwork.esp": {
+        "GLOB": 43,
+        "CLAS": 2,
+        "FACT": 4,
+        "RACE": 2,
+        "MGEF": 8,
+        "ENCH": 2,
+        "SPEL": 15,
+        "FLST": 50
+      },
+      "ForgottenCity.esp": {
+        "FACT": 16,
+        "RACE": 3,
+        "MGEF": 17,
+        "ENCH": 11,
+        "SPEL": 6,
+        "FLST": 4
+      },
+      "UndeathFixes.esp": {
+        "GLOB": 17,
+        "FACT": 2,
+        "RACE": 2,
+        "MGEF": 67,
+        "ENCH": 1,
+        "SPEL": 38,
+        "PERK": 13
+      },
+      "Undeath.esp": {
+        "GLOB": 2,
+        "FACT": 4,
+        "RACE": 3,
+        "MGEF": 61,
+        "ENCH": 2,
+        "SPEL": 45,
+        "PERK": 8
+      },
+      "Haem Projects Goblands.esp": {
+        "GLOB": 4,
+        "FACT": 21,
+        "RACE": 16,
+        "MGEF": 12,
+        "ENCH": 2,
+        "SPEL": 14,
+        "FLST": 4
+      },
+      "Requiem - Undeath.esp": {
+        "RACE": 1,
+        "MGEF": 8,
+        "SPEL": 10,
+        "PERK": 1
+      },
+      "Missives - Gray Cowl Patch.esp": {
+        "GLOB": 31,
+        "FLST": 4
+      },
+      "Missile IED Meshes.esp": {
+        "GLOB": 2
+      },
+      "ImmersiveInteractions.esp": {
+        "GLOB": 43,
+        "MGEF": 3,
+        "SPEL": 1,
+        "FLST": 36,
+        "PERK": 1
+      },
+      "Taberu Animation - Stros M'Kai Rum Patch.esp": {
+        "MGEF": 1
+      },
+      "Taberu Animation - USSEP Patch.esp": {
+        "MGEF": 1
+      },
+      "TaberuAnimation.esp": {
+        "GLOB": 4,
+        "MGEF": 100,
+        "SPEL": 99
+      },
+      "Taberu Animation - Fishing Patch.esp": {
+        "MGEF": 47
+      },
+      "CraftingAnimations.esp": {
+        "GLOB": 13,
+        "FLST": 3
+      },
+      "LootingAnimations.esp": {
+        "GLOB": 6,
+        "FLST": 20,
+        "PERK": 1
+      },
+      "FirstPersonInteractions.esp": {
+        "GLOB": 28,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 25,
+        "PERK": 1
+      },
+      "FirstPersonInteractions_Addon.esp": {
+        "PERK": 1
+      },
+      "BOOB - Requiem.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "BOOB.esp": {
+        "GLOB": 4,
+        "MGEF": 35,
+        "ENCH": 2,
+        "SPEL": 33,
+        "PERK": 7
+      },
+      "WadeInWater.esp": {
+        "MGEF": 1,
+        "SPEL": 3
+      },
+      "WadeInWaterRedone.esp": {
+        "MGEF": 1
+      },
+      "evgCLAMBER.esp": {
+        "GLOB": 14
+      },
+      "Skyrim Extended Cut - Saints and Seducers.esp": {
+        "GLOB": 9,
+        "FACT": 15,
+        "RACE": 14,
+        "MGEF": 29,
+        "ENCH": 5,
+        "SPEL": 32,
+        "FLST": 13,
+        "PERK": 1
+      },
+      "EVGAnimatedTraversal.esl": {
+        "MGEF": 14,
+        "SPEL": 14
+      },
+      "Werewolf_New_Anim.esp": {
+        "MGEF": 9,
+        "SPEL": 7
+      },
+      "Gray Fox Cowl.esm": {
+        "GLOB": 28,
+        "CLAS": 3,
+        "FACT": 30,
+        "RACE": 5,
+        "MGEF": 41,
+        "ENCH": 14,
+        "SPEL": 34,
+        "FLST": 10,
+        "PERK": 1
+      },
+      "Centurion_OAR.esp": {
+        "MGEF": 4,
+        "SPEL": 5
+      },
+      "Giant_New_Anim.esl": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Stances - Dynamic Weapon Movesets SE.esp": {
+        "GLOB": 2,
+        "MGEF": 16,
+        "SPEL": 13,
+        "PERK": 3
+      },
+      "DynamicBlockHit.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Left Hand Equipment Overhaul.esp": {
+        "MGEF": 4,
+        "SPEL": 4
+      },
+      "Smooth Bow Animation.esp": {
+        "MGEF": 4,
+        "SPEL": 4
+      },
+      "Smooth Animation.esp": {
+        "MGEF": 17,
+        "SPEL": 16,
+        "PERK": 3
+      },
+      "ViolensExtension.esp": {
+        "PERK": 20
+      },
+      "Dismembering Framework.esm": {
+        "GLOB": 119,
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "DF - Official Humanoid Pack.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "VioLens SE.esp": {
+        "GLOB": 130,
+        "MGEF": 6,
+        "SPEL": 6,
+        "FLST": 23
+      },
+      "Precision.esp": {
+        "GLOB": 1,
+        "FLST": 1
+      },
+      "Bow Charge Plus.esp": {
+        "GLOB": 26,
+        "MGEF": 6,
+        "SPEL": 6
+      },
+      "Keytrace.esp": {
+        "MGEF": 4,
+        "SPEL": 4
+      },
+      "BowRapidCombo.esp": {
+        "GLOB": 1,
+        "MGEF": 46,
+        "SPEL": 22
+      },
+      "StopOnSlash.esp": {
+        "GLOB": 3
+      },
+      "AnimatedMountedCasting.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "TKDodgeAddon.esp": {
+        "GLOB": 7,
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 2
+      },
+      "NIBF_SkyPatcher.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Ultimate NPC Dodging.esp": {
+        "GLOB": 5,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Stoppage of Staggerlock.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "PowerShot.esp": {
+        "MGEF": 9,
+        "SPEL": 8
+      },
+      "SomeCreatureBehaviorBugFixes.esp": {
+        "RACE": 1
+      },
+      "TDM Target Lock Fix - Bristleback.esp": {
+        "RACE": 1
+      },
+      "Requiem - Pickpocket Rework.esp": {
+        "MGEF": 6,
+        "SPEL": 7,
+        "PERK": 13,
+        "AVIF": 1
+      },
+      "Requiem - Lockpicking Rework.esp": {
+        "MGEF": 20,
+        "SPEL": 13,
+        "PERK": 13,
+        "AVIF": 1
+      },
+      "Poisonous Bear Traps.esp": {
+        "FLST": 1,
+        "PERK": 1
+      },
+      "Requiem - Improved Spell Learning.esp": {
+        "GLOB": 1,
+        "FLST": 1
+      },
+      "Requiem - Customizable Spells Per Perk.esp": {
+        "GLOB": 5
+      },
+      "Requiem - Lurker Breath Attack Fix.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Requiem - Minor Arcana - Civil War.esp": {
+        "CLAS": 6,
+        "PERK": 3
+      },
+      "Requiem - Minor Arcana - Forsworn.esp": {
+        "CLAS": 3,
+        "SPEL": 6,
+        "PERK": 1
+      },
+      "Requiem - Minor Arcana - Roleplaying.esp": {
+        "GLOB": 2,
+        "CLAS": 8,
+        "FACT": 4,
+        "RACE": 1,
+        "MGEF": 12,
+        "ENCH": 2,
+        "SPEL": 8,
+        "PERK": 8
+      },
+      "Requiem - Minor Arcana SF Patch.esp": {
+        "MGEF": 1
+      },
+      "Requiem_Alduin_redone.esp": {
+        "FACT": 3,
+        "MGEF": 40,
+        "SPEL": 21,
+        "PERK": 3
+      },
+      "Requiem - Special Feats.esp": {
+        "MGEF": 59,
+        "SPEL": 40,
+        "PERK": 43,
+        "AVIF": 11
+      },
+      "Requiem-betterForgottenVale.esp": {
+        "RACE": 1,
+        "MGEF": 8,
+        "ENCH": 1,
+        "SPEL": 8
+      },
+      "Requiem_knockdown_patch.esp": {
+        "RACE": 7,
+        "MGEF": 5,
+        "SPEL": 7
+      },
+      "DisarmShoutReplacer.esp": {
+        "MGEF": 17,
+        "SPEL": 4
+      },
+      "Requiem_VampireCollection.esp": {
+        "MGEF": 32,
+        "ENCH": 4,
+        "SPEL": 74,
+        "PERK": 23
+      },
+      "Valthume Boss - Requiem.esp": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 1,
+        "PERK": 2
+      },
+      "Valthume Boss - Requiem - Magic Redone.esp": {
+        "ENCH": 1
+      },
+      "Fozars_Dragonborn_-_Requiem_Patch.esp": {
+        "GLOB": 3,
+        "CLAS": 29,
+        "FACT": 2,
+        "RACE": 23,
+        "MGEF": 130,
+        "ENCH": 61,
+        "SPEL": 174,
+        "FLST": 4,
+        "PERK": 47,
+        "AVIF": 1
+      },
+      "Volskygge Boss - Requiem.esp": {
+        "MGEF": 8,
+        "ENCH": 1,
+        "SPEL": 4,
+        "PERK": 4
+      },
+      "Requiem-general_NPC_tweaks.esp": {
+        "CLAS": 4,
+        "FACT": 1,
+        "RACE": 1,
+        "MGEF": 68,
+        "ENCH": 8,
+        "SPEL": 171,
+        "FLST": 2,
+        "PERK": 39
+      },
+      "Dustman's Cairn Boss - Requiem.esp": {
+        "MGEF": 4,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Shriekwind Bastion Boss - Requiem.esp": {
+        "CLAS": 1,
+        "MGEF": 4,
+        "SPEL": 3,
+        "PERK": 1
+      },
+      "Requiem - AR Special Feats Patch.esp": {
+        "AVIF": 1
+      },
+      "Requiem - Birthsigns Redone.esp": {
+        "MGEF": 27,
+        "SPEL": 21,
+        "PERK": 8
+      },
+      "Requiem - Alchemy Redone.esp": {
+        "MGEF": 75,
+        "ENCH": 7,
+        "SPEL": 1,
+        "PERK": 7,
+        "AVIF": 1
+      },
+      "Requiem - Stealth Redone.esp": {
+        "MGEF": 1,
+        "SPEL": 2,
+        "PERK": 23
+      },
+      "Requiem - Toggle Enchantment.esp": {
+        "MGEF": 2,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Requiem - Vendor tweaks.esp": {
+        "FACT": 6,
+        "MGEF": 2,
+        "SPEL": 2,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "Requiem - WAR Alchemy Redone Patch.esp": {
+        "MGEF": 5
+      },
+      "Requiem - WAR Stealth Redone Patch.esp": {
+        "PERK": 4
+      },
+      "Requiem - WAR Special Feats Patch.esp": {
+        "AVIF": 2
+      },
+      "Thief Experience.esp": {
+        "GLOB": 7
+      },
+      "Requiem - Weapons and Armor Redone.esp": {
+        "FACT": 1,
+        "MGEF": 85,
+        "ENCH": 12,
+        "SPEL": 51,
+        "FLST": 6,
+        "PERK": 84,
+        "AVIF": 4
+      },
+      "Requiem - MR Small Tweaks Patch.esp": {
+        "MGEF": 2,
+        "SPEL": 70
+      },
+      "Requiem - MR Special Feats Patch.esp": {
+        "PERK": 10,
+        "AVIF": 3
+      },
+      "Shadow Clone on Self.esp": {
+        "GLOB": 1,
+        "RACE": 1,
+        "MGEF": 6,
+        "SPEL": 5,
+        "FLST": 1,
+        "PERK": 10
+      },
+      "Elemental Seals.esp": {
+        "MGEF": 6,
+        "ENCH": 3,
+        "SPEL": 3,
+        "PERK": 1
+      },
+      "Requiem - More Unique Enemies - Magic Redone Addon.esp": {
+        "SPEL": 43
+      },
+      "Requiem - More Unique Enemies.esp": {
+        "CLAS": 17,
+        "MGEF": 84,
+        "ENCH": 8,
+        "SPEL": 62,
+        "PERK": 13
+      },
+      "Requiem - Additional Dremora Faces - Dremora Lines Expansion.esp": {
+        "RACE": 2
+      },
+      "Requiem - Small Tweaks - Additional Dremora Faces - Dremora Lines Expansion.esp": {
+        "RACE": 2
+      },
+      "NewArmoury - Magic Redone.esp": {
+        "MGEF": 15,
+        "ENCH": 5,
+        "SPEL": 5
+      },
+      "Requiem - Races Redone.esp": {
+        "RACE": 20,
+        "MGEF": 21,
+        "SPEL": 38,
+        "PERK": 11
+      },
+      "Requiem Magic Redone - Enemy Magic Expansion.esp": {
+        "MGEF": 41,
+        "SPEL": 171
+      },
+      "Requiem - NewArmoury.esp": {
+        "MGEF": 18,
+        "SPEL": 12,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "Requiem - Kyne's Peace no ragdoll objects.esp": {
+        "MGEF": 3
+      },
+      "Trad_SaintsExtendedCut_Artifacts_Requiem_Patch.esp": {
+        "ENCH": 1
+      },
+      "Requiem - Resist and Regen Tweak.esp": {
+        "MGEF": 2,
+        "SPEL": 26
+      },
+      "Trad_AE_CC_Collection_Requiem_Patch.esp": {
+        "GLOB": 3,
+        "CLAS": 9,
+        "FACT": 2,
+        "RACE": 11,
+        "MGEF": 237,
+        "ENCH": 127,
+        "SPEL": 215,
+        "PERK": 33
+      },
+      "Requiem - Magic Redone.esp": {
+        "GLOB": 2,
+        "FACT": 3,
+        "RACE": 6,
+        "MGEF": 1209,
+        "ENCH": 917,
+        "SPEL": 777,
+        "FLST": 52,
+        "PERK": 152,
+        "AVIF": 6
+      },
+      "Requiem - Growl.esp": {
+        "RACE": 2,
+        "MGEF": 2,
+        "SPEL": 19,
+        "PERK": 21,
+        "AVIF": 1
+      },
+      "Growl - Poison Weakness.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Sacrilege - Minimalistic Vampires of Skyrim.esp": {
+        "GLOB": 54,
+        "MGEF": 178,
+        "SPEL": 146,
+        "FLST": 9,
+        "PERK": 52,
+        "AVIF": 1
+      },
+      "Sacrilege - Fishing Compatibility Patch.esp": {
+        "FLST": 1
+      },
+      "Requiem.esp": {
+        "GLOB": 92,
+        "CLAS": 37,
+        "FACT": 32,
+        "RACE": 127,
+        "MGEF": 1533,
+        "ENCH": 571,
+        "SPEL": 1353,
+        "FLST": 96,
+        "PERK": 535,
+        "AVIF": 20
+      },
+      "Wielding Sun Stuff Hurts Vamps.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "Ordinator - Perks of Skyrim.esp": {
+        "GLOB": 137,
+        "CLAS": 2,
+        "RACE": 1,
+        "MGEF": 1303,
+        "ENCH": 7,
+        "SPEL": 939,
+        "FLST": 36,
+        "PERK": 591,
+        "AVIF": 11
+      },
+      "Growl - Werebeasts of Skyrim.esp": {
+        "GLOB": 25,
+        "RACE": 12,
+        "MGEF": 87,
+        "SPEL": 60,
+        "FLST": 5,
+        "PERK": 38,
+        "AVIF": 1
+      },
+      "CCSurvival - Disable Shrine Menu.esl": {
+        "PERK": 1
+      },
+      "FaceSculptorExpanded.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Wintersun Optional Call of the Void.esp": {
+        "PERK": 1
+      },
+      "Wintersun - Tweaks and Enhancements.esp": {
+        "GLOB": 21,
+        "MGEF": 28,
+        "SPEL": 13,
+        "PERK": 13
+      },
+      "Wintersun Pray Cooldown.esp": {
+        "GLOB": 1,
+        "MGEF": 17,
+        "SPEL": 1
+      },
+      "Wintersun Skillrate Alternative.esp": {
+        "MGEF": 5,
+        "SPEL": 1,
+        "PERK": 2
+      },
+      "Sacrilege - Wintersun.esp": {
+        "MGEF": 1,
+        "FLST": 1
+      },
+      "SunAffectsNPCVampires-Hooded.esp": {
+        "SPEL": 2
+      },
+      "SunAffectsNPCVampires.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 1
+      },
+      "The Great Town of Shor's Stone - Wintersun Addon.esp": {
+        "FLST": 1
+      },
+      "hz_NonExploitableCrossbowReload.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "Wintersun - GotT Patch.esp": {
+        "GLOB": 13,
+        "MGEF": 31,
+        "SPEL": 23,
+        "FLST": 2,
+        "PERK": 5
+      },
+      "VampireWerewolfLevelSpeed_MCM.esp": {
+        "GLOB": 3
+      },
+      "Hearthfires - Wintersun Shrines.esp": {
+        "FLST": 2
+      },
+      "TargetingSummonsTweak.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "SmarterMinions.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 1
+      },
+      "StealthKillDetectionFix.esp": {
+        "GLOB": 9,
+        "MGEF": 18,
+        "SPEL": 13,
+        "PERK": 7
+      },
+      "The White Phial - Tweaks and Enhancements.esp": {
+        "GLOB": 10,
+        "FACT": 1,
+        "MGEF": 4,
+        "SPEL": 1,
+        "FLST": 4
+      },
+      "Missives - Carriage and Ferry Travel Overhaul Patch.esp": {
+        "FLST": 1
+      },
+      "Missives - Solstheim.esp": {
+        "GLOB": 31,
+        "FACT": 3,
+        "FLST": 4
+      },
+      "Missives - Quest Edits for Unique Missive Boards.esp": {
+        "FLST": 1
+      },
+      "Missives Quests Raise Disposition.esp": {
+        "FLST": 3
+      },
+      "BIG [REDACTED] BOSS (BFB).esp": {
+        "RACE": 1,
+        "MGEF": 11,
+        "ENCH": 1,
+        "SPEL": 7
+      },
+      "TimingIsEverything.esp": {
+        "GLOB": 28,
+        "FLST": 1
+      },
+      "LoreRim Trapper - Immersive Interactions Patch.esp": {
+        "FLST": 1
+      },
+      "SimplestHorses.esp": {
+        "GLOB": 5,
+        "FACT": 2,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 3
+      },
+      "LoreRim Trapper.esp": {
+        "MGEF": 9,
+        "SPEL": 7,
+        "PERK": 5,
+        "AVIF": 1
+      },
+      "Missives.esp": {
+        "GLOB": 344,
+        "FLST": 38
+      },
+      "Narrative Gameplay Consistent Dialogue Tweaks.esp": {
+        "GLOB": 8,
+        "FACT": 1
+      },
+      "Favor Quests Seperated.esp": {
+        "FLST": 9
+      },
+      "ThugsNotAssassins.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "WerewolfNightEye.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Paragliding.esp": {
+        "FACT": 1,
+        "MGEF": 12,
+        "SPEL": 4,
+        "PERK": 1
+      },
+      "Elemental Fury for MCO ADXP.esp": {
+        "MGEF": 15,
+        "SPEL": 21
+      },
+      "Bloodskal Blade - Tweaks and Enhancements.esp": {
+        "GLOB": 2,
+        "MGEF": 10,
+        "ENCH": 2,
+        "SPEL": 4,
+        "PERK": 1
+      },
+      "RelentlessTriad.esp": {
+        "PERK": 2
+      },
+      "Biggie Traits - Immersive Interactions.esp": {
+        "FLST": 1
+      },
+      "Biggie Traits - Requiem.esp": {
+        "MGEF": 5,
+        "SPEL": 7,
+        "PERK": 3
+      },
+      "Legendary Enemies.esp": {
+        "GLOB": 7,
+        "MGEF": 18,
+        "SPEL": 19,
+        "FLST": 2,
+        "PERK": 2
+      },
+      "Dragonborns Bestiary.esp": {
+        "GLOB": 1,
+        "FACT": 2
+      },
+      "The Dragonborn's Fishiary.esp": {
+        "FLST": 2
+      },
+      "Bestiary Artifacts.esp": {
+        "FLST": 3
+      },
+      "Biggie Traits.esp": {
+        "GLOB": 20,
+        "FACT": 2,
+        "MGEF": 115,
+        "SPEL": 75,
+        "FLST": 31,
+        "PERK": 77
+      },
+      "Wintersun - Faiths of Skyrim.esp": {
+        "GLOB": 364,
+        "FACT": 1,
+        "RACE": 3,
+        "MGEF": 742,
+        "ENCH": 6,
+        "SPEL": 464,
+        "FLST": 23,
+        "PERK": 149
+      },
+      "madEngagingCombat.esp": {
+        "GLOB": 18,
+        "MGEF": 282,
+        "ENCH": 2,
+        "SPEL": 103,
+        "PERK": 286
+      },
+      "Requiem - ArteFakes.esp": {
+        "MGEF": 3,
+        "ENCH": 5,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Requiem - Inigo.esp": {
+        "CLAS": 1
+      },
+      "Requiem - Immersive Sounds Compendium.esp": {
+        "MGEF": 82
+      },
+      "Requiem - Timing is Everything.esp": {
+        "GLOB": 12
+      },
+      "Requiem - Trade and Barter.esp": {
+        "GLOB": 4,
+        "PERK": 2
+      },
+      "Requiem - Royal Armory.esp": {
+        "MGEF": 17,
+        "ENCH": 25,
+        "SPEL": 8,
+        "PERK": 4
+      },
+      "Requiem_NoBloodPotions.esp": {
+        "PERK": 1
+      },
+      "Static Skill Leveling SMI Patch.esp": {
+        "PERK": 3
+      },
+      "RequiemPatcherKeyword.esp": {
+        "MGEF": 3,
+        "SPEL": 23,
+        "PERK": 46
+      },
+      "LoreRim Tsuns Gift.esp": {
+        "GLOB": 1
+      },
+      "LoreRim Avenging Wraith.esp": {
+        "GLOB": 3,
+        "MGEF": 1
+      },
+      "LoreRim Lion's Arrow.esp": {
+        "PERK": 1
+      },
+      "LoreRim Traits.esp": {
+        "GLOB": 7,
+        "MGEF": 40,
+        "ENCH": 3,
+        "SPEL": 32,
+        "FLST": 1,
+        "PERK": 20
+      },
+      "Requiem Lite.esp": {
+        "MGEF": 22,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Circle of Entropy - QOL Tweak.esp": {
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "LoreRim Dagon Defile Fix.esp": {
+        "FLST": 1,
+        "PERK": 1
+      },
+      "LoreRim Bard Cloth Vendors.esp": {
+        "FACT": 2
+      },
+      "LoreRim Heir to the Relic.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "LoreRim Second Breath.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "LoreRim Dreamstride.esp": {
+        "RACE": 1,
+        "MGEF": 5,
+        "SPEL": 5
+      },
+      "LoreRim Startup.esp": {
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "RespawnSoulslike - Transformation Patch.esp": {
+        "FLST": 1
+      },
+      "Weapon Material Properties.esp": {
+        "MGEF": 7,
+        "SPEL": 7,
+        "PERK": 13,
+        "AVIF": 1
+      },
+      "Aetherium Forge - Perk Potions.esp": {
+        "MGEF": 1
+      },
+      "Attacko's Daedra - Reqtificated.esp": {
+        "SPEL": 1
+      },
+      "Baby Dragon - LoreRim Patch.esp": {
+        "MGEF": 1,
+        "SPEL": 2
+      },
+      "BFB Consistency Patch.esp": {
+        "RACE": 1,
+        "MGEF": 1,
+        "SPEL": 6
+      },
+      "Birbwalker - Creature Patches.esp": {
+        "SPEL": 4
+      },
+      "BoozyBardFixTest.esp": {
+        "MGEF": 1
+      },
+      "Bow Charge - Rapid Bow Effect.esp": {
+        "MGEF": 3
+      },
+      "Crowded Streets - Death Fall Fix.esp": {
+        "PERK": 1
+      },
+      "DEER - Patches.esp": {
+        "RACE": 3
+      },
+      "Ebony Blade Curse - Reqtificated.esp": {
+        "SPEL": 1
+      },
+      "Big Tweaks.esp": {
+        "GLOB": 7,
+        "RACE": 18,
+        "MGEF": 136,
+        "ENCH": 24,
+        "SPEL": 185,
+        "FLST": 2,
+        "PERK": 77,
+        "AVIF": 2
+      },
+      "Elemental Fury - Patches.esp": {
+        "MGEF": 1,
+        "SPEL": 3
+      },
+      "Elemental Mastery Magic - Magic Redone Patch.esp": {
+        "MGEF": 7,
+        "SPEL": 9
+      },
+      "Falkreath Shades - Reqtificated.esp": {
+        "SPEL": 2
+      },
+      "Grand Cleaver - Shazdeh Patch.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "Gray Cowl of Nocturnal - Requiem Patch.esp": {
+        "MGEF": 3,
+        "SPEL": 5,
+        "PERK": 1
+      },
+      "Growl - Reqtificated.esp": {
+        "RACE": 1,
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 6,
+        "PERK": 3,
+        "AVIF": 1
+      },
+      "Guards Attack Hostiles Patch.esp": {
+        "FACT": 3
+      },
+      "Human Dragon Priests - Reqtificated.esp": {
+        "RACE": 1,
+        "SPEL": 2,
+        "FLST": 1
+      },
+      "Homeowner FPI Patch.esp": {
+        "FLST": 1,
+        "PERK": 1
+      },
+      "Jesper - Requiem Patch.esp": {
+        "SPEL": 2
+      },
+      "KoFi - CamSandwich Patch.esp": {
+        "SPEL": 1
+      },
+      "Kofi - Filthdog Patch.esp": {
+        "SPEL": 1
+      },
+      "Kofi - Graay Patch.esp": {
+        "ENCH": 1
+      },
+      "Kofi - ParkGuest Patch.esp": {
+        "SPEL": 3
+      },
+      "KoFi - Pautinich Patch.esp": {
+        "ENCH": 4,
+        "SPEL": 12
+      },
+      "Kofi - SoulStoned Patch.esp": {
+        "ENCH": 1
+      },
+      "Kofi Weapon - Gilgy Patch.esp": {
+        "SPEL": 2
+      },
+      "Legends of Aetherium - Requiem Patch.esp": {
+        "MGEF": 17,
+        "SPEL": 2
+      },
+      "LoreRim - Alchemy Tweaks.esp": {
+        "MGEF": 4,
+        "SPEL": 1
+      },
+      "LoreRim - Arena Markarth Side.esp": {
+        "FACT": 3
+      },
+      "LoreRim - Armor Merges.esp": {
+        "ENCH": 5
+      },
+      "LoreRim - Clavicus Viled.esp": {
+        "GLOB": 2,
+        "MGEF": 1
+      },
+      "LoreRim - Carved Brink Patch.esp": {
+        "MGEF": 4,
+        "SPEL": 9
+      },
+      "LoreRim - Cloth Padding.esp": {
+        "MGEF": 1,
+        "ENCH": 2
+      },
+      "LoreRim - Dialogue Patch.esp": {
+        "FLST": 2
+      },
+      "LoreRim - Food Tweaks.esp": {
+        "MGEF": 8
+      },
+      "LoreRim - Global Modifiers.esp": {
+        "GLOB": 42
+      },
+      "LoreRim - ISC Patches.esp": {
+        "MGEF": 5
+      },
+      "LoreRim - Missives Patch.esp": {
+        "GLOB": 2
+      },
+      "LoreRim - Consistency Patch.esp": {
+        "FACT": 22,
+        "RACE": 18,
+        "MGEF": 43,
+        "ENCH": 18,
+        "SPEL": 11,
+        "FLST": 13,
+        "PERK": 1
+      },
+      "LoreRim - Remi Patch.esp": {
+        "SPEL": 12,
+        "PERK": 2
+      },
+      "LoreRim - RFTI Merge.esp": {
+        "RACE": 1
+      },
+      "LoreRim - NPC Overwrite Merge.esp": {
+        "RACE": 3,
+        "FLST": 2
+      },
+      "LoreRim - Stance Addon.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 3
+      },
+      "LoreRim - Static Skill Leveling Patch.esp": {
+        "MGEF": 6,
+        "SPEL": 4,
+        "PERK": 1
+      },
+      "LoreRim - Undeath Patches.esp": {
+        "FACT": 1,
+        "RACE": 1,
+        "MGEF": 2,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "LoreRim - Weaponmaster.esp": {
+        "PERK": 9,
+        "AVIF": 1
+      },
+      "LoreRim - Spell Balance Patches.esp": {
+        "MGEF": 57,
+        "ENCH": 28,
+        "SPEL": 203,
+        "PERK": 5
+      },
+      "Magic Redone - Legends of Aetherium Patch.esp": {
+        "FLST": 1
+      },
+      "Magicka Surge - Requiem Magic Redone Patch.esp": {
+        "MGEF": 15,
+        "SPEL": 7
+      },
+      "LoreRim - World Fixes.esp": {
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "Missives - Reqtificated.esp": {
+        "FLST": 1
+      },
+      "morrowind creatures - requiem consistency patch.esp": {
+        "RACE": 3,
+        "SPEL": 2
+      },
+      "Morrowind Creatures Merge.esp": {
+        "RACE": 5,
+        "MGEF": 2,
+        "SPEL": 3
+      },
+      "nirn necessities - Lorerim patch.esp": {
+        "MGEF": 1,
+        "ENCH": 9
+      },
+      "NPCs Pre-Synthesis Reqtificated.esp": {
+        "RACE": 9,
+        "SPEL": 6,
+        "PERK": 1
+      },
+      "Ocato's Recital - Consistency.esp": {
+        "MGEF": 1
+      },
+      "Olenveld - Reqtificated.esp": {
+        "SPEL": 2
+      },
+      "Post-RFTI Weapon Patch.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "ENCH": 1
+      },
+      "Requiem - Growl - Nerfs.esp": {
+        "GLOB": 3,
+        "PERK": 5
+      },
+      "Requiem - Magic Redone Typo Fix With Special Feats Patch.esp": {
+        "PERK": 4
+      },
+      "Requiem NPC Tweaks - Red Eagle Fury Fixed.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "Respawn Soulslike Health Exploit Fix.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 2
+      },
+      "Roosters - Reqtificated.esp": {
+        "RACE": 1
+      },
+      "Ryn's Mods - Reqtificated.esp": {
+        "CLAS": 1,
+        "SPEL": 2
+      },
+      "Requiem_-_Modern_Combat_Rework.esp": {
+        "MGEF": 31,
+        "SPEL": 41,
+        "PERK": 58,
+        "AVIF": 1
+      },
+      "SheepSheriff_SubclassesOfSkyrim_Patch.esp": {
+        "MGEF": 7,
+        "SPEL": 20,
+        "PERK": 36
+      },
+      "Sleepwalking - Requiem Patch.esp": {
+        "ENCH": 14,
+        "SPEL": 4
+      },
+      "Smooth Nerf.esp": {
+        "PERK": 3
+      },
+      "Stakes Reqtificated.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "Spookier Ghosts - Requiem Patch.esp": {
+        "MGEF": 1,
+        "SPEL": 12
+      },
+      "Synthesis - Gameplay Overwrite.esp": {
+        "AVIF": 7
+      },
+      "The Contest - New Model.esp": {
+        "MGEF": 3,
+        "ENCH": 1
+      },
+      "Trapper - Sound Body Connection.esp": {
+        "MGEF": 3,
+        "PERK": 3,
+        "AVIF": 1
+      },
+      "Traits - LoreRim Balance Patch.esp": {
+        "SPEL": 14,
+        "PERK": 7
+      },
+      "Unique Thane Weapons - Patches.esp": {
+        "MGEF": 1,
+        "ENCH": 2
+      },
+      "VAE Reborn - LoreRim.esp": {
+        "MGEF": 41,
+        "ENCH": 6
+      },
+      "Wand Keywords.esp": {
+        "SPEL": 1,
+        "PERK": 8,
+        "AVIF": 1
+      },
+      "Wayfarer - Survival Perks.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 4,
+        "AVIF": 1
+      },
+      "Werewolf Spirit - Reqtificated.esp": {
+        "SPEL": 1
+      },
+      "Wielding Sun Stuff Hurts Vampires - Bound Weapon Fix.esp": {
+        "SPEL": 2
+      },
+      "Wintersun - Global Tweaks.esp": {
+        "GLOB": 9,
+        "SPEL": 1
+      },
+      "Wintersun - Reqtificated.esp": {
+        "GLOB": 6,
+        "RACE": 1,
+        "MGEF": 27,
+        "SPEL": 66,
+        "PERK": 10,
+        "AVIF": 1
+      },
+      "LoreRim - Race Patch.esp": {
+        "RACE": 30,
+        "MGEF": 1,
+        "SPEL": 7
+      },
+      "Requiem for the Indifferent.esp": {
+        "GLOB": 1,
+        "FLST": 2
+      },
+      "Synthesis - Stat Scaler.esp": {
+        "SPEL": 46
+      },
+      "Synthesis - Requiem Patcher.esp": {
+        "CLAS": 109,
+        "RACE": 129,
+        "SPEL": 4
+      },
+      "DynDOLOD.esp": {
+        "FLST": 28
+      },
+      "LoreRim - Vampire Helmet Mod.esp": {
+        "SPEL": 5
+      },
+      "madDynamicStatScaler_Shouts.esp": {
+        "MGEF": 6,
+        "SPEL": 6,
+        "PERK": 6
+      },
+      "Stokes Alchemy Tweaks.esp": {
+        "MGEF": 3
+      },
+      "madDynamicStatScaler.esp": {
+        "MGEF": 18,
+        "SPEL": 46
+      },
+      "Synthesis - NPC.esp": {
+        "RACE": 114
       }
     },
     "parsedRecord": {
-      "Conduit.esp": {
-        "PERK": 2
-      },
-      "BattlemageCSF.esp": {
-        "PERK": 4
-      },
-      "The Wizard Warrior.esp": {
+      "HearthFires.esm": {
+        "GLOB": 114,
+        "CLAS": 1,
+        "FACT": 141,
+        "MGEF": 46,
+        "ENCH": 43,
+        "SPEL": 3,
+        "FLST": 65,
         "PERK": 1
       },
-      "Ordinator - Perks of Skyrim.esp": {
-        "PERK": 553
+      "Update.esm": {
+        "GLOB": 16,
+        "FACT": 3,
+        "MGEF": 52,
+        "ENCH": 6,
+        "SPEL": 30,
+        "FLST": 15,
+        "PERK": 16,
+        "RACE": 27,
+        "AVIF": 1
       },
-      "Vokrii - Minimalistic Perks of Skyrim.esp": {
-        "PERK": 193
+      "ccafdsse001-dwesanctuary.esm": {
+        "GLOB": 10,
+        "FACT": 5,
+        "RACE": 2
+      },
+      "ccasvsse001-almsivi.esm": {
+        "GLOB": 6,
+        "CLAS": 1,
+        "FACT": 10,
+        "MGEF": 10,
+        "ENCH": 4,
+        "SPEL": 8,
+        "FLST": 7,
+        "PERK": 5
+      },
+      "ccBGSSSE001-Fish.esm": {
+        "GLOB": 66,
+        "FACT": 6,
+        "MGEF": 12,
+        "ENCH": 13,
+        "SPEL": 9,
+        "FLST": 153,
+        "RACE": 4
+      },
+      "ccbgssse002-exoticarrows.esl": {
+        "GLOB": 2,
+        "MGEF": 5,
+        "ENCH": 5,
+        "SPEL": 2,
+        "PERK": 2
+      },
+      "ccbgssse003-zombies.esl": {
+        "GLOB": 1,
+        "MGEF": 5,
+        "SPEL": 10,
+        "RACE": 1
+      },
+      "ccbgssse005-goldbrand.esl": {
+        "GLOB": 5,
+        "FACT": 1
+      },
+      "ccbgssse008-wraithguard.esl": {
+        "GLOB": 1,
+        "MGEF": 16,
+        "ENCH": 2,
+        "SPEL": 6,
+        "PERK": 2
+      },
+      "ccbgssse011-hrsarmrelvn.esl": {
+        "GLOB": 2
+      },
+      "ccbgssse012-hrsarmrstl.esl": {
+        "GLOB": 2
+      },
+      "ccbgssse013-dawnfang.esl": {
+        "GLOB": 3,
+        "MGEF": 14,
+        "ENCH": 2,
+        "SPEL": 7,
+        "PERK": 2
+      },
+      "ccbgssse016-umbra.esm": {
+        "GLOB": 6,
+        "FACT": 2,
+        "MGEF": 3,
+        "ENCH": 2,
+        "SPEL": 2,
+        "FLST": 2
+      },
+      "ccBGSSSE025-AdvDSGS.esm": {
+        "GLOB": 14,
+        "FACT": 4,
+        "MGEF": 17,
+        "ENCH": 1,
+        "SPEL": 17,
+        "FLST": 19,
+        "PERK": 3,
+        "RACE": 6
+      },
+      "ccbgssse031-advcyrus.esm": {
+        "GLOB": 1,
+        "FACT": 5
+      },
+      "ccbgssse034-mntuni.esl": {
+        "GLOB": 1,
+        "FACT": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "ccbgssse041-netchleather.esl": {
+        "GLOB": 1,
+        "FACT": 4,
+        "MGEF": 2,
+        "ENCH": 1
+      },
+      "ccbgssse043-crosselv.esl": {
+        "GLOB": 3
+      },
+      "ccbgssse051-ba_daedricmail.esl": {
+        "GLOB": 1,
+        "ENCH": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Dawnguard.esm": {
+        "GLOB": 176,
+        "CLAS": 5,
+        "FACT": 82,
+        "MGEF": 261,
+        "ENCH": 28,
+        "SPEL": 308,
+        "FLST": 76,
+        "PERK": 57,
+        "RACE": 46,
+        "AVIF": 2
+      },
+      "ccbgssse067-daedinv.esm": {
+        "GLOB": 8,
+        "FACT": 2,
+        "MGEF": 15,
+        "ENCH": 4,
+        "SPEL": 12,
+        "FLST": 5,
+        "PERK": 1,
+        "RACE": 1
+      },
+      "ccedhsse001-norjewel.esl": {
+        "GLOB": 3,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "ccedhsse003-redguard.esl": {
+        "GLOB": 6,
+        "FACT": 3,
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "cceejsse001-hstead.esm": {
+        "GLOB": 1,
+        "FACT": 5
+      },
+      "cceejsse005-cave.esm": {
+        "GLOB": 1,
+        "FACT": 7,
+        "SPEL": 1,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "ccffbsse002-crossbowpack.esl": {
+        "GLOB": 8
+      },
+      "ccffbsse001-imperialdragon.esl": {
+        "GLOB": 2,
+        "FACT": 4,
+        "MGEF": 37,
+        "ENCH": 14,
+        "SPEL": 12,
+        "PERK": 5
+      },
+      "ccmtysse001-knightsofthenine.esl": {
+        "GLOB": 5,
+        "MGEF": 7,
+        "ENCH": 9,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "cckrtsse001_altar.esl": {
+        "GLOB": 2,
+        "FACT": 2,
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 2,
+        "PERK": 4
+      },
+      "ccpewsse002-armsofchaos.esl": {
+        "GLOB": 1,
+        "CLAS": 1,
+        "MGEF": 23,
+        "ENCH": 7,
+        "SPEL": 8
+      },
+      "ccqdrsse002-firewood.esl": {
+        "GLOB": 5,
+        "MGEF": 3,
+        "SPEL": 2,
+        "FLST": 3
+      },
+      "ccrmssse001-necrohouse.esl": {
+        "GLOB": 2,
+        "FACT": 5,
+        "MGEF": 8,
+        "ENCH": 3,
+        "SPEL": 3,
+        "FLST": 1,
+        "PERK": 3
+      },
+      "ccQDRSSE001-SurvivalMode.esl": {
+        "GLOB": 61,
+        "MGEF": 146,
+        "SPEL": 94,
+        "FLST": 25,
+        "PERK": 4
+      },
+      "ccvsvsse001-winter.esl": {
+        "GLOB": 1,
+        "FACT": 2,
+        "RACE": 1
+      },
+      "cctwbsse001-puzzledungeon.esm": {
+        "GLOB": 8,
+        "FACT": 1,
+        "MGEF": 35,
+        "ENCH": 17,
+        "SPEL": 22,
+        "PERK": 1
+      },
+      "ccvsvsse002-pets.esl": {
+        "GLOB": 13,
+        "MGEF": 9,
+        "ENCH": 1,
+        "SPEL": 8,
+        "FLST": 9,
+        "RACE": 5
+      },
+      "_ResourcePack.esl": {
+        "GLOB": 2
+      },
+      "ccvsvsse004-beafarmer.esl": {
+        "GLOB": 18,
+        "FACT": 10,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "Bittercup - Tweaks and Enhancements.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "CC Farming - Tweaks and Enhancements.esp": {
+        "GLOB": 28,
+        "FACT": 12,
+        "FLST": 4,
+        "PERK": 2
+      },
+      "Myrwatch - Tweaks and Enhancements.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Hendraheim - Tweaks and Enhancements.esp": {
+        "GLOB": 3,
+        "FACT": 26
+      },
+      "CauseTweakAllowClose.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Unofficial Skyrim Special Edition Patch.esp": {
+        "GLOB": 20,
+        "CLAS": 16,
+        "FACT": 66,
+        "MGEF": 354,
+        "ENCH": 53,
+        "SPEL": 171,
+        "FLST": 27,
+        "PERK": 85,
+        "RACE": 28,
+        "AVIF": 1
+      },
+      "Unofficial Skyrim Modders Patch.esp": {
+        "GLOB": 2,
+        "FACT": 147,
+        "MGEF": 21,
+        "SPEL": 9,
+        "FLST": 16,
+        "PERK": 1,
+        "RACE": 34
+      },
+      "Dragonborn.esm": {
+        "GLOB": 147,
+        "CLAS": 15,
+        "FACT": 102,
+        "MGEF": 321,
+        "ENCH": 71,
+        "SPEL": 272,
+        "FLST": 150,
+        "PERK": 74,
+        "RACE": 32
+      },
+      "TrueHUD.esl": {
+        "GLOB": 2
+      },
+      "AHZmoreHUD.esl": {
+        "GLOB": 40
+      },
+      "TrueDirectionalMovement.esp": {
+        "GLOB": 5,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "PhotoMode.esp": {
+        "GLOB": 1,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "UltimateImmersionToggle.esp": {
+        "GLOB": 1
+      },
+      "HotKeySkill.esp": {
+        "GLOB": 17,
+        "MGEF": 35,
+        "SPEL": 2
+      },
+      "hideQuestItems.esp": {
+        "GLOB": 1
+      },
+      "Rainbows Remade.esp": {
+        "GLOB": 2,
+        "MGEF": 3,
+        "SPEL": 1
+      },
+      "Morning Fogs SSE.esp": {
+        "GLOB": 4
+      },
+      "StormLightning.esp": {
+        "GLOB": 41,
+        "MGEF": 58,
+        "SPEL": 58,
+        "FLST": 16
+      },
+      "Skyrim.esm": {
+        "GLOB": 664,
+        "CLAS": 138,
+        "FACT": 1084,
+        "MGEF": 950,
+        "ENCH": 604,
+        "SPEL": 827,
+        "FLST": 726,
+        "PERK": 375,
+        "RACE": 99,
+        "AVIF": 149
+      },
+      "Pseudoloaddoors for Walled Cities.esp": {
+        "GLOB": 91,
+        "FLST": 3
+      },
+      "Stendarr Rising.esp": {
+        "GLOB": 20,
+        "FACT": 2,
+        "FLST": 1
+      },
+      "Riverwood Trader Is A Mess.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Environs - Greenwood Shack.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "Environs - Hroggars House.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Environs - Riften Warehouse.esp": {
+        "GLOB": 1,
+        "FACT": 2,
+        "FLST": 1
+      },
+      "Environs - Tundra Farmhouse.esp": {
+        "GLOB": 1,
+        "FACT": 2,
+        "FLST": 2
+      },
+      "Environs - Kolskeggr.esp": {
+        "GLOB": 2,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Environs - Whiterun Watchtower.esp": {
+        "GLOB": 1,
+        "FACT": 2
+      },
+      "Evolving Locations - Cliffside Retreat.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "Evolving Locations - Lucky Shack.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "Evolving Locations - Riverside Shack.esp": {
+        "GLOB": 1,
+        "FACT": 2
+      },
+      "JK's Blue Palace.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "JK's Jorrvaskr.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "JK's High Hrothgar.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "JK's Understone Keep.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "JK's Haelga's Bunkhouse.esp": {
+        "GLOB": 2,
+        "FLST": 1
+      },
+      "earthquakes - MCM.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "CFTO.esp": {
+        "GLOB": 9,
+        "FACT": 6
+      },
+      "TGC Winterhold - No ForceGreet.esp": {
+        "GLOB": 1
+      },
+      "Kynareth Replaces Talos - Civil War Consequence.esp": {
+        "GLOB": 3,
+        "MGEF": 3,
+        "SPEL": 1
+      },
+      "WindhelmSSE.esp": {
+        "GLOB": 1,
+        "FACT": 31,
+        "MGEF": 3,
+        "ENCH": 4,
+        "SPEL": 10,
+        "FLST": 13,
+        "PERK": 3
+      },
+      "AnimatedShips.esl": {
+        "GLOB": 1,
+        "FACT": 18,
+        "SPEL": 1,
+        "FLST": 51
+      },
+      "Sanguine Symphony.esp": {
+        "GLOB": 66,
+        "MGEF": 9,
+        "SPEL": 9
+      },
+      "War Horns.esp": {
+        "GLOB": 1,
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "Helmet Toggle 2.esp": {
+        "GLOB": 29,
+        "MGEF": 5,
+        "SPEL": 10,
+        "FLST": 4
+      },
+      "Ring of Draconic Burdon.esp": {
+        "GLOB": 1,
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Armors of the Velothi Pt2 - Travelling Merchant Travels.esp": {
+        "GLOB": 1
+      },
+      "Press E To Heal Followers.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "SetHome.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "MoiraFollowerMod.esp": {
+        "GLOB": 4,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Chatty NPCs.esp": {
+        "GLOB": 3,
+        "FLST": 77
+      },
+      "FDE Aranea.esp": {
+        "GLOB": 2
+      },
+      "FDE Uthgerd.esp": {
+        "GLOB": 4
+      },
+      "FDE Faendal.esp": {
+        "GLOB": 3
+      },
+      "FDE Camilla.esp": {
+        "GLOB": 1
+      },
+      "FDE Sapphire.esp": {
+        "GLOB": 4
+      },
+      "FDE Jordis.esp": {
+        "GLOB": 1
+      },
+      "FDE Erik.esp": {
+        "GLOB": 3
+      },
+      "FDE Lydia.esp": {
+        "GLOB": 5
+      },
+      "FDE Brelyna.esp": {
+        "GLOB": 2
+      },
+      "FDE Borgakh.esp": {
+        "GLOB": 4
+      },
+      "FDE Illia.esp": {
+        "GLOB": 24,
+        "FLST": 1
+      },
+      "FDE Aela.esp": {
+        "GLOB": 31
+      },
+      "FDE Rayya.esp": {
+        "GLOB": 8
+      },
+      "FDE Jenassa.esp": {
+        "GLOB": 35
+      },
+      "FDE Mjoll - Auri.esp": {
+        "GLOB": 1
+      },
+      "018Auri.esp": {
+        "GLOB": 20,
+        "CLAS": 1,
+        "MGEF": 2,
+        "SPEL": 3,
+        "FLST": 1,
+        "RACE": 1
+      },
+      "Katana Raven LoreCut - Reqtificated.esp": {
+        "GLOB": 1,
+        "MGEF": 5,
+        "ENCH": 3,
+        "SPEL": 32,
+        "RACE": 1
+      },
+      "FDE Mjoll Remiel.esp": {
+        "GLOB": 1
+      },
+      "Gore - SaSEC.esp": {
+        "GLOB": 1
+      },
+      "GORE.esp": {
+        "GLOB": 251,
+        "FACT": 8,
+        "MGEF": 12,
+        "SPEL": 5,
+        "FLST": 2,
+        "RACE": 1
+      },
+      "HLIORemi.esp": {
+        "GLOB": 158,
+        "CLAS": 1,
+        "FACT": 12,
+        "MGEF": 20,
+        "ENCH": 1,
+        "SPEL": 17,
+        "FLST": 6,
+        "PERK": 4,
+        "RACE": 3
+      },
+      "00Taliesin.esp": {
+        "GLOB": 4,
+        "CLAS": 1,
+        "FACT": 2,
+        "MGEF": 1,
+        "SPEL": 1,
+        "RACE": 1
+      },
+      "Katana.esp": {
+        "GLOB": 120,
+        "CLAS": 4,
+        "FACT": 10,
+        "MGEF": 82,
+        "ENCH": 3,
+        "SPEL": 84,
+        "FLST": 11,
+        "PERK": 7,
+        "RACE": 2
+      },
+      "GuardTalesFollowerMod.esp": {
+        "GLOB": 1,
+        "CLAS": 1,
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "HSFBabyDragon.esp": {
+        "GLOB": 5,
+        "MGEF": 6,
+        "SPEL": 9,
+        "FLST": 1,
+        "RACE": 5
+      },
+      "Scholar's Sting.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "NewArmoury.esp": {
+        "GLOB": 10,
+        "MGEF": 33,
+        "ENCH": 26,
+        "SPEL": 13,
+        "FLST": 11,
+        "PERK": 1
+      },
+      "Sandwiches of Skyrim.esp": {
+        "GLOB": 1
+      },
+      "DEST_ISL.esp": {
+        "GLOB": 14,
+        "FLST": 2
+      },
+      "Magicka Surge.esp": {
+        "GLOB": 3,
+        "MGEF": 17,
+        "SPEL": 12,
+        "PERK": 1
+      },
+      "DeadByDining.esp": {
+        "GLOB": 8,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Apocalypse - Requiem & Magic Redone Patch.esp": {
+        "GLOB": 2,
+        "MGEF": 246,
+        "ENCH": 65,
+        "SPEL": 197,
+        "FLST": 71,
+        "PERK": 15,
+        "RACE": 6
+      },
+      "Triumvirate - Mage Archetypes.esp": {
+        "GLOB": 31,
+        "CLAS": 1,
+        "FACT": 18,
+        "MGEF": 362,
+        "ENCH": 31,
+        "SPEL": 185,
+        "FLST": 23,
+        "PERK": 11,
+        "RACE": 16
+      },
+      "SubclassesOfSkyrim.esp": {
+        "GLOB": 6,
+        "MGEF": 90,
+        "SPEL": 61,
+        "FLST": 1,
+        "PERK": 53
+      },
+      "StaticSkillLeveling.esp": {
+        "GLOB": 11
+      },
+      "Severin Manor Has A Price.esp": {
+        "GLOB": 3
+      },
+      "Sell Stones of Barenziah.esp": {
+        "GLOB": 2
+      },
+      "SkyrimsGotTalent - Free Movement.esp": {
+        "GLOB": 1,
+        "MGEF": 3
+      },
+      "SkyrimsGotTalent-Bards.esp": {
+        "GLOB": 9,
+        "FACT": 1,
+        "MGEF": 15,
+        "SPEL": 3,
+        "FLST": 3
+      },
+      "SkyrimsGotTalent_AnimAddon.esp": {
+        "GLOB": 1,
+        "MGEF": 3
+      },
+      "Apocalypse - Magic of Skyrim.esp": {
+        "GLOB": 98,
+        "CLAS": 2,
+        "FACT": 2,
+        "MGEF": 717,
+        "ENCH": 65,
+        "SPEL": 404,
+        "FLST": 133,
+        "PERK": 46,
+        "RACE": 9
+      },
+      "trade & barter.esp": {
+        "GLOB": 75,
+        "FLST": 1,
+        "PERK": 57
+      },
+      "LittleLessons.esp": {
+        "GLOB": 2,
+        "MGEF": 20,
+        "SPEL": 15,
+        "PERK": 12
+      },
+      "Dynamic Activation Key.esp": {
+        "GLOB": 3
+      },
+      "Atronach Forge Expanded.esp": {
+        "GLOB": 1,
+        "MGEF": 5,
+        "ENCH": 6,
+        "FLST": 33
+      },
+      "suspiciouscityguards.esp": {
+        "GLOB": 9,
+        "MGEF": 6,
+        "SPEL": 6,
+        "PERK": 1
+      },
+      "Dynamic Activation Key - Addons Collection.esp": {
+        "GLOB": 7,
+        "FLST": 3,
+        "PERK": 20
+      },
+      "FollowerInteractWithGestures.esp": {
+        "GLOB": 2,
+        "FACT": 2
+      },
+      "Take a Nap.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "SimpleFunctionalApiary.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Afterlife.esp": {
+        "GLOB": 7,
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "RealisticRoomRental-Basic.esp": {
+        "GLOB": 20
+      },
+      "Xtended Stay.esp": {
+        "GLOB": 7,
+        "FLST": 1
+      },
+      "Aetherium Forge Destroys Items.esp": {
+        "GLOB": 26,
+        "MGEF": 2,
+        "SPEL": 1,
+        "FLST": 3
+      },
+      "AmuletEvangelism.esp": {
+        "GLOB": 1,
+        "FLST": 6
+      },
+      "Footprints.esp": {
+        "GLOB": 8,
+        "MGEF": 44,
+        "SPEL": 36,
+        "FLST": 7
+      },
+      "C.O.I.N.esp": {
+        "GLOB": 2,
+        "FLST": 3
+      },
+      "SL99Exchanger.esp": {
+        "GLOB": 2,
+        "FACT": 11,
+        "MGEF": 4
+      },
+      "Simple Fishing Overhaul.esp": {
+        "GLOB": 26,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "WaitCarriageInns.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Bring Meeko to Lod.esp": {
+        "GLOB": 2
+      },
+      "JPNocturnalMoths.esp": {
+        "GLOB": 1,
+        "FLST": 1
+      },
+      "Give Beggars Food.esp": {
+        "GLOB": 1
+      },
+      "VampireFeedingTweaks.esp": {
+        "GLOB": 4,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "Undeath Litch Can Fly.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "The Gildergreen Grows.esp": {
+        "GLOB": 4,
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "Better Difficulty Options.esp": {
+        "GLOB": 2,
+        "PERK": 5
+      },
+      "SetDifficultyGlobal.esp": {
+        "GLOB": 3
+      },
+      "Camping Expansion.esp": {
+        "GLOB": 11,
+        "MGEF": 3
+      },
+      "Camping Expansion - Wintersun shrines.esp": {
+        "GLOB": 8,
+        "FLST": 1
+      },
+      "SurvivalModeImproved.esp": {
+        "GLOB": 58,
+        "MGEF": 34,
+        "SPEL": 69,
+        "FLST": 6,
+        "PERK": 3
+      },
+      "FastTravelCost.esp": {
+        "GLOB": 4
+      },
+      "AlchEquipment - complex alembic + retort.esp": {
+        "GLOB": 1
+      },
+      "AlchEquipment.esp": {
+        "GLOB": 8,
+        "MGEF": 6,
+        "SPEL": 2,
+        "PERK": 6
+      },
+      "Simple Hunting Overhaul.esp": {
+        "GLOB": 26,
+        "FLST": 11,
+        "PERK": 1
+      },
+      "ImmersiveHunting.esp": {
+        "GLOB": 47,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "Smart_NPC_Potions.esp": {
+        "GLOB": 6,
+        "MGEF": 3,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "DynamicMercenaryFees.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "alchemy helper.esp": {
+        "GLOB": 1
+      },
+      "Waterskin.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "PERK": 1
+      },
+      "CameraSwitchDuringDialogue.esp": {
+        "GLOB": 1
+      },
+      "Portable Cooking.esp": {
+        "GLOB": 1,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "Naked Comments Overhaul.esp": {
+        "GLOB": 2,
+        "FLST": 21
+      },
+      "Collision Dialogue Overhaul.esp": {
+        "GLOB": 3,
+        "FLST": 4
+      },
+      "Nightmares of Skyrim.esp": {
+        "GLOB": 1,
+        "FLST": 3
+      },
+      "moretodo.esp": {
+        "GLOB": 4,
+        "FACT": 1,
+        "FLST": 1
+      },
+      "moretosayfalkreath.esp": {
+        "GLOB": 3,
+        "FLST": 1
+      },
+      "moretosaywinterhold.esp": {
+        "GLOB": 1,
+        "FACT": 1
+      },
+      "Guard Dialogue Overhaul.esp": {
+        "GLOB": 8
+      },
+      "Extended Bandit Dialogue.esp": {
+        "GLOB": 112
+      },
+      "Extended Guard Dialogue.esp": {
+        "GLOB": 168
+      },
+      "NPCs React To Necromancy.esp": {
+        "GLOB": 1
+      },
+      "Companions at Mirmulnir.esp": {
+        "GLOB": 1,
+        "FLST": 2
+      },
+      "Companions Dialogue Bundle.esp": {
+        "GLOB": 2,
+        "SPEL": 1
+      },
+      "bloodbond.esp": {
+        "GLOB": 1,
+        "MGEF": 5,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Hunters Mark Animal Den on Map.esp": {
+        "GLOB": 11,
+        "FLST": 2
+      },
+      "Extended Encounters.esp": {
+        "GLOB": 358,
+        "FACT": 6
+      },
+      "tdgsseGoblinsAroundSkyrim.esl": {
+        "GLOB": 8,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Crowded Streets.esp": {
+        "GLOB": 23
+      },
+      "AP - Missile Additional Starts.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "CollegeEntry.esp": {
+        "GLOB": 1,
+        "FACT": 1,
+        "SPEL": 2,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "DragonHunting.esp": {
+        "GLOB": 3,
+        "MGEF": 4,
+        "SPEL": 3,
+        "FLST": 1,
+        "PERK": 4
+      },
+      "AlternatePerspective.esp": {
+        "GLOB": 4,
+        "FACT": 11,
+        "MGEF": 5,
+        "ENCH": 1,
+        "SPEL": 4,
+        "FLST": 5,
+        "PERK": 2,
+        "RACE": 1
+      },
+      "HarvestYourFriendsBlood.esp": {
+        "GLOB": 1
+      },
+      "HarvestYourBlood.esp": {
+        "GLOB": 1
+      },
+      "Clue Scrolls In Skyrim.esp": {
+        "GLOB": 17,
+        "MGEF": 4,
+        "SPEL": 2,
+        "FLST": 7
+      },
+      "Additional Contracts For the Dark Brotherhood.esp": {
+        "GLOB": 3,
+        "MGEF": 4,
+        "SPEL": 1
+      },
+      "TheChoiceIsYours.esp": {
+        "GLOB": 3,
+        "MGEF": 5,
+        "ENCH": 2,
+        "SPEL": 2,
+        "FLST": 1,
+        "PERK": 2
+      },
+      "LeapsOfFaith.esp": {
+        "GLOB": 2,
+        "PERK": 1
+      },
+      "BuyableGoldenClaw.esp": {
+        "GLOB": 1,
+        "FLST": 1
+      },
+      "SaveTheIcerunner.esp": {
+        "GLOB": 3,
+        "FACT": 1
+      },
+      "Destroy the Dark Brotherhood - Quest Expansion.esp": {
+        "GLOB": 1
+      },
+      "The Heart Of Dibella - Quest Expansion.esp": {
+        "GLOB": 2,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Innocence Lost - Quest Expansion.esp": {
+        "GLOB": 4,
+        "MGEF": 2,
+        "SPEL": 2,
+        "FLST": 1
+      },
+      "College Of Winterhold - Quest Expansion.esp": {
+        "GLOB": 6,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "TheOnlyCureQuestExpansion.esp": {
+        "GLOB": 1,
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "DestroyTheDarkBrotherhoodEnhanced.esp": {
+        "GLOB": 48,
+        "FACT": 10,
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 3
+      },
+      "The Whispering Door - Quest Expansion.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "HouseOfHorrorsQuestExpansion.esp": {
+        "GLOB": 3,
+        "SPEL": 2,
+        "FLST": 1
+      },
+      "Taunt Your Enemies.esp": {
+        "GLOB": 3,
+        "MGEF": 3,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Remote Interactions.esp": {
+        "GLOB": 2,
+        "MGEF": 3,
+        "SPEL": 2
+      },
+      "CWRepairs.esp": {
+        "GLOB": 6
+      },
+      "Listen.esp": {
+        "GLOB": 3,
+        "FLST": 5
+      },
+      "Forlorn Hope.esp": {
+        "GLOB": 2,
+        "MGEF": 1,
+        "FLST": 1
+      },
+      "SeranaCureQuestPlus.esp": {
+        "GLOB": 2
+      },
+      "TypographyTraining.esp": {
+        "GLOB": 1
+      },
+      "dvEdda.esp": {
+        "GLOB": 2,
+        "FACT": 1
+      },
+      "Poetic Duels.esp": {
+        "GLOB": 6,
+        "FLST": 1
+      },
+      "Respectful Ravyn.esp": {
+        "GLOB": 1
+      },
+      "Knight of the North.esp": {
+        "GLOB": 9,
+        "MGEF": 8,
+        "SPEL": 7,
+        "FLST": 2
+      },
+      "Belethor's Sister.esp": {
+        "GLOB": 6
+      },
+      "Revealing Rune.esp": {
+        "GLOB": 1
+      },
+      "Skyrim On Skooma.esp": {
+        "GLOB": 6,
+        "MGEF": 45,
+        "ENCH": 4,
+        "SPEL": 10,
+        "FLST": 7,
+        "PERK": 2,
+        "RACE": 8
+      },
+      "TheGiftOfSaturalia_CC_Patch.esp": {
+        "GLOB": 1
+      },
+      "TheGiftOfSaturalia_SGT_Patch.esp": {
+        "GLOB": 1
+      },
+      "TheGiftOfSaturalia_Skooma_Patch.esp": {
+        "GLOB": 1
+      },
+      "TheGiftofSaturalia.esp": {
+        "GLOB": 4,
+        "FACT": 1,
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 5,
+        "FLST": 3
+      },
+      "Ascend - Hidden Peaks of Skyrim.esp": {
+        "GLOB": 4,
+        "MGEF": 7,
+        "ENCH": 2,
+        "SPEL": 4,
+        "PERK": 2
+      },
+      "ksws04_quest.esp": {
+        "GLOB": 32,
+        "FACT": 4,
+        "FLST": 2
+      },
+      "Siege at Icemoth.esp": {
+        "GLOB": 3,
+        "MGEF": 11,
+        "ENCH": 4,
+        "SPEL": 8,
+        "PERK": 1
+      },
+      "Fists of Fury - Skyrim.esp": {
+        "GLOB": 9,
+        "CLAS": 2,
+        "FACT": 4,
+        "MGEF": 13,
+        "ENCH": 1,
+        "SPEL": 8,
+        "PERK": 1
+      },
+      "HeartOfTheReach.esp": {
+        "GLOB": 4,
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "evgSIRENROOT.esm": {
+        "GLOB": 36,
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "Tools of Kagrenac.esp": {
+        "GLOB": 25,
+        "FACT": 5,
+        "MGEF": 120,
+        "ENCH": 13,
+        "SPEL": 85,
+        "FLST": 4,
+        "PERK": 4,
+        "RACE": 14
+      },
+      "Missives - Wyrmstooth.esp": {
+        "GLOB": 31,
+        "FACT": 4,
+        "FLST": 4
+      },
+      "Requiem - Wyrmstooth.esp": {
+        "GLOB": 1,
+        "MGEF": 4,
+        "ENCH": 5,
+        "SPEL": 8,
+        "RACE": 2
+      },
+      "Olenveld.esp": {
+        "GLOB": 61,
+        "FACT": 9,
+        "MGEF": 29,
+        "SPEL": 22,
+        "FLST": 23,
+        "PERK": 1,
+        "RACE": 16
+      },
+      "Dwarfsphere.esp": {
+        "GLOB": 8,
+        "CLAS": 1,
+        "FACT": 28,
+        "MGEF": 32,
+        "ENCH": 2,
+        "SPEL": 18,
+        "FLST": 56,
+        "PERK": 2,
+        "RACE": 27
+      },
+      "Wyrmstooth.esp": {
+        "GLOB": 27,
+        "FACT": 38,
+        "MGEF": 27,
+        "ENCH": 10,
+        "SPEL": 34,
+        "FLST": 16,
+        "RACE": 2
+      },
+      "ClockworkWoodWhimWR.esp": {
+        "GLOB": 20
+      },
+      "ECSS - Staff of Sheogorath Patch.esp": {
+        "GLOB": 4,
+        "MGEF": 5,
+        "ENCH": 3,
+        "SPEL": 1
+      },
+      "Clockwork.esp": {
+        "GLOB": 43,
+        "CLAS": 2,
+        "FACT": 4,
+        "MGEF": 8,
+        "ENCH": 2,
+        "SPEL": 15,
+        "FLST": 50,
+        "RACE": 2
+      },
+      "UndeathFixes.esp": {
+        "GLOB": 17,
+        "FACT": 2,
+        "MGEF": 67,
+        "ENCH": 1,
+        "SPEL": 38,
+        "PERK": 13,
+        "RACE": 2
+      },
+      "Undeath.esp": {
+        "GLOB": 2,
+        "FACT": 4,
+        "MGEF": 61,
+        "ENCH": 2,
+        "SPEL": 45,
+        "PERK": 8,
+        "RACE": 3
+      },
+      "Haem Projects Goblands.esp": {
+        "GLOB": 4,
+        "FACT": 21,
+        "MGEF": 12,
+        "ENCH": 2,
+        "SPEL": 14,
+        "FLST": 4,
+        "RACE": 16
+      },
+      "Missives - Gray Cowl Patch.esp": {
+        "GLOB": 31,
+        "FLST": 4
+      },
+      "Missile IED Meshes.esp": {
+        "GLOB": 2
+      },
+      "ImmersiveInteractions.esp": {
+        "GLOB": 43,
+        "MGEF": 3,
+        "SPEL": 1,
+        "FLST": 36,
+        "PERK": 1
+      },
+      "TaberuAnimation.esp": {
+        "GLOB": 4,
+        "MGEF": 100,
+        "SPEL": 99
+      },
+      "CraftingAnimations.esp": {
+        "GLOB": 13,
+        "FLST": 3
+      },
+      "LootingAnimations.esp": {
+        "GLOB": 6,
+        "FLST": 20,
+        "PERK": 1
+      },
+      "FirstPersonInteractions.esp": {
+        "GLOB": 28,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 25,
+        "PERK": 1
+      },
+      "BOOB.esp": {
+        "GLOB": 4,
+        "MGEF": 35,
+        "ENCH": 2,
+        "SPEL": 33,
+        "PERK": 7
+      },
+      "evgCLAMBER.esp": {
+        "GLOB": 14
+      },
+      "Skyrim Extended Cut - Saints and Seducers.esp": {
+        "GLOB": 9,
+        "FACT": 15,
+        "MGEF": 29,
+        "ENCH": 5,
+        "SPEL": 32,
+        "FLST": 13,
+        "PERK": 1,
+        "RACE": 14
+      },
+      "Gray Fox Cowl.esm": {
+        "GLOB": 28,
+        "CLAS": 3,
+        "FACT": 30,
+        "MGEF": 41,
+        "ENCH": 14,
+        "SPEL": 34,
+        "FLST": 10,
+        "PERK": 1,
+        "RACE": 5
+      },
+      "Stances - Dynamic Weapon Movesets SE.esp": {
+        "GLOB": 2,
+        "MGEF": 16,
+        "SPEL": 13,
+        "PERK": 3
+      },
+      "Dismembering Framework.esm": {
+        "GLOB": 119,
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "VioLens SE.esp": {
+        "GLOB": 130,
+        "MGEF": 6,
+        "SPEL": 6,
+        "FLST": 23
+      },
+      "Precision.esp": {
+        "GLOB": 1,
+        "FLST": 1
+      },
+      "Bow Charge Plus.esp": {
+        "GLOB": 26,
+        "MGEF": 6,
+        "SPEL": 6
+      },
+      "BowRapidCombo.esp": {
+        "GLOB": 1,
+        "MGEF": 46,
+        "SPEL": 22
+      },
+      "StopOnSlash.esp": {
+        "GLOB": 3
+      },
+      "TKDodgeAddon.esp": {
+        "GLOB": 7,
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 2
+      },
+      "NIBF_SkyPatcher.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Ultimate NPC Dodging.esp": {
+        "GLOB": 5,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Requiem - Improved Spell Learning.esp": {
+        "GLOB": 1,
+        "FLST": 1
+      },
+      "Requiem - Customizable Spells Per Perk.esp": {
+        "GLOB": 5
+      },
+      "Requiem - Minor Arcana - Roleplaying.esp": {
+        "GLOB": 2,
+        "CLAS": 8,
+        "FACT": 4,
+        "MGEF": 12,
+        "ENCH": 2,
+        "SPEL": 8,
+        "PERK": 8,
+        "RACE": 1
+      },
+      "Fozars_Dragonborn_-_Requiem_Patch.esp": {
+        "GLOB": 3,
+        "CLAS": 29,
+        "FACT": 2,
+        "MGEF": 130,
+        "ENCH": 61,
+        "SPEL": 174,
+        "FLST": 4,
+        "PERK": 47,
+        "RACE": 23,
+        "AVIF": 1
+      },
+      "Thief Experience.esp": {
+        "GLOB": 7
+      },
+      "Shadow Clone on Self.esp": {
+        "GLOB": 1,
+        "MGEF": 6,
+        "SPEL": 5,
+        "FLST": 1,
+        "PERK": 10,
+        "RACE": 1
+      },
+      "Trad_AE_CC_Collection_Requiem_Patch.esp": {
+        "GLOB": 3,
+        "CLAS": 9,
+        "FACT": 2,
+        "MGEF": 237,
+        "ENCH": 127,
+        "SPEL": 215,
+        "PERK": 33,
+        "RACE": 11
+      },
+      "Requiem - Magic Redone.esp": {
+        "GLOB": 2,
+        "FACT": 3,
+        "MGEF": 1209,
+        "ENCH": 917,
+        "SPEL": 777,
+        "FLST": 52,
+        "PERK": 152,
+        "RACE": 6,
+        "AVIF": 6
+      },
+      "Sacrilege - Minimalistic Vampires of Skyrim.esp": {
+        "GLOB": 54,
+        "MGEF": 178,
+        "SPEL": 146,
+        "FLST": 9,
+        "PERK": 52,
+        "AVIF": 1
+      },
+      "Requiem.esp": {
+        "GLOB": 92,
+        "CLAS": 37,
+        "FACT": 32,
+        "MGEF": 1533,
+        "ENCH": 571,
+        "SPEL": 1353,
+        "FLST": 96,
+        "PERK": 535,
+        "RACE": 127,
+        "AVIF": 20
+      },
+      "Ordinator - Perks of Skyrim.esp": {
+        "GLOB": 137,
+        "CLAS": 2,
+        "MGEF": 1303,
+        "ENCH": 7,
+        "SPEL": 939,
+        "FLST": 36,
+        "PERK": 591,
+        "RACE": 1,
+        "AVIF": 11
+      },
+      "Growl - Werebeasts of Skyrim.esp": {
+        "GLOB": 25,
+        "MGEF": 87,
+        "SPEL": 60,
+        "FLST": 5,
+        "PERK": 38,
+        "RACE": 12,
+        "AVIF": 1
+      },
+      "FaceSculptorExpanded.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Wintersun - Tweaks and Enhancements.esp": {
+        "GLOB": 21,
+        "MGEF": 28,
+        "SPEL": 13,
+        "PERK": 13
+      },
+      "Wintersun Pray Cooldown.esp": {
+        "GLOB": 1,
+        "MGEF": 17,
+        "SPEL": 1
+      },
+      "hz_NonExploitableCrossbowReload.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "Wintersun - GotT Patch.esp": {
+        "GLOB": 13,
+        "MGEF": 31,
+        "SPEL": 23,
+        "FLST": 2,
+        "PERK": 5
+      },
+      "VampireWerewolfLevelSpeed_MCM.esp": {
+        "GLOB": 3
+      },
+      "StealthKillDetectionFix.esp": {
+        "GLOB": 9,
+        "MGEF": 18,
+        "SPEL": 13,
+        "PERK": 7
+      },
+      "The White Phial - Tweaks and Enhancements.esp": {
+        "GLOB": 10,
+        "FACT": 1,
+        "MGEF": 4,
+        "SPEL": 1,
+        "FLST": 4
+      },
+      "Missives - Solstheim.esp": {
+        "GLOB": 31,
+        "FACT": 3,
+        "FLST": 4
+      },
+      "TimingIsEverything.esp": {
+        "GLOB": 28,
+        "FLST": 1
+      },
+      "SimplestHorses.esp": {
+        "GLOB": 5,
+        "FACT": 2,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 3
+      },
+      "Missives.esp": {
+        "GLOB": 344,
+        "FLST": 38
+      },
+      "Narrative Gameplay Consistent Dialogue Tweaks.esp": {
+        "GLOB": 8,
+        "FACT": 1
+      },
+      "ThugsNotAssassins.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "Bloodskal Blade - Tweaks and Enhancements.esp": {
+        "GLOB": 2,
+        "MGEF": 10,
+        "ENCH": 2,
+        "SPEL": 4,
+        "PERK": 1
+      },
+      "Legendary Enemies.esp": {
+        "GLOB": 7,
+        "MGEF": 18,
+        "SPEL": 19,
+        "FLST": 2,
+        "PERK": 2
+      },
+      "Dragonborns Bestiary.esp": {
+        "GLOB": 1,
+        "FACT": 2
+      },
+      "Biggie Traits.esp": {
+        "GLOB": 20,
+        "FACT": 2,
+        "MGEF": 115,
+        "SPEL": 75,
+        "FLST": 31,
+        "PERK": 77
+      },
+      "Wintersun - Faiths of Skyrim.esp": {
+        "GLOB": 364,
+        "FACT": 1,
+        "MGEF": 742,
+        "ENCH": 6,
+        "SPEL": 464,
+        "FLST": 23,
+        "PERK": 149,
+        "RACE": 3
+      },
+      "madEngagingCombat.esp": {
+        "GLOB": 18,
+        "MGEF": 282,
+        "ENCH": 2,
+        "SPEL": 103,
+        "PERK": 286
+      },
+      "Requiem - Timing is Everything.esp": {
+        "GLOB": 12
+      },
+      "Requiem - Trade and Barter.esp": {
+        "GLOB": 4,
+        "PERK": 2
+      },
+      "LoreRim Tsuns Gift.esp": {
+        "GLOB": 1
+      },
+      "LoreRim Avenging Wraith.esp": {
+        "GLOB": 3,
+        "MGEF": 1
+      },
+      "LoreRim Traits.esp": {
+        "GLOB": 7,
+        "MGEF": 40,
+        "ENCH": 3,
+        "SPEL": 32,
+        "FLST": 1,
+        "PERK": 20
+      },
+      "LoreRim Heir to the Relic.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Big Tweaks.esp": {
+        "GLOB": 7,
+        "MGEF": 136,
+        "ENCH": 24,
+        "SPEL": 185,
+        "FLST": 2,
+        "PERK": 77,
+        "RACE": 18,
+        "AVIF": 2
+      },
+      "LoreRim - Clavicus Viled.esp": {
+        "GLOB": 2,
+        "MGEF": 1
+      },
+      "LoreRim - Global Modifiers.esp": {
+        "GLOB": 42
+      },
+      "LoreRim - Missives Patch.esp": {
+        "GLOB": 2
+      },
+      "Post-RFTI Weapon Patch.esp": {
+        "GLOB": 3,
+        "MGEF": 2,
+        "ENCH": 1
+      },
+      "Requiem - Growl - Nerfs.esp": {
+        "GLOB": 3,
+        "PERK": 5
+      },
+      "Respawn Soulslike Health Exploit Fix.esp": {
+        "GLOB": 1,
+        "MGEF": 1,
+        "SPEL": 2
+      },
+      "Wintersun - Global Tweaks.esp": {
+        "GLOB": 9,
+        "SPEL": 1
+      },
+      "Wintersun - Reqtificated.esp": {
+        "GLOB": 6,
+        "MGEF": 27,
+        "SPEL": 66,
+        "PERK": 10,
+        "RACE": 1,
+        "AVIF": 1
+      },
+      "Requiem for the Indifferent.esp": {
+        "GLOB": 1,
+        "FLST": 2
+      },
+      "ccvsvsse003-necroarts.esl": {
+        "CLAS": 1,
+        "FACT": 3,
+        "MGEF": 73,
+        "ENCH": 14,
+        "SPEL": 50,
+        "FLST": 2,
+        "PERK": 5,
+        "RACE": 4
+      },
+      "Ryn's Karthspire.esp": {
+        "CLAS": 1
+      },
+      "Ryn's Snazzy Last Vigil - Ebony Warrior Overhaul.esp": {
+        "CLAS": 1,
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 5
+      },
+      "SurWR.esp": {
+        "CLAS": 2,
+        "FACT": 17,
+        "MGEF": 6,
+        "ENCH": 2,
+        "SPEL": 12,
+        "FLST": 7,
+        "RACE": 3
+      },
+      "DIS_Armor_Fractions.esp": {
+        "CLAS": 1,
+        "ENCH": 4
+      },
+      "Inigo.esp": {
+        "CLAS": 1,
+        "FACT": 8,
+        "MGEF": 6,
+        "ENCH": 2,
+        "SPEL": 2,
+        "FLST": 2,
+        "RACE": 1
+      },
+      "WizardingTraversal.esl": {
+        "CLAS": 1,
+        "MGEF": 11,
+        "SPEL": 10,
+        "PERK": 1,
+        "RACE": 1
+      },
+      "KittySpellPack02.esl": {
+        "CLAS": 1,
+        "MGEF": 25,
+        "SPEL": 17,
+        "PERK": 1,
+        "RACE": 1
+      },
+      "AncientBloodII.esl": {
+        "CLAS": 1,
+        "MGEF": 69,
+        "SPEL": 51,
+        "PERK": 3,
+        "RACE": 5
+      },
+      "Khajiit Caravan Mules.esp": {
+        "CLAS": 1,
+        "FACT": 3,
+        "RACE": 2
+      },
+      "BoethiahCalling_AlternativeQuest.esp": {
+        "CLAS": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Requiem - Minor Arcana - Civil War.esp": {
+        "CLAS": 6,
+        "PERK": 3
+      },
+      "Requiem - Minor Arcana - Forsworn.esp": {
+        "CLAS": 3,
+        "SPEL": 6,
+        "PERK": 1
+      },
+      "Requiem-general_NPC_tweaks.esp": {
+        "CLAS": 4,
+        "FACT": 1,
+        "MGEF": 68,
+        "ENCH": 8,
+        "SPEL": 171,
+        "FLST": 2,
+        "PERK": 39,
+        "RACE": 1
+      },
+      "Shriekwind Bastion Boss - Requiem.esp": {
+        "CLAS": 1,
+        "MGEF": 4,
+        "SPEL": 3,
+        "PERK": 1
+      },
+      "Requiem - More Unique Enemies.esp": {
+        "CLAS": 17,
+        "MGEF": 84,
+        "ENCH": 8,
+        "SPEL": 62,
+        "PERK": 13
+      },
+      "Requiem - Inigo.esp": {
+        "CLAS": 1
+      },
+      "Ryn's Mods - Reqtificated.esp": {
+        "CLAS": 1,
+        "SPEL": 2
+      },
+      "Synthesis - Requiem Patcher.esp": {
+        "CLAS": 109,
+        "SPEL": 4,
+        "RACE": 129
+      },
+      "ccbgssse020-graycowl.esl": {
+        "FACT": 1,
+        "MGEF": 9,
+        "ENCH": 2,
+        "SPEL": 3,
+        "PERK": 2
+      },
+      "ccbgssse040-advobgobs.esl": {
+        "FACT": 4,
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 5,
+        "RACE": 2
+      },
+      "ccbgssse058-ba_steel.esl": {
+        "FACT": 1,
+        "PERK": 1
+      },
+      "ccbgssse059-ba_dragonplate.esl": {
+        "FACT": 2,
+        "ENCH": 2,
+        "PERK": 1
+      },
+      "ccbgssse063-ba_ebony.esl": {
+        "FACT": 1
+      },
+      "cceejsse002-tower.esl": {
+        "FACT": 5,
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "cceejsse003-hollow.esl": {
+        "FACT": 5,
+        "FLST": 3
+      },
+      "cceejsse004-hall.esl": {
+        "FACT": 5,
+        "FLST": 5
+      },
+      "unofficial skyrim creation club content patch.esl": {
+        "FACT": 1,
+        "MGEF": 26,
+        "ENCH": 4,
+        "SPEL": 23,
+        "FLST": 1,
+        "PERK": 2,
+        "RACE": 5
+      },
+      "myrwatchhomefixer.esp": {
+        "FACT": 5
+      },
+      "Landscape and Water Fixes.esp": {
+        "FACT": 1,
+        "FLST": 2
+      },
+      "Environs - Shrines of Talos.esp": {
+        "FACT": 2
+      },
+      "JK's Septimus Signus's Outpost.esp": {
+        "FACT": 1
+      },
+      "JK's Castle Dour.esp": {
+        "FACT": 2
+      },
+      "Snazzy Interiors - Markarth Endon's House.esp": {
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Snazzy Interiors - Riften Black-Briar Manor.esp": {
+        "FACT": 1,
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Snazzy Black Briar Lodge.esp": {
+        "FACT": 1
+      },
+      "Fort Greymoor.esp": {
+        "FACT": 2
+      },
+      "Fort Dunstad.esp": {
+        "FACT": 6,
+        "FLST": 2
+      },
+      "Ryn's Snazzy Last Vigil.esp": {
+        "FACT": 1
+      },
+      "SkaalFishingCamp.esp": {
+        "FACT": 1
+      },
+      "Undriel_QuaintRavenRock.esp": {
+        "FACT": 4,
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 3,
+        "RACE": 2
+      },
+      "Orc Strongholds - Mor Khazgur.esp": {
+        "FACT": 1
+      },
+      "Resources - The Great Cities.esp": {
+        "FACT": 1,
+        "FLST": 1
+      },
+      "The Great Village of Old Hroldan.esp": {
+        "FACT": 2
+      },
+      "The Great Village of Kynesgrove.esp": {
+        "FACT": 4,
+        "FLST": 3
+      },
+      "The Great Town of Shor's Stone.esp": {
+        "FACT": 5,
+        "FLST": 1
+      },
+      "The Great Town of Karthwasten.esp": {
+        "FACT": 7
+      },
+      "The Great Town of Ivarstead.esp": {
+        "FACT": 4,
+        "FLST": 1
+      },
+      "The Great Village of Mixwater Mill.esp": {
+        "FACT": 1,
+        "FLST": 1
+      },
+      "The Great City of Dragon Bridge.esp": {
+        "FACT": 3,
+        "FLST": 1
+      },
+      "Gonz - Stonehills ReRe-imagined.esp": {
+        "FACT": 1
+      },
+      "The Great City of Morthal.esp": {
+        "FACT": 2,
+        "FLST": 1
+      },
+      "The Great City of Winterhold v4.esp": {
+        "FACT": 14,
+        "FLST": 2
+      },
+      "COTN - Falkreath.esp": {
+        "FACT": 2,
+        "FLST": 2
+      },
+      "The Great City of Dawnstar.esp": {
+        "FACT": 2,
+        "FLST": 1
+      },
+      "The Great City of Solitude.esp": {
+        "FACT": 16,
+        "FLST": 2
+      },
+      "RedBag's Solitude.esp": {
+        "FACT": 23,
+        "FLST": 16
+      },
+      "Sky City.esp": {
+        "FACT": 4,
+        "FLST": 5
+      },
+      "Lux Via - Markarth Entrance and Farm Overhaul.esp": {
+        "FACT": 17,
+        "FLST": 1
+      },
+      "Riften Docks Overhaul.esp": {
+        "FACT": 2,
+        "FLST": 1
+      },
+      "GG's Thieves Guild Headquarters.esp": {
+        "FACT": 2
+      },
+      "Unique Border Gates - Fixes.esp": {
+        "FACT": 1
+      },
+      "Arena - Markarth Side.esp": {
+        "FACT": 17,
+        "FLST": 5
+      },
+      "aaaGraniteHill.esp": {
+        "FACT": 10,
+        "FLST": 6,
+        "RACE": 1
+      },
+      "Kidmer - Adoptable Elf Children 1_2.esp": {
+        "FACT": 1,
+        "FLST": 2,
+        "RACE": 4
+      },
+      "Artifacts of the Lore(Rim).esp": {
+        "FACT": 7,
+        "MGEF": 11,
+        "ENCH": 22,
+        "SPEL": 4,
+        "FLST": 1,
+        "PERK": 5
+      },
+      "Armors of the Velothi Pt2.esl": {
+        "FACT": 1,
+        "MGEF": 1,
+        "ENCH": 2,
+        "FLST": 1
+      },
+      "Shockwave.esl": {
+        "FACT": 1,
+        "MGEF": 20,
+        "SPEL": 13,
+        "PERK": 6,
+        "RACE": 1
+      },
+      "Neutral Whiterun Guards.esp": {
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 1,
+        "FLST": 2
+      },
+      "Guards Attack Hostiles.esp": {
+        "FACT": 14
+      },
+      "AI Overhaul.esp": {
+        "FACT": 3,
+        "FLST": 4
+      },
+      "Hunters Sell Fish And More Animal Parts.esp": {
+        "FACT": 1,
+        "FLST": 2
+      },
+      "More Sensible Quartermasters.esp": {
+        "FACT": 2
+      },
+      "FSLE - More Locations.esp": {
+        "FACT": 1
+      },
+      "mihailnixcreatures.esp": {
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 3,
+        "RACE": 1
+      },
+      "mihailkagoutiandguar.esp": {
+        "FACT": 1,
+        "MGEF": 1,
+        "SPEL": 3,
+        "RACE": 4
+      },
+      "mihailmudcrabmerchant.esp": {
+        "FACT": 1,
+        "RACE": 1
+      },
+      "Shalks.esp": {
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 4,
+        "RACE": 2
+      },
+      "Alit.esp": {
+        "FACT": 1,
+        "MGEF": 1,
+        "SPEL": 1,
+        "RACE": 1
+      },
+      "Shroom Beetles.esp": {
+        "FACT": 1,
+        "MGEF": 4,
+        "RACE": 2
+      },
+      "Alternate Perspective -- New Beginnings.esp": {
+        "FACT": 1,
+        "MGEF": 1,
+        "FLST": 1
+      },
+      "TomeTrials.esp": {
+        "FACT": 1,
+        "FLST": 4
+      },
+      "TasteOfDeath_Addon_Dialogue.esp": {
+        "FACT": 1,
+        "FLST": 1
+      },
+      "Infiltration - Quest Expansion.esp": {
+        "FACT": 2
+      },
+      "MorihausRefugeStandalone.esp": {
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 1,
+        "RACE": 2
+      },
+      "Unmasking Sybille.esp": {
+        "FACT": 1
+      },
+      "MoreToDoSoulCairn.esp": {
+        "FACT": 1,
+        "SPEL": 1
+      },
+      "RuneDreamstrides.esp": {
+        "FACT": 1,
+        "MGEF": 10,
+        "ENCH": 3,
+        "SPEL": 13,
+        "RACE": 4
+      },
+      "FalkreathShades.esp": {
+        "FACT": 5,
+        "MGEF": 40,
+        "ENCH": 3,
+        "SPEL": 37,
+        "PERK": 1,
+        "RACE": 10
+      },
+      "Meridia.esp": {
+        "FACT": 23,
+        "MGEF": 3,
+        "ENCH": 5,
+        "SPEL": 5
+      },
+      "NightmarePlane.esp": {
+        "FACT": 1,
+        "MGEF": 17,
+        "ENCH": 20,
+        "SPEL": 4
+      },
+      "Journey to Baan Malur.esp": {
+        "FACT": 122,
+        "MGEF": 80,
+        "ENCH": 15,
+        "SPEL": 73,
+        "FLST": 107,
+        "RACE": 45
+      },
+      "ClockworkInterestingInhabitants.esp": {
+        "FACT": 1
+      },
+      "ForgottenCity.esp": {
+        "FACT": 16,
+        "MGEF": 17,
+        "ENCH": 11,
+        "SPEL": 6,
+        "FLST": 4,
+        "RACE": 3
+      },
+      "Requiem_Alduin_redone.esp": {
+        "FACT": 3,
+        "MGEF": 40,
+        "SPEL": 21,
+        "PERK": 3
+      },
+      "Requiem - Vendor tweaks.esp": {
+        "FACT": 6,
+        "MGEF": 2,
+        "SPEL": 2,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "Requiem - Weapons and Armor Redone.esp": {
+        "FACT": 1,
+        "MGEF": 85,
+        "ENCH": 12,
+        "SPEL": 51,
+        "FLST": 6,
+        "PERK": 84,
+        "AVIF": 4
+      },
+      "Paragliding.esp": {
+        "FACT": 1,
+        "MGEF": 12,
+        "SPEL": 4,
+        "PERK": 1
+      },
+      "LoreRim Bard Cloth Vendors.esp": {
+        "FACT": 2
+      },
+      "Guards Attack Hostiles Patch.esp": {
+        "FACT": 3
+      },
+      "LoreRim - Arena Markarth Side.esp": {
+        "FACT": 3
+      },
+      "LoreRim - Consistency Patch.esp": {
+        "FACT": 22,
+        "MGEF": 43,
+        "ENCH": 18,
+        "SPEL": 11,
+        "FLST": 13,
+        "PERK": 1,
+        "RACE": 18
+      },
+      "LoreRim - Undeath Patches.esp": {
+        "FACT": 1,
+        "MGEF": 2,
+        "SPEL": 1,
+        "PERK": 1,
+        "RACE": 1
+      },
+      "ccbgssse004-ruinsedge.esl": {
+        "MGEF": 7,
+        "ENCH": 1,
+        "SPEL": 7
+      },
+      "ccbgssse006-stendarshammer.esl": {
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "ccbgssse007-chrysamere.esl": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 4
+      },
+      "ccbgssse010-petdwarvenarmoredmudcrab.esl": {
+        "MGEF": 2,
+        "SPEL": 3,
+        "RACE": 1
+      },
+      "ccbgssse014-spellpack01.esl": {
+        "MGEF": 26,
+        "ENCH": 14,
+        "SPEL": 22,
+        "PERK": 1
+      },
+      "ccbgssse018-shadowrend.esl": {
+        "MGEF": 5,
+        "ENCH": 2,
+        "SPEL": 2,
+        "FLST": 1,
+        "RACE": 5
+      },
+      "ccbgssse019-staffofsheogorath.esl": {
+        "MGEF": 4,
+        "ENCH": 3,
+        "SPEL": 1,
+        "PERK": 4
+      },
+      "ccbgssse021-lordsmail.esl": {
+        "MGEF": 9,
+        "ENCH": 2,
+        "SPEL": 2
+      },
+      "ccbgssse035-petnhound.esl": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "RACE": 2
+      },
+      "ccbgssse036-petbwolf.esl": {
+        "MGEF": 3,
+        "SPEL": 4,
+        "PERK": 1,
+        "RACE": 1
+      },
+      "ccBGSSSE037-Curios.esl": {
+        "MGEF": 4,
+        "PERK": 2
+      },
+      "ccbgssse038-bowofshadows.esl": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 4,
+        "PERK": 2
+      },
+      "ccbgssse045-hasedoki.esl": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "ccbgssse066-staves.esl": {
+        "MGEF": 10,
+        "ENCH": 42
+      },
+      "ccbgssse068-bloodfall.esl": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "ccbgssse069-contest.esl": {
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 2,
+        "PERK": 1,
+        "RACE": 1
+      },
+      "PickpocketReset.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Vanilla Eating Animation Fix.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "bleedoutFix.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Unaggressive Dragon Priests Fix.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "WERoad02Fix.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Quick Follower Commands.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 4
+      },
+      "RotolsMoreIcons.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Standing Stones - I4.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Racial Abilities - I4.esp": {
+        "MGEF": 4,
+        "SPEL": 3
+      },
+      "Racial Abilities Survival Mode - I4.esp": {
+        "MGEF": 10,
+        "SPEL": 8
+      },
+      "SkySigns.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "FLST": 1
+      },
+      "Audio Overhaul Skyrim.esp": {
+        "MGEF": 1,
+        "FLST": 3,
+        "RACE": 1
+      },
+      "Immersive Sounds - Compendium.esp": {
+        "MGEF": 66
+      },
+      "sanguinum sfx vanilla.esp": {
+        "MGEF": 7
+      },
+      "ENB Light.esp": {
+        "MGEF": 10
+      },
+      "EasierRidersDungeonPackSSE.esp": {
+        "MGEF": 3,
+        "ENCH": 3,
+        "SPEL": 1
+      },
+      "RealRabbitsHD.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1,
+        "RACE": 1
+      },
+      "DynamicAnimalVariantsPlus.esp": {
+        "MGEF": 29,
+        "SPEL": 29,
+        "FLST": 29
+      },
+      "ShinyHorkerVariants.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "DiverseMammothBabies-MBM.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "Use Those Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 18
+      },
+      "Ignoble Beds - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 13
+      },
+      "Deep Slumber - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 3
+      },
+      "Bedroll Alternative - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 4
+      },
+      "Reclusive Respite - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 4
+      },
+      "Cozy Cots - Use Those Blankets Patch.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 7
+      },
+      "Redoran Reverie - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 7
+      },
+      "Dunmer Dreams - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 7
+      },
+      "Rustic Repose Distributed - Use Those Variant Blankets.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "FLST": 14
+      },
+      "Sleipnir Beds - Use Those Variant Blankets.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 7
+      },
+      "RiverStaff.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "ArteFake.esp": {
+        "MGEF": 3,
+        "ENCH": 5,
+        "SPEL": 1,
+        "PERK": 2
+      },
+      "VAEReborn.esp": {
+        "MGEF": 55,
+        "ENCH": 16
+      },
+      "Humanoid Dragon Priest.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "RACE": 1
+      },
+      "Elytra ENB Light.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Sprites or Specters ENB Light.esp": {
+        "MGEF": 8,
+        "SPEL": 8
+      },
+      "AdditionalHearthfireDollsFixesPass.esp": {
+        "MGEF": 4,
+        "SPEL": 12
+      },
+      "AdditionalHFDollsPassivesPatch.esp": {
+        "MGEF": 21,
+        "SPEL": 24
+      },
+      "3BBB.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "BosmersHaveAntlers.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "PrinceandPauperRefine.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 2
+      },
+      "WeddingBand.esp": {
+        "MGEF": 4,
+        "ENCH": 2
+      },
+      "NPCsWearWeddingBands.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Windcaller.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "Soul Devourer.esp": {
+        "MGEF": 7,
+        "ENCH": 1,
+        "SPEL": 6,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "evgnnsmpaccessories.esp": {
+        "MGEF": 37,
+        "ENCH": 9,
+        "SPEL": 32,
+        "FLST": 1
+      },
+      "Kad_MoonMonkRobes.esp": {
+        "MGEF": 1,
+        "ENCH": 3,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "SweetestRoll.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "RACE": 1
+      },
+      "FDE Ysolda.esp": {
+        "MGEF": 4,
+        "SPEL": 2
+      },
+      "Noct_LostRelicsOfTamriel.esp": {
+        "MGEF": 6,
+        "ENCH": 8,
+        "SPEL": 1
+      },
+      "UniqueBows.esp": {
+        "MGEF": 16,
+        "ENCH": 10
+      },
+      "PrvtIRoyalArmory.esp": {
+        "MGEF": 15,
+        "ENCH": 25,
+        "SPEL": 7,
+        "FLST": 1,
+        "PERK": 4
+      },
+      "Vampire Hunter's Stake.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "SkyrimSpearMechanic.esp": {
+        "MGEF": 11,
+        "SPEL": 11,
+        "FLST": 4,
+        "PERK": 3
+      },
+      "Unique Thane Weapons.esp": {
+        "MGEF": 6,
+        "ENCH": 12
+      },
+      "mihailcrescent.esp": {
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "FGCWyrmheart.esp": {
+        "MGEF": 6,
+        "SPEL": 2
+      },
+      "Arcane Arsenal.esp": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "FGCSamTheBattlePan.esp": {
+        "MGEF": 2,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "FGCGleamstrike-ESL-AAVersion.esp": {
+        "MGEF": 23,
+        "ENCH": 4,
+        "SPEL": 12,
+        "PERK": 4
+      },
+      "FGCDraugrslayerGreatsword.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "FGCVerdantAxe.esp": {
+        "MGEF": 18,
+        "ENCH": 2,
+        "SPEL": 3
+      },
+      "FGCGreatmaceOfBlasphemy.esp": {
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "FGCVolkiharRelicSword.esp": {
+        "MGEF": 6,
+        "SPEL": 6,
+        "PERK": 2
+      },
+      "Granite Maul SE - Johnskyrim.esp": {
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "Spikey.esp": {
+        "MGEF": 3,
+        "ENCH": 2,
+        "SPEL": 1
+      },
+      "RiilungolzStaff AA Edition.esp": {
+        "MGEF": 11,
+        "ENCH": 2
+      },
+      "WidowmakerBattleaxe_SE_ENG.esp": {
+        "MGEF": 1,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "Use Telekinesis on Traps.esp": {
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "FGCDrakeKnightSwordReborn.esp": {
+        "MGEF": 6,
+        "SPEL": 8,
+        "PERK": 5
+      },
+      "Requiem - Wizarding Traversal - Magic Redone Patch.esp": {
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "Lightpower.esl": {
+        "MGEF": 35,
+        "ENCH": 1,
+        "SPEL": 15
+      },
+      "Requiem - Holy Templar Magic - Magic Redone Patch.esp": {
+        "MGEF": 29,
+        "SPEL": 13
+      },
+      "RunemasterMagic.esl": {
+        "MGEF": 60,
+        "ENCH": 16,
+        "SPEL": 29
+      },
+      "WildwakerMagic.esl": {
+        "MGEF": 23,
+        "SPEL": 17,
+        "PERK": 1
+      },
+      "Wildwaker Magic - Requiem Magic Redone Patch.esp": {
+        "MGEF": 23,
+        "SPEL": 16
+      },
+      "Frostbitten Dreams - Magic Redone Patch.esp": {
+        "MGEF": 13,
+        "SPEL": 10
+      },
+      "IceBloomNightmare.esl": {
+        "MGEF": 22,
+        "SPEL": 14,
+        "PERK": 2,
+        "RACE": 1
+      },
+      "Requiem - Dark Hierophant Magic - Magic Redone Patch.esp": {
+        "MGEF": 33,
+        "SPEL": 18
+      },
+      "Ghostlight.esl": {
+        "MGEF": 33,
+        "ENCH": 1,
+        "SPEL": 20
+      },
+      "Ancient Blood - Magic Redone Patch.esp": {
+        "MGEF": 36,
+        "SPEL": 51,
+        "RACE": 5
+      },
+      "Requiem - Obscure Magic - Magic Redone Patch.esp": {
+        "MGEF": 31,
+        "ENCH": 1,
+        "SPEL": 18
+      },
+      "Requiem - Sonic Mage - Magic Redone Patch.esp": {
+        "MGEF": 18,
+        "SPEL": 7
+      },
+      "KittySpellPack01.esl": {
+        "MGEF": 31,
+        "ENCH": 1,
+        "SPEL": 18,
+        "PERK": 1
+      },
+      "Supernova.esl": {
+        "MGEF": 15,
+        "SPEL": 9
+      },
+      "Requiem - Constellation Magic - Magic Redone Patch.esp": {
+        "MGEF": 13,
+        "SPEL": 5
+      },
+      "Aqua.esl": {
+        "MGEF": 21,
+        "SPEL": 15,
+        "PERK": 3,
+        "RACE": 1
+      },
+      "Requiem - Abyssal Tides - Magic Redone Patch.esp": {
+        "MGEF": 17,
+        "SPEL": 12
+      },
+      "Runemaster Magic - Magic Redone Patch.esp": {
+        "MGEF": 60,
+        "SPEL": 9,
+        "PERK": 3
+      },
+      "OcatosRecitalCostsMagicka.esp": {
+        "MGEF": 2
+      },
+      "Triumvirate - Magic Redone Patch.esp": {
+        "MGEF": 105,
+        "ENCH": 31,
+        "SPEL": 101,
+        "PERK": 5,
+        "RACE": 7
+      },
+      "survival_spells.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Requiem - Survival Spells.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "NightingalePowersRedone.esp": {
+        "MGEF": 6,
+        "SPEL": 5
+      },
+      "SpellAbsorptionRework.esp": {
+        "MGEF": 6,
+        "SPEL": 5,
+        "PERK": 5
+      },
+      "SubclassesOfSkyrim_ADXP_Patch.esp": {
+        "MGEF": 2,
+        "SPEL": 1,
+        "PERK": 2
+      },
+      "Fish Anywhere.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "DiplomaticDragons.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Beneficial Speech Checks.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Nocturnal's Favor.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "eve - critical damage fixes for perk mods.esp": {
+        "MGEF": 3,
+        "SPEL": 1,
+        "PERK": 6
+      },
+      "ArrowsIgnite.esp": {
+        "MGEF": 6,
+        "SPEL": 4,
+        "FLST": 1
+      },
+      "Scared of Shootings.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 1
+      },
+      "Animals Swim.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "VampireLordsCanFly.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "SeranasTombBloodCurse.esp": {
+        "MGEF": 3,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "HuntersLoot.esp": {
+        "MGEF": 1,
+        "SPEL": 4
+      },
+      "VampiresHaveClaws.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "NPCs_Wear_Amulets_Of_Mara.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "SkyforgeImmersionAddon.esp": {
+        "MGEF": 4,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Dynamic Weather And Time Based Detection.esp": {
+        "MGEF": 4,
+        "SPEL": 3
+      },
+      "JustBlood.esp": {
+        "MGEF": 4,
+        "SPEL": 1
+      },
+      "NPCs Take Cover.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Andrealphus Scene Tweaks.esp": {
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "FSLE - Unique Abilities.esp": {
+        "MGEF": 1,
+        "ENCH": 3,
+        "SPEL": 1
+      },
+      "NPCs React To Invisibility - Bow of Shadows Patch.esp": {
+        "MGEF": 2
+      },
+      "NPCs React To Invisibility.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "FLST": 2
+      },
+      "bloodbond - alternative player dialogue.esp": {
+        "MGEF": 4,
+        "SPEL": 2
+      },
+      "mihailcliffracer_FLY.esp": {
+        "MGEF": 3,
+        "SPEL": 4,
+        "RACE": 1
+      },
+      "mihailundeadwerewolf.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "RACE": 2
+      },
+      "mihailwraiths.esp": {
+        "MGEF": 5,
+        "SPEL": 5,
+        "RACE": 1
+      },
+      "mihailudefryktereplacer.esp": {
+        "MGEF": 2,
+        "SPEL": 3,
+        "RACE": 2
+      },
+      "mihailseagiants.esp": {
+        "MGEF": 6,
+        "ENCH": 2,
+        "SPEL": 9,
+        "RACE": 5
+      },
+      "WormpleHagravens.esp": {
+        "MGEF": 3,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "spookier ghosts.esp": {
+        "MGEF": 3,
+        "SPEL": 12
+      },
+      "FireTonguedDaedroth_Integration.esp": {
+        "MGEF": 2,
+        "SPEL": 3,
+        "RACE": 2
+      },
+      "melyfairy.esl": {
+        "MGEF": 1,
+        "SPEL": 2,
+        "RACE": 1
+      },
+      "TasteOfDeath_Addon_Boss.esp": {
+        "MGEF": 7,
+        "ENCH": 1,
+        "SPEL": 3,
+        "FLST": 2
+      },
+      "TasteOfDeath_Addon_RingCurse_SMI.esp": {
+        "MGEF": 4
+      },
+      "World Eater's Influence.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "ImmersiveMiraakDifficulty.esp": {
+        "MGEF": 3,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Caught Red Handed - Quest Expansion.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "EbonyBladeCurse.esp": {
+        "MGEF": 2,
+        "SPEL": 3,
+        "RACE": 1
+      },
+      "Brawling - No Hitting Bystanders.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "RisingAtDawnQuestOverhaul.esp": {
+        "MGEF": 1
+      },
+      "ConditionalMaxPickpocketChance.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Finding_VelehkSain.esp": {
+        "MGEF": 5,
+        "ENCH": 2,
+        "FLST": 4
+      },
+      "Cidhna Mine Expanded.esp": {
+        "MGEF": 7,
+        "SPEL": 5
+      },
+      "Requiem - Heart of the Reach.esp": {
+        "MGEF": 2,
+        "ENCH": 1,
+        "SPEL": 1
+      },
+      "LegendsOfAetherium.esp": {
+        "MGEF": 17,
+        "ENCH": 18,
+        "SPEL": 2,
+        "FLST": 2,
+        "PERK": 1
+      },
+      "DwarfsphereImprovedPatch.esp": {
+        "MGEF": 4,
+        "SPEL": 4
+      },
+      "ProjectAHO - StartWhenYouWant.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "ClockworkBugFixes.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "RACE": 2
+      },
+      "Requiem - ECSS.esp": {
+        "MGEF": 3,
+        "ENCH": 3,
+        "SPEL": 22,
+        "PERK": 1,
+        "RACE": 11
+      },
+      "Trad_SaintsSeducers025Curios037_Requiem_Patch.esp": {
+        "MGEF": 27,
+        "ENCH": 1,
+        "SPEL": 27,
+        "PERK": 7,
+        "RACE": 5,
+        "AVIF": 1
+      },
+      "Forgotten City Music Fix.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Requiem - Undeath.esp": {
+        "MGEF": 8,
+        "SPEL": 10,
+        "PERK": 1,
+        "RACE": 1
+      },
+      "Taberu Animation - Stros M'Kai Rum Patch.esp": {
+        "MGEF": 1
+      },
+      "Taberu Animation - USSEP Patch.esp": {
+        "MGEF": 1
+      },
+      "Taberu Animation - Fishing Patch.esp": {
+        "MGEF": 47
+      },
+      "BOOB - Requiem.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "WadeInWater.esp": {
+        "MGEF": 1,
+        "SPEL": 3
+      },
+      "WadeInWaterRedone.esp": {
+        "MGEF": 1
+      },
+      "EVGAnimatedTraversal.esl": {
+        "MGEF": 14,
+        "SPEL": 14
+      },
+      "Werewolf_New_Anim.esp": {
+        "MGEF": 9,
+        "SPEL": 7
+      },
+      "Centurion_OAR.esp": {
+        "MGEF": 4,
+        "SPEL": 5
+      },
+      "Giant_New_Anim.esl": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "DynamicBlockHit.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Left Hand Equipment Overhaul.esp": {
+        "MGEF": 4,
+        "SPEL": 4
+      },
+      "Smooth Bow Animation.esp": {
+        "MGEF": 4,
+        "SPEL": 4
+      },
+      "Smooth Animation.esp": {
+        "MGEF": 17,
+        "SPEL": 16,
+        "PERK": 3
+      },
+      "DF - Official Humanoid Pack.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Keytrace.esp": {
+        "MGEF": 4,
+        "SPEL": 4
+      },
+      "AnimatedMountedCasting.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Stoppage of Staggerlock.esp": {
+        "MGEF": 2,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "PowerShot.esp": {
+        "MGEF": 9,
+        "SPEL": 8
+      },
+      "Requiem - Pickpocket Rework.esp": {
+        "MGEF": 6,
+        "SPEL": 7,
+        "PERK": 13,
+        "AVIF": 1
+      },
+      "Requiem - Lockpicking Rework.esp": {
+        "MGEF": 20,
+        "SPEL": 13,
+        "PERK": 13,
+        "AVIF": 1
+      },
+      "Requiem - Lurker Breath Attack Fix.esp": {
+        "MGEF": 2,
+        "SPEL": 2
+      },
+      "Requiem - Minor Arcana SF Patch.esp": {
+        "MGEF": 1
+      },
+      "Requiem - Special Feats.esp": {
+        "MGEF": 59,
+        "SPEL": 40,
+        "PERK": 43,
+        "AVIF": 11
+      },
+      "Requiem-betterForgottenVale.esp": {
+        "MGEF": 8,
+        "ENCH": 1,
+        "SPEL": 8,
+        "RACE": 1
+      },
+      "Requiem_knockdown_patch.esp": {
+        "MGEF": 5,
+        "SPEL": 7,
+        "RACE": 7
+      },
+      "DisarmShoutReplacer.esp": {
+        "MGEF": 17,
+        "SPEL": 4
+      },
+      "Requiem_VampireCollection.esp": {
+        "MGEF": 32,
+        "ENCH": 4,
+        "SPEL": 74,
+        "PERK": 23
+      },
+      "Valthume Boss - Requiem.esp": {
+        "MGEF": 4,
+        "ENCH": 1,
+        "SPEL": 1,
+        "PERK": 2
+      },
+      "Volskygge Boss - Requiem.esp": {
+        "MGEF": 8,
+        "ENCH": 1,
+        "SPEL": 4,
+        "PERK": 4
+      },
+      "Dustman's Cairn Boss - Requiem.esp": {
+        "MGEF": 4,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Requiem - Birthsigns Redone.esp": {
+        "MGEF": 27,
+        "SPEL": 21,
+        "PERK": 8
+      },
+      "Requiem - Alchemy Redone.esp": {
+        "MGEF": 75,
+        "ENCH": 7,
+        "SPEL": 1,
+        "PERK": 7,
+        "AVIF": 1
+      },
+      "Requiem - Stealth Redone.esp": {
+        "MGEF": 1,
+        "SPEL": 2,
+        "PERK": 23
+      },
+      "Requiem - Toggle Enchantment.esp": {
+        "MGEF": 2,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Requiem - WAR Alchemy Redone Patch.esp": {
+        "MGEF": 5
+      },
+      "Requiem - MR Small Tweaks Patch.esp": {
+        "MGEF": 2,
+        "SPEL": 70
+      },
+      "Elemental Seals.esp": {
+        "MGEF": 6,
+        "ENCH": 3,
+        "SPEL": 3,
+        "PERK": 1
+      },
+      "NewArmoury - Magic Redone.esp": {
+        "MGEF": 15,
+        "ENCH": 5,
+        "SPEL": 5
+      },
+      "Requiem - Races Redone.esp": {
+        "MGEF": 21,
+        "SPEL": 38,
+        "PERK": 11,
+        "RACE": 20
+      },
+      "Requiem Magic Redone - Enemy Magic Expansion.esp": {
+        "MGEF": 41,
+        "SPEL": 171
+      },
+      "Requiem - NewArmoury.esp": {
+        "MGEF": 18,
+        "SPEL": 12,
+        "FLST": 3,
+        "PERK": 1
+      },
+      "Requiem - Kyne's Peace no ragdoll objects.esp": {
+        "MGEF": 3
+      },
+      "Requiem - Resist and Regen Tweak.esp": {
+        "MGEF": 2,
+        "SPEL": 26
+      },
+      "Requiem - Growl.esp": {
+        "MGEF": 2,
+        "SPEL": 19,
+        "PERK": 21,
+        "RACE": 2,
+        "AVIF": 1
+      },
+      "Growl - Poison Weakness.esp": {
+        "MGEF": 1,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Wielding Sun Stuff Hurts Vamps.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "FLST": 1
+      },
+      "Wintersun Skillrate Alternative.esp": {
+        "MGEF": 5,
+        "SPEL": 1,
+        "PERK": 2
+      },
+      "Sacrilege - Wintersun.esp": {
+        "MGEF": 1,
+        "FLST": 1
+      },
+      "SunAffectsNPCVampires.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 1
+      },
+      "TargetingSummonsTweak.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "SmarterMinions.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 1
+      },
+      "BIG [REDACTED] BOSS (BFB).esp": {
+        "MGEF": 11,
+        "ENCH": 1,
+        "SPEL": 7,
+        "RACE": 1
+      },
+      "LoreRim Trapper.esp": {
+        "MGEF": 9,
+        "SPEL": 7,
+        "PERK": 5,
+        "AVIF": 1
+      },
+      "WerewolfNightEye.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "Elemental Fury for MCO ADXP.esp": {
+        "MGEF": 15,
+        "SPEL": 21
+      },
+      "Biggie Traits - Requiem.esp": {
+        "MGEF": 5,
+        "SPEL": 7,
+        "PERK": 3
+      },
+      "Requiem - ArteFakes.esp": {
+        "MGEF": 3,
+        "ENCH": 5,
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Requiem - Immersive Sounds Compendium.esp": {
+        "MGEF": 82
+      },
+      "Requiem - Royal Armory.esp": {
+        "MGEF": 17,
+        "ENCH": 25,
+        "SPEL": 8,
+        "PERK": 4
+      },
+      "RequiemPatcherKeyword.esp": {
+        "MGEF": 3,
+        "SPEL": 23,
+        "PERK": 46
+      },
+      "Requiem Lite.esp": {
+        "MGEF": 22,
+        "SPEL": 2,
+        "PERK": 1
+      },
+      "Circle of Entropy - QOL Tweak.esp": {
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "LoreRim Second Breath.esp": {
+        "MGEF": 1,
+        "SPEL": 1
+      },
+      "LoreRim Dreamstride.esp": {
+        "MGEF": 5,
+        "SPEL": 5,
+        "RACE": 1
+      },
+      "LoreRim Startup.esp": {
+        "MGEF": 2,
+        "SPEL": 1
+      },
+      "Weapon Material Properties.esp": {
+        "MGEF": 7,
+        "SPEL": 7,
+        "PERK": 13,
+        "AVIF": 1
+      },
+      "Aetherium Forge - Perk Potions.esp": {
+        "MGEF": 1
+      },
+      "Baby Dragon - LoreRim Patch.esp": {
+        "MGEF": 1,
+        "SPEL": 2
+      },
+      "BFB Consistency Patch.esp": {
+        "MGEF": 1,
+        "SPEL": 6,
+        "RACE": 1
+      },
+      "BoozyBardFixTest.esp": {
+        "MGEF": 1
+      },
+      "Bow Charge - Rapid Bow Effect.esp": {
+        "MGEF": 3
+      },
+      "Elemental Fury - Patches.esp": {
+        "MGEF": 1,
+        "SPEL": 3
+      },
+      "Elemental Mastery Magic - Magic Redone Patch.esp": {
+        "MGEF": 7,
+        "SPEL": 9
+      },
+      "Grand Cleaver - Shazdeh Patch.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "Gray Cowl of Nocturnal - Requiem Patch.esp": {
+        "MGEF": 3,
+        "SPEL": 5,
+        "PERK": 1
+      },
+      "Growl - Reqtificated.esp": {
+        "MGEF": 6,
+        "ENCH": 1,
+        "SPEL": 6,
+        "PERK": 3,
+        "RACE": 1,
+        "AVIF": 1
+      },
+      "Legends of Aetherium - Requiem Patch.esp": {
+        "MGEF": 17,
+        "SPEL": 2
+      },
+      "LoreRim - Alchemy Tweaks.esp": {
+        "MGEF": 4,
+        "SPEL": 1
+      },
+      "LoreRim - Carved Brink Patch.esp": {
+        "MGEF": 4,
+        "SPEL": 9
+      },
+      "LoreRim - Cloth Padding.esp": {
+        "MGEF": 1,
+        "ENCH": 2
+      },
+      "LoreRim - Food Tweaks.esp": {
+        "MGEF": 8
+      },
+      "LoreRim - ISC Patches.esp": {
+        "MGEF": 5
+      },
+      "LoreRim - Stance Addon.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 3
+      },
+      "LoreRim - Static Skill Leveling Patch.esp": {
+        "MGEF": 6,
+        "SPEL": 4,
+        "PERK": 1
+      },
+      "LoreRim - Spell Balance Patches.esp": {
+        "MGEF": 57,
+        "ENCH": 28,
+        "SPEL": 203,
+        "PERK": 5
+      },
+      "Magicka Surge - Requiem Magic Redone Patch.esp": {
+        "MGEF": 15,
+        "SPEL": 7
+      },
+      "LoreRim - World Fixes.esp": {
+        "MGEF": 3,
+        "SPEL": 3
+      },
+      "Morrowind Creatures Merge.esp": {
+        "MGEF": 2,
+        "SPEL": 3,
+        "RACE": 5
+      },
+      "nirn necessities - Lorerim patch.esp": {
+        "MGEF": 1,
+        "ENCH": 9
+      },
+      "Ocato's Recital - Consistency.esp": {
+        "MGEF": 1
+      },
+      "Requiem NPC Tweaks - Red Eagle Fury Fixed.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "Requiem_-_Modern_Combat_Rework.esp": {
+        "MGEF": 31,
+        "SPEL": 41,
+        "PERK": 58,
+        "AVIF": 1
+      },
+      "SheepSheriff_SubclassesOfSkyrim_Patch.esp": {
+        "MGEF": 7,
+        "SPEL": 20,
+        "PERK": 36
+      },
+      "Stakes Reqtificated.esp": {
+        "MGEF": 1,
+        "ENCH": 1
+      },
+      "Spookier Ghosts - Requiem Patch.esp": {
+        "MGEF": 1,
+        "SPEL": 12
+      },
+      "The Contest - New Model.esp": {
+        "MGEF": 3,
+        "ENCH": 1
+      },
+      "Trapper - Sound Body Connection.esp": {
+        "MGEF": 3,
+        "PERK": 3,
+        "AVIF": 1
+      },
+      "Unique Thane Weapons - Patches.esp": {
+        "MGEF": 1,
+        "ENCH": 2
+      },
+      "VAE Reborn - LoreRim.esp": {
+        "MGEF": 41,
+        "ENCH": 6
+      },
+      "Wayfarer - Survival Perks.esp": {
+        "MGEF": 3,
+        "SPEL": 3,
+        "PERK": 4,
+        "AVIF": 1
+      },
+      "LoreRim - Race Patch.esp": {
+        "MGEF": 1,
+        "SPEL": 7,
+        "RACE": 30
+      },
+      "madDynamicStatScaler_Shouts.esp": {
+        "MGEF": 6,
+        "SPEL": 6,
+        "PERK": 6
+      },
+      "Stokes Alchemy Tweaks.esp": {
+        "MGEF": 3
+      },
+      "madDynamicStatScaler.esp": {
+        "MGEF": 18,
+        "SPEL": 46
+      },
+      "cccbhsse001-gaunt.esl": {
+        "ENCH": 7
+      },
+      "ccfsvsse001-backpacks.esl": {
+        "ENCH": 5
+      },
+      "Cultural Bards.esp": {
+        "ENCH": 1
+      },
+      "Armors of the Velothi 2 - Reqtificated.esp": {
+        "ENCH": 2
+      },
+      "Karasumi's Leviathan Axe.esp": {
+        "ENCH": 1
+      },
+      "Grand Cleaver.esp": {
+        "ENCH": 1
+      },
+      "ZD_RB_Daggers.esp": {
+        "ENCH": 2
+      },
+      "Ice Breath.esp": {
+        "ENCH": 1
+      },
+      "CC_Backpacks_Rebalanced.esl": {
+        "ENCH": 16
+      },
+      "Requiem - Tools of Kagrenac Patch.esp": {
+        "ENCH": 3,
+        "RACE": 14
+      },
+      "Valthume Boss - Requiem - Magic Redone.esp": {
+        "ENCH": 1
+      },
+      "Trad_SaintsExtendedCut_Artifacts_Requiem_Patch.esp": {
+        "ENCH": 1
+      },
+      "Kofi - Graay Patch.esp": {
+        "ENCH": 1
+      },
+      "KoFi - Pautinich Patch.esp": {
+        "ENCH": 4,
+        "SPEL": 12
+      },
+      "Kofi - SoulStoned Patch.esp": {
+        "ENCH": 1
+      },
+      "LoreRim - Armor Merges.esp": {
+        "ENCH": 5
+      },
+      "Sleepwalking - Requiem Patch.esp": {
+        "ENCH": 14,
+        "SPEL": 4
+      },
+      "KillMiraakSpellFix.esp": {
+        "SPEL": 1
+      },
+      "Unmarked Locations Pack - All In One.esp": {
+        "SPEL": 4
+      },
+      "Ryn's Crabber's Shanty.esp": {
+        "SPEL": 1,
+        "RACE": 1
+      },
+      "Little Prince.esp": {
+        "SPEL": 1
+      },
+      "Soul Withdrawal Is a Disease.esp": {
+        "SPEL": 1
+      },
+      "Apex_Khajiit.esp": {
+        "SPEL": 1,
+        "FLST": 1,
+        "PERK": 1
+      },
+      "Timeless spear.esp": {
+        "SPEL": 1,
+        "PERK": 1
+      },
+      "Respawn - Death Overhaul.esp": {
+        "SPEL": 2,
+        "FLST": 8
+      },
+      "mihailtrollcub.esp": {
+        "SPEL": 2,
+        "RACE": 1
+      },
+      "CompanionsTweaks.esp": {
+        "SPEL": 1
+      },
+      "EbonyBladeCurse_Requiem.esp": {
+        "SPEL": 1,
+        "RACE": 1
+      },
+      "olenveldfixpack.esp": {
+        "SPEL": 3
+      },
+      "Requiem - DwarfSphere.esp": {
+        "SPEL": 8,
+        "RACE": 25
+      },
+      "Requiem - Clockwork.esp": {
+        "SPEL": 1,
+        "RACE": 2
+      },
+      "Requiem - More Unique Enemies - Magic Redone Addon.esp": {
+        "SPEL": 43
+      },
+      "SunAffectsNPCVampires-Hooded.esp": {
+        "SPEL": 2
+      },
+      "Attacko's Daedra - Reqtificated.esp": {
+        "SPEL": 1
+      },
+      "Birbwalker - Creature Patches.esp": {
+        "SPEL": 4
+      },
+      "Ebony Blade Curse - Reqtificated.esp": {
+        "SPEL": 1
+      },
+      "Falkreath Shades - Reqtificated.esp": {
+        "SPEL": 2
+      },
+      "Human Dragon Priests - Reqtificated.esp": {
+        "SPEL": 2,
+        "FLST": 1,
+        "RACE": 1
+      },
+      "Jesper - Requiem Patch.esp": {
+        "SPEL": 2
+      },
+      "KoFi - CamSandwich Patch.esp": {
+        "SPEL": 1
+      },
+      "Kofi - Filthdog Patch.esp": {
+        "SPEL": 1
+      },
+      "Kofi - ParkGuest Patch.esp": {
+        "SPEL": 3
+      },
+      "Kofi Weapon - Gilgy Patch.esp": {
+        "SPEL": 2
+      },
+      "LoreRim - Remi Patch.esp": {
+        "SPEL": 12,
+        "PERK": 2
+      },
+      "morrowind creatures - requiem consistency patch.esp": {
+        "SPEL": 2,
+        "RACE": 3
+      },
+      "NPCs Pre-Synthesis Reqtificated.esp": {
+        "SPEL": 6,
+        "PERK": 1,
+        "RACE": 9
+      },
+      "Olenveld - Reqtificated.esp": {
+        "SPEL": 2
+      },
+      "Traits - LoreRim Balance Patch.esp": {
+        "SPEL": 14,
+        "PERK": 7
+      },
+      "Wand Keywords.esp": {
+        "SPEL": 1,
+        "PERK": 8,
+        "AVIF": 1
+      },
+      "Werewolf Spirit - Reqtificated.esp": {
+        "SPEL": 1
+      },
+      "Wielding Sun Stuff Hurts Vampires - Bound Weapon Fix.esp": {
+        "SPEL": 2
+      },
+      "Synthesis - Stat Scaler.esp": {
+        "SPEL": 46
+      },
+      "LoreRim - Vampire Helmet Mod.esp": {
+        "SPEL": 5
+      },
+      "ccedhsse002-splkntset.esl": {
+        "FLST": 1
+      },
+      "Civil War Champions - Reduced Cut.esp": {
+        "FLST": 1
+      },
+      "zeroBountyHostilityFix.esp": {
+        "FLST": 1
+      },
+      "UIExtensions.esp": {
+        "FLST": 1
+      },
+      "Butterflies.esp": {
+        "FLST": 1
+      },
+      "Pick Up Radius.esp": {
+        "FLST": 46,
+        "PERK": 1
+      },
+      "OCF.esp": {
+        "FLST": 238
+      },
+      "Upgradable Spells UI.esp": {
+        "FLST": 8
+      },
+      "Quick Item Transfer.esp": {
+        "FLST": 8
+      },
+      "Dynamic Things Alternative.esp": {
+        "FLST": 5
+      },
+      "Snowman Secrets.esp": {
+        "FLST": 1
+      },
+      "SkyrimHouseRemodel.esp": {
+        "FLST": 4
+      },
+      "RedBag's Solitude [PATCH - TGCoS].esp": {
+        "FLST": 2
+      },
+      "RTDocks - Animated Ships.esp": {
+        "FLST": 2
+      },
+      "Eli_Dovah Vault.esp": {
+        "FLST": 3
+      },
+      "Embers XD - Patch - Survival Mode Improved.esp": {
+        "FLST": 1
+      },
+      "AdditionalHearthfireDolls.esp": {
+        "FLST": 1
+      },
+      "cs_hf_trophypatch_BOS.esp": {
+        "FLST": 2
+      },
+      "DTA - Diverse Archery Targets Patch.esp": {
+        "FLST": 1
+      },
+      "ClimbableDoorLadder.esp": {
+        "FLST": 1,
+        "PERK": 1
+      },
+      "More Silver and Dwemer Kitchenware.esp": {
+        "FLST": 1
+      },
+      "FacegenForKids.esp": {
+        "FLST": 1
+      },
+      "Additional Dremora Faces.esp": {
+        "FLST": 2,
+        "RACE": 2
+      },
+      "Project ja-Kha'jay- Khajiit Diversity.esp": {
+        "FLST": 17,
+        "RACE": 10
+      },
+      "PrinceandPauperRefine_CC_Cave.esp": {
+        "FLST": 2
+      },
+      "Missing Follower Dialogue Fix.esp": {
+        "FLST": 3
+      },
+      "Press E to heal Gore.esp": {
+        "FLST": 2
+      },
+      "Aurea Umbra - SerketHetyt's Taliesin Overhaul.esp": {
+        "FLST": 2
+      },
+      "InsanitySilverBow.esp": {
+        "FLST": 3
+      },
+      "Spell Organizer.esp": {
+        "FLST": 2
+      },
+      "Skyrim Got Talent - UI.esp": {
+        "FLST": 3
+      },
+      "Temper&Recharge.esp": {
+        "FLST": 8
+      },
+      "Alchemical Appraisal Services.esp": {
+        "FLST": 2
+      },
+      "Sit on Stuff.esp": {
+        "FLST": 2
+      },
+      "Hunters Sell Fish And More Animal Parts - CC Fishing.esp": {
+        "FLST": 1
+      },
+      "Survival Mode Improved Embers XD Rest By Campfire - Kyne's Devotion Patch.esp": {
+        "FLST": 1
+      },
+      "Alchemy Requires Bottles Redux.esp": {
+        "FLST": 1
+      },
+      "Shouts of Stallholders.esp": {
+        "FLST": 1
+      },
+      "moretosaycityguards.esp": {
+        "FLST": 1
+      },
+      "moretosaygeneric.esp": {
+        "FLST": 4
+      },
+      "Falmer Servant Lines Expansion.esp": {
+        "FLST": 1
+      },
+      "NPCsReactToFrenzy.esp": {
+        "FLST": 6
+      },
+      "PirateBarks.esp": {
+        "FLST": 1
+      },
+      "GoodnightSkyrim.esp": {
+        "FLST": 4
+      },
+      "mihailhousecat - Immersive Interactions patch.esp": {
+        "FLST": 1
+      },
+      "StridingSiltStrider.esl": {
+        "FLST": 1
+      },
+      "JELWyrmstoothCausePatch.esp": {
+        "FLST": 1
+      },
+      "Poisonous Bear Traps.esp": {
+        "FLST": 1,
+        "PERK": 1
+      },
+      "Sacrilege - Fishing Compatibility Patch.esp": {
+        "FLST": 1
+      },
+      "The Great Town of Shor's Stone - Wintersun Addon.esp": {
+        "FLST": 1
+      },
+      "Hearthfires - Wintersun Shrines.esp": {
+        "FLST": 2
+      },
+      "Missives - Carriage and Ferry Travel Overhaul Patch.esp": {
+        "FLST": 1
+      },
+      "Missives - Quest Edits for Unique Missive Boards.esp": {
+        "FLST": 1
+      },
+      "Missives Quests Raise Disposition.esp": {
+        "FLST": 3
+      },
+      "LoreRim Trapper - Immersive Interactions Patch.esp": {
+        "FLST": 1
+      },
+      "Favor Quests Seperated.esp": {
+        "FLST": 9
+      },
+      "Biggie Traits - Immersive Interactions.esp": {
+        "FLST": 1
+      },
+      "The Dragonborn's Fishiary.esp": {
+        "FLST": 2
+      },
+      "Bestiary Artifacts.esp": {
+        "FLST": 3
+      },
+      "LoreRim Dagon Defile Fix.esp": {
+        "FLST": 1,
+        "PERK": 1
+      },
+      "RespawnSoulslike - Transformation Patch.esp": {
+        "FLST": 1
+      },
+      "Homeowner FPI Patch.esp": {
+        "FLST": 1,
+        "PERK": 1
+      },
+      "LoreRim - Dialogue Patch.esp": {
+        "FLST": 2
+      },
+      "LoreRim - NPC Overwrite Merge.esp": {
+        "FLST": 2,
+        "RACE": 3
+      },
+      "Magic Redone - Legends of Aetherium Patch.esp": {
+        "FLST": 1
+      },
+      "Missives - Reqtificated.esp": {
+        "FLST": 1
+      },
+      "DynDOLOD.esp": {
+        "FLST": 28
+      },
+      "ccbgssse055-ba_orcishscaled.esl": {
+        "PERK": 3
+      },
+      "ccbgssse056-ba_silver.esl": {
+        "PERK": 2
+      },
+      "ccbgssse062-ba_dwarvenmail.esl": {
+        "PERK": 1
+      },
+      "AdoptionAndMovingFix.esp": {
+        "PERK": 1
+      },
+      "skymoji.esp": {
+        "PERK": 1
+      },
+      "Inigo Official Patch SE (ESPFE).esp": {
+        "PERK": 1
+      },
+      "SpellAbsorptionRework_75Cap.esp": {
+        "PERK": 2
+      },
+      "Sit on Stuff - Take a Nap Patch.esp": {
+        "PERK": 1
+      },
+      "AlchEquipment - Stronger Master Equipment.esp": {
+        "PERK": 3
+      },
+      "Portable Enchanting.esp": {
+        "PERK": 1
+      },
+      "Dremora Lines Expansion.esp": {
+        "PERK": 1
+      },
+      "FirstPersonInteractions_Addon.esp": {
+        "PERK": 1
+      },
+      "ViolensExtension.esp": {
+        "PERK": 20
+      },
+      "Requiem - WAR Stealth Redone Patch.esp": {
+        "PERK": 4
+      },
+      "Requiem - MR Special Feats Patch.esp": {
+        "PERK": 10,
+        "AVIF": 3
+      },
+      "CCSurvival - Disable Shrine Menu.esl": {
+        "PERK": 1
+      },
+      "Wintersun Optional Call of the Void.esp": {
+        "PERK": 1
+      },
+      "RelentlessTriad.esp": {
+        "PERK": 2
+      },
+      "Requiem_NoBloodPotions.esp": {
+        "PERK": 1
+      },
+      "Static Skill Leveling SMI Patch.esp": {
+        "PERK": 3
+      },
+      "LoreRim Lion's Arrow.esp": {
+        "PERK": 1
+      },
+      "Crowded Streets - Death Fall Fix.esp": {
+        "PERK": 1
+      },
+      "LoreRim - Weaponmaster.esp": {
+        "PERK": 9,
+        "AVIF": 1
+      },
+      "Requiem - Magic Redone Typo Fix With Special Feats Patch.esp": {
+        "PERK": 4
+      },
+      "Smooth Nerf.esp": {
+        "PERK": 3
+      },
+      "Ryn's Saarthal.esp": {
+        "RACE": 1
+      },
+      "UniqueBarbas.esp": {
+        "RACE": 1
+      },
+      "JELBettyNetch.esp": {
+        "RACE": 1
+      },
+      "Bears of the North.esp": {
+        "RACE": 3
+      },
+      "ScarifiedDunmer.esp": {
+        "RACE": 2
+      },
+      "SimpleChildren.esp": {
+        "RACE": 1
+      },
+      "BeastHHBB - Adoptable Beast Children.esp": {
+        "RACE": 5
+      },
+      "Requiem of the Green.esp": {
+        "RACE": 1
+      },
+      "Assassin of Old - Remastered.esp": {
+        "RACE": 1
+      },
+      "Racial Body Morphs.esp": {
+        "RACE": 26
+      },
+      "VampiresHaveClaws - Player Version.esp": {
+        "RACE": 20
+      },
+      "mihailrooster.esp": {
+        "RACE": 1
+      },
+      "mihailmammothbaby.esp": {
+        "RACE": 1
+      },
+      "mihailchicks.esp": {
+        "RACE": 1
+      },
+      "mihailgiantfamily.esp": {
+        "RACE": 3
+      },
+      "mihailringneckedpheasant.esp": {
+        "RACE": 1
+      },
+      "mihailscutler.esp": {
+        "RACE": 1
+      },
+      "mihailhousecat.esp": {
+        "RACE": 1
+      },
+      "mihailfrogs.esp": {
+        "RACE": 1
+      },
+      "Zeus.esp": {
+        "RACE": 1
+      },
+      "BIRDS.esl": {
+        "RACE": 2
+      },
+      "1Minotaurs.esp": {
+        "RACE": 2
+      },
+      "Vvardvark.esp": {
+        "RACE": 1
+      },
+      "DEER.esp": {
+        "RACE": 3
+      },
+      "SomeCreatureBehaviorBugFixes.esp": {
+        "RACE": 1
+      },
+      "TDM Target Lock Fix - Bristleback.esp": {
+        "RACE": 1
+      },
+      "Requiem - Additional Dremora Faces - Dremora Lines Expansion.esp": {
+        "RACE": 2
+      },
+      "Requiem - Small Tweaks - Additional Dremora Faces - Dremora Lines Expansion.esp": {
+        "RACE": 2
+      },
+      "DEER - Patches.esp": {
+        "RACE": 3
+      },
+      "LoreRim - RFTI Merge.esp": {
+        "RACE": 1
+      },
+      "Roosters - Reqtificated.esp": {
+        "RACE": 1
+      },
+      "Synthesis - NPC.esp": {
+        "RACE": 114
+      },
+      "Requiem - AR Special Feats Patch.esp": {
+        "AVIF": 1
+      },
+      "Requiem - WAR Special Feats Patch.esp": {
+        "AVIF": 2
+      },
+      "Synthesis - Gameplay Overwrite.esp": {
+        "AVIF": 7
       }
     }
   }

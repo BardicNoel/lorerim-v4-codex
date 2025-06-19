@@ -27,8 +27,6 @@ class FileWriterImpl implements FileWriter {
       await writeFile(filePath, formatJSON(typeRecords));
     }
   }
-
-
 }
 
 /**

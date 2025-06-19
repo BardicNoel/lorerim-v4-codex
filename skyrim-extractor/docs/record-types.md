@@ -1,119 +1,100 @@
-# Skyrim Record Types
+# 🎮 Character Creation & Gameplay Record Types (Skyrim/xEdit)
 
-This document provides a comprehensive overview of Skyrim record types and their groupings. These record types are used in the plugin files (.esp/.esm) and can be filtered using the `recordTypeFilter` configuration option.
+This document lists key record types relevant to **character creation** and **core gameplay logic** in Skyrim modding (via ESM/ESP/ESL parsing). These records govern abilities, leveling, stats, and systemic mechanics used in character tools.
 
-## Core Gameplay Records
-- `PERK` - Perks that modify character abilities and stats
-- `MGEF` - Magic Effects that define spell behaviors
-- `SPEL` - Spells that combine magic effects
-- `RACE` - Character races with their attributes
-- `CLAS` - Character classes and their progression
+---
 
-## Item Records
-- `ARMO` - Armor and clothing items
-- `WEAP` - Weapons and their properties
-- `ALCH` - Potions and alchemical items
-- `INGR` - Ingredients for alchemy
-- `BOOK` - Books, notes, and readable items
-- `MISC` - Miscellaneous items
-- `AMMO` - Arrows and bolts
+## 🧬 Character Creation Alpha Records
 
-## World Records
-- `CELL` - Interior and exterior cells
-- `WRLD` - World spaces and their properties
-- `LAND` - Landscape data
-- `NAVI` - Navigation meshes
-- `WATR` - Water definitions
-- `WTHR` - Weather systems
+These records are foundational for building a character creation tool—defining race, class, skills, and passive effects (like standing stones).
 
-## Quest Records
-- `QUST` - Quest definitions
-- `DIAL` - Dialogue topics
-- `INFO` - Dialogue responses
-- `PACK` - AI packages and behaviors
+### 📌 Essential Character Creation Records
 
-## NPC Records
-- `NPC_` - Non-player characters
-- `FACT` - Factions and their relationships
-- `RACE` - Character races
-- `CLAS` - Character classes
+| Record | Name             | Purpose                                                |
+| ------ | ---------------- | ------------------------------------------------------ |
+| `RACE` | Race             | Stats, movement, skills, appearance                    |
+| `CLAS` | Class            | Governs skill focus and combat roles                   |
+| `FACT` | Faction          | Starting allegiances, dialogue access                  |
+| `PERK` | Perk             | Starting abilities, passive bonuses                    |
+| `AVIF` | Actor Value Info | Core stats (e.g., health, stamina, carry weight)       |
+| `MGEF` | Magic Effect     | Logic behind standing stones, passives, racial bonuses |
+| `SPEL` | Spell            | Racial powers, innate abilities                        |
+| `ENCH` | Enchantment      | Embedded gear-based passives, racial traits            |
+| `GLOB` | Global Variable  | Used for controlling choice mechanics or UI state      |
+| `FLST` | Form List        | Option groups for powers, races, stone powers          |
 
-## Object Records
-- `CONT` - Containers (chests, barrels, etc.)
-- `DOOR` - Doors and gates
-- `FLOR` - Flora (plants, trees)
-- `FURN` - Furniture and interactive objects
-- `LIGH` - Light sources
-- `STAT` - Static objects
-- `TREE` - Tree definitions
-- `ACTI` - Activators (buttons, levers)
-- `TERM` - Terminals and computers
+---
 
-## Game Systems
-- `GLOB` - Global variables
-- `GMST` - Game settings
-- `KYWD` - Keywords for object categorization
-- `LSCR` - Loading screens
-- `LTEX` - Landscape textures
-- `MATT` - Material definitions
-- `MESG` - Messages and notifications
-- `MUSC` - Music tracks
-- `SOUN` - Sound effects
-- `TXST` - Texture sets
+## 🧱 Core Gameplay Logic & Systemic Records
 
-## Usage in Configuration
+These records influence how a character progresses and interacts with the world over time.
 
-To filter specific record types, add them to the `recordTypeFilter` array in your `config.json`:
+### 📘 Progression & Mechanics
 
-```json
-{
-  "recordTypeFilter": [
-    "PERK",
-    "MGEF",
-    "SPEL"
-  ]
-}
+| Record | Name          | Purpose                                                        |
+| ------ | ------------- | -------------------------------------------------------------- |
+| `PERK` | Perk          | Passive or active abilities; progression systems               |
+| `LVLN` | Leveled NPC   | NPCs/creatures by level                                        |
+| `LVSP` | Leveled Spell | Spell lists scaling with level                                 |
+| `LVLI` | Leveled Item  | Scaled loot, vendor stock, random rewards                      |
+| `SKIL` | Skill         | (Obsolete) Used in earlier games, replaced by `AVIF` in Skyrim |
+
+### 🎓 Learning & Training
+
+| Record | Name       | Purpose                                              |
+| ------ | ---------- | ---------------------------------------------------- |
+| `NPC_` | NPC        | Includes trainers, skill-based leveling NPCs         |
+| `QUST` | Quest      | Skill checks, training scripts, perk rewards         |
+| `PACK` | AI Package | Training routines, idle actions, scheduled behaviors |
+| `SCEN` | Scene      | Dialogue-driven events, sometimes for progression    |
+
+### 🧠 Abilities & Powers
+
+| Record | Name        | Purpose                                      |
+| ------ | ----------- | -------------------------------------------- |
+| `SPEL` | Spell       | All abilities and spells (active/passive)    |
+| `MGEF` | MagicEffect | Underlying behavior logic for spells/perks   |
+| `ENCH` | Enchantment | Gear-based effects (often passive abilities) |
+| `SHOU` | Shout       | Dragon Shouts                                |
+
+### 🎭 Role and AI Behavior
+
+| Record        | Name         | Purpose                                      |
+| ------------- | ------------ | -------------------------------------------- |
+| `CSTY`        | Combat Style | Governs AI tactics and combat behavior       |
+| `DIAL`/`INFO` | Dialogue     | Skill/perk/quest conditions in conversations |
+| `EQUP`        | Equip Slot   | Equipment slot definitions                   |
+
+### 🛠️ Technical & Modifier Records
+
+| Record | Name      | Purpose                                           |
+| ------ | --------- | ------------------------------------------------- |
+| `GLOB` | Global    | Global variables used in quests, balancing, logic |
+| `FLST` | Form List | Logic groupings of perks, spells, factions, etc.  |
+| `ACTI` | Activator | Often used in skill-gated interactions            |
+| `REFR` | Reference | May contain scripts affecting character logic     |
+
+---
+
+## 🔍 Filtering Tip
+
+To isolate chore-level records in tools like xEdit:
+
+```regex
+PERK|MGEF|SPEL|LVLI|RACE|CLAS|FACT|AVIF|PACK|CSTY|GLOB|FLST
 ```
 
-### Common Filter Combinations
+This captures core systemic gameplay data excluding art/audio/model content.
 
-1. **Combat Focus**
-   ```json
-   "recordTypeFilter": [
-     "WEAP",
-     "ARMO",
-     "PERK",
-     "SPEL",
-     "MGEF"
-   ]
-   ```
+---
 
-2. **Quest Content**
-   ```json
-   "recordTypeFilter": [
-     "QUST",
-     "DIAL",
-     "INFO",
-     "NPC_",
-     "PACK"
-   ]
-   ```
+## ✅ Use Cases
 
-3. **World Building**
-   ```json
-   "recordTypeFilter": [
-     "CELL",
-     "WRLD",
-     "LAND",
-     "NAVI",
-     "STAT",
-     "FURN",
-     "CONT"
-   ]
-   ```
+- **Character creation interface tools**
+- **Exporting perks, spells, and leveling data** for analysis
+- **Building gameplay analyzers** or balance tools
+- **Understanding progression trees** and class mechanics
 
-## Notes
-- Record types are case-sensitive
-- Some record types may be dependent on others (e.g., DIAL often requires QUST)
-- Filtering record types can significantly improve processing speed
-- Consider your analysis goals when selecting record types to filter 
+---
+
+For plugin developers, understanding these records is essential for adjusting balance, progression, or AI behavior without touching visuals or assets.
