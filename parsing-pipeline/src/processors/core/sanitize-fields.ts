@@ -3,109 +3,54 @@ import { Processor } from './index';
 import { ParsedRecord } from '@lorerim/platform-types';
 
 function isExcludedField(fieldPath: string, excludeFields?: string[]): boolean {
-    if (!excludeFields) return false;
-    return excludeFields.some(excluded => fieldPath.startsWith(excluded));
+  if (!excludeFields) return false;
+  return excludeFields.some((excluded) => fieldPath.startsWith(excluded));
 }
 
 function extractFormId(value: string): string | null {
-    const match = value.match(/\[([A-Z]+:[0-9A-F]+)\]/);
-    return match ? match[1] : null;
+  const match = value.match(/\[([A-Z]+:[0-9A-F]+)\]/);
+  return match ? match[1] : null;
 }
 
-function processObject(
-    obj: Record<string, any>,
-    rules: SanitizeFieldsConfig['rules'],
-    currentPath: string = '',
-    stats: { fieldsProcessed: number; fieldsRemoved: number; fieldsReplaced: number }
-): Record<string, any> {
-    const result: Record<string, any> = {};
-
-    for (const [key, value] of Object.entries(obj)) {
-        const fieldPath = currentPath ? `${currentPath}.${key}` : key;
-        stats.fieldsProcessed++;
-
-        // Skip excluded fields
-        if (isExcludedField(fieldPath, rules[0]?.excludeFields)) {
-            result[key] = value;
-            continue;
-        }
-
-        // Handle nested objects
-        if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-            result[key] = processObject(value, rules, fieldPath, stats);
-            continue;
-        }
-
-        // Handle arrays
-        if (Array.isArray(value)) {
-            result[key] = value.map(item => 
-                typeof item === 'object' && item !== null
-                    ? processObject(item, rules, fieldPath, stats)
-                    : item
-            );
-            continue;
-        }
-
-        // Handle primitive values
-        if (typeof value === 'string') {
-            const rule = rules[0]; // For now, we only use the first rule
-            
-            // Handle form ID extraction
-            if (rule.action === 'extractFormId') {
-                const formId = extractFormId(value);
-                if (formId) {
-                    stats.fieldsReplaced++;
-                    result[key] = formId;
-                    continue;
-                }
-            }
-            
-            // Handle other string patterns
-            if (value.includes(rule.pattern)) {
-                if (rule.action === 'remove') {
-                    stats.fieldsRemoved++;
-                    continue; // Skip this field
-                } else if (rule.action === 'replace' && rule.replacement !== undefined) {
-                    stats.fieldsReplaced++;
-                    result[key] = rule.replacement;
-                    continue;
-                }
-            }
-        }
-
-        // Keep the original value if no rules matched
-        result[key] = value;
-    }
-
-    return result;
+function processRecordSubrecords(
+  recordArr: { tag: string; buffer: string }[],
+  rules: SanitizeFieldsConfig['rules'],
+  stats: any
+): { tag: string; buffer: string }[] {
+  // Example: could add logic to sanitize subrecord buffers if needed
+  // For now, just return as is
+  return recordArr;
 }
 
 export function createSanitizeFieldsProcessor(config: SanitizeFieldsConfig): Processor {
-    let stats = {
-        recordsProcessed: 0,
-        fieldsProcessed: 0,
-        fieldsRemoved: 0,
-        fieldsReplaced: 0
-    };
+  let stats = {
+    recordsProcessed: 0,
+    fieldsProcessed: 0,
+    fieldsRemoved: 0,
+    fieldsReplaced: 0,
+  };
 
-    return {
-        async transform(data: JsonArray): Promise<JsonArray> {
-            stats.recordsProcessed = data.length;
-            stats.fieldsProcessed = 0;
-            stats.fieldsRemoved = 0;
-            stats.fieldsReplaced = 0;
+  return {
+    async transform(data: JsonArray): Promise<JsonArray> {
+      stats.recordsProcessed = data.length;
+      stats.fieldsProcessed = 0;
+      stats.fieldsRemoved = 0;
+      stats.fieldsReplaced = 0;
 
-            return data.map(record => {
-                const parsedRecord = record as ParsedRecord;
-                const newRecord: ParsedRecord = {
-                    meta: { ...parsedRecord.meta },
-                    data: processObject(parsedRecord.data, config.rules, '', stats),
-                    header: parsedRecord.header
-                };
-                return newRecord;
-            });
-        },
-
-        getStats: () => stats
-    };
-} 
+      return data.map((record) => {
+        const parsedRecord = record as ParsedRecord;
+        // For now, only process meta and decodedData fields
+        const newRecord: ParsedRecord = {
+          meta: { ...parsedRecord.meta },
+          record: processRecordSubrecords(parsedRecord.record, config.rules, stats),
+          header: parsedRecord.header,
+        };
+        // Optionally process decodedData, decodedErrors, etc. if present
+        if (parsedRecord.decodedData) newRecord.decodedData = { ...parsedRecord.decodedData };
+        if (parsedRecord.decodedErrors) newRecord.decodedErrors = { ...parsedRecord.decodedErrors };
+        return newRecord;
+      });
+    },
+    getStats: () => stats,
+  };
+}

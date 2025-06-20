@@ -3,9 +3,12 @@ import { Processor } from './index';
 import { ParsedRecord } from '@lorerim/platform-types';
 import { getNestedValue } from '../../utils/field-access';
 
-function evaluateCondition(record: ParsedRecord, condition: { field: string; operator: string; value: any }): boolean {
+function evaluateCondition(
+  record: ParsedRecord,
+  condition: { field: string; operator: string; value: any }
+): boolean {
   const fieldValue = getNestedValue(record, condition.field);
-  
+
   switch (condition.operator) {
     case 'equals':
       return fieldValue === condition.value;
@@ -27,7 +30,7 @@ function evaluateCondition(record: ParsedRecord, condition: { field: string; ope
 export function createKeepFieldsProcessor(config: KeepFieldsConfig): Processor {
   let stats: ProcessingResult = {
     recordsProcessed: 0,
-    fieldsKept: 0
+    fieldsKept: 0,
   };
 
   return {
@@ -35,62 +38,58 @@ export function createKeepFieldsProcessor(config: KeepFieldsConfig): Processor {
       stats.recordsProcessed = data.length;
       stats.fieldsKept = 0;
 
-      return data.map(record => {
+      return data.map((record) => {
         const parsedRecord = record as ParsedRecord;
-        // Check if conditions are met
-        const shouldProcess = !config.conditions || 
-          config.conditions.every(condition => evaluateCondition(parsedRecord, condition));
+        const shouldProcess =
+          !config.conditions ||
+          config.conditions.every((condition) => evaluateCondition(parsedRecord, condition));
 
-        // Create new record with only specified fields
-        const newRecord: ParsedRecord = {
-          meta: { ...parsedRecord.meta },
-          data: {},
-          header: parsedRecord.header
-        };
+        // Prepare new meta
+        const newMeta = { ...parsedRecord.meta };
+        // Prepare new record array
+        let newRecordArr: { tag: string; buffer: string }[] = [];
 
         if (shouldProcess) {
-          // Process each field path
-          config.fields.forEach(fieldPath => {
+          // Only keep specified fields
+          for (const fieldPath of config.fields) {
             const parts = fieldPath.split('.');
-            if (parts[0] === 'data') {
-              // Handle data fields
-              const fieldName = parts[1];
-              if (fieldName in parsedRecord.data) {
-                newRecord.data[fieldName] = parsedRecord.data[fieldName];
+            if (parts[0] === 'record') {
+              const tag = parts[1];
+              const found = parsedRecord.record.find((r) => r.tag === tag);
+              if (found) {
+                newRecordArr.push({ tag: found.tag, buffer: found.buffer });
                 stats.fieldsKept!++;
               }
             } else if (parts[0] === 'meta') {
-              // Handle meta fields
               const fieldName = parts[1];
-              switch (fieldName) {
-                case 'type':
-                  newRecord.meta.type = parsedRecord.meta.type;
-                  stats.fieldsKept!++;
-                  break;
-                case 'formId':
-                  newRecord.meta.formId = parsedRecord.meta.formId;
-                  stats.fieldsKept!++;
-                  break;
-                case 'plugin':
-                  newRecord.meta.plugin = parsedRecord.meta.plugin;
-                  stats.fieldsKept!++;
-                  break;
-                case 'stackOrder':
-                  newRecord.meta.stackOrder = parsedRecord.meta.stackOrder;
-                  stats.fieldsKept!++;
-                  break;
+              // Only assign known meta fields
+              if (
+                fieldName === 'type' ||
+                fieldName === 'formId' ||
+                fieldName === 'plugin' ||
+                fieldName === 'stackOrder' ||
+                fieldName === 'isWinner'
+              ) {
+                (newMeta as any)[fieldName] =
+                  parsedRecord.meta[fieldName as keyof typeof parsedRecord.meta];
+                stats.fieldsKept!++;
               }
+              // Skip unknown meta fields
             }
-          });
+          }
         } else {
-          // If conditions aren't met, keep all fields
-          newRecord.data = { ...parsedRecord.data };
+          // If conditions aren't met, keep all subrecords
+          newRecordArr = [...parsedRecord.record];
         }
 
-        return newRecord;
+        return {
+          meta: newMeta,
+          record: newRecordArr,
+          header: parsedRecord.header,
+        };
       });
     },
 
-    getStats: () => stats
+    getStats: () => stats,
   };
-} 
+}

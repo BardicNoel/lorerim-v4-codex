@@ -1,10 +1,4 @@
-import {
-  RecordSpecificSchemas,
-  CommonFields,
-  RecordSchema,
-  SchemaInternal,
-  SharedFields,
-} from './schemaTypes';
+import { RecordSpecificSchemas, CommonFields, SchemaInternal, SharedFields } from './schemaTypes';
 
 // Shared internal field layouts that can be composed into larger structs
 export const sharedFields: SharedFields = {
@@ -18,7 +12,7 @@ export const sharedFields: SharedFields = {
 };
 
 // Common field schemas that are reused across record types
-export const commonFieldSchemas: RecordSchema = {
+export const commonFieldSchemas: CommonFields = {
   EDID: { type: 'string', encoding: 'utf8' },
   FULL: { type: 'string', encoding: 'utf8' },
   DESC: { type: 'string', encoding: 'utf8' },

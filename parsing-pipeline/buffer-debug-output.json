@@ -9,41 +9,32 @@
         "stackOrder": 3770,
         "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "QVZEcmFnb25Tb3VscwA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"QVZEcmFnb25Tb3VscwA=\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 20,
+            "preview": "QVZEcmFnb25Tb3VscwA="
           }
         },
-        "DESC": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AAAAAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AAAAAA==\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "CNAM": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "ZS9TYw==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"ZS9TYw==\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "ZS9TYw=="
           }
         }
-      }
+      ]
     },
     {
       "meta": {
@@ -53,41 +44,32 @@
         "stackOrder": 3770,
         "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "QVZWYXJpYWJsZTAxAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"QVZWYXJpYWJsZTAxAA==\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 20,
+            "preview": "QVZWYXJpYWJsZTAxAA=="
           }
         },
-        "DESC": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AAAAAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AAAAAA==\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "CNAM": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "MDAyNA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"MDAyNA==\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "MDAyNA=="
           }
         }
-      }
+      ]
     },
     {
       "meta": {
@@ -97,41 +79,32 @@
         "stackOrder": 3770,
         "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "QVZMaWdodEFybW9yUG93ZXJNb2QA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"QVZMaWdodEFybW9yUG93ZXJNb2QA\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 28,
+            "preview": "QVZMaWdodEFybW9yUG93ZXJNb2QA"
           }
         },
-        "DESC": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AAAAAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AAAAAA==\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "CNAM": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "MITkEg==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"MITkEg==\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "MITkEg=="
           }
         }
-      }
+      ]
     },
     {
       "meta": {
@@ -141,41 +114,32 @@
         "stackOrder": 3770,
         "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "QVZFbmNoYW50aW5nU2tpbGxBZHZhbmNlAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"QVZFbmNoYW50aW5nU2tpbGxBZHZhbmNlAA==\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 36,
+            "preview": "QVZFbmNoYW50aW5nU2tpbGxBZHZhbmNl"
           }
         },
-        "DESC": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AAAAAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AAAAAA==\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "CNAM": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "bG9ndQ==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"bG9ndQ==\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "bG9ndQ=="
           }
         }
-      }
+      ]
     },
     {
       "meta": {
@@ -185,41 +149,32 @@
         "stackOrder": 3770,
         "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "QVZIZWF2eUFybW9yU2tpbGxBZHZhbmNlAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"QVZIZWF2eUFybW9yU2tpbGxBZHZhbmNlAA==\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 36,
+            "preview": "QVZIZWF2eUFybW9yU2tpbGxBZHZhbmNl"
           }
         },
-        "DESC": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AAAAAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AAAAAA==\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "CNAM": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "QS5wcw==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"QS5wcw==\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "QS5wcw=="
           }
         }
-      }
+      ]
     }
   ],
   "config": {

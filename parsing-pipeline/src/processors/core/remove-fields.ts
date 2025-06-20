@@ -97,15 +97,25 @@ export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Process
 
       return data.map((record) => {
         const parsedRecord = record as ParsedRecord;
-        const newRecord: ParsedRecord = {
+        let newRecordArr = [...parsedRecord.record];
+        // Remove subrecords by tag if specified in config.fields
+        if (Array.isArray(config.fields)) {
+          for (const field of config.fields) {
+            const parts = field.split('.');
+            if (parts[0] === 'record') {
+              const tag = parts[1];
+              const before = newRecordArr.length;
+              newRecordArr = newRecordArr.filter((r) => r.tag !== tag);
+              fieldsRemoved += before - newRecordArr.length;
+            }
+          }
+        }
+        return {
           ...parsedRecord,
+          record: newRecordArr,
         };
-
-        processNestedFields(newRecord, config.fields);
-        return newRecord;
       });
     },
-
     getStats: () => ({
       recordsProcessed: totalRecords,
       fieldsRemoved,

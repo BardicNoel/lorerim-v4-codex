@@ -44,7 +44,7 @@ export function extractParsedRecords(
     }
 
     let offset = 0;
-    const data: Record<string, string[]> = {};
+    const record: { tag: string; buffer: string }[] = [];
 
     while (offset + 6 <= processedDataBuffer.length) {
       const tag = processedDataBuffer.toString("ascii", offset, offset + 4);
@@ -54,8 +54,7 @@ export function extractParsedRecords(
         offset + 6,
         offset + 6 + size
       );
-      if (!data[tag]) data[tag] = [];
-      data[tag].push(payload.toString("base64"));
+      record.push({ tag, buffer: payload.toString("base64") });
 
       offset += 6 + size;
     }
@@ -67,7 +66,7 @@ export function extractParsedRecords(
         plugin: meta.sourcePlugin,
         stackOrder,
       },
-      data,
+      record,
       header,
     });
   }

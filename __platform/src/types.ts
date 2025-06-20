@@ -6,9 +6,10 @@ export interface ParsedRecord {
     stackOrder?: number | null; // e.g., 0, 1, 2, (0 being the highest version of this record)
     plugin: string; // e.g., 'Requiem.esp'
   };
-  data: {
-    [key: string]: string[]; // Subrecord content by subrecord ID, containing base64 encoded strings
-  };
+  record: {
+    tag: string;
+    buffer: string; // base64 encoded
+  }[];
   decodedData?: {
     [key: string]: any; // Decoded data by subrecord ID
   };

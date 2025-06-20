@@ -10,6 +10,7 @@ export type FieldType =
   | 'struct'
   | 'formid'
   | 'array'
+  | 'grouped'
   | 'unknown';
 
 export type StringEncoding = 'utf8' | 'utf16le' | 'ascii';
@@ -52,13 +53,24 @@ export interface ArrayFieldSchema extends NoPostParseSchema {
   element: FieldSchema;
 }
 
+export interface GroupedFieldsSchema extends NoPostParseSchema {
+  type: 'grouped';
+  groupSchema: {
+    [tag: string]: FieldSchema;
+  };
+  cardinality: 'single' | 'multiple';
+  virtualField: string; // Group will be assigned to this field
+  terminatorTag?: string; // if provided, the parser will stop and EXCLUDE this tag
+}
+
 export type FieldSchema =
   | StringFieldSchema
   | NumericFieldSchema
   | StructFieldSchema
   | FormIdFieldSchema
   | UnknownFieldSchema
-  | ArrayFieldSchema;
+  | ArrayFieldSchema
+  | GroupedFieldsSchema;
 
 export interface RecordSchema {
   [tag: string]: FieldSchema;
