@@ -1,7 +1,5 @@
 import { JsonArray, RemoveFieldsConfig } from '../../types/pipeline';
 import { Processor } from './index';
-import { getNestedValue, setNestedValue } from '../../utils/field-access';
-import { ParsedRecord } from '@lorerim/platform-types';
 
 type TrimType = 'all' | 'field' | 'object' | 'array';
 
@@ -87,6 +85,84 @@ function processNestedFields(obj: Record<string, any>, fields: any, path: string
   }
 }
 
+function removeFieldsFromObject(obj: any, fields: any): void {
+  if (typeof obj !== 'object' || obj === null) {
+    return;
+  }
+
+  if (Array.isArray(fields)) {
+    // Simple array of field paths
+    for (const field of fields) {
+      const parts = field.split('.');
+      let current = obj;
+
+      // Navigate to the parent of the field to remove
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (current && typeof current === 'object' && parts[i] in current) {
+          current = current[parts[i]];
+        } else {
+          current = null;
+          break;
+        }
+      }
+
+      // Remove the field if we found its parent
+      if (current && typeof current === 'object' && parts[parts.length - 1] in current) {
+        delete current[parts[parts.length - 1]];
+      }
+    }
+  } else if (typeof fields === 'object' && fields !== null) {
+    // Complex nested field configuration
+    processNestedFields(obj, fields);
+  }
+}
+
+function meetsConditions(obj: any, conditions?: any[]): boolean {
+  if (!conditions || conditions.length === 0) {
+    return true;
+  }
+
+  for (const condition of conditions) {
+    const { field, operator, value } = condition;
+    const parts = field.split('.');
+    let current = obj;
+
+    // Navigate to the field
+    for (const part of parts) {
+      if (current && typeof current === 'object' && part in current) {
+        current = current[part];
+      } else {
+        current = undefined;
+        break;
+      }
+    }
+
+    let matches = false;
+    switch (operator) {
+      case 'equals':
+        matches = current === value;
+        break;
+      case 'not-equals':
+        matches = current !== value;
+        break;
+      case 'contains':
+        matches = typeof current === 'string' && current.includes(value);
+        break;
+      case 'not-contains':
+        matches = typeof current === 'string' && !current.includes(value);
+        break;
+      default:
+        matches = false;
+    }
+
+    if (!matches) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Processor {
   let fieldsRemoved = 0;
   let totalRecords = 0;
@@ -96,24 +172,21 @@ export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Process
       totalRecords = data.length;
 
       return data.map((record) => {
-        const parsedRecord = record as ParsedRecord;
-        let newRecordArr = [...parsedRecord.record];
-        // Remove subrecords by tag if specified in config.fields
-        if (Array.isArray(config.fields)) {
-          for (const field of config.fields) {
-            const parts = field.split('.');
-            if (parts[0] === 'record') {
-              const tag = parts[1];
-              const before = newRecordArr.length;
-              newRecordArr = newRecordArr.filter((r) => r.tag !== tag);
-              fieldsRemoved += before - newRecordArr.length;
-            }
-          }
+        // Check if record meets conditions before processing
+        if (!meetsConditions(record, config.conditions)) {
+          return record;
         }
-        return {
-          ...parsedRecord,
-          record: newRecordArr,
-        };
+
+        // Create a deep copy to avoid mutating the original
+        const processedRecord = JSON.parse(JSON.stringify(record));
+
+        // Remove fields based on configuration
+        removeFieldsFromObject(processedRecord, config.fields);
+
+        // Count removed fields (this is a rough estimate)
+        fieldsRemoved += 1; // Increment for each processed record
+
+        return processedRecord;
       });
     },
     getStats: () => ({

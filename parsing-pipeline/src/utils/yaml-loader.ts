@@ -64,6 +64,7 @@ function validateStage(stage: any): StageConfig {
       'sanitize-fields',
       'buffer-decoder',
       'flatten-fields',
+      'merge-records',
     ].includes(stage.type)
   ) {
     throw new Error(`Invalid stage type: ${stage.type}`);
@@ -99,6 +100,23 @@ function validateStage(stage: any): StageConfig {
     case 'flatten-fields':
       if (!stage.fields) {
         throw new Error('Flatten fields stage must have fields');
+      }
+      break;
+    case 'merge-records':
+      if (!stage.sourceFile) {
+        throw new Error('Merge records stage must have sourceFile');
+      }
+      if (!stage.sourceRecordType) {
+        throw new Error('Merge records stage must have sourceRecordType');
+      }
+      if (!stage.mappings) {
+        throw new Error('Merge records stage must have mappings');
+      }
+      if (!stage.mergeField) {
+        throw new Error('Merge records stage must have mergeField');
+      }
+      if (!stage.mergeStrategy) {
+        throw new Error('Merge records stage must have mergeStrategy');
       }
       break;
   }

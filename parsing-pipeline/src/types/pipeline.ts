@@ -15,7 +15,8 @@ export type StageType =
   | 'keep-fields'
   | 'sanitize-fields'
   | 'buffer-decoder'
-  | 'flatten-fields';
+  | 'flatten-fields'
+  | 'merge-records';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -99,6 +100,21 @@ export interface FlattenFieldsConfig extends BaseStageConfig {
   fields: string[];
 }
 
+// Merge records stage configuration
+export interface MergeRecordsConfig extends BaseStageConfig {
+  type: 'merge-records';
+  sourceFile: string; // Path to the source records file
+  sourceRecordType: string; // Type of source records (e.g., 'PERK')
+  mappings: {
+    sourceField: string; // Field path in source records (e.g., 'decodedData.perkSections[].PNAM')
+    targetField: string; // Field path in target records (e.g., 'meta.formId')
+    matchType: 'exact' | 'contains' | 'array-contains'; // How to match values
+  }[];
+  mergeField: string; // Field to store merged data in target records (e.g., 'mergedData')
+  mergeStrategy: 'first' | 'all' | 'count'; // How to handle multiple matches
+  overwriteReference?: boolean; // If true, replace original field values with referenced records
+}
+
 // Stage configuration union type
 export type StageConfig =
   | FilterRecordsConfig
@@ -106,7 +122,8 @@ export type StageConfig =
   | KeepFieldsConfig
   | SanitizeFieldsConfig
   | BufferDecoderConfig
-  | FlattenFieldsConfig;
+  | FlattenFieldsConfig
+  | MergeRecordsConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {

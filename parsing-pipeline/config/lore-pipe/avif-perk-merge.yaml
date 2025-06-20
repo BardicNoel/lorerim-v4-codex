@@ -1,0 +1,28 @@
+# AVIF to PERK Merge Pipeline
+name: 'AVIF-PERK Merge Pipeline'
+description: 'Merge AVIF records with their related PERK records'
+input: '../output/parsing-pipeline/lorerim/avif-analysis.json'
+output: '../output/parsing-pipeline/lorerim/avif-perk-merged.json'
+
+stages:
+  - from: 'local'
+    name: 'Merge PERK Records'
+    type: 'merge-records'
+    description: 'Merge PERK records that are referenced by AVIF perkSections'
+    sourceFile: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+    sourceRecordType: 'PERK'
+    mappings:
+      - sourceField: 'meta.formId'
+        targetField: 'decodedData.perkSections[].PNAM'
+        matchType: 'exact'
+    mergeField: 'relatedPerks'
+    mergeStrategy: 'all'
+
+  - from: 'local'
+    name: 'Remove Processing Fields'
+    type: 'remove-fields'
+    description: 'Remove fields that were only needed for processing'
+    fields:
+      record: 'all'
+      header: 'all'
+      meta: 'all'

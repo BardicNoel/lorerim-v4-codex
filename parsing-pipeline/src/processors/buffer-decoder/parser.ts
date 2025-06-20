@@ -7,18 +7,8 @@ import {
 } from './schema';
 import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
 import { Processor } from '../core';
-import { formatJSON, formatFormId } from '@lorerim/platform-types';
+import { formatFormId } from '@lorerim/platform-types';
 import { parentPort } from 'worker_threads';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
-
-// Debug logging function that works in both worker and main thread
-function debugLog(message: string, data?: any) {
-  console.log(`[DEBUG] ${message}`, data);
-  if (parentPort) {
-    parentPort.postMessage({ type: 'debug', message, data });
-  }
-}
 
 // Error logging function that works in both worker and main thread
 function errorLog(message: string, error?: any) {
@@ -56,6 +46,29 @@ export class BufferDecoder {
     type: string,
     postParse?: (value: number) => any
   ): number {
+    // Add debugging for buffer bounds checking
+    if (offset < 0 || offset >= buffer.length) {
+      console.error(`[ERROR] Buffer bounds error in parseNumeric:`);
+      console.error(`[ERROR] Requested offset: ${offset}`);
+      console.error(`[ERROR] Buffer length: ${buffer.length}`);
+      console.error(`[ERROR] Type: ${type}`);
+      console.error(`[ERROR] Available range: 0 to ${buffer.length - 1}`);
+      throw new Error(`Buffer offset ${offset} is out of bounds (buffer length: ${buffer.length})`);
+    }
+
+    // Check if we have enough bytes for the requested type
+    const typeSize = this.getTypeSize(type);
+    if (offset + typeSize > buffer.length) {
+      console.error(`[ERROR] Insufficient buffer space for type ${type}:`);
+      console.error(`[ERROR] Requested offset: ${offset}`);
+      console.error(`[ERROR] Type size: ${typeSize}`);
+      console.error(`[ERROR] Buffer length: ${buffer.length}`);
+      console.error(
+        `[ERROR] Would need ${offset + typeSize} bytes, but only have ${buffer.length}`
+      );
+      throw new Error(`Insufficient buffer space for ${type} at offset ${offset}`);
+    }
+
     let value: number;
     switch (type) {
       case 'uint8':
@@ -108,7 +121,6 @@ export class BufferDecoder {
             currentOffset += strLength;
           } else {
             strLength = buffer.readUInt16LE(currentOffset);
-            // console.log(`[DEBUG] String length from buffer: ${strLength}`);
             result[field.name] = this.parseString(
               buffer,
               currentOffset,
@@ -129,12 +141,6 @@ export class BufferDecoder {
         case 'uint16':
         case 'uint32':
         case 'float32':
-          if (field.name === 'skill') {
-            console.log(`[DEBUG] Parsing skill at offset ${currentOffset}`, {
-              buffer: buffer.toString('hex', currentOffset, currentOffset + 4),
-              type: field.type,
-            });
-          }
           result[field.name] = this.parseNumeric(buffer, currentOffset, field.type, field.parser);
           currentOffset += this.getTypeSize(field.type);
           break;
@@ -165,18 +171,9 @@ export class BufferDecoder {
           break;
 
         case 'unknown':
-          if (field.name === 'skill') {
-            console.log(
-              `[DEBUG] Parsing field "${field.name}" (${field.type}) at offset ${currentOffset}`
-            );
-          }
           const unknownLength = buffer.readUInt16LE(currentOffset);
           currentOffset += 2 + unknownLength;
           break;
-      }
-
-      if (field.name === 'skill') {
-        console.log(`[DEBUG] Parsing field "${field.name}" (${field.type}) ${result[field.name]}`);
       }
 
       if (currentOffset > endOffset) {
@@ -291,7 +288,6 @@ export class BufferDecoder {
 
 function createBufferFromFieldData(fieldData: any[]): Buffer | null {
   if (fieldData.length === 0) {
-    console.log(`[DEBUG] No buffer Opt 1`);
     return null;
   }
 
@@ -306,7 +302,6 @@ function createBufferFromFieldData(fieldData: any[]): Buffer | null {
     try {
       return Buffer.from(firstItem, 'base64');
     } catch (error) {
-      console.log(`[DEBUG] Failed to decode base64 string:`, error);
       return null;
     }
   }
@@ -353,11 +348,8 @@ function decodeField(
 
   const buffer = createBufferFromFieldData(fieldData);
   if (!buffer) {
-    console.log(`[DEBUG] No buffer found for ${fieldName} in ${recordType}`);
     return null;
   }
-
-  console.log(`[DEBUG] Buffer found for ${fieldName} in ${recordType}`);
 
   switch (schema.type) {
     case 'string':
@@ -402,7 +394,6 @@ const parseGroupedFields = (
   // Process the first subrecord, which is the group trigger but also sometimes a terminator
   const firstSubrecord = parsedRecord.record[offset];
   const firstSubrecordSchema = groupSchema[firstSubrecord.tag];
-  debugLog(`[DEBUG] First subrecord schema:`, firstSubrecordSchema);
   const decodedFirstSubrecord = decodeField(
     firstSubrecord.tag,
     [firstSubrecord.buffer],
@@ -423,7 +414,6 @@ const parseGroupedFields = (
     const subrecord = parsedRecord.record[processedFields + offset];
     // check for terminator tag
     if (subrecord.tag === terminatorTag) {
-      debugLog(`[DEBUG] Terminator tag ${terminatorTag} found, stopping group parsing`);
       break;
     }
 
@@ -472,7 +462,6 @@ function processRecordFields(
 
       let fieldCount = 1; // Default to 1 for non-grouped fields
       const decodedData: Record<string, any> = {};
-      // check for groupedFields, handle separately
       if (schema.type === 'grouped') {
         const { decodedField: df, fieldCount: fc } = parseGroupedFields(
           processedRecord,
@@ -486,7 +475,6 @@ function processRecordFields(
           decodedData[schema.virtualField] = df;
         } else {
           const existingData = processedRecord.decodedData?.[schema.virtualField] ?? [];
-          debugLog(`[DEBUG] Existing data:`, existingData);
           decodedData[schema.virtualField] = [...existingData, df[schema.virtualField]];
         }
       } else {
@@ -512,6 +500,21 @@ function processRecordFields(
       i += fieldCount;
     } catch (error) {
       console.error(`[ERROR] Failed to parse record for ${fieldName}:`, error);
+      console.error(`[ERROR] Record EDID: ${record.meta?.type || 'unknown'}`);
+      console.error(`[ERROR] Record type: ${config.recordType}`);
+      console.error(`[ERROR] Field index: ${i}`);
+      console.error(`[ERROR] Total fields in record: ${processedRecord.record.length}`);
+
+      // Show buffer information
+      const buffer = createBufferFromFieldData(fieldData);
+      if (buffer) {
+        console.error(`[ERROR] Buffer length: ${buffer.length}`);
+        console.error(
+          `[ERROR] Buffer hex (first 32 bytes): ${buffer.toString('hex').substring(0, 64)}`
+        );
+      } else {
+        console.error(`[ERROR] No buffer data available`);
+      }
 
       errorLog(`Failed to decode field ${fieldName}:`, error);
       if (!processedRecord.decodedErrors) {
@@ -528,7 +531,6 @@ function processRecordFields(
       };
       recordErrors++;
       i++; // Skip to next record on error
-      process.exit(1);
     }
   }
 
@@ -547,27 +549,6 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
 
   return {
     transform(records: JsonArray): Promise<JsonArray> {
-      // Write first few records to file for inspection
-      const debugRecords = records.slice(0, 5).map((record) => ({
-        meta: record.meta,
-        record: record.record.map((subrecord) => ({
-          tag: subrecord.tag,
-          bufferInfo: {
-            isString: typeof subrecord.buffer === 'string',
-            length: typeof subrecord.buffer === 'string' ? subrecord.buffer.length : 0,
-            preview: typeof subrecord.buffer === 'string' ? subrecord.buffer.slice(0, 32) : '',
-          },
-        })),
-      }));
-
-      const debugOutput = {
-        totalRecords: records.length,
-        sampleRecords: debugRecords,
-        config,
-      };
-
-      writeFileSync(join(process.cwd(), 'buffer-debug-output.json'), formatJSON(debugOutput));
-
       const startTime = Date.now();
       const totalRecords = records.length;
       const logInterval = Math.max(1, Math.floor(totalRecords / 10));
@@ -578,11 +559,9 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
       stats.totalFields = 0;
       stats.skippedFields = 0;
 
-      debugLog(`Starting buffer decoder transform with ${totalRecords} records`);
-
       const processedRecords = records.map((record: ParsedRecord, index: number) => {
         if (index % logInterval === 0) {
-          debugLog(
+          console.log(
             `Processing record ${index + 1}/${totalRecords} (${Math.round(
               ((index + 1) / totalRecords) * 100
             )}%)`
@@ -616,11 +595,11 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
       });
 
       const duration = Date.now() - startTime;
-      debugLog(`===== Buffer Decoder Transform Complete =====`);
-      debugLog(`Buffer decoder completed in ${duration}ms`);
-      debugLog(`Successfully decoded ${stats.recordsDecoded}/${stats.recordsProcessed} records`);
+      console.log(`===== Buffer Decoder Transform Complete =====`);
+      console.log(`Buffer decoder completed in ${duration}ms`);
+      console.log(`Successfully decoded ${stats.recordsDecoded}/${stats.recordsProcessed} records`);
       if (stats.errors > 0) {
-        debugLog(`Encountered ${stats.errors} errors during decoding`);
+        console.log(`Encountered ${stats.errors} errors during decoding`);
       }
 
       return Promise.resolve(processedRecords);

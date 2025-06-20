@@ -6,6 +6,7 @@ import { createSanitizeFieldsProcessor } from './sanitize-fields';
 import { createBufferDecoderProcessor } from '../buffer-decoder/parser';
 import { formatJSON } from '@lorerim/platform-types';
 import { createFlattenFieldsProcessor } from './flatten-fields';
+import { createMergeRecordsProcessor } from './merge-records';
 
 // Core processor interface
 export interface Processor {
@@ -28,6 +29,8 @@ export function createProcessor(stage: StageConfig): Processor {
       return createBufferDecoderProcessor(stage);
     case 'flatten-fields':
       return createFlattenFieldsProcessor(stage as any);
+    case 'merge-records':
+      return createMergeRecordsProcessor(stage);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }
