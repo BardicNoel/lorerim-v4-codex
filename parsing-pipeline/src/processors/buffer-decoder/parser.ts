@@ -21,6 +21,17 @@ function errorLog(message: string, error?: any) {
   }
 }
 
+// Helper function to extract FormID from record metadata
+function getFormIdFromRecord(record: ParsedRecord): string {
+  if (record.meta?.globalFormId) {
+    return record.meta.globalFormId;
+  }
+  if (record.meta?.formId) {
+    return record.meta.formId;
+  }
+  return 'unknown';
+}
+
 // Currently doesn't support recursive groups
 export class BufferDecoder {
   private pluginRegistry: Record<string, PluginMeta> = {};
@@ -501,15 +512,6 @@ const parseGroupedFields = (
   { terminatorTag, groupSchema, virtualField }: GroupedFieldsSchema,
   decoder: BufferDecoder
 ): { decodedField: any; fieldCount: number } => {
-  // receives the whole record
-  // starts reading fields at the record field offset
-  // stops when it reach either the terminator tag or the end of the record
-  // returns the decoded fields and a count of how many fields were decoded
-
-  // process group trigger, which will always be the first subrecord
-  // the trigger is potentially also a terminator, we must use a while loop to guard against record end
-  // and check for terminator tag at the end of the loop, not the beginning
-
   // Get context plugin name from record metadata
   const contextPluginName = parsedRecord.meta?.plugin;
 
@@ -624,6 +626,7 @@ function processRecordFields(
     } catch (error) {
       console.error(`[ERROR] Failed to parse record for ${fieldName}:`, error);
       console.error(`[ERROR] Record EDID: ${record.meta?.type || 'unknown'}`);
+      console.error(`[ERROR] Record FormID: ${getFormIdFromRecord(record)}`);
       console.error(`[ERROR] Record type: ${config.recordType}`);
       console.error(`[ERROR] Field index: ${i}`);
       console.error(`[ERROR] Total fields in record: ${processedRecord.record.length}`);
@@ -650,6 +653,7 @@ function processRecordFields(
           bufferLength: fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.length : 0,
           hex: fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.toString('hex') : '',
           recordType: config.recordType,
+          formId: getFormIdFromRecord(record),
         },
       };
       recordErrors++;
@@ -693,7 +697,7 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
           console.log(
             `Processing record ${index + 1}/${totalRecords} (${Math.round(
               ((index + 1) / totalRecords) * 100
-            )}%)`
+            )}%) - FormID: ${getFormIdFromRecord(record)}`
           );
         }
 
@@ -717,7 +721,7 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
 
           return processedRecord;
         } catch (error) {
-          errorLog(`Failed to process record:`, error);
+          errorLog(`Failed to process record ${getFormIdFromRecord(record)}:`, error);
           stats.errors++;
           return record;
         }

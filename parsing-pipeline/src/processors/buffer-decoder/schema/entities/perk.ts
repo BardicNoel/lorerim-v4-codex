@@ -1,61 +1,90 @@
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
+import { sharedFields } from '../createSchema';
 
 export const perkSchema: RecordSpecificSchemas = createSchema('PERK', {
   // Main DATA block with perk flags and rank info
   // According to UESP: uint8[5] - IsTrait, Level, NumRanks, IsPlayable, IsHidden
   DATA: {
-    type: 'array',
-    element: { type: 'uint8' },
-  },
-
-  // Perk section header - PRKE is uint8[3] according to UESP
-  PRKE: {
     type: 'struct',
     fields: [
-      { name: 'sectionType', type: 'uint8' }, // 0=Quest, 1=Ability, 2=Complex Entry Point
-      { name: 'rank', type: 'uint8' },
-      { name: 'priority', type: 'uint8' },
+      { name: 'isTrait', type: 'uint8' },
+      { name: 'level', type: 'uint8' },
+      { name: 'numRanks', type: 'uint8' },
+      { name: 'isPlayable', type: 'uint8' },
+      { name: 'isHidden', type: 'uint8' },
     ],
   },
 
-  // Complex-entry points: condition type logic
-  PRKC: {
-    type: 'uint8',
+  // CTDA - Condition data for the perk to be available to the player
+  CTDA: {
+    type: 'array',
+    element: {
+      type: 'struct',
+      size: 32, // CTDA is always 32 bytes
+      fields: sharedFields.conditionBlock,
+    },
   },
 
-  // Entry-point effects, interpreted dynamically
-  EPFT: {
-    type: 'uint8',
-  }, // Effect data type code
+  // Perk sections - grouped field that starts with PRKE and includes all section fields
+  // This ensures that DATA fields are parsed in the correct context
+  PRKE: {
+    type: 'grouped',
+    virtualField: 'sections', // Group will be assigned to this field
+    cardinality: 'multiple',
+    terminatorTag: 'PRKE', // Stop when we hit the next section's PRKE
+    groupSchema: {
+      // PRKE - Perk section header (uint8[3])
+      PRKE: {
+        type: 'struct',
+        fields: sharedFields.perkSectionHeader,
+      },
 
-  // Payload data - these are variable length based on EPFT
-  EPFD: {
-    type: 'unknown',
-  }, // Payload (float/formid/string depending on EPFT)
+      // PRKC - Condition type logic (only in Complex Entry Point sections)
+      PRKC: {
+        type: 'uint8',
+      },
 
-  EPF2: {
-    type: 'unknown',
-  }, // Extra data for certain EPFTs
+      // CTDA - Condition data for the section
+      CTDA: {
+        type: 'array',
+        element: {
+          type: 'struct',
+          size: 32,
+          fields: sharedFields.conditionBlock,
+        },
+      },
 
-  EPF3: {
-    type: 'uint32',
-  }, // Additional int32 if EPFT=04/05
+      // EPFT - Entry point effect type
+      EPFT: {
+        type: 'uint8',
+      },
 
-  // Section terminator — marks end of section
-  PRKF: {
-    type: 'unknown',
+      // EPF2 - Extra data for certain EPFTs
+      EPF2: {
+        type: 'unknown', // Will be parsed dynamically based on EPFT
+      },
+
+      // EPF3 - Additional data for certain EPFTs
+      EPF3: {
+        type: 'uint32',
+      },
+
+      // EPFD - Payload data (variable format based on EPFT)
+      EPFD: {
+        type: 'unknown', // Will be parsed dynamically based on EPFT
+      },
+
+      // DATA - Section-specific data (different format per section type)
+      // This will be parsed as unknown for now, we'll handle the dynamic parsing next
+      DATA: {
+        type: 'unknown', // Will be parsed dynamically based on section type
+      },
+
+      // PRKF - Section terminator
+      PRKF: {
+        type: 'unknown', // Just a marker, no data
+      },
+    },
   },
-
-  // Quest section data (when PRKE.sectionType = 0)
-  // DATA in quest section is uint8[8] - formid + stage + 3 null bytes
-  // This is handled by the generic DATA field above
-
-  // Ability section data (when PRKE.sectionType = 1)
-  // DATA in ability section is formid (spell ID)
-  // This is handled by the generic DATA field above
-
-  // Complex Entry Point section data (when PRKE.sectionType = 2)
-  // DATA in complex section is uint8[3] - EffectType + FunctionType + CondTypeCount
-  // This is handled by the generic DATA field above
 });
