@@ -37,12 +37,18 @@ export function createProcessor(stage: StageConfig): Processor {
 }
 
 // Create a pipeline from multiple stages
-export function createPipeline(stages: StageConfig[]): Processor {
+export function createPipeline(stages: StageConfig[], inputFilePath?: string): Processor {
   return {
     transform: async (data: JsonArray) => {
       let result = data;
       for (const stage of stages) {
         console.log(`\n[DEBUG] ===== Processing Stage: ${stage.name} =====`);
+
+        // Add input file path to buffer decoder config if available
+        if (stage.type === 'buffer-decoder' && inputFilePath) {
+          (stage as any).inputFilePath = inputFilePath;
+        }
+
         const processor = createProcessor(stage);
         result = await processor.transform(result);
         console.log(`[DEBUG] ===== Stage Complete =====\n`);

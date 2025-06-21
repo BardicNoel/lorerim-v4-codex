@@ -1,8 +1,7 @@
 import { ThreadPool } from "./ThreadPool";
-import { PluginMeta } from "../types";
-import { BufferMeta } from "./types";
-import { ParsedRecord } from "@lorerim/platform-types";
+import { ParsedRecord, PluginMeta } from "@lorerim/platform-types";
 import { ProcessingStats } from "../utils/statsCollector";
+import { BufferMeta } from "./types";
 
 export interface ScanOptions {
   maxThreads?: number;

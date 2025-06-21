@@ -1,5 +1,5 @@
 import { parentPort } from "worker_threads";
-import { PluginMeta } from "../types";
+import { PluginMeta } from "@lorerim/platform-types";
 import { WorkerMessage } from "./types";
 import * as fs from "fs";
 import { scanAllBlocks } from "./scanAllBlocks";
@@ -32,11 +32,18 @@ async function processPlugin(task: WorkerTask): Promise<void> {
     const { results, report } = await scanAllBlocks(buffer, {
       sourcePlugin: plugin.name,
       modFolder: plugin.modFolder,
-      pluginIndex: plugin.index,
+      pluginIndex: plugin.loadOrder,
       recordTypeFilter,
       onLog: sendLog,
       statsCollector,
     });
+
+    // const tes4Record = results.find((r) => r.tag === "TES4");
+    // if (tes4Record) {
+    //   sendLog("info", `✅ Found TES4 record in ${plugin.name}`);
+    // } else {
+    //   sendLog("info", `❌ No TES4 record found in ${plugin.name}`);
+    // }
 
     // sendLog("info", `Scan report: ${JSON.stringify(report)}`);
 

@@ -7,8 +7,11 @@ import {
 } from './schema';
 import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
 import { Processor } from '../core';
-import { formatFormId } from '@lorerim/platform-types';
+import { formatFormId, PluginMeta } from '@lorerim/platform-types';
+import { resolveGlobalFromReference } from '@lorerim/platform-types';
 import { parentPort } from 'worker_threads';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 // Error logging function that works in both worker and main thread
 function errorLog(message: string, error?: any) {
@@ -20,8 +23,97 @@ function errorLog(message: string, error?: any) {
 
 // Currently doesn't support recursive groups
 export class BufferDecoder {
+  private pluginRegistry: Record<string, PluginMeta> = {};
+  private pluginMetadataLoaded = false;
+
   public getFieldSchema(recordType: string, tag: string): FieldSchema | undefined {
     return recordSpecificSchemas[recordType]?.[tag];
+  }
+
+  /**
+   * Loads plugin metadata from the specified path or automatically discovers it
+   */
+  public async loadPluginMetadata(inputFilePath?: string, metadataPath?: string): Promise<void> {
+    if (this.pluginMetadataLoaded) {
+      return; // Already loaded
+    }
+
+    try {
+      let metadataFilePath: string;
+
+      if (metadataPath) {
+        // Use explicitly provided path
+        metadataFilePath = path.resolve(metadataPath);
+      } else if (inputFilePath) {
+        // Auto-discover in parent directory of input file
+        const parentDir = path.dirname(path.resolve(inputFilePath));
+        metadataFilePath = path.join(parentDir, 'plugin-metadata.json');
+      } else {
+        throw new Error(
+          'Cannot load plugin metadata: no input file path or metadata path provided'
+        );
+      }
+
+      console.log(`[DEBUG] Loading plugin metadata from: ${metadataFilePath}`);
+
+      if (
+        !(await fs
+          .access(metadataFilePath)
+          .then(() => true)
+          .catch(() => false))
+      ) {
+        console.warn(`[WARN] Plugin metadata file not found at: ${metadataFilePath}`);
+        this.pluginMetadataLoaded = true; // Mark as loaded to avoid repeated attempts
+        return;
+      }
+
+      const metadataContent = await fs.readFile(metadataFilePath, 'utf-8');
+      const metadata = JSON.parse(metadataContent);
+
+      // Convert to the expected format: Record<string, PluginMeta>
+      this.pluginRegistry = metadata;
+
+      console.log(
+        `[DEBUG] Loaded ${Object.keys(this.pluginRegistry).length} plugin metadata entries`
+      );
+      this.pluginMetadataLoaded = true;
+    } catch (error) {
+      console.error(`[ERROR] Failed to load plugin metadata:`, error);
+      this.pluginMetadataLoaded = true; // Mark as loaded to avoid repeated attempts
+    }
+  }
+
+  /**
+   * Resolves a raw FormID to a global FormID using plugin metadata
+   */
+  private resolveFormId(rawFormId: number, contextPluginName: string): string {
+    if (!this.pluginMetadataLoaded || Object.keys(this.pluginRegistry).length === 0) {
+      // Fall back to simple formatting if no metadata available
+      return formatFormId(rawFormId);
+    }
+
+    const contextPlugin = this.pluginRegistry[contextPluginName];
+    if (!contextPlugin) {
+      console.warn(
+        `[WARN] Context plugin "${contextPluginName}" not found in registry, using raw FormID`
+      );
+      return formatFormId(rawFormId);
+    }
+
+    // Debug: Show FormID in hex format only for failed resolutions
+    const fileIndex = (rawFormId >>> 24) & 0xff;
+    const localID = rawFormId & 0x00ffffff;
+
+    const globalFormId = resolveGlobalFromReference(rawFormId, contextPlugin, this.pluginRegistry);
+    if (globalFormId === null) {
+      console.warn(
+        `[WARN] Failed to resolve FormID 0x${rawFormId.toString(16).padStart(8, '0').toUpperCase()} (fileIndex: ${fileIndex}, localID: 0x${localID.toString(16).padStart(6, '0').toUpperCase()}) for plugin ${contextPluginName}, using raw FormID`
+      );
+      process.exit(1); // temporary during debugging
+      return formatFormId(rawFormId);
+    }
+
+    return formatFormId(globalFormId);
   }
 
   public parseString(
@@ -34,8 +126,18 @@ export class BufferDecoder {
     return postParse ? postParse(value) : value;
   }
 
-  public parseFormId(buffer: Buffer, offset: number, postParse?: (value: string) => any): string {
-    const formId = formatFormId(buffer.readUInt32LE(offset));
+  public parseFormId(
+    buffer: Buffer,
+    offset: number,
+    postParse?: (value: string) => any,
+    contextPluginName?: string
+  ): string {
+    const rawFormId = buffer.readUInt32LE(offset);
+
+    // Use global resolution if context plugin is provided and metadata is loaded
+    const formId = contextPluginName
+      ? this.resolveFormId(rawFormId, contextPluginName)
+      : formatFormId(rawFormId);
 
     return postParse ? postParse(formId) : formId;
   }
@@ -97,7 +199,8 @@ export class BufferDecoder {
     offset: number,
     length: number,
     fields: FieldSchema[],
-    useFieldLength = true
+    useFieldLength = true,
+    contextPluginName?: string
   ): any {
     const result: any = {};
     let currentOffset = offset;
@@ -132,7 +235,12 @@ export class BufferDecoder {
           break;
 
         case 'formid':
-          result[field.name] = this.parseFormId(buffer, currentOffset, field.parser);
+          result[field.name] = this.parseFormId(
+            buffer,
+            currentOffset,
+            field.parser,
+            contextPluginName
+          );
           currentOffset += 4;
           break;
 
@@ -153,7 +261,8 @@ export class BufferDecoder {
             currentOffset + 2,
             structLength,
             field.fields,
-            false
+            false,
+            contextPluginName
           );
           currentOffset += 2 + structLength;
           break;
@@ -165,7 +274,8 @@ export class BufferDecoder {
             buffer,
             currentOffset + 2,
             arrayLength,
-            field.element
+            field.element,
+            contextPluginName
           );
           currentOffset += 2 + arrayLength;
           break;
@@ -193,7 +303,8 @@ export class BufferDecoder {
     buffer: Buffer,
     offset: number,
     length: number,
-    elementSchema: FieldSchema
+    elementSchema: FieldSchema,
+    contextPluginName?: string
   ): any[] {
     const results: any[] = [];
     let currentOffset = offset;
@@ -226,7 +337,9 @@ export class BufferDecoder {
               buffer,
               currentOffset,
               structSize,
-              elementSchema.fields
+              elementSchema.fields,
+              false,
+              contextPluginName
             );
             results.push(structData);
             currentOffset += structSize;
@@ -236,7 +349,9 @@ export class BufferDecoder {
               buffer,
               currentOffset + 2,
               structLength,
-              elementSchema.fields
+              elementSchema.fields,
+              false,
+              contextPluginName
             );
             results.push(structData);
             currentOffset += 2 + structLength;
@@ -244,7 +359,12 @@ export class BufferDecoder {
           break;
 
         case 'formid':
-          const formId = this.parseFormId(buffer.slice(currentOffset, currentOffset + 4), 0);
+          const formId = this.parseFormId(
+            buffer.slice(currentOffset, currentOffset + 4),
+            0,
+            undefined,
+            contextPluginName
+          );
           results.push(formId);
           currentOffset += 4;
           break;
@@ -336,11 +456,10 @@ interface ProcessRecordResult {
 }
 
 function decodeField(
-  fieldName: string,
   fieldData: any[],
   schema: FieldSchema,
   decoder: BufferDecoder,
-  recordType: string
+  contextPluginName?: string
 ): any {
   if (!Array.isArray(fieldData) || fieldData.length === 0) {
     return null;
@@ -357,7 +476,7 @@ function decodeField(
       return decoder.parseString(buffer, 0, schema.encoding, schema.parser);
 
     case 'formid':
-      return decoder.parseFormId(buffer, 0);
+      return decoder.parseFormId(buffer, 0, undefined, contextPluginName);
 
     case 'uint8':
     case 'uint16':
@@ -366,10 +485,10 @@ function decodeField(
       return decoder.parseNumeric(buffer, 0, schema.type);
 
     case 'struct':
-      return decoder.parseStruct(buffer, 0, buffer.length, schema.fields);
+      return decoder.parseStruct(buffer, 0, buffer.length, schema.fields, true, contextPluginName);
 
     case 'array':
-      return decoder.parseArray(buffer, 0, buffer.length, schema.element);
+      return decoder.parseArray(buffer, 0, buffer.length, schema.element, contextPluginName);
 
     default:
       return null;
@@ -391,15 +510,17 @@ const parseGroupedFields = (
   // the trigger is potentially also a terminator, we must use a while loop to guard against record end
   // and check for terminator tag at the end of the loop, not the beginning
 
+  // Get context plugin name from record metadata
+  const contextPluginName = parsedRecord.meta?.plugin;
+
   // Process the first subrecord, which is the group trigger but also sometimes a terminator
   const firstSubrecord = parsedRecord.record[offset];
   const firstSubrecordSchema = groupSchema[firstSubrecord.tag];
   const decodedFirstSubrecord = decodeField(
-    firstSubrecord.tag,
     [firstSubrecord.buffer],
     firstSubrecordSchema,
     decoder,
-    parsedRecord.meta.type
+    contextPluginName
   );
 
   const decodedField = {
@@ -418,11 +539,10 @@ const parseGroupedFields = (
     }
 
     const decodedSubrecord = decodeField(
-      subrecord.tag,
       [subrecord.buffer],
       groupSchema[subrecord.tag],
       decoder,
-      parsedRecord.meta.type
+      contextPluginName
     );
     decodedField[virtualField][subrecord.tag] = decodedSubrecord;
 
@@ -443,6 +563,9 @@ function processRecordFields(
   const processedRecord = { ...record } as ParsedRecord;
   let hasDecodedFields = false;
   let recordErrors = 0;
+
+  // Get context plugin name from record metadata
+  const contextPluginName = processedRecord.meta?.plugin;
 
   // Use indexed iterator for order-dependent processing with potential skip-ahead capability
   let i = 0;
@@ -478,7 +601,7 @@ function processRecordFields(
           decodedData[schema.virtualField] = [...existingData, df[schema.virtualField]];
         }
       } else {
-        const decodedField = decodeField(fieldName, fieldData, schema, decoder, config.recordType);
+        const decodedField = decodeField(fieldData, schema, decoder, contextPluginName);
         if (decodedField !== null) {
           decodedData[fieldName] = decodedField;
         }
@@ -548,10 +671,16 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
   };
 
   return {
-    transform(records: JsonArray): Promise<JsonArray> {
+    async transform(records: JsonArray): Promise<JsonArray> {
       const startTime = Date.now();
       const totalRecords = records.length;
       const logInterval = Math.max(1, Math.floor(totalRecords / 10));
+
+      // Load plugin metadata if requested
+      if (config.loadPluginMetadata) {
+        console.log(`[DEBUG] Loading plugin metadata for FormID resolution...`);
+        await decoder.loadPluginMetadata(config.inputFilePath, config.pluginMetadataPath);
+      }
 
       stats.recordsProcessed = totalRecords;
       stats.recordsDecoded = 0;
@@ -602,7 +731,7 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
         console.log(`Encountered ${stats.errors} errors during decoding`);
       }
 
-      return Promise.resolve(processedRecords);
+      return processedRecords;
     },
 
     getStats: () => stats,

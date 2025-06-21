@@ -92,6 +92,9 @@ export interface SanitizeFieldsConfig extends BaseStageConfig {
 export interface BufferDecoderConfig extends BaseStageConfig {
   type: 'buffer-decoder';
   recordType: string; // The type of record being decoded (e.g., "PERK", "SPEL")
+  loadPluginMetadata?: boolean; // Whether to load plugin metadata for FormID resolution
+  pluginMetadataPath?: string; // Optional path to plugin-metadata.json (defaults to parentDir/plugin-metadata.json)
+  inputFilePath?: string; // Path to the input file for auto-discovery of plugin metadata
 }
 
 // Flatten fields stage configuration

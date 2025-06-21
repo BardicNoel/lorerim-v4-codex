@@ -5,128 +5,138 @@ The pipeline configuration is defined in YAML format and specifies the sequence 
 ## Configuration Structure
 
 ```yaml
-name: string              # Name of the pipeline
-description: string       # Optional description
-input: string            # Input file path
-output: string           # Output file path
-stages:                  # Array of processing stages
-  - name: string        # Stage name
-    type: string        # Stage type
+name: string # Name of the pipeline
+description: string # Optional description
+input: string # Input file path
+output: string # Output file path
+stages: # Array of processing stages
+  - name: string # Stage name
+    type: string # Stage type
     description: string # Optional stage description
-    enabled: boolean    # Optional, defaults to true
+    enabled: boolean # Optional, defaults to true
     # Stage-specific configuration
 ```
 
 ## Available Processors
 
 ### 1. Filter Records
+
 Filters records based on specified criteria.
 
 ```yaml
-type: "filter-records"
+type: 'filter-records'
 criteria:
-  - field: string      # Field path
-    operator: string   # equals, not-equals, contains, not-contains, greater-than, less-than
-    value: any        # Value to compare against
+  - field: string # Field path
+    operator: string # equals, not-equals, contains, not-contains, greater-than, less-than
+    value: any # Value to compare against
 ```
 
 Example:
+
 ```yaml
-- name: "Filter Active Users"
-  type: "filter-records"
-  description: "Keep only active users"
+- name: 'Filter Active Users'
+  type: 'filter-records'
+  description: 'Keep only active users'
   criteria:
-    - field: "status"
-      operator: "equals"
-      value: "active"
-    - field: "age"
-      operator: "greater-than"
+    - field: 'status'
+      operator: 'equals'
+      value: 'active'
+    - field: 'age'
+      operator: 'greater-than'
       value: 18
 ```
 
 ### 2. Remove Fields
+
 Removes specified fields from records.
 
 ```yaml
-type: "remove-fields"
+type: 'remove-fields'
 fields:
-  - "field1"
-  - "nested.field2"
-  - "deeply.nested.field3"
+  - 'field1'
+  - 'nested.field2'
+  - 'deeply.nested.field3'
 ```
 
 Example:
+
 ```yaml
-- name: "Remove Sensitive Data"
-  type: "remove-fields"
-  description: "Remove sensitive user information"
+- name: 'Remove Sensitive Data'
+  type: 'remove-fields'
+  description: 'Remove sensitive user information'
   fields:
-    - "user.password"
-    - "user.ssn"
-    - "user.creditCard"
+    - 'user.password'
+    - 'user.ssn'
+    - 'user.creditCard'
 ```
 
 ### 3. Keep Fields
+
 Keeps only specified fields in records.
 
 ```yaml
-type: "keep-fields"
+type: 'keep-fields'
 fields:
-  - "field1"
-  - "field2"
-  - "nested.field3"
+  - 'field1'
+  - 'field2'
+  - 'nested.field3'
 ```
 
 Example:
+
 ```yaml
-- name: "Keep Essential Fields"
-  type: "keep-fields"
-  description: "Keep only essential user information"
+- name: 'Keep Essential Fields'
+  type: 'keep-fields'
+  description: 'Keep only essential user information'
   fields:
-    - "id"
-    - "name"
-    - "email"
-    - "status"
+    - 'id'
+    - 'name'
+    - 'email'
+    - 'status'
 ```
 
 ### 4. Sanitize Fields
+
 Removes or replaces fields containing specific patterns.
 
 ```yaml
-type: "sanitize-fields"
+type: 'sanitize-fields'
 rules:
-  - pattern: string           # Pattern to match
-    action: string           # remove or replace
-    replacement?: string     # Value to replace with (if action is replace)
+  - pattern: string # Pattern to match
+    action: string # remove or replace
+    replacement?: string # Value to replace with (if action is replace)
     excludeFields?: string[] # Fields to exclude from checking
 ```
 
 Example:
+
 ```yaml
-- name: "Clean Null References"
-  type: "sanitize-fields"
-  description: "Remove null reference strings"
+- name: 'Clean Null References'
+  type: 'sanitize-fields'
+  description: 'Remove null reference strings'
   rules:
-    - pattern: "NULL - Null Reference"
-      action: "remove"
+    - pattern: 'NULL - Null Reference'
+      action: 'remove'
       excludeFields:
-        - "id"
-        - "name"
+        - 'id'
+        - 'name'
 ```
 
 ### 5. Buffer Decoder
+
 Decodes binary record data using predefined schemas. This processor is specifically designed for handling binary data formats with complex structures.
 
 ```yaml
-type: "buffer-decoder"
-recordType: string          # Type of record being decoded (e.g., "PERK", "SPEL")
-options:
-  debug?: boolean          # Enable debug logging
+type: 'buffer-decoder'
+recordType: string # Type of record being decoded (e.g., "PERK", "SPEL")
+loadPluginMetadata?: boolean # Whether to load plugin metadata for FormID resolution
+pluginMetadataPath?: string # Optional path to plugin-metadata.json (defaults to parentDir/plugin-metadata.json)
 ```
 
 The buffer decoder supports the following data types:
+
 - Strings (with various encodings)
-- Form IDs (special 32-bit identifiers)
+- Form IDs (special 32-bit identifiers with optional global resolution)
 - Numeric types:
   - uint8 (8-bit unsigned integer)
   - uint16 (16-bit unsigned integer)
@@ -137,15 +147,17 @@ The buffer decoder supports the following data types:
 - Arrays (variable-length lists)
 - Unknown fields (skipped with length tracking)
 
+**FormID Resolution**: When `loadPluginMetadata` is enabled, the buffer decoder will automatically load plugin metadata from `plugin-metadata.json` in the parent directory of the input file (or from a custom path if specified). This enables global FormID resolution, converting raw FormIDs to globally unique identifiers that include the load order information.
+
 Example:
+
 ```yaml
-- name: "Decode Binary Records"
-  type: "buffer-decoder"
-  description: "Decode binary record data into structured format"
-  recordType: "PERK"
-  options:
-    debug: true
-    validateSchema: true
+- name: 'Decode Binary Records'
+  type: 'buffer-decoder'
+  description: 'Decode binary record data into structured format with global FormID resolution'
+  recordType: 'PERK'
+  loadPluginMetadata: true
+  # pluginMetadataPath: "custom/path/plugin-metadata.json"  # Optional custom path
 ```
 
 Note: The buffer decoder uses predefined schemas for each record type. These schemas are defined in the codebase and cannot be modified through the pipeline configuration. The processor handles complex binary structures including nested objects, arrays, and variable-length fields.
@@ -155,48 +167,48 @@ Note: The buffer decoder uses predefined schemas for each record type. These sch
 Here's a complete example of a pipeline configuration:
 
 ```yaml
-name: "User Data Processing Pipeline"
-description: "Process and clean user data"
-input: "data/raw/users.json"
-output: "data/processed/clean-users.json"
+name: 'User Data Processing Pipeline'
+description: 'Process and clean user data'
+input: 'data/raw/users.json'
+output: 'data/processed/clean-users.json'
 stages:
-  - name: "Filter Active Users"
-    type: "filter-records"
-    description: "Keep only active users"
+  - name: 'Filter Active Users'
+    type: 'filter-records'
+    description: 'Keep only active users'
     criteria:
-      - field: "status"
-        operator: "equals"
-        value: "active"
-      - field: "age"
-        operator: "greater-than"
+      - field: 'status'
+        operator: 'equals'
+        value: 'active'
+      - field: 'age'
+        operator: 'greater-than'
         value: 18
 
-  - name: "Remove Sensitive Data"
-    type: "remove-fields"
-    description: "Remove sensitive user information"
+  - name: 'Remove Sensitive Data'
+    type: 'remove-fields'
+    description: 'Remove sensitive user information'
     fields:
-      - "user.password"
-      - "user.ssn"
-      - "user.creditCard"
+      - 'user.password'
+      - 'user.ssn'
+      - 'user.creditCard'
 
-  - name: "Keep Essential Fields"
-    type: "keep-fields"
-    description: "Keep only essential user information"
+  - name: 'Keep Essential Fields'
+    type: 'keep-fields'
+    description: 'Keep only essential user information'
     fields:
-      - "id"
-      - "name"
-      - "email"
-      - "status"
+      - 'id'
+      - 'name'
+      - 'email'
+      - 'status'
 
-  - name: "Clean Null References"
-    type: "sanitize-fields"
-    description: "Remove null reference strings"
+  - name: 'Clean Null References'
+    type: 'sanitize-fields'
+    description: 'Remove null reference strings'
     rules:
-      - pattern: "NULL - Null Reference"
-        action: "remove"
+      - pattern: 'NULL - Null Reference'
+        action: 'remove'
         excludeFields:
-          - "id"
-          - "name"
+          - 'id'
+          - 'name'
 ```
 
 ## Notes
@@ -206,4 +218,4 @@ stages:
 3. Field paths in remove-fields and keep-fields are specified as an array of strings
 4. The sanitize-fields processor can either remove or replace matching patterns
 5. All processors maintain the original data structure and only modify the specified fields
-6. The buffer decoder requires binary input data and uses predefined schemas for decoding 
+6. The buffer decoder requires binary input data and uses predefined schemas for decoding

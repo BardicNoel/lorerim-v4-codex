@@ -14,6 +14,7 @@ import { createFileWriter } from "./utils/fileWriter";
 import { StatsReporter } from "./utils/statsReporter";
 import { mergeTypeDictionaries } from "./refactor/parsedRecordDataStructs";
 import { flagWinners } from "./post-process";
+import * as fs from "fs";
 
 export function parseArgs(): {
   configPath: string | undefined;
@@ -139,6 +140,27 @@ export async function main(
     const fileWriter = createFileWriter();
     await fileWriter.writeRecords(parsedRecordDict, recordsDir);
     console.log(`\nRecords written to: ${recordsDir}`);
+
+    // Write plugin metadata map
+    printSubHeader("Writing Plugin Metadata");
+    const pluginMetadataPath = path.join(recordsDir, "plugin-metadata.json");
+    const pluginMetadata = Object.fromEntries(pluginPathMap);
+
+    try {
+      await fs.promises.writeFile(
+        pluginMetadataPath,
+        JSON.stringify(pluginMetadata, null, 2),
+        "utf-8"
+      );
+      console.log(`Plugin metadata written to: ${pluginMetadataPath}`);
+      console.log(
+        `Total plugins in metadata: ${Object.keys(pluginMetadata).length}`
+      );
+    } catch (error) {
+      console.error(
+        `Failed to write plugin metadata: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
   } catch (error) {
     console.error(
       "Error:",

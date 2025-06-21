@@ -20,6 +20,7 @@ stages:
     type: 'buffer-decoder'
     description: 'Decode binary record data into structured format'
     recordType: 'PERK'
+    loadPluginMetadata: true
 
   - from: 'local'
     name: 'Remove PERK Specific Fields'

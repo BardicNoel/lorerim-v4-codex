@@ -29,8 +29,8 @@ stages:
       record: 'all'
       header: 'all'
       # meta: 'all'
-      decodedData:
-        - 'perkSections'
+      # decodedData:
+      #   - 'perkSections'
 
   # - from: 'local'
   #   name: 'Flatten Decoded Data'

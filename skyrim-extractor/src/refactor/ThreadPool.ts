@@ -1,8 +1,7 @@
 import { Worker } from "worker_threads";
-import { PluginMeta } from "../types";
 import { BufferMeta, WorkerMessage, ThreadPoolConfig } from "./types";
 import * as path from "path";
-import { ParsedRecord } from "@lorerim/platform-types";
+import { ParsedRecord, PluginMeta } from "@lorerim/platform-types";
 import { mergeTypeDictionaries } from "./parsedRecordDataStructs";
 import { StatsCollector, ProcessingStats } from "../utils/statsCollector";
 
@@ -40,7 +39,19 @@ export class ThreadPool {
     this.totalPlugins = plugins.length;
     this.lastProgressLog = Date.now();
     this.statsCollector.reset();
-    console.log(`Processing ${this.totalPlugins} plugins: ${plugins.map((p) => p.name).join(", ")}`);
+
+    // Create truncated plugin list for display
+    const pluginNames = plugins.map((p) => p.name);
+    let displayPlugins = "";
+    if (pluginNames.length <= 6) {
+      displayPlugins = pluginNames.join(", ");
+    } else {
+      const firstThree = pluginNames.slice(0, 3).join(", ");
+      const lastThree = pluginNames.slice(-3).join(", ");
+      displayPlugins = `${firstThree} ... ${lastThree}`;
+    }
+
+    console.log(`Processing ${this.totalPlugins} plugins: ${displayPlugins}`);
 
     // Create initial worker pool
     const workerCount = Math.min(this.config.maxThreads, plugins.length);
@@ -58,8 +69,6 @@ export class ThreadPool {
     // Terminate all workers
     await Promise.all(this.workers.map((worker) => worker.terminate()));
     this.workers = [];
-
-
 
     return {
       bufferMetas: this.results,
@@ -148,7 +157,7 @@ export class ThreadPool {
       worker.postMessage({
         plugin,
         recordTypeFilter: this.config.recordTypeFilter,
-        stackOrder: this.totalPlugins - 1 - plugin.index,
+        stackOrder: this.totalPlugins - 1 - plugin.loadOrder,
       });
     }
   }

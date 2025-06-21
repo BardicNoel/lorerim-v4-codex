@@ -1,10 +1,10 @@
-import { hexDump } from "../utils/debugUtils";
 import { BufferMeta } from "./types";
 import {
   formatFormId,
   ParsedRecord,
   decompressRecordData,
   isRecordCompressed,
+  resolveGlobalFromLocal,
 } from "@lorerim/platform-types";
 
 export function extractParsedRecords(
@@ -58,11 +58,14 @@ export function extractParsedRecords(
 
       offset += 6 + size;
     }
+    const globalFormId = resolveGlobalFromLocal(meta.formId!, meta.pluginIndex);
 
+    // console.log(formatFormId(globalFormId));
     records.push({
       meta: {
         type: meta.tag,
         formId: formatFormId(meta.formId!),
+        globalFormId: formatFormId(globalFormId),
         plugin: meta.sourcePlugin,
         stackOrder,
       },

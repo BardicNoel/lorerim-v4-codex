@@ -1,5 +1,9 @@
 import { BufferMeta } from "./types";
-import { formatFormId } from "@lorerim/platform-types";
+import {
+  formatFormId,
+  GrupOffset,
+  RecordOffset,
+} from "@lorerim/platform-types";
 import { StatsCollector } from "../utils/statsCollector";
 import { parseRecordFlags } from "@lorerim/platform-types/src/binary/header-flags";
 
@@ -16,22 +20,6 @@ interface ScanContext {
 interface TagStats {
   count: number;
   compressed: number;
-}
-
-enum GrupOffset {
-  Label = 8,
-  GroupType = 12,
-  DataSize = 16,
-  TotalSize = 20,
-  EndOffset = 24,
-  FormId = 8,
-  DataOffset = 24,
-}
-
-enum RecordOffset {
-  Size = 4,
-  FormId = 12,
-  DataOffset = 24,
 }
 
 interface ScanReport {
@@ -124,17 +112,14 @@ export async function scanAllBlocks(
 
       results.push(...groupResults);
       offset = endOffset;
-    } else if (tag === "TES4") {
-      const dataSize = buffer.readUInt32LE(offset + RecordOffset.Size);
-      const totalSize = RecordOffset.DataOffset + dataSize;
-
-      offset += totalSize;
-      continue;
     } else {
       const dataSize = size;
       const totalSize = RecordOffset.DataOffset + dataSize;
+      const filterTags = context.recordTypeFilter
+        ? [...context.recordTypeFilter, "TES4"]
+        : undefined;
       // Skip if record type is filtered
-      if (context.recordTypeFilter && !context.recordTypeFilter.includes(tag)) {
+      if (filterTags && !filterTags.includes(tag)) {
         context.statsCollector?.recordSkipped(
           context.sourcePlugin,
           tag,
@@ -181,17 +166,6 @@ export async function scanAllBlocks(
       offset += totalSize;
     }
   }
-
-  // // Format the final counts report - only log at root level
-  // if (parentPath.length === 0) {
-  //   const formattedCounts = Object.fromEntries(
-  //     Array.from(localTagCounts.entries()).map(([tag, stats]) => [
-  //       tag,
-  //       `count: ${stats.count}, compressed: ${stats.compressed}`
-  //     ])
-  //   );
-  //   context.onLog?.("debug", `Final counts for ${context.sourcePlugin}: ${JSON.stringify(formattedCounts, null, 2)}`);
-  // }
 
   return {
     results,
