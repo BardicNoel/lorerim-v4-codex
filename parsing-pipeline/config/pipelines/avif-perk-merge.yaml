@@ -9,9 +9,20 @@ stages:
     sourceFile: 'output/perk-analysis.json'
     sourceRecordType: 'PERK'
     mappings:
-      - sourceField: 'meta.formId'
+      - sourceField: 'perk-mapping'
         targetField: 'decodedData.perkSections[].PNAM'
+        matchField: 'meta.globalFormId'
+        dataField: 'decodedData'
         matchType: 'exact'
     mergeField: 'relatedPerks'
     mergeStrategy: 'first'
     overwriteReference: true
+
+  - name: 'Remove Fields from perkSections'
+    type: 'remove-fields'
+    description: 'Remove specific fields from each perkSections element'
+    fields:
+      {
+        'decodedData.perkSections[]':
+          ['FNAM', 'XNAM', 'YNAM', 'HNAM', 'VNAM', 'SNAM', 'CNAM', 'INAM'],
+      }

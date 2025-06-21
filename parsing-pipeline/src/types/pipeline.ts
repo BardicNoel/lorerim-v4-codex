@@ -112,6 +112,8 @@ export interface MergeRecordsConfig extends BaseStageConfig {
     sourceField: string; // Field path in source records (e.g., 'decodedData.perkSections[].PNAM')
     targetField: string; // Field path in target records (e.g., 'meta.formId')
     matchType: 'exact' | 'contains' | 'array-contains'; // How to match values
+    matchField?: string; // Field to match on in source records (defaults to sourceField if not specified)
+    dataField?: string; // Field to pull data from in source records (defaults to entire record if not specified)
   }[];
   mergeField: string; // Field to store merged data in target records (e.g., 'mergedData')
   mergeStrategy: 'first' | 'all' | 'count'; // How to handle multiple matches

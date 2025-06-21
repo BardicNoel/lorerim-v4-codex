@@ -5,7 +5,7 @@ import { ParsedRecord } from '@lorerim/platform-types';
 export interface FlattenFieldsConfig {
   name: string;
   type: 'flatten-fields';
-  fields: string[]; // e.g., ['decodedData']
+  fields: string[]; // e.g., ['decodedData', 'perkSections[].PNAM']
 }
 
 export function createFlattenFieldsProcessor(config: FlattenFieldsConfig): Processor {
@@ -20,25 +20,46 @@ export function createFlattenFieldsProcessor(config: FlattenFieldsConfig): Proce
       stats.fieldsFlattened = 0;
 
       return data.map((record) => {
-        const parsedRecord = record as ParsedRecord;
-        let newRecord: any = { ...parsedRecord };
-        // Flatten each specified field if present
+        let newRecord: any = { ...record };
+
         for (const field of config.fields) {
-          if (
-            field in parsedRecord &&
-            typeof (parsedRecord as any)[field] === 'object' &&
-            (parsedRecord as any)[field] !== null
-          ) {
-            const toFlatten = (parsedRecord as any)[field];
-            for (const [key, value] of Object.entries(toFlatten)) {
-              // Only add if not already present at the top level
-              if (!(key in newRecord)) {
-                (newRecord as any)[key] = value;
-                stats.fieldsFlattened!++;
-              }
+          // Handle array syntax: e.g., 'perkSections[].PNAM'
+          const arrayMatch = field.match(/^(.+)\[\]\.([^.]+)$/);
+          if (arrayMatch) {
+            const arrayPath = arrayMatch[1];
+            const subField = arrayMatch[2];
+            const array = newRecord[arrayPath];
+            if (Array.isArray(array)) {
+              array.forEach((element: any, idx: number) => {
+                if (
+                  element &&
+                  typeof element === 'object' &&
+                  subField in element &&
+                  typeof element[subField] === 'object' &&
+                  element[subField] !== null
+                ) {
+                  Object.assign(element, element[subField]);
+                  delete element[subField];
+                  stats.fieldsFlattened!++;
+                }
+              });
             }
-            // Remove the original field after flattening
-            delete newRecord[field];
+          } else {
+            // Default: flatten at root
+            if (
+              field in newRecord &&
+              typeof newRecord[field] === 'object' &&
+              newRecord[field] !== null
+            ) {
+              const toFlatten = newRecord[field];
+              for (const [key, value] of Object.entries(toFlatten)) {
+                if (!(key in newRecord)) {
+                  newRecord[key] = value;
+                  stats.fieldsFlattened!++;
+                }
+              }
+              delete newRecord[field];
+            }
           }
         }
         return newRecord;

@@ -26,7 +26,7 @@ stages:
     type: 'remove-fields'
     description: 'Remove AVIF-specific fields that are not needed for analysis'
     fields:
-      record: 'all'
+      # record: 'all'
       header: 'all'
       # meta: 'all'
       # decodedData:

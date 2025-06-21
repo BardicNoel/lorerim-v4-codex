@@ -1,0 +1,64 @@
+# AVIF to PERK Merge Pipeline
+name: 'AVIF-PERK Merge Pipeline'
+description: 'Merge AVIF records with their related PERK records'
+input: '../output/parsing-pipeline/lorerim/avif-analysis.json'
+output: '../output/parsing-pipeline/lorerim/processed/player-perk-docs.json'
+
+stages:
+  - from: 'local'
+    name: 'Merge PERK Records'
+    type: 'merge-records'
+    description: 'Merge PERK records that are referenced by AVIF perkSections'
+    sourceFile: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+    sourceRecordType: 'PERK'
+    mappings:
+      - sourceField: 'perk-mapping'
+        targetField: 'decodedData.perkSections[].PNAM'
+        matchField: 'meta.globalFormId'
+        dataField: 'decodedData'
+        matchType: 'exact'
+    mergeField: 'relatedPerks'
+    mergeStrategy: 'first'
+    overwriteReference: true
+
+  - from: 'local'
+    name: 'Remove Processing Fields'
+    type: 'remove-fields'
+    description: 'Remove fields that were only needed for processing'
+    fields:
+      record: 'all'
+      header: 'all'
+      meta: 'all'
+
+  - name: 'Flatten decodedData Fields'
+    type: 'flatten-fields'
+    description: 'Flatten the decodedData field to make nested data more accessible'
+    fields: ['decodedData']
+
+  - name: 'Remove Deep Fields, unneeded'
+    type: 'remove-fields'
+    description: 'Remove the decodedData field and clean up perkSections'
+    fields:
+      'CNAM': 'all'
+      'AVSK': 'all'
+      'perkSections[]':
+        - 'FNAM'
+        - 'XNAM'
+        - 'YNAM'
+        - 'HNAM'
+        - 'VNAM'
+        - 'SNAM'
+        - 'CNAM'
+        - 'INAM'
+        - 'PNAM':
+            - 'DATA'
+            - 'PRKE'
+            - 'PRKC'
+            - 'EPFT'
+            - 'PRKH'
+            - 'PRKH'
+
+  # - name: 'Flatten PNAM in perkSections'
+  #   type: 'flatten-fields'
+  #   description: 'Flatten the PNAM object inside each perkSections element'
+  #   fields: ['perkSections[].PNAM']

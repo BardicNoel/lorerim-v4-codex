@@ -64,9 +64,13 @@ function trimArray(obj: Record<string, any>, key: string, value: any[], path: st
 }
 
 function processNestedFields(obj: Record<string, any>, fields: any, path: string[] = []): void {
+  console.log(`[DEBUG] processNestedFields called with fields:`, fields, `path:`, path);
+
   for (const [key, value] of Object.entries(fields)) {
     const currentPath = [...path, key];
     const trimType = determineTrimType(value);
+
+    console.log(`[DEBUG] Processing key: ${key}, value:`, value, `trimType: ${trimType}`);
 
     switch (trimType) {
       case 'all':
@@ -76,11 +80,104 @@ function processNestedFields(obj: Record<string, any>, fields: any, path: string
         trimFields(obj, key, [String(value)], currentPath);
         break;
       case 'object':
-        trimObject(obj, key, value as Record<string, any>, currentPath);
+        if (key.includes('[]')) {
+          // Handle array notation within nested objects
+          const arrayKey = key.slice(0, -2); // Remove '[]'
+          console.log(`[DEBUG] Found array notation: ${key}, arrayKey: ${arrayKey}`);
+
+          if (obj[arrayKey] && Array.isArray(obj[arrayKey])) {
+            console.log(
+              `[DEBUG] Processing array ${arrayKey} with ${obj[arrayKey].length} elements`
+            );
+            obj[arrayKey].forEach((element, index) => {
+              if (typeof element === 'object' && element !== null) {
+                if (Array.isArray(value)) {
+                  // Remove specific fields from array elements
+                  console.log(`[DEBUG] Removing fields from element ${index}:`, value);
+                  value.forEach((field) => {
+                    if (field in element) {
+                      delete element[field];
+                      console.log(`[DEBUG] Removed field ${field} from element ${index}`);
+                    }
+                  });
+                } else if (typeof value === 'object' && value !== null) {
+                  // Handle nested object removal within array elements
+                  console.log(
+                    `[DEBUG] Processing nested object removal in element ${index}:`,
+                    value
+                  );
+                  for (const [nestedKey, nestedValue] of Object.entries(value)) {
+                    if (
+                      nestedKey in element &&
+                      typeof element[nestedKey] === 'object' &&
+                      element[nestedKey] !== null
+                    ) {
+                      if (Array.isArray(nestedValue)) {
+                        // Remove specific fields from the nested object
+                        nestedValue.forEach((fieldToRemove) => {
+                          if (fieldToRemove in element[nestedKey]) {
+                            delete element[nestedKey][fieldToRemove];
+                            console.log(
+                              `[DEBUG] Removed nested field ${fieldToRemove} from ${nestedKey} in element ${index}`
+                            );
+                          }
+                        });
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          } else {
+            console.log(`[DEBUG] Array ${arrayKey} not found or not an array in obj:`, obj);
+          }
+        } else {
+          trimObject(obj, key, value as Record<string, any>, currentPath);
+        }
         break;
       case 'array':
         trimArray(obj, key, value as any[], currentPath);
         break;
+    }
+  }
+}
+
+function removeFieldsFromArrayElements(
+  obj: any,
+  fieldPath: string,
+  fieldsToRemove: string[]
+): void {
+  const parts = fieldPath.split('.');
+  let current = obj;
+
+  // Navigate to the array
+  for (let i = 0; i < parts.length - 1; i++) {
+    const part = parts[i];
+    if (current && typeof current === 'object' && part in current) {
+      current = current[part];
+    } else {
+      return; // Path not found
+    }
+  }
+
+  // Check if the last part ends with '[]' and we have an array
+  const lastPart = parts[parts.length - 1];
+  if (lastPart.endsWith('[]')) {
+    const arrayKey = lastPart.slice(0, -2); // Remove '[]'
+    if (current && typeof current === 'object' && arrayKey in current) {
+      const array = current[arrayKey];
+      if (Array.isArray(array)) {
+        // Remove specified fields from each element in the array
+        array.forEach((element) => {
+          if (typeof element === 'object' && element !== null) {
+            fieldsToRemove.forEach((field) => {
+              if (field in element) {
+                delete element[field];
+              }
+            });
+          }
+        });
+      }
     }
   }
 }
@@ -112,8 +209,89 @@ function removeFieldsFromObject(obj: any, fields: any): void {
       }
     }
   } else if (typeof fields === 'object' && fields !== null) {
-    // Complex nested field configuration
-    processNestedFields(obj, fields);
+    // Handle nested field configuration
+    for (const [fieldPath, fieldConfig] of Object.entries(fields)) {
+      console.log(`[DEBUG] Processing field path: ${fieldPath}, config:`, fieldConfig);
+
+      if (fieldConfig === 'all') {
+        // Remove entire field
+        const parts = fieldPath.split('.');
+        let current = obj;
+
+        // Navigate to the parent of the field to remove
+        for (let i = 0; i < parts.length - 1; i++) {
+          if (current && typeof current === 'object' && parts[i] in current) {
+            current = current[parts[i]];
+          } else {
+            current = null;
+            break;
+          }
+        }
+
+        // Remove the field if we found its parent
+        if (current && typeof current === 'object' && parts[parts.length - 1] in current) {
+          delete current[parts[parts.length - 1]];
+          console.log(`[DEBUG] Removed field: ${fieldPath}`);
+        }
+      } else if (Array.isArray(fieldConfig)) {
+        // Check if this is a mixed array config (contains both strings and objects)
+        const hasMixedTypes =
+          fieldConfig.some((item) => typeof item === 'object') &&
+          fieldConfig.some((item) => typeof item === 'string');
+
+        console.log(`[DEBUG] Array config detected:`, fieldConfig);
+        console.log(`[DEBUG] Has mixed types: ${hasMixedTypes}`);
+        console.log(`[DEBUG] Field path includes []: ${fieldPath.includes('[]')}`);
+        console.log(
+          `[DEBUG] Types in config:`,
+          fieldConfig.map((item) => typeof item)
+        );
+        console.log(
+          `[DEBUG] Condition evaluation: hasMixedTypes=${hasMixedTypes} && includes[]=${fieldPath.includes('[]')} = ${hasMixedTypes && fieldPath.includes('[]')}`
+        );
+
+        if (hasMixedTypes && fieldPath.includes('[]')) {
+          // Handle mixed array configuration
+          console.log(`[DEBUG] Processing mixed array config for ${fieldPath}:`, fieldConfig);
+          console.log(`[DEBUG] ABOUT TO CALL processMixedArrayConfig`);
+          processMixedArrayConfig(obj, fieldPath, fieldConfig);
+        } else if (fieldPath.includes('[]')) {
+          // Handle simple array field removal
+          console.log(
+            `[DEBUG] Processing simple array field removal for ${fieldPath}:`,
+            fieldConfig
+          );
+          removeFieldsFromArrayElements(obj, fieldPath, fieldConfig as string[]);
+        } else {
+          // Handle regular nested field configuration
+          console.log(
+            `[DEBUG] Processing regular nested field config for ${fieldPath}:`,
+            fieldConfig
+          );
+          processNestedFields(obj, { [fieldPath]: fieldConfig });
+        }
+      } else if (typeof fieldConfig === 'object' && fieldConfig !== null) {
+        // Handle nested object configuration like 'decodedData: { perkSections[]: [...] }'
+        const parts = fieldPath.split('.');
+        let current = obj;
+
+        // Navigate to the target object
+        for (const part of parts) {
+          if (current && typeof current === 'object' && part in current) {
+            current = current[part];
+          } else {
+            current = null;
+            break;
+          }
+        }
+
+        // Process the nested configuration on the target object
+        if (current && typeof current === 'object') {
+          console.log(`[DEBUG] Processing nested config for ${fieldPath}:`, fieldConfig);
+          processNestedFields(current, fieldConfig);
+        }
+      }
+    }
   }
 }
 
@@ -161,6 +339,91 @@ function meetsConditions(obj: any, conditions?: any[]): boolean {
   }
 
   return true;
+}
+
+function processMixedArrayConfig(obj: any, arrayPath: string, mixedConfig: any[]): void {
+  console.log(
+    `[DEBUG] processMixedArrayConfig called with arrayPath: ${arrayPath}, mixedConfig:`,
+    mixedConfig
+  );
+  console.log(`[DEBUG] Starting object keys:`, Object.keys(obj));
+
+  // Navigate to the array - handle perkSections[] syntax
+  const cleanPath = arrayPath.replace('[]', ''); // Remove [] from the path
+  const parts = cleanPath.split('.');
+  let current = obj;
+
+  for (const part of parts) {
+    console.log(
+      `[DEBUG] Navigating to part: ${part}, current keys:`,
+      current ? Object.keys(current) : 'null'
+    );
+    if (current && typeof current === 'object' && part in current) {
+      current = current[part];
+    } else {
+      console.log(`[DEBUG] Path not found: ${arrayPath}`);
+      return; // Path not found
+    }
+  }
+
+  if (!Array.isArray(current)) {
+    console.log(`[DEBUG] Not an array: ${arrayPath}`);
+    return;
+  }
+
+  console.log(`[DEBUG] Found array with ${current.length} elements`);
+
+  // Process each element in the array
+  current.forEach((element, index) => {
+    if (typeof element === 'object' && element !== null) {
+      console.log(`[DEBUG] Processing element ${index}:`, element);
+
+      // Process each item in the mixed config
+      mixedConfig.forEach((configItem) => {
+        console.log(`[DEBUG] Processing config item:`, configItem, `type:`, typeof configItem);
+
+        if (typeof configItem === 'string') {
+          // Simple field removal
+          if (configItem in element) {
+            delete element[configItem];
+            console.log(`[DEBUG] Removed field ${configItem} from element ${index}`);
+          } else {
+            console.log(`[DEBUG] Field ${configItem} not found in element ${index}`);
+          }
+        } else if (typeof configItem === 'object' && configItem !== null) {
+          // Nested object removal
+          console.log(`[DEBUG] Processing nested object config:`, configItem);
+          for (const [nestedKey, nestedFields] of Object.entries(configItem)) {
+            console.log(`[DEBUG] Processing nested key: ${nestedKey}, fields:`, nestedFields);
+            if (
+              nestedKey in element &&
+              typeof element[nestedKey] === 'object' &&
+              element[nestedKey] !== null
+            ) {
+              if (Array.isArray(nestedFields)) {
+                nestedFields.forEach((fieldToRemove) => {
+                  if (fieldToRemove in element[nestedKey]) {
+                    delete element[nestedKey][fieldToRemove];
+                    console.log(
+                      `[DEBUG] Removed nested field ${fieldToRemove} from ${nestedKey} in element ${index}`
+                    );
+                  } else {
+                    console.log(
+                      `[DEBUG] Nested field ${fieldToRemove} not found in ${nestedKey} of element ${index}`
+                    );
+                  }
+                });
+              }
+            } else {
+              console.log(
+                `[DEBUG] Nested key ${nestedKey} not found or not an object in element ${index}`
+              );
+            }
+          }
+        }
+      });
+    }
+  });
 }
 
 export function createRemoveFieldsProcessor(config: RemoveFieldsConfig): Processor {
