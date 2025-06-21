@@ -16,6 +16,13 @@ stages:
         value: true
 
   - from: 'local'
+    name: 'Sample 500 Records'
+    type: 'sample-records'
+    description: 'Randomly sample 500 records from the filtered data'
+    sampleSize: 500
+    method: 'random'
+
+  - from: 'local'
     name: 'Decode Binary Records'
     type: 'buffer-decoder'
     description: 'Decode binary record data into structured format'

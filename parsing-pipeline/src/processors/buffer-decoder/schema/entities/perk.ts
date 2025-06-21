@@ -1,61 +1,139 @@
-import { RecordSpecificSchemas } from '../schemaTypes';
+import { RecordSpecificSchemas, FieldSchema } from '../schemaTypes';
 import { createSchema } from '../createSchema';
+import { sharedFields } from '../createSchema';
+
+// Section-specific schemas based on PRKE section type
+const questSectionSchema: { [tag: string]: FieldSchema } = {
+  CIS2: { type: 'unknown' },
+  DATA: {
+    type: 'struct' as const,
+    fields: [
+      { name: 'questId', type: 'formid' as const },
+      { name: 'stage', type: 'uint8' as const },
+      { name: 'padding', type: 'uint8' as const },
+      { name: 'padding2', type: 'uint8' as const },
+      { name: 'padding3', type: 'uint8' as const },
+    ],
+  },
+  PRKF: {
+    type: 'unknown' as const, // Just a marker, no data
+  },
+};
+
+const perkConditionalSchema: { [tag: string]: FieldSchema } = {
+  CIS2: { type: 'unknown' },
+  PRKC: {
+    type: 'uint8' as const,
+  },
+  CTDA: {
+    type: 'array' as const,
+    element: {
+      type: 'struct' as const,
+      size: 32,
+      fields: sharedFields.conditionBlock,
+    },
+  },
+};
+
+const abilitySectionSchema: { [tag: string]: FieldSchema } = {
+  ...perkConditionalSchema,
+  DATA: {
+    type: 'struct' as const,
+    fields: [{ name: 'spellId', type: 'formid' as const }],
+  },
+  CTDA: {
+    type: 'array' as const,
+    element: {
+      type: 'struct' as const,
+      size: 32,
+      fields: sharedFields.conditionBlock,
+    },
+  },
+  PRKF: {
+    type: 'unknown' as const, // Just a marker, no data
+  },
+  CIS2: { type: 'unknown' },
+};
+
+const complexSectionSchema: { [tag: string]: FieldSchema } = {
+  ...perkConditionalSchema,
+  DATA: {
+    type: 'struct' as const,
+    fields: [
+      { name: 'effectType', type: 'uint8' as const },
+      { name: 'functionType', type: 'uint8' as const },
+      { name: 'conditionCount', type: 'uint8' as const },
+    ],
+  },
+  EPFT: {
+    type: 'uint8' as const,
+  },
+  EPF2: {
+    type: 'unknown' as const, // Will be parsed dynamically based on EPFT
+  },
+  EPF3: {
+    type: 'uint32' as const,
+  },
+  EPFD: {
+    type: 'unknown' as const, // Will be parsed dynamically based on EPFT
+  },
+  PRKF: {
+    type: 'unknown' as const, // Just a marker, no data
+  },
+  CIS2: { type: 'unknown' },
+};
 
 export const perkSchema: RecordSpecificSchemas = createSchema('PERK', {
   // Main DATA block with perk flags and rank info
   // According to UESP: uint8[5] - IsTrait, Level, NumRanks, IsPlayable, IsHidden
   DATA: {
-    type: 'array',
-    element: { type: 'uint8' },
-  },
-
-  // Perk section header - PRKE is uint8[3] according to UESP
-  PRKE: {
-    type: 'struct',
+    type: 'struct' as const,
     fields: [
-      { name: 'sectionType', type: 'uint8' }, // 0=Quest, 1=Ability, 2=Complex Entry Point
-      { name: 'rank', type: 'uint8' },
-      { name: 'priority', type: 'uint8' },
+      { name: 'isTrait', type: 'uint8' as const },
+      { name: 'level', type: 'uint8' as const },
+      { name: 'numRanks', type: 'uint8' as const },
+      { name: 'isPlayable', type: 'uint8' as const },
+      { name: 'isHidden', type: 'uint8' as const },
     ],
   },
 
-  // Complex-entry points: condition type logic
-  PRKC: {
-    type: 'uint8',
+  // CTDA - Condition data for the perk to be available to the player
+  CTDA: {
+    type: 'array' as const,
+    element: {
+      type: 'struct' as const,
+      size: 32, // CTDA is always 32 bytes
+      fields: sharedFields.conditionBlock,
+    },
   },
 
-  // Entry-point effects, interpreted dynamically
-  EPFT: {
-    type: 'uint8',
-  }, // Effect data type code
-
-  // Payload data - these are variable length based on EPFT
-  EPFD: {
-    type: 'unknown',
-  }, // Payload (float/formid/string depending on EPFT)
-
-  EPF2: {
-    type: 'unknown',
-  }, // Extra data for certain EPFTs
-
-  EPF3: {
-    type: 'uint32',
-  }, // Additional int32 if EPFT=04/05
-
-  // Section terminator — marks end of section
-  PRKF: {
-    type: 'unknown',
+  // Perk sections - grouped field that starts with PRKE and includes all section fields
+  // This ensures that DATA fields are parsed in the correct context
+  PRKE: {
+    type: 'grouped' as const,
+    virtualField: 'sections', // Group will be assigned to this field
+    cardinality: 'multiple' as const,
+    terminatorTag: 'PRKE', // Stop when we hit the next section's PRKE
+    groupSchema: {
+      // PRKE - Perk section header (uint8[3])
+      PRKE: {
+        type: 'struct' as const,
+        fields: sharedFields.perkSectionHeader,
+      },
+    },
+    dynamicSchema: (parsedPRKE: any) => {
+      const sectionType = parsedPRKE.sectionType;
+      switch (sectionType) {
+        case 0: // Quest section
+          return questSectionSchema;
+        case 1: // Ability section
+          return abilitySectionSchema;
+        case 2: // Complex Entry Point section
+          return complexSectionSchema;
+        default:
+          console.warn(`[WARN] Unknown section type: ${sectionType}`);
+          return { PRKF: { type: 'unknown' } };
+      }
+    },
   },
-
-  // Quest section data (when PRKE.sectionType = 0)
-  // DATA in quest section is uint8[8] - formid + stage + 3 null bytes
-  // This is handled by the generic DATA field above
-
-  // Ability section data (when PRKE.sectionType = 1)
-  // DATA in ability section is formid (spell ID)
-  // This is handled by the generic DATA field above
-
-  // Complex Entry Point section data (when PRKE.sectionType = 2)
-  // DATA in complex section is uint8[3] - EffectType + FunctionType + CondTypeCount
-  // This is handled by the generic DATA field above
 });

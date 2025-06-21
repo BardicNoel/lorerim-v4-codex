@@ -8,7 +8,38 @@ export const sharedFields: SharedFields = {
     { name: 'op', type: 'uint8' },
     { name: 'value', type: 'float32' },
     { name: 'functionIndex', type: 'uint32' },
+    { name: 'param1', type: 'formid' },
+    { name: 'param2', type: 'formid' },
+    { name: 'runOnType', type: 'uint32' },
+    { name: 'reference', type: 'formid' },
+    { name: 'unknown', type: 'uint32' },
   ],
+  // PERK-specific shared fields
+  perkSectionHeader: [
+    { name: 'sectionType', type: 'uint8' }, // 0=Quest, 1=Ability, 2=Complex Entry Point
+    { name: 'rank', type: 'uint8' },
+    { name: 'priority', type: 'uint8' },
+  ],
+  questData: [
+    { name: 'questId', type: 'formid' },
+    { name: 'stage', type: 'uint8' },
+    { name: 'padding', type: 'uint8' },
+    { name: 'padding2', type: 'uint8' },
+    { name: 'padding3', type: 'uint8' },
+  ],
+  abilityData: [{ name: 'spellId', type: 'formid' }],
+  complexData: [
+    { name: 'effectType', type: 'uint8' },
+    { name: 'functionType', type: 'uint8' },
+    { name: 'conditionCount', type: 'uint8' },
+  ],
+};
+
+export const CIS2Schema = {
+  CIS2: {
+    name: 'LocalizedStringID',
+    type: 'uint32',
+  },
 };
 
 // Common field schemas that are reused across record types
