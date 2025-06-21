@@ -553,7 +553,10 @@ const parseGroupedFields = (
 
     const subrecordSchema = currentSchema[subrecord.tag];
     if (!subrecordSchema) {
-      console.warn(`[WARN] No schema found for field ${subrecord.tag} in grouped field`);
+      console.warn(
+        `[WARN] No schema found for field ${parsedRecord.meta.globalFormId} ${subrecord.tag} in grouped field`
+      );
+      console.log(decodedFirstSubrecord);
       processedFields++;
       continue;
     }

@@ -4,6 +4,7 @@ import { sharedFields } from '../createSchema';
 
 // Section-specific schemas based on PRKE section type
 const questSectionSchema: { [tag: string]: FieldSchema } = {
+  CIS2: { type: 'unknown' },
   DATA: {
     type: 'struct' as const,
     fields: [
@@ -19,17 +20,8 @@ const questSectionSchema: { [tag: string]: FieldSchema } = {
   },
 };
 
-const abilitySectionSchema: { [tag: string]: FieldSchema } = {
-  DATA: {
-    type: 'struct' as const,
-    fields: [{ name: 'spellId', type: 'formid' as const }],
-  },
-  PRKF: {
-    type: 'unknown' as const, // Just a marker, no data
-  },
-};
-
-const complexSectionSchema: { [tag: string]: FieldSchema } = {
+const perkConditionalSchema: { [tag: string]: FieldSchema } = {
+  CIS2: { type: 'unknown' },
   PRKC: {
     type: 'uint8' as const,
   },
@@ -41,6 +33,30 @@ const complexSectionSchema: { [tag: string]: FieldSchema } = {
       fields: sharedFields.conditionBlock,
     },
   },
+};
+
+const abilitySectionSchema: { [tag: string]: FieldSchema } = {
+  ...perkConditionalSchema,
+  DATA: {
+    type: 'struct' as const,
+    fields: [{ name: 'spellId', type: 'formid' as const }],
+  },
+  CTDA: {
+    type: 'array' as const,
+    element: {
+      type: 'struct' as const,
+      size: 32,
+      fields: sharedFields.conditionBlock,
+    },
+  },
+  PRKF: {
+    type: 'unknown' as const, // Just a marker, no data
+  },
+  CIS2: { type: 'unknown' },
+};
+
+const complexSectionSchema: { [tag: string]: FieldSchema } = {
+  ...perkConditionalSchema,
   DATA: {
     type: 'struct' as const,
     fields: [
@@ -64,6 +80,7 @@ const complexSectionSchema: { [tag: string]: FieldSchema } = {
   PRKF: {
     type: 'unknown' as const, // Just a marker, no data
   },
+  CIS2: { type: 'unknown' },
 };
 
 export const perkSchema: RecordSpecificSchemas = createSchema('PERK', {

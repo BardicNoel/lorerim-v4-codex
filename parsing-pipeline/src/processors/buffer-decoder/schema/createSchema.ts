@@ -35,6 +35,13 @@ export const sharedFields: SharedFields = {
   ],
 };
 
+export const CIS2Schema = {
+  CIS2: {
+    name: 'LocalizedStringID',
+    type: 'uint32',
+  },
+};
+
 // Common field schemas that are reused across record types
 export const commonFieldSchemas: CommonFields = {
   EDID: { type: 'string', encoding: 'utf8' },
