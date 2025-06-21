@@ -16,7 +16,8 @@ export type StageType =
   | 'sanitize-fields'
   | 'buffer-decoder'
   | 'flatten-fields'
-  | 'merge-records';
+  | 'merge-records'
+  | 'rename-fields';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -120,6 +121,14 @@ export interface MergeRecordsConfig extends BaseStageConfig {
   overwriteReference?: boolean; // If true, replace original field values with referenced records
 }
 
+// Rename fields stage configuration
+export interface RenameFieldsConfig extends BaseStageConfig {
+  type: 'rename-fields';
+  mappings: {
+    [oldFieldPath: string]: string; // old path -> new field name
+  };
+}
+
 // Stage configuration union type
 export type StageConfig =
   | FilterRecordsConfig
@@ -128,7 +137,8 @@ export type StageConfig =
   | SanitizeFieldsConfig
   | BufferDecoderConfig
   | FlattenFieldsConfig
-  | MergeRecordsConfig;
+  | MergeRecordsConfig
+  | RenameFieldsConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {

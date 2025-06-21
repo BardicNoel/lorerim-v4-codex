@@ -162,6 +162,102 @@ Example:
 
 Note: The buffer decoder uses predefined schemas for each record type. These schemas are defined in the codebase and cannot be modified through the pipeline configuration. The processor handles complex binary structures including nested objects, arrays, and variable-length fields.
 
+### 6. Flatten Fields
+
+Moves nested fields to the root level of records, making them more accessible for analysis.
+
+```yaml
+type: 'flatten-fields'
+fields: string[] # Array of field paths to flatten
+```
+
+The flatten-fields processor supports:
+
+- Regular field paths: `['decodedData']`
+- Array notation: `['perkSections[].PNAM']` - flattens the PNAM object in each perkSections element
+
+Example:
+
+```yaml
+- name: 'Flatten decodedData Fields'
+  type: 'flatten-fields'
+  description: 'Flatten the decodedData field to make nested data more accessible'
+  fields: ['decodedData']
+
+- name: 'Flatten PNAM in perkSections'
+  type: 'flatten-fields'
+  description: 'Flatten the PNAM object inside each perkSections element'
+  fields: ['perkSections[].PNAM']
+```
+
+### 7. Merge Records
+
+Merges records from a source file into target records based on field mappings.
+
+```yaml
+type: 'merge-records'
+sourceFile: string # Path to the source records file
+sourceRecordType: string # Type of source records (e.g., 'PERK')
+mappings:
+  - sourceField: string # Unique identifier for the mapping
+    targetField: string # Field path in target records (e.g., 'decodedData.perkSections[].PNAM')
+    matchField: string # Field to match on in source records (e.g., 'meta.globalFormId')
+    dataField: string # Field to pull data from in source records (e.g., 'decodedData')
+    matchType: 'exact' | 'contains' | 'array-contains'
+mergeField: string # Field to store merged data (when not using overwriteReference)
+mergeStrategy: 'first' | 'all' | 'count'
+overwriteReference?: boolean # If true, replace original field values with referenced records
+```
+
+Example:
+
+```yaml
+- name: 'Merge PERK Records'
+  type: 'merge-records'
+  description: 'Merge PERK records that are referenced by AVIF perkSections'
+  sourceFile: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+  sourceRecordType: 'PERK'
+  mappings:
+    - sourceField: 'perk-mapping'
+      targetField: 'decodedData.perkSections[].PNAM'
+      matchField: 'meta.globalFormId'
+      dataField: 'decodedData'
+      matchType: 'exact'
+  mergeField: 'relatedPerks'
+  mergeStrategy: 'first'
+  overwriteReference: true
+```
+
+### 8. Rename Fields
+
+Renames fields at multiple levels to standardize field names across different record types.
+
+```yaml
+type: 'rename-fields'
+mappings:
+  'oldFieldPath': 'newFieldName' # old path -> new field name
+```
+
+The rename-fields processor supports:
+
+- Regular field paths: `'EDID': 'editorId'`
+- Nested field paths: `'decodedData.EDID': 'editorId'`
+- Array notation: `'perkSections[].EDID': 'editorId'` - renames EDID in each perkSections element
+
+Example:
+
+```yaml
+- name: 'Standardize Field Names'
+  type: 'rename-fields'
+  description: 'Rename EDID fields to editorId for consistency'
+  mappings:
+    'EDID': 'editorId'
+    'decodedData.EDID': 'editorId'
+    'perkSections[].EDID': 'editorId'
+    'FULL': 'name'
+    'perkSections[].FULL': 'name'
+```
+
 ## Complete Example
 
 Here's a complete example of a pipeline configuration:
