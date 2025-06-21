@@ -7,6 +7,7 @@ import {
 } from "@lorerim/platform-types";
 
 interface TES4Record {
+  flags: number;
   masters: string[];
   masterIndexMap: Record<number, string>;
   fileIndexMap: Record<string, number>;
@@ -111,6 +112,7 @@ export async function scanTES4Record(
     // }
 
     return {
+      flags,
       masters,
       masterIndexMap,
       fileIndexMap,
@@ -125,72 +127,90 @@ export async function scanTES4Record(
   }
 }
 
-/**
- * Hydrate PluginMeta objects with master information from TES4 records
- */
-export async function hydratePluginMetas(
-  plugins: PluginMeta[]
-): Promise<PluginMeta[]> {
-  // console.log(
-  //   `[INFO] Hydrating ${plugins.length} plugins with TES4 master information...`
-  // );
-
-  // Create a plugin registry for lookup
-  const pluginRegistry: Record<string, PluginMeta> = {};
-  plugins.forEach((plugin) => {
-    pluginRegistry[plugin.name.toLocaleLowerCase()] = plugin;
-  });
-
-  console.log(Object.keys(pluginRegistry).length);
-  // process.exit(1);
-
-  const hydratedPlugins: PluginMeta[] = [];
-
-  for (const plugin of plugins) {
-    try {
+export async function hydratePluginMetaWithTes4Record(
+  plugins: { fullPath: string; name: string; modFolder: string }[]
+): Promise<
+  Omit<PluginMeta, "fileToLoadOrderMap" | "loadOrder" | "inTypeOrder">[]
+> {
+  const hydratedPlugins = await Promise.all(
+    plugins.map(async (plugin) => {
       const tes4Data = await scanTES4Record(plugin.fullPath);
-
-      if (tes4Data) {
-        // Build fileToLoadOrderMap: maps file indices to load order indices
-        const fileToLoadOrderMap: Record<number, number> = {};
-
-        // Map masters (indices 0 to masterCount-1)
-        tes4Data.masters.forEach((masterName, index) => {
-          const masterPlugin = pluginRegistry[masterName.toLocaleLowerCase()];
-          if (masterPlugin) {
-            fileToLoadOrderMap[index] = masterPlugin.loadOrder;
-          } else {
-            console.warn(
-              `[WARN] Could not find master plugin "${masterName}" in registry for ${plugin.name}`
-            );
-          }
-        });
-
-        // Map current plugin (index = masterCount + 1)
-        const masterCount = tes4Data.masters.length;
-        fileToLoadOrderMap[masterCount + 1] = plugin.loadOrder;
-
-        const hydratedPlugin: PluginMeta = {
-          ...plugin,
-          masters: tes4Data.masters,
-          masterIndexMap: tes4Data.masterIndexMap,
-          fileToLoadOrderMap,
-        };
-
-        hydratedPlugins.push(hydratedPlugin);
-      } else {
-        // Keep original plugin if no TES4 data found
-        hydratedPlugins.push(plugin);
+      if (!tes4Data) {
+        throw new Error(`[ERROR] No TES4 record found for ${plugin.name}`);
       }
-    } catch (error) {
-      console.error(`[ERROR] Failed to hydrate ${plugin.name}:`, error);
-      // Keep original plugin on error
-      hydratedPlugins.push(plugin);
-    }
-  }
-
-  console.log(
-    `[INFO] Hydration complete - ${hydratedPlugins.length} plugins processed`
+      const isEslFlagged = (tes4Data?.flags & 0x000200) !== 0;
+      return {
+        ...plugin,
+        isEsl: isEslFlagged || plugin.name.endsWith(".esl"),
+        masters: tes4Data.masters,
+        masterIndexMap: tes4Data.masterIndexMap,
+      };
+    })
   );
+
   return hydratedPlugins;
 }
+// /**
+//  * Hydrate PluginMeta objects with master information from TES4 records
+//  */
+// export async function hydratePluginMetas(plugins: PluginMeta[]): Promise<[]> {
+//   // console.log(
+//   //   `[INFO] Hydrating ${plugins.length} plugins with TES4 master information...`
+//   // );
+
+//   // Create a plugin registry for lookup
+//   const pluginRegistry: Record<string, PluginMeta> = {};
+//   plugins.forEach((plugin) => {
+//     pluginRegistry[plugin.name] = plugin;
+//   });
+
+//   const hydratedPlugins: PluginMeta[] = [];
+
+//   for (const plugin of plugins) {
+//     try {
+//       const tes4Data = await scanTES4Record(plugin.fullPath);
+
+//       if (tes4Data) {
+//         // Build fileToLoadOrderMap: maps file indices to load order indices
+//         const fileToLoadOrderMap: Record<number, number> = {};
+
+//         // // Map masters (indices 0 to masterCount-1)
+//         // tes4Data.masters.forEach((masterName, index) => {
+//         //   const masterPlugin = pluginRegistry[masterName];
+//         //   if (masterPlugin) {
+//         //     fileToLoadOrderMap[index] = masterPlugin.loadOrder;
+//         //   } else {
+//         //     console.warn(
+//         //       `[WARN] Could not find master plugin "${masterName}" in registry for ${plugin.name}`
+//         //     );
+//         //   }
+//         // });
+
+//         // Map current plugin (index = masterCount + 1)
+//         const masterCount = tes4Data.masters.length;
+//         fileToLoadOrderMap[masterCount + 1] = plugin.loadOrder;
+
+//         const hydratedPlugin: PluginMeta = {
+//           ...plugin,
+//           masters: tes4Data.masters,
+//           masterIndexMap: tes4Data.masterIndexMap,
+//           fileToLoadOrderMap,
+//         };
+
+//         hydratedPlugins.push(hydratedPlugin);
+//       } else {
+//         // Keep original plugin if no TES4 data found
+//         hydratedPlugins.push(plugin);
+//       }
+//     } catch (error) {
+//       console.error(`[ERROR] Failed to hydrate ${plugin.name}:`, error);
+//       // Keep original plugin on error
+//       hydratedPlugins.push(plugin);
+//     }
+//   }
+
+//   console.log(
+//     `[INFO] Hydration complete - ${hydratedPlugins.length} plugins processed`
+//   );
+//   return hydratedPlugins;
+// }

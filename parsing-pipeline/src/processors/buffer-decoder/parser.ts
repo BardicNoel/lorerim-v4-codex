@@ -47,7 +47,7 @@ export class BufferDecoder {
       } else if (inputFilePath) {
         // Auto-discover in parent directory of input file
         const parentDir = path.dirname(path.resolve(inputFilePath));
-        metadataFilePath = path.join(parentDir, 'plugin-metadata.json');
+        metadataFilePath = path.join(parentDir, 'plugin-metadata-map.json');
       } else {
         throw new Error(
           'Cannot load plugin metadata: no input file path or metadata path provided'

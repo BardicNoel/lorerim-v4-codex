@@ -38,17 +38,8 @@ async function processPlugin(task: WorkerTask): Promise<void> {
       statsCollector,
     });
 
-    // const tes4Record = results.find((r) => r.tag === "TES4");
-    // if (tes4Record) {
-    //   sendLog("info", `✅ Found TES4 record in ${plugin.name}`);
-    // } else {
-    //   sendLog("info", `❌ No TES4 record found in ${plugin.name}`);
-    // }
-
-    // sendLog("info", `Scan report: ${JSON.stringify(report)}`);
-
     // Extract parsed records from the results
-    const parsedRecords = extractParsedRecords(buffer, results, stackOrder);
+    const parsedRecords = extractParsedRecords(buffer, results, plugin);
 
     // Send results back to main thread
     const message = {

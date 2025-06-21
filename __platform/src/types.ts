@@ -26,6 +26,7 @@ export interface PluginMeta {
   modFolder: string; // which mod the plugin came from
   isEsl: boolean; // true if the plugin is an ESL plugin
   loadOrder: number; // load order index from plugins.txt
+  inTypeOrder: number; // load order for they type (this helps us resolve formIds)
   masters?: string[]; // master records in the plugin
   masterIndexMap?: Record<number, string>; // e.g., 0 → "Skyrim.esm", 1 → "Update.esm"
   fileToLoadOrderMap?: Record<string, number>; // reverse of above

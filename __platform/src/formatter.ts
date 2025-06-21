@@ -1,5 +1,7 @@
 export const formatFormId = (value: number) => {
-  return `0x${value.toString(16).padStart(8, "0")}`;
+  // Ensure the value is treated as an unsigned 32-bit integer
+  const unsignedValue = value >>> 0;
+  return `0x${unsignedValue.toString(16).toUpperCase().padStart(8, "0")}`;
 };
 
 /**

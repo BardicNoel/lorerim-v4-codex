@@ -2,7 +2,7 @@ import { readdir, readFile } from "fs/promises";
 import { Config } from "../config";
 import path from "path";
 import { PluginMeta } from "@lorerim/platform-types";
-import { hydratePluginMetas } from "../refactor/tes4PluginScan";
+import { hydratePluginMetaWithTes4Record } from "../refactor/tes4PluginScan";
 
 /**
  * Read modlist.txt and return array of mod names
@@ -59,6 +59,11 @@ export async function readPlugins(profileDirPath: string): Promise<string[]> {
     .map((line) => line.substring(1).trim());
 }
 
+const getRecordFileV2 = async (config: Config) => {
+  const loadOrder = await readLoadOrder(config.paths.profileDir);
+  const baseGameFiles = await findPluginFiles(config.paths.baseGameDir);
+};
+
 export async function getRecordFiles(config: Config) {
   // Create a unique set for storing plugin paths
   const pluginPaths = new Map<string, PluginMeta>();
@@ -71,90 +76,90 @@ export async function getRecordFiles(config: Config) {
     loadOrder.slice(0, 10)
   );
 
-  // Create case-insensitive lookup map
-  const loadOrderMap = new Map<string, number>();
-
-  let mainLoadOrderIndex = 0;
-  let eslLoadOrderIndex = 0;
-  loadOrder.forEach((plugin) => {
-    const pluginName = plugin.toLowerCase();
-    if (pluginName.endsWith(".esl")) {
-      eslLoadOrderIndex++;
-    } else {
-      mainLoadOrderIndex++;
-    }
-    loadOrderMap.set(
-      pluginName,
-      pluginName.endsWith(".esl") ? eslLoadOrderIndex : mainLoadOrderIndex
-    );
-  });
-
   // Step 2: Find all files in baseGameDir matching fileExtensions
   const baseGameFiles = await findPluginFiles(config.paths.baseGameDir);
+  const { enabled: mods } = await readModlist(config.paths.profileDir);
+
+  const pluginPartialMap = new Map<
+    string,
+    Pick<PluginMeta, "name" | "fullPath" | "modFolder">
+  >();
+
+  // We need to hydrate before we can make buffers, so for now we just build a map of paths
   baseGameFiles.forEach((file) => {
-    const loadOrderIndex = loadOrderMap.get(file.toLowerCase());
-    if (loadOrderIndex === undefined) {
-      console.log(`[WARN] Plugin not found in loadorder.txt: ${file}`);
-    }
-    pluginPaths.set(file, {
+    pluginPartialMap.set(file, {
       name: file,
       fullPath: path.join(config.paths.baseGameDir, file),
       modFolder: "baseGame",
-      isEsl: file.endsWith(".esl"),
-      loadOrder: loadOrderIndex !== undefined ? loadOrderIndex : 0, // Use load order index for proper FormID resolution
     });
   });
 
-  // Step 3: Read modlist.txt
-  const { enabled: mods } = await readModlist(config.paths.profileDir);
-  // Step 4: Read plugins.txt
-  const plugins = await readPlugins(config.paths.profileDir);
-
-  // Traverse the modlist in reverse order, and add the plugin to the map, this will ensure we follow the Mo2 override order
-  for (const mod of mods.reverse()) {
-    const modFiles = await findPluginFiles(path.join(config.paths.modDir, mod));
-    modFiles.forEach((file) => {
-      const loadOrderIndex = loadOrderMap.get(file.toLowerCase());
-      if (loadOrderIndex === undefined) {
-        console.log(
-          `[WARN] Plugin not found in loadorder.txt: ${file} (from mod: ${mod})`
-        );
-      }
-      pluginPaths.set(file, {
-        name: file,
-        fullPath: path.join(config.paths.modDir, mod, file),
-        modFolder: mod,
-        loadOrder: loadOrderIndex !== undefined ? loadOrderIndex : 0, // Use load order index for proper FormID resolution
-        isEsl: file.endsWith(".esl"),
+  // Overwrite the further down the list we find something.
+  for (const modDir of [...mods].reverse()) {
+    const modFiles = await findPluginFiles(
+      path.join(config.paths.modDir, modDir)
+    );
+    // Filter to only include plugins that are in the modlist or base game
+    modFiles
+      .filter((file) => loadOrder.includes(file))
+      .forEach((file) => {
+        pluginPartialMap.set(file, {
+          name: file,
+          fullPath: path.join(config.paths.modDir, modDir, file),
+          modFolder: modDir,
+        });
       });
-    });
   }
 
-  // Debug: Show some load order information
-  const sortedPlugins = Array.from(pluginPaths.values()).sort(
-    (a, b) => a.loadOrder - b.loadOrder
+  const tes4InformedPlugins = await hydratePluginMetaWithTes4Record(
+    Array.from(pluginPartialMap.values())
   );
-  console.log(`[DEBUG] First 10 plugins in load order:`);
-  sortedPlugins.slice(0, 10).forEach((plugin) => {
-    console.log(
-      `[DEBUG] Load Order ${plugin.loadOrder} (0x${plugin.loadOrder.toString(16).padStart(2, "0")}): ${plugin.name} (${plugin.modFolder})`
-    );
+
+  // Now we need to hydrate the plugins with the load order
+
+  let loadOrderIndex = 0;
+  let mainTypeOrderIndex = 0;
+  let eslLoadOrderIndex = 0;
+
+  const loadOrderHydratedPlugins: Omit<PluginMeta, "fileToLoadOrderMap">[] = [];
+  // We need to read load order from the loadOrder file
+  for (const mod of loadOrder) {
+    // console.log(`[DEBUG] Mod: ${mod}`);
+    const plugin = tes4InformedPlugins.find((plugin) => plugin.name === mod);
+    if (plugin) {
+      loadOrderHydratedPlugins.push({
+        ...plugin,
+        loadOrder: loadOrderIndex++,
+        inTypeOrder: plugin.isEsl ? eslLoadOrderIndex++ : mainTypeOrderIndex++,
+      });
+    }
+  }
+
+  const pluginRegistry = new Map<string, PluginMeta>();
+  loadOrderHydratedPlugins.forEach((plugin) => {
+    pluginRegistry.set(plugin.name.toLowerCase(), plugin);
   });
 
-  // Step 5: Hydrate plugins with TES4 master information
-  console.log(
-    `[INFO] Hydrating ${sortedPlugins.length} plugins with TES4 master information...`
-  );
-  const hydratedPlugins = await hydratePluginMetas(sortedPlugins);
-  console.log(
-    `[INFO] Hydration complete - ${hydratedPlugins.length} plugins processed`
-  );
+  // Now we need to hydrate the plugins with the fileToLoadOrderMap
+  const pluginMetaMap = new Map<string, PluginMeta>();
+  loadOrderHydratedPlugins.forEach((plugin) => {
+    const fileToLoadOrderMap: Record<number, number> = {};
+    plugin.masters?.forEach((masterName, index) => {
+      const masterPlugin = pluginRegistry.get(masterName.toLowerCase());
+      if (masterPlugin) {
+        fileToLoadOrderMap[index] = masterPlugin.loadOrder;
+      } else {
+        console.warn(
+          `[WARN] Could not find master plugin "${masterName}" in registry for ${plugin.name}`
+        );
+      }
+    });
 
-  // Convert back to Map with hydrated plugins
-  const hydratedPluginMap = new Map<string, PluginMeta>();
-  hydratedPlugins.forEach((plugin) => {
-    hydratedPluginMap.set(plugin.name, plugin);
+    pluginMetaMap.set(plugin.name, {
+      ...plugin,
+      fileToLoadOrderMap,
+    });
   });
 
-  return hydratedPluginMap;
+  return pluginMetaMap;
 }

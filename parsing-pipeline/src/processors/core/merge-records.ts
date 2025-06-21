@@ -20,44 +20,31 @@ interface MergeConfig {
 }
 
 function extractArrayValues(fieldPath: string, record: ParsedRecord): any[] {
-  console.log(`[DEBUG] extractArrayValues: fieldPath="${fieldPath}"`);
-
   // Handle array field paths like 'decodedData.perkSections[].PNAM'
   if (fieldPath.includes('[]')) {
     const [basePath, arrayField] = fieldPath.split('[]');
-    console.log(`[DEBUG] Array path detected: basePath="${basePath}", arrayField="${arrayField}"`);
 
     // Trim leading dot from arrayField if present
     const cleanArrayField = arrayField.startsWith('.') ? arrayField.substring(1) : arrayField;
-    console.log(`[DEBUG] Cleaned arrayField: "${cleanArrayField}"`);
 
     const baseValue = getNestedValue(record, basePath);
-    console.log(`[DEBUG] Base value:`, baseValue);
 
     if (Array.isArray(baseValue)) {
-      console.log(`[DEBUG] Base value is array with ${baseValue.length} items`);
       const result = baseValue
         .map((item, index) => {
-          //   console.log(`[DEBUG] Processing array item ${index}:`, item);
           if (typeof item === 'object' && item !== null && item !== undefined) {
             const extracted = getNestedValue(item, cleanArrayField);
-            console.log(`[DEBUG] Extracted from item ${index}:`, extracted);
             return extracted;
           }
-          console.log(`[DEBUG] Item ${index} is not an object, returning as-is:`, item);
           return item;
         })
         .filter((val) => val !== undefined);
-      console.log(`[DEBUG] Final extracted values:`, result);
       return result;
-    } else {
-      console.log(`[DEBUG] Base value is not an array:`, typeof baseValue);
     }
   }
 
   // Single value
   const value = getNestedValue(record, fieldPath);
-  console.log(`[DEBUG] Single value extraction:`, value);
   return value !== undefined ? [value] : [];
 }
 
@@ -77,12 +64,6 @@ export function createMergeRecordsProcessor(config: MergeRecordsConfig): Process
         const sourceData = JSON.parse(sourceContent);
         sourceRecords = Array.isArray(sourceData) ? sourceData : sourceData.data || [];
         console.log(`[INFO] Loaded ${sourceRecords.length} source records`);
-
-        // Debug: Show first few source records
-        console.log(`[DEBUG] First source record keys:`, Object.keys(sourceRecords[0] || {}));
-        if (sourceRecords[0]) {
-          console.log(`[DEBUG] First source record meta:`, sourceRecords[0].meta);
-        }
       } catch (error) {
         console.error(`[ERROR] Failed to load source records:`, error);
         throw new Error(
@@ -94,7 +75,6 @@ export function createMergeRecordsProcessor(config: MergeRecordsConfig): Process
       const lookupMaps = new Map<string, Map<any, ParsedRecord[]>>();
 
       for (const mapping of config.mappings) {
-        console.log(`[DEBUG] Building lookup map for source field: ${mapping.sourceField}`);
         const sourceMap = new Map<any, ParsedRecord[]>();
 
         for (const sourceRecord of sourceRecords) {
@@ -109,41 +89,15 @@ export function createMergeRecordsProcessor(config: MergeRecordsConfig): Process
         }
 
         lookupMaps.set(mapping.sourceField, sourceMap);
-        console.log(
-          `[DEBUG] Built map with ${sourceMap.size} unique keys for ${mapping.sourceField}`
-        );
-
-        // Debug: Show first few entries
-        const firstFew = Array.from(sourceMap.entries()).slice(0, 3);
-        console.log(
-          `[DEBUG] Sample map entries:`,
-          firstFew.map(([key, records]) => ({
-            key,
-            count: records.length,
-            sampleEdid: records[0]?.meta?.type,
-          }))
-        );
       }
 
       const result = data.map((targetRecord: ParsedRecord) => {
         recordsProcessed++;
         const mergedData: Record<string, any> = {};
 
-        // Debug: Show target record structure
-        if (recordsProcessed === 1) {
-          console.log(`[DEBUG] First target record keys:`, Object.keys(targetRecord));
-          console.log(`[DEBUG] First target record meta:`, targetRecord.meta);
-          console.log(`[DEBUG] First target record decodedData:`, targetRecord.decodedData);
-        }
-
         // Process each mapping
         for (const mapping of config.mappings) {
-          console.log(
-            `[DEBUG] Processing mapping: ${mapping.sourceField} -> ${mapping.targetField}`
-          );
-
           const targetValues = extractArrayValues(mapping.targetField, targetRecord);
-          console.log(`[DEBUG] Extracted target values for ${mapping.targetField}:`, targetValues);
 
           const sourceMap = lookupMaps.get(mapping.sourceField);
           if (!sourceMap) {
@@ -156,13 +110,11 @@ export function createMergeRecordsProcessor(config: MergeRecordsConfig): Process
 
           for (const targetValue of targetValues) {
             if (targetValue === undefined || targetValue === null) {
-              console.log(`[DEBUG] Skipping null/undefined target value`);
               continue;
             }
 
             // Skip null references (0x00000000 in Skyrim)
             if (targetValue === '0x00000000' || targetValue === 0 || targetValue === '0') {
-              console.log(`[DEBUG] Skipping null reference: ${targetValue}`);
               continue;
             }
 
@@ -210,9 +162,6 @@ export function createMergeRecordsProcessor(config: MergeRecordsConfig): Process
 
               // Replace the original field values
               setNestedValue(targetRecord, mapping.targetField, flatReplacementValues);
-              console.log(
-                `[DEBUG] Replaced ${mapping.targetField} with ${flatReplacementValues.length} referenced records`
-              );
             } else {
               // Store in merged data (original behavior)
               const mappingKey = `${mapping.sourceField}_${mapping.targetField}`;

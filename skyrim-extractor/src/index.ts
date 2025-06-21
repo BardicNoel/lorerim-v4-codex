@@ -15,6 +15,7 @@ import { StatsReporter } from "./utils/statsReporter";
 import { mergeTypeDictionaries } from "./refactor/parsedRecordDataStructs";
 import { flagWinners } from "./post-process";
 import * as fs from "fs";
+import { PluginMeta } from "@lorerim/platform-types";
 
 export function parseArgs(): {
   configPath: string | undefined;
@@ -71,7 +72,6 @@ export async function main(
 
     // Process plugins
     const pluginPathMap = await getRecordFiles(config);
-    console.log(pluginPathMap.get("Ordinator - Perks of Skyrim.esp"));
     const plugins = Array.from(pluginPathMap.values());
 
     printHeader("Processing Plugins");
@@ -144,7 +144,32 @@ export async function main(
     // Write plugin metadata map
     printSubHeader("Writing Plugin Metadata");
     const pluginMetadataPath = path.join(recordsDir, "plugin-metadata.json");
-    const pluginMetadata = Object.fromEntries(pluginPathMap);
+
+    // Split plugins into main and esl arrays
+    const allPlugins = Array.from(pluginPathMap.values());
+    const mainPlugins: Partial<PluginMeta>[] = [];
+    const eslPlugins: Partial<PluginMeta>[] = [];
+
+    allPlugins.forEach((plugin) => {
+      const partialPlugin: Partial<PluginMeta> = {
+        name: plugin.name,
+        fullPath: plugin.fullPath,
+        modFolder: plugin.modFolder,
+        isEsl: plugin.isEsl,
+        loadOrder: plugin.loadOrder,
+      };
+
+      if (plugin.isEsl) {
+        eslPlugins.push(partialPlugin);
+      } else {
+        mainPlugins.push(partialPlugin);
+      }
+    });
+
+    const pluginMetadata = {
+      main: mainPlugins,
+      esl: eslPlugins,
+    };
 
     try {
       await fs.promises.writeFile(
@@ -154,11 +179,34 @@ export async function main(
       );
       console.log(`Plugin metadata written to: ${pluginMetadataPath}`);
       console.log(
-        `Total plugins in metadata: ${Object.keys(pluginMetadata).length}`
+        `Total plugins in metadata: ${mainPlugins.length} main + ${eslPlugins.length} esl = ${allPlugins.length}`
       );
     } catch (error) {
       console.error(
         `Failed to write plugin metadata: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+
+    // Also write the original plugin metadata map format
+    const pluginMetadataMapPath = path.join(
+      recordsDir,
+      "plugin-metadata-map.json"
+    );
+    const pluginMetadataMap = Object.fromEntries(pluginPathMap);
+
+    try {
+      await fs.promises.writeFile(
+        pluginMetadataMapPath,
+        JSON.stringify(pluginMetadataMap, null, 2),
+        "utf-8"
+      );
+      console.log(`Plugin metadata map written to: ${pluginMetadataMapPath}`);
+      console.log(
+        `Total plugins in metadata map: ${Object.keys(pluginMetadataMap).length}`
+      );
+    } catch (error) {
+      console.error(
+        `Failed to write plugin metadata map: ${error instanceof Error ? error.message : String(error)}`
       );
     }
   } catch (error) {

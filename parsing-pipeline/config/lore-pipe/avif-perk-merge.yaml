@@ -12,7 +12,7 @@ stages:
     sourceFile: '../output/parsing-pipeline/lorerim/perk-analysis.json'
     sourceRecordType: 'PERK'
     mappings:
-      - sourceField: 'meta.formId'
+      - sourceField: 'meta.globalFormId'
         targetField: 'decodedData.perkSections[].PNAM'
         matchType: 'exact'
     mergeField: 'relatedPerks'

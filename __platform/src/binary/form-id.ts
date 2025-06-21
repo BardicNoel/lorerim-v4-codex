@@ -6,13 +6,13 @@ function resolveGlobalFromLocal(
   isEsl: boolean = false
 ): number {
   if (isEsl) {
-    console.log("isEsl");
     // ESL plugin: encode as 0xFEYYXXXX
     const eslSlot = pluginLoadOrder & 0xff; // limit to 1 byte
     return ((0xfe << 24) | (eslSlot << 16) | (localFormId & 0xffff)) >>> 0;
   }
 
   // Normal ESM/ESP plugin
+  // Use unsigned right shift to ensure we get an unsigned 32-bit result
   return ((pluginLoadOrder << 24) | (localFormId & 0x00ffffff)) >>> 0;
 }
 
@@ -39,7 +39,7 @@ function resolveGlobalFromReference(
 
   // Case 1: Index equals master count + 1 = record in the referencing plugin itself
   if (fileIndex === masterCount) {
-    return (contextPlugin.loadOrder << 24) | localID;
+    return ((contextPlugin.loadOrder << 24) | localID) >>> 0;
   }
 
   // Case 2: Reference to a master (index 0 to masterCount)
@@ -60,7 +60,7 @@ function resolveGlobalFromReference(
       return null;
     }
 
-    return (masterPlugin.loadOrder << 24) | localID;
+    return ((masterPlugin.loadOrder << 24) | localID) >>> 0;
   }
 
   // Case 3: Invalid index (beyond master count + 1)

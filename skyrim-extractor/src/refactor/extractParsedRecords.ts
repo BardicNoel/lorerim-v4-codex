@@ -5,12 +5,13 @@ import {
   decompressRecordData,
   isRecordCompressed,
   resolveGlobalFromLocal,
+  PluginMeta,
 } from "@lorerim/platform-types";
 
 export function extractParsedRecords(
   buffer: Buffer,
   metas: BufferMeta[],
-  stackOrder: number
+  plugin: PluginMeta
 ): ParsedRecord[] {
   const records: ParsedRecord[] = [];
 
@@ -58,16 +59,19 @@ export function extractParsedRecords(
 
       offset += 6 + size;
     }
-    const globalFormId = resolveGlobalFromLocal(meta.formId!, meta.pluginIndex);
+    const globalFormId = resolveGlobalFromLocal(
+      meta.formId!,
+      plugin.loadOrder,
+      plugin.isEsl
+    );
 
-    // console.log(formatFormId(globalFormId));
     records.push({
       meta: {
         type: meta.tag,
         formId: formatFormId(meta.formId!),
         globalFormId: formatFormId(globalFormId),
         plugin: meta.sourcePlugin,
-        stackOrder,
+        stackOrder: plugin.loadOrder,
       },
       record,
       header,
