@@ -258,6 +258,37 @@ Example:
     'perkSections[].FULL': 'name'
 ```
 
+### 9. Sample Records
+
+Randomly samples a specified number of records from the input data. This is useful for reducing dataset size for testing or analysis purposes.
+
+```yaml
+type: 'sample-records'
+sampleSize: number # Number of records to sample
+method?: 'random' | 'first' | 'last' # Sampling method, defaults to 'random'
+seed?: number # Random seed for reproducible sampling
+```
+
+The sample-records processor supports:
+
+- **Random sampling**: Shuffles the array and takes the first N records (default)
+- **First N records**: Takes the first N records in their original order
+- **Last N records**: Takes the last N records in their original order
+- **Seeded randomness**: Uses a seed value for reproducible random sampling
+
+Example:
+
+```yaml
+- name: 'Sample 500 Records'
+  type: 'sample-records'
+  description: 'Randomly sample 500 records from the filtered data'
+  sampleSize: 500
+  method: 'random'
+  seed: 12345 # Optional: for reproducible results
+```
+
+Note: If the input data has fewer records than the requested sample size, all records will be returned.
+
 ## Complete Example
 
 Here's a complete example of a pipeline configuration:

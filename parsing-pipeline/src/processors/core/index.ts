@@ -8,6 +8,7 @@ import { formatJSON } from '@lorerim/platform-types';
 import { createFlattenFieldsProcessor } from './flatten-fields';
 import { createMergeRecordsProcessor } from './merge-records';
 import { createRenameFieldsProcessor } from './rename-fields';
+import { createSampleRecordsProcessor } from './sample-records';
 
 // Core processor interface
 export interface Processor {
@@ -34,6 +35,8 @@ export function createProcessor(stage: StageConfig): Processor {
       return createMergeRecordsProcessor(stage);
     case 'rename-fields':
       return createRenameFieldsProcessor(stage as any);
+    case 'sample-records':
+      return createSampleRecordsProcessor(stage);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }

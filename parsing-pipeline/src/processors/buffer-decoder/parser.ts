@@ -509,7 +509,7 @@ function decodeField(
 const parseGroupedFields = (
   parsedRecord: ParsedRecord,
   offset: number,
-  { terminatorTag, groupSchema, virtualField }: GroupedFieldsSchema,
+  { terminatorTag, groupSchema, virtualField, dynamicSchema }: GroupedFieldsSchema,
   decoder: BufferDecoder
 ): { decodedField: any; fieldCount: number } => {
   // Get context plugin name from record metadata
@@ -531,6 +531,17 @@ const parseGroupedFields = (
     },
   };
 
+  // If we have a dynamic schema function, use it to get the schema based on parsed data
+  let currentSchema = groupSchema;
+  if (dynamicSchema) {
+    try {
+      currentSchema = { ...groupSchema, ...dynamicSchema(decodedFirstSubrecord) };
+    } catch (error) {
+      console.warn(`[WARN] Failed to get dynamic schema for ${firstSubrecord.tag}:`, error);
+      // Fall back to base schema
+    }
+  }
+
   let processedFields = 1;
 
   while (processedFields + offset < parsedRecord.record.length) {
@@ -540,9 +551,16 @@ const parseGroupedFields = (
       break;
     }
 
+    const subrecordSchema = currentSchema[subrecord.tag];
+    if (!subrecordSchema) {
+      console.warn(`[WARN] No schema found for field ${subrecord.tag} in grouped field`);
+      processedFields++;
+      continue;
+    }
+
     const decodedSubrecord = decodeField(
       [subrecord.buffer],
-      groupSchema[subrecord.tag],
+      subrecordSchema,
       decoder,
       contextPluginName
     );

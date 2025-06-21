@@ -17,7 +17,8 @@ export type StageType =
   | 'buffer-decoder'
   | 'flatten-fields'
   | 'merge-records'
-  | 'rename-fields';
+  | 'rename-fields'
+  | 'sample-records';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -129,6 +130,14 @@ export interface RenameFieldsConfig extends BaseStageConfig {
   };
 }
 
+// Sample records stage configuration
+export interface SampleRecordsConfig extends BaseStageConfig {
+  type: 'sample-records';
+  sampleSize: number; // Number of records to sample
+  method?: 'random' | 'first' | 'last'; // Sampling method, defaults to 'random'
+  seed?: number; // Random seed for reproducible sampling
+}
+
 // Stage configuration union type
 export type StageConfig =
   | FilterRecordsConfig
@@ -138,7 +147,8 @@ export type StageConfig =
   | BufferDecoderConfig
   | FlattenFieldsConfig
   | MergeRecordsConfig
-  | RenameFieldsConfig;
+  | RenameFieldsConfig
+  | SampleRecordsConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {

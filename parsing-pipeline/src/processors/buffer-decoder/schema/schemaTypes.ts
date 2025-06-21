@@ -61,6 +61,7 @@ export interface GroupedFieldsSchema extends NoPostParseSchema {
   cardinality: 'single' | 'multiple';
   virtualField: string; // Group will be assigned to this field
   terminatorTag?: string; // if provided, the parser will stop and EXCLUDE this tag
+  dynamicSchema?: (parsedData: any) => { [tag: string]: FieldSchema }; // Dynamic schema based on parsed data
 }
 
 export type FieldSchema =

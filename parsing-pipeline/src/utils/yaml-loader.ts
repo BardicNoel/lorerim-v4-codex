@@ -65,6 +65,8 @@ function validateStage(stage: any): StageConfig {
       'buffer-decoder',
       'flatten-fields',
       'merge-records',
+      'rename-fields',
+      'sample-records',
     ].includes(stage.type)
   ) {
     throw new Error(`Invalid stage type: ${stage.type}`);
@@ -117,6 +119,19 @@ function validateStage(stage: any): StageConfig {
       }
       if (!stage.mergeStrategy) {
         throw new Error('Merge records stage must have mergeStrategy');
+      }
+      break;
+    case 'rename-fields':
+      if (!stage.mappings) {
+        throw new Error('Rename fields stage must have mappings');
+      }
+      break;
+    case 'sample-records':
+      if (!stage.sampleSize) {
+        throw new Error('Sample records stage must have sampleSize');
+      }
+      if (typeof stage.sampleSize !== 'number' || stage.sampleSize <= 0) {
+        throw new Error('Sample records stage sampleSize must be a positive number');
       }
       break;
   }
