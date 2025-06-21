@@ -10,31 +10,14 @@ This document outlines the rules and best practices for creating processors and 
 
 ## Core Requirements
 
-### 1. Output Wrapper
-All processors MUST wrap their output in a standard format:
-
-```typescript
-interface ProcessorOutput {
-    metadata: {
-        processor: string;      // Name of the processor
-        timestamp: string;      // ISO timestamp of processing
-        inputFile: string;      // Original input file
-        recordType: string;     // Type of records processed
-        profile?: string;       // Optional profile used
-        recordCount: number;    // Number of records processed
-    };
-    data: any[];               // The processed records
-}
-```
-
-### 2. Pipeline Integration
+### 1. Pipeline Integration
 All processors MUST:
 - Be registered in `run-pipeline.ts`
 - Support both interactive and command-line operation
 - Handle input/output file paths consistently
 - Provide clear error messages and validation
 
-### 3. File Handling
+### 2. File Handling
 - Use streams for processing large files
 - Implement proper error handling for file operations
 - Validate input/output paths before processing

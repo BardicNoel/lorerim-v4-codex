@@ -1,7 +1,6 @@
 import { writeFile, mkdir, readFile } from "fs/promises";
-import { buildPath, PATHS } from "../constants/paths";
+import { buildPath, PATHS } from "../utils/paths";
 import { formatJSON } from "@lorerim/platform-types";
-import { ProcessingStats } from "./stats";
 
 /**
  * Centralized file operations
@@ -48,17 +47,7 @@ export const FileOps = {
       );
       await this.writeJson(filePath, typeRecords);
     }
-  },
+  }
 
-  /**
-   * Write statistics and metadata to index.json
-   */
-  async writeStats(stats: ProcessingStats, outputDir: string): Promise<void> {
-    const indexPath = buildPath(outputDir, "index.json");
-    await this.writeJson(indexPath, {
-      stats,
-      timestamp: new Date().toISOString(),
-      recordTypes: Object.keys(stats.recordsByType),
-    });
-  },
+ 
 };

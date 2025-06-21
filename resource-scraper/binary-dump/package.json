@@ -1,0 +1,10 @@
+{
+  "name": "binary-dump",
+  "version": "1.0.0",
+  "description": "Tool for creating hex dumps of Skyrim .esp files",
+  "type": "module",
+  "scripts": {
+    "start": "node binary-dump-main.js"
+  },
+  "dependencies": {}
+} 

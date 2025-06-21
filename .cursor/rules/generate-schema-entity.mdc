@@ -1,0 +1,118 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# How to Generate a New Schema Entity from UESP
+
+This rule explains how to create a new schema entity for a Skyrim record type using the UESP wiki as your primary reference.
+
+## Key Principle
+
+**Do not redefine fields already included by `createSchema.ts`.**  
+Common fields (such as `EDID`, `FULL`, `DESC`, `ICON`, `DNAM`, `KSIZ`, `KWDA`, `NNAM`) are automatically present in every schema entity via `createSchema`.  
+Only add fields that are unique or record-specific.
+
+## 1. Research the Record Structure
+
+1. Go to [UESP Skyrim Mod: Mod File Format](mdc:https:/en.uesp.net/wiki/Skyrim_Mod:Mod_File_Format) and find the page for your target record type (e.g., [MGEF](mdc:https:/en.uesp.net/wiki/Skyrim_Mod:Mod_File_Format/MGEF), [AVIF](mdc:https:/en.uesp.net/wiki/Skyrim_Mod:Mod_File_Format/AVIF)).
+2. Review the field list, types, and any notes about encoding, arrays, or special parsing.
+3. For any record type, you can view its UESP page by changing the record name in the URL (e.g., `AVIF` → `PERK`).
+
+## 2. Create a New Schema Entity File
+
+1. In the codebase, navigate to `parsing-pipeline/src/processors/buffer-decoder/schema/entities/`.
+2. Create a new file named after the record type in lowercase (e.g., `avif.ts` for AVIF).
+3. Use the following template, adapting field names/types from UESP. **Only include record-specific fields!**
+
+```typescript
+import { RecordSpecificSchemas } from '../schemaTypes';
+import { createSchema } from '../createSchema';
+
+export const avifSchema: RecordSpecificSchemas = createSchema('AVIF', {
+  ANAM: { type: 'string', encoding: 'utf8' }, // abbreviation, record-specific
+  CNAM: { type: 'uint32' },                   // skill category or data, record-specific
+  AVSK: {
+    type: 'array',
+    element: { type: 'float32' },             // float[4], record-specific
+  },
+  // Add other record-specific fields here
+});
+```
+
+> **Do not include `EDID`, `FULL`, `DESC`, etc. in the schema object—they are already present via `createSchema`.**
+
+- For arrays of structs (like perk tree sections), use `type: 'array'` and define the struct fields as per the UESP table.
+
+## 3. Register and Stitch the Schema into the System
+
+**After creating your schema entity, you must import and spread it into the `recordSpecificSchemas` object in `fullSchema.ts`.**
+
+This step is required for your schema to be recognized and used by the system.
+
+In `fullSchema.ts`:
+
+```typescript
+import { avifSchema } from './entities/avif';
+
+export const recordSpecificSchemas: RecordSpecificSchemas = {
+  ...avifSchema,
+  // ...other schemas
+};
+```
+
+If you skip this step, your schema will not be available to the parser.
+
+## 4. Test with a Sample File
+
+Suppose you have a file `sample-avif.json`:
+
+```json
+{
+  "EDID": "OneHanded",
+  "FULL": "One-Handed",
+  "DESC": "Governs your effectiveness with one-handed weapons.",
+  "ANAM": "1H",
+  "CNAM": 1,
+  "AVSK": [1.0, 0.0, 1.5, 0.0]
+}
+```
+
+Run your pipeline or processor to ensure the schema parses the file correctly and matches the UESP documentation.
+
+---
+
+**Tip:**  
+For any other record type, simply change the record key (e.g., `AVIF`) and use the corresponding UESP page (e.g., [https://en.uesp.net/wiki/Skyrim_Mod:Mod_File_Format/PERK](mdc:https:/en.uesp.net/wiki/Skyrim_Mod:Mod_File_Format/PERK)).
+
+---
+
+## Good Example
+
+```typescript
+export const perkSchema: RecordSpecificSchemas = createSchema('PERK', {
+  DATA: {
+    type: 'struct',
+    fields: [
+      { name: 'isTrait', type: 'uint8' },
+      // ...
+    ],
+  },
+  // ...
+});
+```
+
+## Bad Example
+
+- Skipping required fields from UESP
+- Using incorrect types (e.g., string instead of uint32)
+- Not registering the schema in `fullSchema.ts`
+- **Redefining fields already provided by `createSchema.ts` (e.g., `EDID`, `FULL`, `DESC`)**
+
+---
+
+This rule ensures all new record schemas are consistent, accurate, and easy to maintain.
+
+
+
+

@@ -1,0 +1,8 @@
+{
+  "modDirPath": "../data/mod-samples",
+  "outputPath": "../output/skyrim-extractor/mod-samples",
+  "maxThreads": 4,
+  "recordTypeFilter": [
+    "PERK"
+  ]
+} 

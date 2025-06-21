@@ -21,6 +21,7 @@ stages:
       data: 'all'
       header: 'all'
       decodedData:
+        - MDOB
         - DATA:
             - effectShader
             - enchantShader

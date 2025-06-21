@@ -1,0 +1,10 @@
+{
+  "paths": {
+    "baseGameDir": "C:\\Modlists\\LoreRim\\Stock Game\\Data",
+    "profileDir": "C:\\Modlists\\LoreRim\\profiles\\Ultra",
+    "outputDir": "../output/skyrim-extractor/lorerim",
+    "modDir": "C:\\Modlists\\LoreRim\\mods"
+  },
+  "maxThreads": 4,
+  "recordTypeFilter": ["RACE", "CLAS", "FACT", "PERK", "AVIF", "MGEF", "SPEL", "ENCH", "GLOB", "FLST"]
+} 

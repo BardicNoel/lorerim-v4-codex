@@ -1,20 +1,17 @@
-import { Buffer } from 'buffer';
-import { FieldSchema, ParsedRecord, StringEncoding } from './types';
-import { commonFieldSchemas, recordSpecificSchemas } from './schemas';
+import {
+  FieldSchema,
+  GroupedFieldsSchema,
+  ParsedRecord,
+  StringEncoding,
+  recordSpecificSchemas,
+} from './schema';
 import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
 import { Processor } from '../core';
-import { formatJSON } from '@lorerim/platform-types';
+import { formatFormId, PluginMeta } from '@lorerim/platform-types';
+import { resolveGlobalFromReference } from '@lorerim/platform-types';
 import { parentPort } from 'worker_threads';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
-
-// Debug logging function that works in both worker and main thread
-function debugLog(message: string, data?: any) {
-  console.log(`[DEBUG] ${message}`, data);
-  if (parentPort) {
-    parentPort.postMessage({ type: 'debug', message, data });
-  }
-}
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 // Error logging function that works in both worker and main thread
 function errorLog(message: string, error?: any) {
@@ -24,37 +21,177 @@ function errorLog(message: string, error?: any) {
   }
 }
 
+// Currently doesn't support recursive groups
 export class BufferDecoder {
+  private pluginRegistry: Record<string, PluginMeta> = {};
+  private pluginMetadataLoaded = false;
+
   public getFieldSchema(recordType: string, tag: string): FieldSchema | undefined {
-    return recordSpecificSchemas[recordType]?.[tag] || commonFieldSchemas[tag];
+    return recordSpecificSchemas[recordType]?.[tag];
+  }
+
+  /**
+   * Loads plugin metadata from the specified path or automatically discovers it
+   */
+  public async loadPluginMetadata(inputFilePath?: string, metadataPath?: string): Promise<void> {
+    if (this.pluginMetadataLoaded) {
+      return; // Already loaded
+    }
+
+    try {
+      let metadataFilePath: string;
+
+      if (metadataPath) {
+        // Use explicitly provided path
+        metadataFilePath = path.resolve(metadataPath);
+      } else if (inputFilePath) {
+        // Auto-discover in parent directory of input file
+        const parentDir = path.dirname(path.resolve(inputFilePath));
+        metadataFilePath = path.join(parentDir, 'plugin-metadata-map.json');
+      } else {
+        throw new Error(
+          'Cannot load plugin metadata: no input file path or metadata path provided'
+        );
+      }
+
+      console.log(`[DEBUG] Loading plugin metadata from: ${metadataFilePath}`);
+
+      if (
+        !(await fs
+          .access(metadataFilePath)
+          .then(() => true)
+          .catch(() => false))
+      ) {
+        console.warn(`[WARN] Plugin metadata file not found at: ${metadataFilePath}`);
+        this.pluginMetadataLoaded = true; // Mark as loaded to avoid repeated attempts
+        return;
+      }
+
+      const metadataContent = await fs.readFile(metadataFilePath, 'utf-8');
+      const metadata = JSON.parse(metadataContent);
+
+      // Convert to the expected format: Record<string, PluginMeta>
+      this.pluginRegistry = metadata;
+
+      console.log(
+        `[DEBUG] Loaded ${Object.keys(this.pluginRegistry).length} plugin metadata entries`
+      );
+      this.pluginMetadataLoaded = true;
+    } catch (error) {
+      console.error(`[ERROR] Failed to load plugin metadata:`, error);
+      this.pluginMetadataLoaded = true; // Mark as loaded to avoid repeated attempts
+    }
+  }
+
+  /**
+   * Resolves a raw FormID to a global FormID using plugin metadata
+   */
+  private resolveFormId(rawFormId: number, contextPluginName: string): string {
+    if (!this.pluginMetadataLoaded || Object.keys(this.pluginRegistry).length === 0) {
+      // Fall back to simple formatting if no metadata available
+      return formatFormId(rawFormId);
+    }
+
+    const contextPlugin = this.pluginRegistry[contextPluginName];
+    if (!contextPlugin) {
+      console.warn(
+        `[WARN] Context plugin "${contextPluginName}" not found in registry, using raw FormID`
+      );
+      return formatFormId(rawFormId);
+    }
+
+    // Debug: Show FormID in hex format only for failed resolutions
+    const fileIndex = (rawFormId >>> 24) & 0xff;
+    const localID = rawFormId & 0x00ffffff;
+
+    const globalFormId = resolveGlobalFromReference(rawFormId, contextPlugin, this.pluginRegistry);
+    if (globalFormId === null) {
+      console.warn(
+        `[WARN] Failed to resolve FormID 0x${rawFormId.toString(16).padStart(8, '0').toUpperCase()} (fileIndex: ${fileIndex}, localID: 0x${localID.toString(16).padStart(6, '0').toUpperCase()}) for plugin ${contextPluginName}, using raw FormID`
+      );
+      process.exit(1); // temporary during debugging
+      return formatFormId(rawFormId);
+    }
+
+    return formatFormId(globalFormId);
   }
 
   public parseString(
     buffer: Buffer,
-
-    encoding: StringEncoding
+    offset: number,
+    encoding: StringEncoding,
+    postParse?: (value: string) => any
   ): string {
-    return buffer.toString(encoding).replace(/\0+$/, '');
+    const value = buffer.toString(encoding).replace(/\0+$/, '');
+    return postParse ? postParse(value) : value;
   }
 
-  public parseFormId(buffer: Buffer, offset: number): string {
-    const value = buffer.readUInt32LE(offset);
-    return `0x${value.toString(16).padStart(8, '0')}`;
+  public parseFormId(
+    buffer: Buffer,
+    offset: number,
+    postParse?: (value: string) => any,
+    contextPluginName?: string
+  ): string {
+    const rawFormId = buffer.readUInt32LE(offset);
+
+    // Use global resolution if context plugin is provided and metadata is loaded
+    const formId = contextPluginName
+      ? this.resolveFormId(rawFormId, contextPluginName)
+      : formatFormId(rawFormId);
+
+    return postParse ? postParse(formId) : formId;
   }
 
-  public parseNumeric(buffer: Buffer, offset: number, type: string): number {
+  public parseNumeric(
+    buffer: Buffer,
+    offset: number,
+    type: string,
+    postParse?: (value: number) => any
+  ): number {
+    // Add debugging for buffer bounds checking
+    if (offset < 0 || offset >= buffer.length) {
+      console.error(`[ERROR] Buffer bounds error in parseNumeric:`);
+      console.error(`[ERROR] Requested offset: ${offset}`);
+      console.error(`[ERROR] Buffer length: ${buffer.length}`);
+      console.error(`[ERROR] Type: ${type}`);
+      console.error(`[ERROR] Available range: 0 to ${buffer.length - 1}`);
+      throw new Error(`Buffer offset ${offset} is out of bounds (buffer length: ${buffer.length})`);
+    }
+
+    // Check if we have enough bytes for the requested type
+    const typeSize = this.getTypeSize(type);
+    if (offset + typeSize > buffer.length) {
+      console.error(`[ERROR] Insufficient buffer space for type ${type}:`);
+      console.error(`[ERROR] Requested offset: ${offset}`);
+      console.error(`[ERROR] Type size: ${typeSize}`);
+      console.error(`[ERROR] Buffer length: ${buffer.length}`);
+      console.error(
+        `[ERROR] Would need ${offset + typeSize} bytes, but only have ${buffer.length}`
+      );
+      throw new Error(`Insufficient buffer space for ${type} at offset ${offset}`);
+    }
+
+    let value: number;
     switch (type) {
       case 'uint8':
-        return buffer.readUInt8(offset);
+        value = buffer.readUInt8(offset);
+        break;
       case 'uint16':
-        return buffer.readUInt16LE(offset);
+        value = buffer.readUInt16LE(offset);
+        break;
       case 'uint32':
-        return buffer.readUInt32LE(offset);
+        value = buffer.readUInt32LE(offset);
+        break;
       case 'float32':
-        return buffer.readFloatLE(offset);
+        value = buffer.readFloatLE(offset);
+        break;
+      case 'int32':
+        value = buffer.readInt32LE(offset);
+        break;
       default:
         throw new Error(`Unsupported numeric type: ${type}`);
     }
+    return postParse ? postParse(value) : value;
   }
 
   public parseStruct(
@@ -62,24 +199,15 @@ export class BufferDecoder {
     offset: number,
     length: number,
     fields: FieldSchema[],
-    useFieldLength = true
+    useFieldLength = true,
+    contextPluginName?: string
   ): any {
     const result: any = {};
     let currentOffset = offset;
     const endOffset = offset + length;
 
-    console.log(
-      `[DEBUG] Starting struct parse at offset ${offset}, length ${length}, endOffset ${endOffset}`
-    );
-    console.log(`[DEBUG] Buffer length: ${buffer.length}, Fields to parse: ${fields.length}`);
-
     for (const field of fields) {
       if (!field.name) throw new Error('Struct field must have a name');
-
-      console.log(
-        `[DEBUG] Processing field "${field.name}" (${field.type}) at offset ${currentOffset}`
-      );
-      console.log(`[DEBUG] Remaining buffer: ${endOffset - currentOffset} bytes`);
 
       switch (field.type) {
         case 'string':
@@ -87,66 +215,74 @@ export class BufferDecoder {
           let strLength: number;
           if (useFieldLength) {
             strLength = length;
-            result[field.name] = this.parseString(buffer, field.encoding);
+            result[field.name] = this.parseString(
+              buffer,
+              currentOffset,
+              field.encoding,
+              field.parser
+            );
             currentOffset += strLength;
           } else {
             strLength = buffer.readUInt16LE(currentOffset);
-            console.log(`[DEBUG] String length from buffer: ${strLength}`);
-            result[field.name] = this.parseString(buffer, field.encoding);
+            result[field.name] = this.parseString(
+              buffer,
+              currentOffset,
+              field.encoding,
+              field.parser
+            );
             currentOffset += 2 + strLength;
           }
-          console.log(`[DEBUG] After string: new offset ${currentOffset}`);
           break;
 
         case 'formid':
-          result[field.name] = this.parseFormId(buffer, currentOffset);
+          result[field.name] = this.parseFormId(
+            buffer,
+            currentOffset,
+            field.parser,
+            contextPluginName
+          );
           currentOffset += 4;
-          console.log(`[DEBUG] After formid: new offset ${currentOffset}`);
           break;
 
+        case 'int32':
         case 'uint8':
         case 'uint16':
         case 'uint32':
         case 'float32':
-          result[field.name] = this.parseNumeric(buffer, currentOffset, field.type);
+          result[field.name] = this.parseNumeric(buffer, currentOffset, field.type, field.parser);
           currentOffset += this.getTypeSize(field.type);
-          console.log(`[DEBUG] After ${field.type}: new offset ${currentOffset}`);
           break;
 
         case 'struct':
           if (!('fields' in field)) throw new Error('Struct field must specify fields');
           const structLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] Nested struct length: ${structLength}`);
           result[field.name] = this.parseStruct(
             buffer,
             currentOffset + 2,
             structLength,
             field.fields,
-            false
+            false,
+            contextPluginName
           );
           currentOffset += 2 + structLength;
-          console.log(`[DEBUG] After nested struct: new offset ${currentOffset}`);
           break;
 
         case 'array':
           if (!('element' in field)) throw new Error('Array field must specify element');
           const arrayLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] Array length: ${arrayLength}`);
           result[field.name] = this.parseArray(
             buffer,
             currentOffset + 2,
             arrayLength,
-            field.element
+            field.element,
+            contextPluginName
           );
           currentOffset += 2 + arrayLength;
-          console.log(`[DEBUG] After array: new offset ${currentOffset}`);
           break;
 
         case 'unknown':
           const unknownLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] Unknown field length: ${unknownLength}`);
           currentOffset += 2 + unknownLength;
-          console.log(`[DEBUG] After unknown: new offset ${currentOffset}`);
           break;
       }
 
@@ -167,31 +303,25 @@ export class BufferDecoder {
     buffer: Buffer,
     offset: number,
     length: number,
-    elementSchema: FieldSchema
+    elementSchema: FieldSchema,
+    contextPluginName?: string
   ): any[] {
     const results: any[] = [];
     let currentOffset = offset;
     const endOffset = offset + length;
 
-    console.log(
-      `[DEBUG] Starting array parse at offset ${offset}, length ${length}, endOffset ${endOffset}`
-    );
-    console.log(`[DEBUG] Array element type: ${elementSchema.type}`);
-
     while (currentOffset < endOffset) {
-      console.log(`[DEBUG] Processing array element at offset ${currentOffset}`);
-      console.log(`[DEBUG] Remaining array bytes: ${endOffset - currentOffset}`);
-
       switch (elementSchema.type) {
         case 'string':
           if (!('encoding' in elementSchema))
             throw new Error('String element must specify encoding');
           const strLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] String element length: ${strLength}`);
           results.push(
             this.parseString(
               buffer.slice(currentOffset + 2, currentOffset + 2 + strLength),
-              elementSchema.encoding
+              0,
+              elementSchema.encoding,
+              elementSchema.parser
             )
           );
           currentOffset += 2 + strLength;
@@ -199,20 +329,43 @@ export class BufferDecoder {
 
         case 'struct':
           if (!('fields' in elementSchema)) throw new Error('Struct element must specify fields');
-          const structLength = buffer.readUInt16LE(currentOffset);
-          console.log(`[DEBUG] Struct element length: ${structLength}`);
-          const structData = this.parseStruct(
-            buffer,
-            currentOffset + 2,
-            structLength,
-            elementSchema.fields
-          );
-          results.push(structData);
-          currentOffset += 2 + structLength;
+
+          let structSize: number;
+          if ('size' in elementSchema && typeof elementSchema.size === 'number') {
+            structSize = elementSchema.size;
+            const structData = this.parseStruct(
+              buffer,
+              currentOffset,
+              structSize,
+              elementSchema.fields,
+              false,
+              contextPluginName
+            );
+            results.push(structData);
+            currentOffset += structSize;
+          } else {
+            const structLength = buffer.readUInt16LE(currentOffset);
+            const structData = this.parseStruct(
+              buffer,
+              currentOffset + 2,
+              structLength,
+              elementSchema.fields,
+              false,
+              contextPluginName
+            );
+            results.push(structData);
+            currentOffset += 2 + structLength;
+          }
           break;
 
         case 'formid':
-          results.push(this.parseFormId(buffer, currentOffset));
+          const formId = this.parseFormId(
+            buffer.slice(currentOffset, currentOffset + 4),
+            0,
+            undefined,
+            contextPluginName
+          );
+          results.push(formId);
           currentOffset += 4;
           break;
 
@@ -228,13 +381,7 @@ export class BufferDecoder {
           throw new Error(`Unsupported array element type: ${elementSchema.type}`);
       }
 
-      console.log(`[DEBUG] After array element: new offset ${currentOffset}`);
-
       if (currentOffset > endOffset) {
-        console.error(`[ERROR] Array parsing overran bounds`);
-        console.error(`[ERROR] Current offset: ${currentOffset}, End offset: ${endOffset}`);
-        console.error(`[ERROR] Overrun by: ${currentOffset - endOffset} bytes`);
-        console.error(`[ERROR] Element type: ${elementSchema.type}`);
         throw new Error('Array parsing overran bounds');
       }
     }
@@ -251,135 +398,16 @@ export class BufferDecoder {
       case 'uint32':
       case 'float32':
       case 'formid':
+      case 'int32':
         return 4;
       default:
         throw new Error(`Unsupported type size: ${type}`);
     }
   }
-
-  private logSchemaResolution(recordType: string, tag: string, schema: FieldSchema | undefined) {
-    debugLog(`Field ${tag} in ${recordType}:`, {
-      recordType,
-      hasSchema: !!schema,
-      schemaType: schema?.type,
-      schemaSource: schema
-        ? recordSpecificSchemas[recordType]?.[tag]
-          ? 'recordSpecific'
-          : 'common'
-        : 'none',
-    });
-  }
-
-  public parseRecord(recordType: string, buffer: Buffer): Record<string, any> {
-    const result: Record<string, any> = {};
-    let offset = 0;
-    let fieldCount = 0;
-
-    // Safety check - need at least 6 bytes for a field header (4 for tag, 2 for length)
-    if (buffer.length < 6) {
-      errorLog(`Buffer too small for field header:`, {
-        bufferLength: buffer.length,
-        hex: buffer.toString('hex'),
-        recordType,
-      });
-      return result;
-    }
-
-    // Log available schemas for this record type
-    debugLog(`Record type ${recordType} schemas:`, {
-      recordSpecific: recordSpecificSchemas[recordType]
-        ? Object.keys(recordSpecificSchemas[recordType])
-        : [],
-      common: Object.keys(commonFieldSchemas),
-    });
-
-    while (offset < buffer.length) {
-      try {
-        // Ensure we have enough bytes remaining for a field header
-        if (buffer.length - offset < 6) {
-          errorLog(`Not enough bytes remaining for field header:`, {
-            offset,
-            bufferLength: buffer.length,
-            remainingBytes: buffer.length - offset,
-            hex: buffer.slice(offset).toString('hex'),
-            recordType,
-            parsedFields: Object.keys(result),
-          });
-          return result;
-        }
-
-        const tag = buffer.toString('ascii', offset, offset + 4);
-        const length = buffer.readUInt16LE(offset + 4);
-
-        debugLog(`Processing field ${tag}:`, {
-          offset,
-          length,
-          bufferLength: buffer.length,
-          remainingBytes: buffer.length - offset,
-          hex: buffer.slice(offset, offset + 6).toString('hex'),
-        });
-
-        const schema = this.getFieldSchema(recordType, tag);
-
-        this.logSchemaResolution(recordType, tag, schema);
-
-        if (schema) {
-          switch (schema.type) {
-            case 'string':
-              if (!('encoding' in schema)) throw new Error('String field must specify encoding');
-              result[tag] = this.parseString(buffer, schema.encoding);
-              break;
-
-            case 'formid':
-              result[tag] = this.parseFormId(buffer, offset);
-              break;
-
-            case 'uint8':
-            case 'uint16':
-            case 'uint32':
-            case 'float32':
-              result[tag] = this.parseNumeric(buffer, offset, schema.type);
-              break;
-
-            case 'struct':
-              if (!('fields' in schema)) throw new Error('Struct field must specify fields');
-              result[tag] = this.parseStruct(buffer, offset, length, schema.fields);
-              break;
-
-            case 'array':
-              if (!('element' in schema)) throw new Error('Array field must specify element');
-              result[tag] = this.parseArray(buffer, offset, length, schema.element);
-              break;
-
-            case 'unknown':
-              break;
-          }
-          fieldCount++;
-        }
-
-        offset += length;
-      } catch (error) {
-        errorLog(`Failed to decode field at offset ${offset}:`, error);
-        errorLog(`Buffer context:`, {
-          offset,
-          bufferLength: buffer.length,
-          remainingBytes: buffer.length - offset,
-          hex: buffer.slice(offset, Math.min(offset, buffer.length)).toString('hex'),
-          recordType,
-          parsedFields: Object.keys(result),
-        });
-        // Return what we've parsed so far instead of throwing
-        return result;
-      }
-    }
-
-    return result;
-  }
 }
 
 function createBufferFromFieldData(fieldData: any[]): Buffer | null {
   if (fieldData.length === 0) {
-    console.log(`[DEBUG] No buffer Opt 1`);
     return null;
   }
 
@@ -394,7 +422,6 @@ function createBufferFromFieldData(fieldData: any[]): Buffer | null {
     try {
       return Buffer.from(firstItem, 'base64');
     } catch (error) {
-      console.log(`[DEBUG] Failed to decode base64 string:`, error);
       return null;
     }
   }
@@ -428,6 +455,106 @@ interface ProcessRecordResult {
   recordErrors: number;
 }
 
+function decodeField(
+  fieldData: any[],
+  schema: FieldSchema,
+  decoder: BufferDecoder,
+  contextPluginName?: string
+): any {
+  if (!Array.isArray(fieldData) || fieldData.length === 0) {
+    return null;
+  }
+
+  const buffer = createBufferFromFieldData(fieldData);
+  if (!buffer) {
+    return null;
+  }
+
+  switch (schema.type) {
+    case 'string':
+      if (!('encoding' in schema)) throw new Error('String field must specify encoding');
+      return decoder.parseString(buffer, 0, schema.encoding, schema.parser);
+
+    case 'formid':
+      return decoder.parseFormId(buffer, 0, undefined, contextPluginName);
+
+    case 'uint8':
+    case 'uint16':
+    case 'uint32':
+    case 'float32':
+      return decoder.parseNumeric(buffer, 0, schema.type);
+
+    case 'struct':
+      return decoder.parseStruct(buffer, 0, buffer.length, schema.fields, true, contextPluginName);
+
+    case 'array':
+      return decoder.parseArray(buffer, 0, buffer.length, schema.element, contextPluginName);
+
+    default:
+      return null;
+  }
+}
+
+const parseGroupedFields = (
+  parsedRecord: ParsedRecord,
+  offset: number,
+  { terminatorTag, groupSchema, virtualField }: GroupedFieldsSchema,
+  decoder: BufferDecoder
+): { decodedField: any; fieldCount: number } => {
+  // receives the whole record
+  // starts reading fields at the record field offset
+  // stops when it reach either the terminator tag or the end of the record
+  // returns the decoded fields and a count of how many fields were decoded
+
+  // process group trigger, which will always be the first subrecord
+  // the trigger is potentially also a terminator, we must use a while loop to guard against record end
+  // and check for terminator tag at the end of the loop, not the beginning
+
+  // Get context plugin name from record metadata
+  const contextPluginName = parsedRecord.meta?.plugin;
+
+  // Process the first subrecord, which is the group trigger but also sometimes a terminator
+  const firstSubrecord = parsedRecord.record[offset];
+  const firstSubrecordSchema = groupSchema[firstSubrecord.tag];
+  const decodedFirstSubrecord = decodeField(
+    [firstSubrecord.buffer],
+    firstSubrecordSchema,
+    decoder,
+    contextPluginName
+  );
+
+  const decodedField = {
+    [virtualField]: {
+      [firstSubrecord.tag]: decodedFirstSubrecord,
+    },
+  };
+
+  let processedFields = 1;
+
+  while (processedFields + offset < parsedRecord.record.length) {
+    const subrecord = parsedRecord.record[processedFields + offset];
+    // check for terminator tag
+    if (subrecord.tag === terminatorTag) {
+      break;
+    }
+
+    const decodedSubrecord = decodeField(
+      [subrecord.buffer],
+      groupSchema[subrecord.tag],
+      decoder,
+      contextPluginName
+    );
+    decodedField[virtualField][subrecord.tag] = decodedSubrecord;
+
+    ++processedFields;
+  }
+
+  return {
+    decodedField,
+    fieldCount: processedFields,
+  };
+};
+
 function processRecordFields(
   record: ParsedRecord,
   config: BufferDecoderConfig,
@@ -437,89 +564,96 @@ function processRecordFields(
   let hasDecodedFields = false;
   let recordErrors = 0;
 
-  for (const [fieldName, fieldData] of Object.entries(processedRecord.data)) {
-    if (!Array.isArray(fieldData) || fieldData.length === 0) continue;
+  // Get context plugin name from record metadata
+  const contextPluginName = processedRecord.meta?.plugin;
 
-    const buffer = createBufferFromFieldData(fieldData);
-    if (!buffer) {
-      console.log(`[DEBUG] No buffer found for ${fieldName} in ${config.recordType}`);
-      continue;
-    }
+  // Use indexed iterator for order-dependent processing with potential skip-ahead capability
+  let i = 0;
+  while (i < processedRecord.record.length) {
+    const subrecord = processedRecord.record[i];
+    const fieldName = subrecord.tag;
+    const fieldData = [subrecord.buffer]; // buffer is a base64 string
 
     try {
-      // console.log(
-      //   `[DEBUG] About to parse record for ${fieldName} in ${config.recordType}, buffer length: ${buffer.length}`
-      // );
-
       // Get the schema for this field
       const schema = decoder.getFieldSchema(config.recordType, fieldName);
 
       if (!schema) {
-        // console.log(`[DEBUG] No schema found for ${fieldName} in ${config.recordType}`);
+        i++; // Skip to next record if no schema found
         continue;
       }
 
-      let decodedField;
+      let fieldCount = 1; // Default to 1 for non-grouped fields
+      const decodedData: Record<string, any> = {};
+      if (schema.type === 'grouped') {
+        const { decodedField: df, fieldCount: fc } = parseGroupedFields(
+          processedRecord,
+          i,
+          schema,
+          decoder
+        );
+        fieldCount = fc;
 
-      switch (schema.type) {
-        case 'string':
-          if (!('encoding' in schema)) throw new Error('String field must specify encoding');
-          decodedField = decoder.parseString(buffer, schema.encoding);
-
-          if (fieldName === 'FULL') {
-            console.log(`[DEBUG] FULL string:`, decodedField);
-            console.log(`[DEBUG] FULL buffer:`, buffer.toString('hex'));
-          }
-
-          break;
-
-        case 'formid':
-          decodedField = decoder.parseFormId(buffer, 0);
-          break;
-
-        case 'uint8':
-        case 'uint16':
-        case 'uint32':
-        case 'float32':
-          decodedField = decoder.parseNumeric(buffer, 0, schema.type);
-          break;
-
-        case 'struct':
-          console.log(`[DEBUG] Struct field ${fieldName} in ${config.recordType}`);
-          decodedField = decoder.parseStruct(buffer, 0, buffer.readUInt16LE(0), schema.fields);
-          break;
-
-        case 'array':
-          decodedField = decoder.parseArray(buffer, 0, buffer.readUInt16LE(0), schema.element);
-          break;
-
-        default:
-          decodedField = null;
+        if (schema.cardinality === 'single') {
+          decodedData[schema.virtualField] = df;
+        } else {
+          const existingData = processedRecord.decodedData?.[schema.virtualField] ?? [];
+          decodedData[schema.virtualField] = [...existingData, df[schema.virtualField]];
+        }
+      } else {
+        const decodedField = decodeField(fieldData, schema, decoder, contextPluginName);
+        if (decodedField !== null) {
+          decodedData[fieldName] = decodedField;
+        }
       }
 
-      console.log(`[DEBUG] Successfully parsed record for ${fieldName}`);
+      if (decodedData !== null) {
+        if (!processedRecord.decodedData) {
+          processedRecord.decodedData = {};
+        }
 
-      if (!processedRecord.decodedData) {
-        processedRecord.decodedData = {};
+        processedRecord.decodedData = {
+          ...processedRecord.decodedData,
+          ...decodedData,
+        };
+        hasDecodedFields = true;
       }
-      processedRecord.decodedData![fieldName] = decodedField;
-      hasDecodedFields = true;
+
+      // Skip ahead by the number of fields processed (supports grouped fields)
+      i += fieldCount;
     } catch (error) {
       console.error(`[ERROR] Failed to parse record for ${fieldName}:`, error);
+      console.error(`[ERROR] Record EDID: ${record.meta?.type || 'unknown'}`);
+      console.error(`[ERROR] Record type: ${config.recordType}`);
+      console.error(`[ERROR] Field index: ${i}`);
+      console.error(`[ERROR] Total fields in record: ${processedRecord.record.length}`);
+
+      // Show buffer information
+      const buffer = createBufferFromFieldData(fieldData);
+      if (buffer) {
+        console.error(`[ERROR] Buffer length: ${buffer.length}`);
+        console.error(
+          `[ERROR] Buffer hex (first 32 bytes): ${buffer.toString('hex').substring(0, 64)}`
+        );
+      } else {
+        console.error(`[ERROR] No buffer data available`);
+      }
+
       errorLog(`Failed to decode field ${fieldName}:`, error);
       if (!processedRecord.decodedErrors) {
         processedRecord.decodedErrors = {};
       }
       processedRecord.decodedErrors[fieldName] = {
         error: error instanceof Error ? error.message : String(error),
-        fieldPath: `data.${fieldName}`,
+        fieldPath: `record.${fieldName}`,
         details: {
-          bufferLength: buffer.length,
-          hex: buffer.toString('hex'),
+          bufferLength: fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.length : 0,
+          hex: fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.toString('hex') : '',
           recordType: config.recordType,
         },
       };
       recordErrors++;
+      i++; // Skip to next record on error
     }
   }
 
@@ -537,40 +671,16 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
   };
 
   return {
-    transform(records: JsonArray): Promise<JsonArray> {
-      // Write first few records to file for inspection
-      const debugRecords = records.slice(0, 5).map((record) => ({
-        meta: record.meta,
-        data: Object.entries(record.data).reduce((acc, [key, value]) => {
-          acc[key] = {
-            isArray: Array.isArray(value),
-            length: Array.isArray(value) ? value.length : 0,
-            firstItem:
-              Array.isArray(value) && value.length > 0
-                ? {
-                    type: typeof value[0],
-                    value: value[0],
-                    isBuffer: Buffer.isBuffer(value[0]),
-                    keys: typeof value[0] === 'object' ? Object.keys(value[0]) : null,
-                    stringified: JSON.stringify(value[0], null, 2),
-                  }
-                : null,
-          };
-          return acc;
-        }, {} as Record<string, any>),
-      }));
-
-      const debugOutput = {
-        totalRecords: records.length,
-        sampleRecords: debugRecords,
-        config,
-      };
-
-      writeFileSync(join(process.cwd(), 'buffer-debug-output.json'), formatJSON(debugOutput));
-
+    async transform(records: JsonArray): Promise<JsonArray> {
       const startTime = Date.now();
       const totalRecords = records.length;
       const logInterval = Math.max(1, Math.floor(totalRecords / 10));
+
+      // Load plugin metadata if requested
+      if (config.loadPluginMetadata) {
+        console.log(`[DEBUG] Loading plugin metadata for FormID resolution...`);
+        await decoder.loadPluginMetadata(config.inputFilePath, config.pluginMetadataPath);
+      }
 
       stats.recordsProcessed = totalRecords;
       stats.recordsDecoded = 0;
@@ -578,11 +688,9 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
       stats.totalFields = 0;
       stats.skippedFields = 0;
 
-      debugLog(`Starting buffer decoder transform with ${totalRecords} records`);
-
       const processedRecords = records.map((record: ParsedRecord, index: number) => {
         if (index % logInterval === 0) {
-          debugLog(
+          console.log(
             `Processing record ${index + 1}/${totalRecords} (${Math.round(
               ((index + 1) / totalRecords) * 100
             )}%)`
@@ -590,7 +698,7 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
         }
 
         try {
-          if (!record.meta || !record.data || !record.header) {
+          if (!record.meta || !record.record || !record.header) {
             return record;
           }
 
@@ -616,14 +724,14 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
       });
 
       const duration = Date.now() - startTime;
-      debugLog(`===== Buffer Decoder Transform Complete =====`);
-      debugLog(`Buffer decoder completed in ${duration}ms`);
-      debugLog(`Successfully decoded ${stats.recordsDecoded}/${stats.recordsProcessed} records`);
+      console.log(`===== Buffer Decoder Transform Complete =====`);
+      console.log(`Buffer decoder completed in ${duration}ms`);
+      console.log(`Successfully decoded ${stats.recordsDecoded}/${stats.recordsProcessed} records`);
       if (stats.errors > 0) {
-        debugLog(`Encountered ${stats.errors} errors during decoding`);
+        console.log(`Encountered ${stats.errors} errors during decoding`);
       }
 
-      return Promise.resolve(processedRecords);
+      return processedRecords;
     },
 
     getStats: () => stats,

@@ -11,7 +11,7 @@ export async function runPipeline(config: PipelineConfig): Promise<void> {
 
   try {
     // Create pipeline
-    const pipeline = createPipeline(config.stages);
+    const pipeline = createPipeline(config.stages, config.input);
 
     // Read input data
     console.log('\nReading input file...');
@@ -47,4 +47,4 @@ export async function runPipeline(config: PipelineConfig): Promise<void> {
 
 // Example usage:
 // import { cleanupPipeline } from '../config/example-pipeline';
-// await runPipeline(cleanupPipeline); 
+// await runPipeline(cleanupPipeline);

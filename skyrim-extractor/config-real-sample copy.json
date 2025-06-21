@@ -1,0 +1,27 @@
+{
+  "baseGameDir": "C:\\Modlists\\LoreRim\\Stock Game\\Data",
+  "modDirPath": "C:\\Modlists\\LoreRim\\mods",
+  "outputPath": "../output/skyrim-extractor/lorerim",
+  "maxThreads": 4,
+  "baseGameFiles": [
+    "Skyrim.esm",
+    "Update.esm",
+    "Dawnguard.esm",
+    "HearthFires.esm",
+    "Dragonborn.esm"
+  ],
+  "recordTypeFilter": [
+    "ACTI",
+    "PERK",
+    "SPEL",
+    "MGEF",
+    "RACE",
+    "CLAS",
+    "QUST",
+    "DIAL",
+    "INFO",
+    "PACK",
+    "NPC_",
+    "FACT"
+  ]
+} 

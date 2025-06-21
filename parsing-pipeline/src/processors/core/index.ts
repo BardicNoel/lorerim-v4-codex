@@ -5,6 +5,9 @@ import { createKeepFieldsProcessor } from './keep-fields';
 import { createSanitizeFieldsProcessor } from './sanitize-fields';
 import { createBufferDecoderProcessor } from '../buffer-decoder/parser';
 import { formatJSON } from '@lorerim/platform-types';
+import { createFlattenFieldsProcessor } from './flatten-fields';
+import { createMergeRecordsProcessor } from './merge-records';
+import { createRenameFieldsProcessor } from './rename-fields';
 
 // Core processor interface
 export interface Processor {
@@ -25,23 +28,35 @@ export function createProcessor(stage: StageConfig): Processor {
       return createSanitizeFieldsProcessor(stage);
     case 'buffer-decoder':
       return createBufferDecoderProcessor(stage);
+    case 'flatten-fields':
+      return createFlattenFieldsProcessor(stage as any);
+    case 'merge-records':
+      return createMergeRecordsProcessor(stage);
+    case 'rename-fields':
+      return createRenameFieldsProcessor(stage as any);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }
 }
 
 // Create a pipeline from multiple stages
-export function createPipeline(stages: StageConfig[]): Processor {
+export function createPipeline(stages: StageConfig[], inputFilePath?: string): Processor {
   return {
     transform: async (data: JsonArray) => {
       let result = data;
       for (const stage of stages) {
         console.log(`\n[DEBUG] ===== Processing Stage: ${stage.name} =====`);
+
+        // Add input file path to buffer decoder config if available
+        if (stage.type === 'buffer-decoder' && inputFilePath) {
+          (stage as any).inputFilePath = inputFilePath;
+        }
+
         const processor = createProcessor(stage);
         result = await processor.transform(result);
         console.log(`[DEBUG] ===== Stage Complete =====\n`);
       }
       return result;
-    }
+    },
   };
-} 
+}

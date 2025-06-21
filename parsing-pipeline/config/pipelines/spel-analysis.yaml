@@ -1,0 +1,44 @@
+# Import base pipeline configuration
+name: 'SPEL Analysis Pipeline'
+description: 'Process SPEL data for analysis'
+input: '../output/skyrim-extractor/mod-samples/SPEL.json'
+# input: '../output/parsing-pipeline/1.SPEL_Analysis.json'
+output: '../output/parsing-pipeline/1.SPEL_Analysis.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'SPEL'
+
+  - from: 'local'
+    name: 'Remove SPEL Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove SPEL-specific fields that are not needed for analysis'
+    fields:
+      # data: 'all'
+      header: 'all'
+      decodedData:
+        - MDOB
+        # - DATA:
+        #     - type
+        #     - cost
+        #     - level
+        #     - flags
+        #     - effects
+        #     - castingType
+        #     - deliveryType
+        #     - castDuration
+        #     - range
+        #     - perk
+        #     - startEffect
+        #     - endEffect
+        #     - projectileSpeed
+        #     - castingArt
+        #     - impactArt
+        #     - castingSound
+        #     - boltSound
+        #     - hitSound
+        #     - areaSound

@@ -1,341 +1,180 @@
 {
-  "totalRecords": 752,
+  "totalRecords": 149,
   "sampleRecords": [
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "0403821B",
-        "plugin": "Wintersun - Faiths of Skyrim.esp",
-        "stackOrder": 0
+        "type": "AVIF",
+        "formId": "0x0000062c",
+        "plugin": "Skyrim.esm",
+        "stackOrder": 3770,
+        "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "V1NOX0RhZWRyYV9Nb2xhZ0JhbF9Cb29uMl9FZmZlY3RfUHJvY09uVGFyZ2V0AA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"V1NOX0RhZWRyYV9Nb2xhZ0JhbF9Cb29uMl9FZmZlY3RfUHJvY09uVGFyZ2V0AA==\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 20,
+            "preview": "QVZEcmFnb25Tb3VscwA="
           }
         },
-        "VMAD": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "BQACAAEAFwBXU05fQmFuaXNoTGl2aW5nX1NjcmlwdAAKABUAV1NOX1NlY29uZHNCZWZvcmVLaWxsBAEAAAA/DQBNQUdCYW5pc2hJbW9kAQEAAP//m/cGABAAV1NOX1RyYWNrZXJRdWVzdAEBAAD//wFZAAQXAEJhbmlzaFRhcmdldEZYQWN0aXZhdG9yAQEAAP//1J4MAAkAV1NOX0NoZXN0AQEAAP//HoIDBBkAV1NOX0l0ZW1fQmlyZF9FZmZlY3RfRW5jaAEBAAD//2HwJwQRAFdTTl9LZWVwT3duZXJzaGlwBQEADABXU05fRmF2b3JNb2QEAQAAcMEJAFBsYXllclJlZgEBAAD//xQAAAAXAFdTTl9TZWNvbmRzQmVmb3JlRGVsZXRlBAEAAGBA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"BQACAAEAFwBXU05fQmFuaXNoTGl2aW5nX1NjcmlwdAAKABUAV1NOX1NlY29uZHNCZWZvcmVLaWxsBAEAAAA/DQBNQUdCYW5pc2hJbW9kAQEAAP//m/cGABAAV1NOX1RyYWNrZXJRdWVzdAEBAAD//wFZAAQXAEJhbmlzaFRhcmdldEZYQWN0aXZhdG9yAQEAAP//1J4MAAkAV1NOX0NoZXN0AQEAAP//HoIDBBkAV1NOX0l0ZW1fQmlyZF9FZmZlY3RfRW5jaAEBAAD//2HwJwQRAFdTTl9LZWVwT3duZXJzaGlwBQEADABXU05fRmF2b3JNb2QEAQAAcMEJAFBsYXllclJlZgEBAAD//xQAAAAXAFdTTl9TZWNvbmRzQmVmb3JlRGVsZXRlBAEAAGBA\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "FULL": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "SW50byB0aGUgTWF3AA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"SW50byB0aGUgTWF3AA==\""
-          }
-        },
-        "MDOB": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "PPkABA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"PPkABA==\""
-          }
-        },
-        "DATA": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "BQgAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEAAAD/////AAAAAAAAAAABAAAAAQAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"BQgAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEAAAD/////AAAAAAAAAAABAAAAAQAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "ZS9TYw=="
           }
         }
-      }
+      ]
     },
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "04102E6F",
-        "plugin": "Wintersun - Faiths of Skyrim.esp",
-        "stackOrder": 0
+        "type": "AVIF",
+        "formId": "0x000005eb",
+        "plugin": "Skyrim.esm",
+        "stackOrder": 3770,
+        "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "V1NOX0RpdmluZV9TdGVuZGFycl9Cb29uMV9FZmZlY3RfQWJfSXNWYW1waXJlRGV0ZWN0b3IA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"V1NOX0RpdmluZV9TdGVuZGFycl9Cb29uMV9FZmZlY3RfQWJfSXNWYW1waXJlRGV0ZWN0b3IA\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 20,
+            "preview": "QVZWYXJpYWJsZTAxAA=="
           }
         },
-        "VMAD": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "BQACAAEAHABXU05fVmFtcGlyZVB1bmlzaG1lbnRfU2NyaXB0AAYACQBXU05fU3BlbGwBAQAA//9hJAQECwBXU05fTWVzc2FnZQEBAAD///ZbBgQWAFdTTl9TaG93U3RhdHVzTWVzc2FnZXMFAQEQAFdTTl9UcmFja2VyUXVlc3QBAQAA//8BWQAEDABXU05fRmF2b3JNb2QEAQAAesQVAFdTTl9VcGRhdGVJbW1lZGlhdGVseQUBAQ==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"BQACAAEAHABXU05fVmFtcGlyZVB1bmlzaG1lbnRfU2NyaXB0AAYACQBXU05fU3BlbGwBAQAA//9hJAQECwBXU05fTWVzc2FnZQEBAAD///ZbBgQWAFdTTl9TaG93U3RhdHVzTWVzc2FnZXMFAQEQAFdTTl9UcmFja2VyUXVlc3QBAQAA//8BWQAEDABXU05fRmF2b3JNb2QEAQAAesQVAFdTTl9VcGRhdGVJbW1lZGlhdGVseQUBAQ==\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "FULL": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "RHJhaW4gRmF2b3Igb24gQmVjb21pbmcgVW5kZWFkAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"RHJhaW4gRmF2b3Igb24gQmVjb21pbmcgVW5kZWFkAA==\""
-          }
-        },
-        "MDOB": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "PPkABA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"PPkABA==\""
-          }
-        },
-        "DATA": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AIoAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////AAAAAAAAAAAAAAAAAAAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AIoAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////AAAAAAAAAAAAAAAAAAAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "MDAyNA=="
           }
         }
-      }
+      ]
     },
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "04102E71",
-        "plugin": "Wintersun - Faiths of Skyrim.esp",
-        "stackOrder": 0
+        "type": "AVIF",
+        "formId": "0x00000634",
+        "plugin": "Skyrim.esm",
+        "stackOrder": 3770,
+        "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "V1NOX0RpdmluZV9TdGVuZGFycl9Cb29uMV9FZmZlY3RfQWJfU3VtbW9uRGV0ZWN0b3IA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"V1NOX0RpdmluZV9TdGVuZGFycl9Cb29uMV9FZmZlY3RfQWJfU3VtbW9uRGV0ZWN0b3IA\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 28,
+            "preview": "QVZMaWdodEFybW9yUG93ZXJNb2QA"
           }
         },
-        "VMAD": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "BQACAAEAEwBXU05fRmF2b3JNb2RfU2NyaXB0AAUADABXU05fRmF2b3JNb2QEAQAAIMIWAFdTTl9TaG93U3RhdHVzTWVzc2FnZXMFAQAQAFdTTl9UcmFja2VyUXVlc3QBAQAA//8BWQAECQBQbGF5ZXJSZWYBAQAA//8UAAAAFQBXU05fVXBkYXRlSW1tZWRpYXRlbHkFAQE=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"BQACAAEAEwBXU05fRmF2b3JNb2RfU2NyaXB0AAUADABXU05fRmF2b3JNb2QEAQAAIMIWAFdTTl9TaG93U3RhdHVzTWVzc2FnZXMFAQAQAFdTTl9UcmFja2VyUXVlc3QBAQAA//8BWQAECQBQbGF5ZXJSZWYBAQAA//8UAAAAFQBXU05fVXBkYXRlSW1tZWRpYXRlbHkFAQE=\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "FULL": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "RHJhaW4gRmF2b3Igb24gU3VtbW9uIFVuZGVhZCBvciBEYWVkcmEA",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"RHJhaW4gRmF2b3Igb24gU3VtbW9uIFVuZGVhZCBvciBEYWVkcmEA\""
-          }
-        },
-        "MDOB": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "PPkABA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"PPkABA==\""
-          }
-        },
-        "DATA": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AIoAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////AAAAAAAAAAAAAAAAAAAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AIoAAAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////AAAAAAAAAAAAAAAAAAAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "MITkEg=="
           }
         }
-      }
+      ]
     },
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "04102E75",
-        "plugin": "Wintersun - Faiths of Skyrim.esp",
-        "stackOrder": 0
+        "type": "AVIF",
+        "formId": "0x0000062a",
+        "plugin": "Skyrim.esm",
+        "stackOrder": 3770,
+        "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "V1NOX0RpdmluZV9TaG9yX0Jvb24yX0VmZmVjdF9DbG9ha1Byb2NfU3VtbW9uRXBpYwA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"V1NOX0RpdmluZV9TaG9yX0Jvb24yX0VmZmVjdF9DbG9ha1Byb2NfU3VtbW9uRXBpYwA=\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 36,
+            "preview": "QVZFbmNoYW50aW5nU2tpbGxBZHZhbmNl"
           }
         },
-        "VMAD": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "BQACAAEAEgBXU05fRGVzdGlueV9TY3JpcHQABAAiAFdTTl9FZmZlY3RfR2xvYmFsX0Rlc3RpbnlBY3RpdmF0ZWQBAQAA//8hyRcEMgBXU05fRWZmZWN0c19NZXNzYWdlX1NoZXphcnJfQm9vbjJfRGVzdGlueUFjdGl2YXRlZAEBAAD//yLJFwQrAFdTTl9EaXZpbmVfU2hlemFycl9Cb29uMl9LZXl3b3JkX1Byb2NPblNlbGYBAQAA//95LhAEKQBXU05fRGl2aW5lX1NoZXphcnJfQm9vbjJfU3BlbGxfUHJvY09uU2VsZgEBAAD//3wuEAQ=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"BQACAAEAEgBXU05fRGVzdGlueV9TY3JpcHQABAAiAFdTTl9FZmZlY3RfR2xvYmFsX0Rlc3RpbnlBY3RpdmF0ZWQBAQAA//8hyRcEMgBXU05fRWZmZWN0c19NZXNzYWdlX1NoZXphcnJfQm9vbjJfRGVzdGlueUFjdGl2YXRlZAEBAAD//yLJFwQrAFdTTl9EaXZpbmVfU2hlemFycl9Cb29uMl9LZXl3b3JkX1Byb2NPblNlbGYBAQAA//95LhAEKQBXU05fRGl2aW5lX1NoZXphcnJfQm9vbjJfU3BlbGxfUHJvY09uU2VsZgEBAAD//3wuEAQ=\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "FULL": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "RGVzdGlueQA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"RGVzdGlueQA=\""
-          }
-        },
-        "MDOB": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "PPkABA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"PPkABA==\""
-          }
-        },
-        "DATA": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "FIwADAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////zy8BAAAAAAACAAAAAgAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"FIwADAAAAAAAAAAA//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPwAAAAAAAAAAAAAAAAEAAAD/////zy8BAAAAAAACAAAAAgAAAP////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "bG9ndQ=="
           }
         }
-      }
+      ]
     },
     {
       "meta": {
-        "type": "MGEF",
-        "formId": "04102E78",
-        "plugin": "Wintersun - Faiths of Skyrim.esp",
-        "stackOrder": 0
+        "type": "AVIF",
+        "formId": "0x0000061e",
+        "plugin": "Skyrim.esm",
+        "stackOrder": 3770,
+        "isWinner": true
       },
-      "data": {
-        "EDID": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "V1NOX0RpdmluZV9TaG9yX0Jvb24yX0VmZmVjdF9Qcm9jT25TZWxmX1N1bW1vbgA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"V1NOX0RpdmluZV9TaG9yX0Jvb24yX0VmZmVjdF9Qcm9jT25TZWxmX1N1bW1vbgA=\""
+      "record": [
+        {
+          "tag": "EDID",
+          "bufferInfo": {
+            "isString": true,
+            "length": 36,
+            "preview": "QVZIZWF2eUFybW9yU2tpbGxBZHZhbmNl"
           }
         },
-        "FULL": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "RGVzdGlueQA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"RGVzdGlueQA=\""
+        {
+          "tag": "DESC",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "AAAAAA=="
           }
         },
-        "MDOB": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "PPkABA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"PPkABA==\""
-          }
-        },
-        "KSIZ": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "AQAAAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"AQAAAA==\""
-          }
-        },
-        "KWDA": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "KUgCAA==",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"KUgCAA==\""
-          }
-        },
-        "DATA": {
-          "isArray": true,
-          "length": 1,
-          "firstItem": {
-            "type": "string",
-            "value": "ABxACAAAAADDrxkE//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAD/////AAAAAAAAAAABAAAAAAAAAP////8AAAAAEfgDAOmhAwAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=",
-            "isBuffer": false,
-            "keys": null,
-            "stringified": "\"ABxACAAAAADDrxkE//////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAD/////AAAAAAAAAAABAAAAAAAAAP////8AAAAAEfgDAOmhAwAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=\""
+        {
+          "tag": "CNAM",
+          "bufferInfo": {
+            "isString": true,
+            "length": 8,
+            "preview": "QS5wcw=="
           }
         }
-      }
+      ]
     }
   ],
   "config": {
@@ -343,6 +182,6 @@
     "name": "Decode Binary Records",
     "type": "buffer-decoder",
     "description": "Decode binary record data into structured format",
-    "recordType": "MGEF"
+    "recordType": "AVIF"
   }
 }

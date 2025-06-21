@@ -1,0 +1,10 @@
+name: 'Test FormID Resolution'
+description: 'Test pipeline to verify global FormID resolution in buffer decoder'
+input: 'output/skyrim-extractor/lorerim/PERK.json'
+output: 'output/test-formid-resolution.json'
+stages:
+  - name: 'Decode PERK Records with Global FormID Resolution'
+    type: 'buffer-decoder'
+    description: 'Decode PERK records with global FormID resolution enabled'
+    recordType: 'PERK'
+    loadPluginMetadata: true

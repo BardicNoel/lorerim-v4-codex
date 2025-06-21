@@ -1,0 +1,39 @@
+# Import base pipeline configuration
+name: 'PERK Analysis Pipeline'
+description: 'Process PERK data for analysis'
+input: '../output/skyrim-extractor/lorerim/PERK.json'
+output: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Filter Winner Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'PERK'
+    loadPluginMetadata: true
+
+  - from: 'local'
+    name: 'Remove PERK Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove PERK-specific fields that are not needed for analysis'
+    fields:
+      record: 'all'
+      header: 'all'
+      # meta: 'all'
+
+  # - from: 'local'
+  #   name: 'Flatten Decoded Data'
+  #   type: 'flatten-fields'
+  #   description: 'Flatten decodedData into the top-level record for easier analysis'
+  #   fields:
+  #     - 'decodedData'

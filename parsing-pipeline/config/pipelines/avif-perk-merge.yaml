@@ -1,0 +1,28 @@
+name: 'AVIF-PERK Merge Pipeline'
+description: 'Merges AVIF records with related PERK records, replacing PNAM references with actual PERK data'
+input: 'output/avif-analysis.json'
+output: 'output/avif-perk-merged.json'
+stages:
+  - name: 'Merge AVIF with PERK Records'
+    type: 'merge-records'
+    description: 'Replace PNAM references in AVIF records with actual PERK record data'
+    sourceFile: 'output/perk-analysis.json'
+    sourceRecordType: 'PERK'
+    mappings:
+      - sourceField: 'perk-mapping'
+        targetField: 'decodedData.perkSections[].PNAM'
+        matchField: 'meta.globalFormId'
+        dataField: 'decodedData'
+        matchType: 'exact'
+    mergeField: 'relatedPerks'
+    mergeStrategy: 'first'
+    overwriteReference: true
+
+  - name: 'Remove Fields from perkSections'
+    type: 'remove-fields'
+    description: 'Remove specific fields from each perkSections element'
+    fields:
+      {
+        'decodedData.perkSections[]':
+          ['FNAM', 'XNAM', 'YNAM', 'HNAM', 'VNAM', 'SNAM', 'CNAM', 'INAM'],
+      }
