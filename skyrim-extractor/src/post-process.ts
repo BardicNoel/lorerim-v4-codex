@@ -125,6 +125,9 @@ const resolveConflicts = (
 
         // Set the isWinner flag to the one with the lowest stackOrder
         groupRecords[0].meta.isWinner = true;
+        for (let i = 1; i < groupRecords.length; i++) {
+          groupRecords[i].meta.isWinner = false;
+        }
       }
     }
   }

@@ -51,7 +51,6 @@ stages:
         - 'CNAM'
         - 'INAM'
         - 'PNAM':
-            - 'DESC'
             - 'DATA'
             - 'PRKE'
             - 'PRKC'
