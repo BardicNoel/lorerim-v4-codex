@@ -97,6 +97,8 @@ export interface BufferDecoderConfig extends BaseStageConfig {
   loadPluginMetadata?: boolean; // Whether to load plugin metadata for FormID resolution
   pluginMetadataPath?: string; // Optional path to plugin-metadata.json (defaults to parentDir/plugin-metadata.json)
   inputFilePath?: string; // Path to the input file for auto-discovery of plugin metadata
+  multithreaded?: boolean; // Whether to use multithreaded processing (defaults to false)
+  maxWorkers?: number; // Maximum number of worker threads (defaults to CPU cores, capped at 8)
 }
 
 // Flatten fields stage configuration

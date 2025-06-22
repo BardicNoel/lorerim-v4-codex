@@ -20,6 +20,8 @@ stages:
     type: 'buffer-decoder'
     description: 'Decode binary record data into structured format'
     recordType: 'AVIF'
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    loadPluginMetadata: true
 
   - from: 'local'
     name: 'Remove AVIF Specific Fields'

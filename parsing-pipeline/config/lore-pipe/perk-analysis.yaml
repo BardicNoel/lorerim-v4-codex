@@ -15,19 +15,22 @@ stages:
         operator: 'equals'
         value: true
 
-  - from: 'local'
-    name: 'Sample 500 Records'
-    type: 'sample-records'
-    description: 'Randomly sample 500 records from the filtered data'
-    sampleSize: 500
-    method: 'random'
+  # - name: 'Sample 1000 Records'
+  #   type: 'sample-records'
+  #   description: 'Sample 1000 records from the decoded output for analysis'
+  #   sampleSize: 1000
+  #   method: 'random'
+  #   enabled: true
 
-  - from: 'local'
-    name: 'Decode Binary Records'
+  - name: 'Multithreaded PERK Decoder'
     type: 'buffer-decoder'
-    description: 'Decode binary record data into structured format'
+    description: 'Decode PERK records using multiple worker threads for improved performance'
     recordType: 'PERK'
+    multithreaded: true
+    maxWorkers: 4 # Optional: limit to 4 workers
     loadPluginMetadata: true
+    enabled: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
 
   - from: 'local'
     name: 'Remove PERK Specific Fields'

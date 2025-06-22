@@ -1,3 +1,4 @@
+import { formatFormId } from "../formatter";
 import { PluginMeta } from "../types";
 
 function resolveGlobalFromLocal(
@@ -7,8 +8,9 @@ function resolveGlobalFromLocal(
 ): number {
   if (isEsl) {
     // ESL plugin: encode as 0xFEYYXXXX
-    const eslSlot = pluginLoadOrder & 0xff; // limit to 1 byte
-    return ((0xfe << 24) | (eslSlot << 16) | (localFormId & 0xffff)) >>> 0;
+    const eslSlot = pluginLoadOrder & 0xfff; // limit to 1 byte
+    const formIndex = localFormId & 0xfff;
+    return ((0xfe << 24) | (eslSlot << 12) | formIndex) >>> 0;
   }
 
   // Normal ESM/ESP plugin
@@ -33,6 +35,9 @@ function resolveGlobalFromReference(
     console.warn("Cannot resolve without masters");
     return null;
   }
+  // Extract High Byte from formId
+  const highByte = (rawFormID >>> 24) & 0xff;
+
   // de-case registry
   const registry = Object.fromEntries(
     Object.entries(pluginRegistry).map(([key, value]) => [
@@ -41,9 +46,12 @@ function resolveGlobalFromReference(
     ])
   );
 
-  // Extract High Byte from formId
-  const pluginMastersIndex = (rawFormID >>> 24) & 0xff;
   const localFormId = rawFormID & 0x00ffffff;
+
+  if (highByte === 0xfe) {
+    console.log("ESL Reference, resolving to ESL plugin");
+  }
+  const pluginMastersIndex = highByte;
 
   const pluginName =
     pluginMastersIndex < contextPlugin.masters.length
@@ -51,6 +59,20 @@ function resolveGlobalFromReference(
       : contextPlugin.name; // If the index is out of bounds, it means the record is in the same plugin
 
   const resolvedPlugin = registry[pluginName.toLowerCase()];
+
+  if (
+    contextPlugin.name.toLowerCase() ===
+      "Synthesis - Gameplay Overwrite.esp".toLowerCase() &&
+    highByte !== 0
+  ) {
+    console.log(
+      contextPlugin.name,
+      pluginName,
+      pluginMastersIndex,
+      resolvedPlugin.name
+    );
+  }
+
   if (!resolvedPlugin) {
     console.warn(
       `[WARN] Could not find plugin "${pluginName}" in registry while resolving for ${contextPlugin.name}`
@@ -58,7 +80,17 @@ function resolveGlobalFromReference(
     return null;
   }
 
-  return ((resolvedPlugin.loadOrder << 24) | localFormId) >>> 0;
+  if (resolvedPlugin.isEsl) {
+    // Format to ESL, which is 0xFEYYYXXX where YYY is the plugin inTypeLoadOrder and XXX is the formId
+    const eslFormId =
+      ((0xfe << 24) | (resolvedPlugin.inTypeOrder << 12) | localFormId) >>> 0;
+    if (resolvedPlugin.name.toLowerCase() === "lorerim - weaponmaster.esp") {
+      console.log("ESL FormID", formatFormId(eslFormId), resolvedPlugin.name);
+    }
+    return eslFormId;
+  }
+
+  return ((resolvedPlugin.inTypeOrder << 24) | localFormId) >>> 0;
 }
 
 export { resolveGlobalFromLocal, resolveGlobalFromReference };
