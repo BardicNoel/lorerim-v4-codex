@@ -130,10 +130,6 @@ const avifSpecificFields: SchemaInternal = {
         type: 'array' as const,
         element: {
           type: 'uint32' as const,
-          parser: (value: number) => {
-            // Map connection IDs to more meaningful descriptions
-            return AVIFPerkConnectionTypes[value] || `Connection ${value}`;
-          },
         },
       },
 

@@ -1,4 +1,4 @@
-import { CTDA_FUNCTION_INDICES } from './ctdaFunctionIndices';
+import { CTDA_FUNCTION_INDICES } from '@lorerim/platform-types';
 import { FieldSchema } from '../schemaTypes';
 import {
   CTDA_COMPARE_OPERATORS,

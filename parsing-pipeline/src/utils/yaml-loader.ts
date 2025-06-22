@@ -67,6 +67,7 @@ function validateStage(stage: any): StageConfig {
       'merge-records',
       'rename-fields',
       'sample-records',
+      'doc-gen',
     ].includes(stage.type)
   ) {
     throw new Error(`Invalid stage type: ${stage.type}`);
@@ -132,6 +133,14 @@ function validateStage(stage: any): StageConfig {
       }
       if (typeof stage.sampleSize !== 'number' || stage.sampleSize <= 0) {
         throw new Error('Sample records stage sampleSize must be a positive number');
+      }
+      break;
+    case 'doc-gen':
+      if (!stage.docType) {
+        throw new Error('Doc-gen stage must have docType');
+      }
+      if (!['player-perk', 'skill-perk-docs'].includes(stage.docType)) {
+        throw new Error(`Invalid docType: ${stage.docType}`);
       }
       break;
   }

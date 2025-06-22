@@ -1,7 +1,7 @@
 import { flagParserGenerator, mapParserGenerator } from '../generics';
 import { RecordSpecificSchemas } from '../schemaTypes';
-import { actorValueMap } from '../actorValueMapRecord';
 import { createSchema } from '../createSchema';
+import { actorValueMap } from '@lorerim/platform-types';
 
 export const MGEFFlags: Record<number, string> = {
   0x00000001: 'Hostile',

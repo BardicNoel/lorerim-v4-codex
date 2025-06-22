@@ -14,6 +14,17 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
 
+// Warning suppression to prevent log flooding
+const warningSuppression = new Set<string>();
+
+function logWarningOnce(message: string, key?: string): void {
+  const warningKey = key || message;
+  if (!warningSuppression.has(warningKey)) {
+    console.warn(message);
+    warningSuppression.add(warningKey);
+  }
+}
+
 // Error logging function that works in both worker and main thread
 export function errorLog(message: string, error?: any) {
   console.error(`[ERROR] ${message}`, error);
@@ -219,7 +230,16 @@ export class BufferDecoder {
     let currentOffset = offset;
     const endOffset = offset + length;
 
-    for (const field of fields) {
+    // Only log struct start for VMAD to reduce noise
+    const isVMAD = fields.length > 0 && fields[0]?.name === 'version';
+    if (isVMAD) {
+      console.log(
+        `[DEBUG] parseStruct: VMAD struct - start: ${offset}, length: ${length}, buffer: ${buffer.length}`
+      );
+    }
+
+    for (let fieldIndex = 0; fieldIndex < fields.length; fieldIndex++) {
+      const field = fields[fieldIndex];
       if (!field.name) throw new Error('Struct field must have a name');
 
       switch (field.type) {
@@ -237,9 +257,19 @@ export class BufferDecoder {
             currentOffset += strLength;
           } else {
             strLength = buffer.readUInt16LE(currentOffset);
+            if (currentOffset + 2 + strLength > buffer.length) {
+              console.error(`[ERROR] parseStruct: String would exceed buffer bounds!`);
+              console.error(
+                `[ERROR] parseStruct: Field: ${field.name}, Current offset: ${currentOffset}, String length: ${strLength}, Buffer length: ${buffer.length}`
+              );
+              console.error(
+                `[ERROR] parseStruct: Would need ${currentOffset + 2 + strLength} bytes`
+              );
+              throw new Error(`String field ${field.name} would exceed buffer bounds`);
+            }
             result[field.name] = this.parseString(
               buffer,
-              currentOffset,
+              currentOffset + 2,
               field.encoding,
               field.parser
             );
@@ -248,6 +278,13 @@ export class BufferDecoder {
           break;
 
         case 'formid':
+          if (currentOffset + 4 > buffer.length) {
+            console.error(`[ERROR] parseStruct: FormID would exceed buffer bounds!`);
+            console.error(
+              `[ERROR] parseStruct: Field: ${field.name}, Current offset: ${currentOffset}, Buffer length: ${buffer.length}`
+            );
+            throw new Error(`FormID field ${field.name} would exceed buffer bounds`);
+          }
           result[field.name] = this.parseFormId(
             buffer,
             currentOffset,
@@ -262,13 +299,31 @@ export class BufferDecoder {
         case 'uint16':
         case 'uint32':
         case 'float32':
+          const typeSize = this.getTypeSize(field.type);
+          if (currentOffset + typeSize > buffer.length) {
+            console.error(`[ERROR] parseStruct: Numeric field would exceed buffer bounds!`);
+            console.error(
+              `[ERROR] parseStruct: Field: ${field.name}, Type: ${field.type}, Current offset: ${currentOffset}, Type size: ${typeSize}, Buffer length: ${buffer.length}`
+            );
+            throw new Error(`Numeric field ${field.name} would exceed buffer bounds`);
+          }
           result[field.name] = this.parseNumeric(buffer, currentOffset, field.type, field.parser);
-          currentOffset += this.getTypeSize(field.type);
+          currentOffset += typeSize;
           break;
 
         case 'struct':
           if (!('fields' in field)) throw new Error('Struct field must specify fields');
           const structLength = buffer.readUInt16LE(currentOffset);
+          if (currentOffset + 2 + structLength > buffer.length) {
+            console.error(`[ERROR] parseStruct: Nested struct would exceed buffer bounds!`);
+            console.error(
+              `[ERROR] parseStruct: Field: ${field.name}, Current offset: ${currentOffset}, Struct length: ${structLength}, Buffer length: ${buffer.length}`
+            );
+            console.error(
+              `[ERROR] parseStruct: Would need ${currentOffset + 2 + structLength} bytes`
+            );
+            throw new Error(`Nested struct field ${field.name} would exceed buffer bounds`);
+          }
           result[field.name] = this.parseStruct(
             buffer,
             currentOffset + 2,
@@ -283,6 +338,16 @@ export class BufferDecoder {
         case 'array':
           if (!('element' in field)) throw new Error('Array field must specify element');
           const arrayLength = buffer.readUInt16LE(currentOffset);
+          if (currentOffset + 2 + arrayLength > buffer.length) {
+            console.error(`[ERROR] parseStruct: Array would exceed buffer bounds!`);
+            console.error(
+              `[ERROR] parseStruct: Field: ${field.name}, Current offset: ${currentOffset}, Array length: ${arrayLength}, Buffer length: ${buffer.length}`
+            );
+            console.error(
+              `[ERROR] parseStruct: Would need ${currentOffset + 2 + arrayLength} bytes`
+            );
+            throw new Error(`Array field ${field.name} would exceed buffer bounds`);
+          }
           result[field.name] = this.parseArray(
             buffer,
             currentOffset + 2,
@@ -295,16 +360,25 @@ export class BufferDecoder {
 
         case 'unknown':
           const unknownLength = buffer.readUInt16LE(currentOffset);
+          if (currentOffset + 2 + unknownLength > buffer.length) {
+            console.error(`[ERROR] parseStruct: Unknown field would exceed buffer bounds!`);
+            console.error(
+              `[ERROR] parseStruct: Field: ${field.name}, Current offset: ${currentOffset}, Unknown length: ${unknownLength}, Buffer length: ${buffer.length}`
+            );
+            throw new Error(`Unknown field ${field.name} would exceed buffer bounds`);
+          }
           currentOffset += 2 + unknownLength;
           break;
       }
 
       if (currentOffset > endOffset) {
-        console.error(`[ERROR] Buffer overrun detected for field "${field.name}"`);
-        console.error(`[ERROR] Current offset: ${currentOffset}, End offset: ${endOffset}`);
-        console.error(`[ERROR] Overrun by: ${currentOffset - endOffset} bytes`);
-        console.error(`[ERROR] Field type: ${field.type}`);
-        console.error(`[ERROR] Buffer length: ${buffer.length}`);
+        console.error(`[ERROR] parseStruct: Buffer overrun detected for field "${field.name}"`);
+        console.error(
+          `[ERROR] parseStruct: Current offset: ${currentOffset}, End offset: ${endOffset}`
+        );
+        console.error(`[ERROR] parseStruct: Overrun by: ${currentOffset - endOffset} bytes`);
+        console.error(`[ERROR] parseStruct: Field type: ${field.type}`);
+        console.error(`[ERROR] parseStruct: Buffer length: ${buffer.length}`);
         throw new Error(`Struct parsing overran bounds for ${field.name}`);
       }
     }
@@ -323,11 +397,27 @@ export class BufferDecoder {
     let currentOffset = offset;
     const endOffset = offset + length;
 
-    while (currentOffset < endOffset) {
+    // Special handling for VMAD arrays that use remaining buffer space
+    const isVMADArray =
+      elementSchema.type === 'struct' &&
+      'fields' in elementSchema &&
+      elementSchema.fields.some((f) => f.name === 'scriptName' || f.name === 'propertyName');
+
+    // For VMAD arrays, use the actual buffer length instead of the provided length
+    const actualEndOffset = isVMADArray ? buffer.length : endOffset;
+
+    if (isVMADArray) {
+      console.log(
+        `[DEBUG] parseArray: VMAD array - start: ${offset}, buffer length: ${buffer.length}, element type: ${elementSchema.type}`
+      );
+    }
+
+    while (currentOffset < actualEndOffset) {
       // Check if we have enough buffer space for the next element
       if (currentOffset >= buffer.length) {
-        console.warn(
-          `[WARN] Array parsing reached buffer end at offset ${currentOffset}, stopping`
+        logWarningOnce(
+          `[WARN] parseArray: Array parsing reached buffer end at offset ${currentOffset}, stopping`,
+          `buffer_end_${currentOffset}`
         );
         break;
       }
@@ -338,8 +428,9 @@ export class BufferDecoder {
             throw new Error('String element must specify encoding');
           const strLength = buffer.readUInt16LE(currentOffset);
           if (currentOffset + 2 + strLength > buffer.length) {
-            console.warn(
-              `[WARN] String element would exceed buffer bounds, stopping array parsing`
+            logWarningOnce(
+              `[WARN] parseArray: String element would exceed buffer bounds, stopping array parsing`,
+              `string_bounds_${currentOffset}_${strLength}_${buffer.length}`
             );
             break;
           }
@@ -361,8 +452,9 @@ export class BufferDecoder {
           if ('size' in elementSchema && typeof elementSchema.size === 'number') {
             structSize = elementSchema.size;
             if (currentOffset + structSize > buffer.length) {
-              console.warn(
-                `[WARN] Struct element would exceed buffer bounds, stopping array parsing`
+              logWarningOnce(
+                `[WARN] parseArray: Struct element would exceed buffer bounds, stopping array parsing`,
+                `struct_fixed_bounds_${currentOffset}_${structSize}_${buffer.length}`
               );
               break;
             }
@@ -379,8 +471,9 @@ export class BufferDecoder {
           } else {
             const structLength = buffer.readUInt16LE(currentOffset);
             if (currentOffset + 2 + structLength > buffer.length) {
-              console.warn(
-                `[WARN] Struct element would exceed buffer bounds, stopping array parsing`
+              logWarningOnce(
+                `[WARN] parseArray: Struct element would exceed buffer bounds, stopping array parsing`,
+                `struct_var_bounds_${currentOffset}_${structLength}_${buffer.length}`
               );
               break;
             }
@@ -399,8 +492,9 @@ export class BufferDecoder {
 
         case 'formid':
           if (currentOffset + 4 > buffer.length) {
-            console.warn(
-              `[WARN] FormID element would exceed buffer bounds, stopping array parsing`
+            logWarningOnce(
+              `[WARN] parseArray: FormID element would exceed buffer bounds, stopping array parsing`,
+              `formid_bounds_${currentOffset}_${buffer.length}`
             );
             break;
           }
@@ -420,8 +514,9 @@ export class BufferDecoder {
         case 'float32':
           const typeSize = this.getTypeSize(elementSchema.type);
           if (currentOffset + typeSize > buffer.length) {
-            console.warn(
-              `[WARN] ${elementSchema.type} element would exceed buffer bounds, stopping array parsing`
+            logWarningOnce(
+              `[WARN] parseArray: ${elementSchema.type} element would exceed buffer bounds, stopping array parsing`,
+              `${elementSchema.type}_bounds_${currentOffset}_${typeSize}_${buffer.length}`
             );
             break;
           }
@@ -435,9 +530,21 @@ export class BufferDecoder {
           throw new Error(`Unsupported array element type: ${elementSchema.type}`);
       }
 
-      if (currentOffset > endOffset) {
+      if (currentOffset > actualEndOffset) {
+        console.error(`[ERROR] parseArray: Array parsing overran bounds!`);
+        console.error(
+          `[ERROR] parseArray: Current offset: ${currentOffset}, End offset: ${actualEndOffset}`
+        );
+        console.error(`[ERROR] parseArray: Overrun by: ${currentOffset - actualEndOffset} bytes`);
         throw new Error('Array parsing overran bounds');
       }
+    }
+
+    // Only log completion for VMAD arrays
+    if (isVMADArray) {
+      console.log(
+        `[DEBUG] parseArray: VMAD array completed - processed ${results.length} elements, final offset: ${currentOffset}`
+      );
     }
 
     return results;

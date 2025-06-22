@@ -82,10 +82,159 @@ const QUST_ALIAS_FLAGS = {
   0x00020000: 'ClearsNameWhenRemoved',
 };
 
+// VMAD Property Type constants
+const VMAD_PROPERTY_TYPES = {
+  0x01: 'String',
+  0x02: 'Integer',
+  0x03: 'Float',
+  0x04: 'Boolean',
+  0x05: 'FormID',
+  0x06: 'Array',
+} as const;
+
+// Custom VMAD parser that handles the specific VMAD format
+const vmadParser = (args: any): any => {
+  const buffer = args.buffer || args[0];
+  const offset = args.offset || 0;
+
+  const result: any = {
+    version: buffer.readUInt16LE(offset),
+    objectFormat: buffer.readUInt16LE(offset + 2),
+    scriptCount: buffer.readUInt16LE(offset + 4),
+    scripts: [],
+  };
+
+  let currentOffset = offset + 6;
+
+  for (let i = 0; i < result.scriptCount; i++) {
+    if (currentOffset >= buffer.length) break;
+
+    // Read script name length
+    const scriptNameLength = buffer.readUInt16LE(currentOffset);
+    currentOffset += 2;
+
+    if (currentOffset + scriptNameLength > buffer.length) break;
+    const scriptName = buffer.toString('utf8', currentOffset, currentOffset + scriptNameLength);
+    currentOffset += scriptNameLength;
+
+    // Read fragment name length
+    const fragmentNameLength = buffer.readUInt16LE(currentOffset);
+    currentOffset += 2;
+
+    if (currentOffset + fragmentNameLength > buffer.length) break;
+    const fragmentName = buffer.toString('utf8', currentOffset, currentOffset + fragmentNameLength);
+    currentOffset += fragmentNameLength;
+
+    // Read fragment index
+    if (currentOffset + 2 > buffer.length) break;
+    const fragmentIndex = buffer.readUInt16LE(currentOffset);
+    currentOffset += 2;
+
+    // Read property count
+    if (currentOffset + 2 > buffer.length) break;
+    const propertyCount = buffer.readUInt16LE(currentOffset);
+    currentOffset += 2;
+
+    const script: any = {
+      scriptName,
+      fragmentName,
+      fragmentIndex,
+      propertyCount,
+      properties: [],
+    };
+
+    // Read properties
+    for (let j = 0; j < propertyCount; j++) {
+      if (currentOffset >= buffer.length) break;
+
+      // Read property name length
+      const propertyNameLength = buffer.readUInt16LE(currentOffset);
+      currentOffset += 2;
+
+      if (currentOffset + propertyNameLength > buffer.length) break;
+      const propertyName = buffer.toString(
+        'utf8',
+        currentOffset,
+        currentOffset + propertyNameLength
+      );
+      currentOffset += propertyNameLength;
+
+      // Read property type
+      if (currentOffset + 1 > buffer.length) break;
+      const propertyType = buffer.readUInt8(currentOffset);
+      currentOffset += 1;
+
+      // Read property value based on type
+      let propertyValue: any = null;
+      switch (propertyType) {
+        case 0x01: // String
+          if (currentOffset + 2 <= buffer.length) {
+            const valueLength = buffer.readUInt16LE(currentOffset);
+            currentOffset += 2;
+            if (currentOffset + valueLength <= buffer.length) {
+              propertyValue = buffer.toString('utf8', currentOffset, currentOffset + valueLength);
+              currentOffset += valueLength;
+            }
+          }
+          break;
+        case 0x02: // Integer
+          if (currentOffset + 4 <= buffer.length) {
+            propertyValue = buffer.readInt32LE(currentOffset);
+            currentOffset += 4;
+          }
+          break;
+        case 0x03: // Float
+          if (currentOffset + 4 <= buffer.length) {
+            propertyValue = buffer.readFloatLE(currentOffset);
+            currentOffset += 4;
+          }
+          break;
+        case 0x04: // Boolean
+          if (currentOffset + 1 <= buffer.length) {
+            propertyValue = buffer.readUInt8(currentOffset) !== 0;
+            currentOffset += 1;
+          }
+          break;
+        case 0x05: // FormID
+          if (currentOffset + 4 <= buffer.length) {
+            propertyValue = buffer.readUInt32LE(currentOffset);
+            currentOffset += 4;
+          }
+          break;
+        default:
+          // Skip unknown types
+          break;
+      }
+
+      script.properties.push({
+        propertyName,
+        propertyType:
+          VMAD_PROPERTY_TYPES[propertyType as keyof typeof VMAD_PROPERTY_TYPES] ||
+          `Unknown(${propertyType})`,
+        propertyValue,
+      });
+    }
+
+    result.scripts.push(script);
+  }
+
+  return result;
+};
+
 export const questSchema: RecordSpecificSchemas = createSchema('QUST', {
   // Script Info
   VMAD: {
-    type: 'unknown', // Complex scripting data
+    type: 'struct',
+    fields: [
+      { name: 'version', type: 'uint16' },
+      { name: 'objectFormat', type: 'uint16' },
+      { name: 'scriptCount', type: 'uint16' },
+      {
+        name: 'scriptData',
+        type: 'unknown',
+        parser: vmadParser,
+      },
+    ],
   },
   // Quest Data
   DNAM: {

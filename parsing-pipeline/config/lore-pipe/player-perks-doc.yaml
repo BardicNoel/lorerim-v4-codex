@@ -1,0 +1,13 @@
+# AVIF to PERK Merge Pipeline
+name: 'AVIF-PERK Merge Pipeline'
+description: 'Merge AVIF records with their related PERK records'
+input: '../output/parsing-pipeline/lorerim/processed/player-perk-docs-pre.json'
+output: '../output/parsing-pipeline/lorerim/processed/player-perk-docs.json'
+
+stages:
+  - name: 'Generate Skills and Perks Documentation'
+    type: 'doc-gen'
+    description: 'Transform AVIF+PERK data into clean skills and perks documentation format'
+    docType: 'skill-perk-docs'
+    outputFormat: 'json'
+    # includePositionalData: true

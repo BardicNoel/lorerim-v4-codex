@@ -69,8 +69,6 @@ function deleteNestedValue(obj: any, path: string): boolean {
  * Process a single field path (e.g., "CTDA[].operator" or "sections[].items[].extra")
  */
 function processFieldPath(obj: any, fieldPath: string): void {
-  console.log(`[DEBUG] Processing field path: ${fieldPath}`);
-
   // Handle array notation like "CTDA[].operator" or "sections[].items[].extra"
   if (fieldPath.includes('[]')) {
     // Split the path into segments, preserving the array notation
@@ -80,15 +78,12 @@ function processFieldPath(obj: any, fieldPath: string): void {
     if (lastSegment.startsWith('.')) {
       lastSegment = lastSegment.substring(1);
     }
-    console.log(`[DEBUG] Segments: ${JSON.stringify(segments)}, lastSegment: "${lastSegment}"`);
     // Build the path to the first array
     const firstArrayPath = segments[0];
     const array = getNestedValue(obj, firstArrayPath);
-    console.log(`[DEBUG] First array path: "${firstArrayPath}", array:`, array);
     if (Array.isArray(array)) {
       if (segments.length === 1 && !lastSegment) {
         // Simple case: "items[]" - remove entire array elements
-        console.log(`[DEBUG] Removing entire array elements`);
         array.forEach((item, index) => {
           if (typeof item === 'object' && item !== null) {
             array[index] = null;
@@ -104,16 +99,13 @@ function processFieldPath(obj: any, fieldPath: string): void {
         nullIndices.forEach((index) => array.splice(index, 1));
       } else if (segments.length === 1 && lastSegment) {
         // Single level: "items[].extra"
-        console.log(`[DEBUG] Single level array removal: "${lastSegment}"`);
         array.forEach((item, index) => {
           if (typeof item === 'object' && item !== null) {
-            console.log(`[DEBUG] Removing "${lastSegment}" from array element ${index}`);
             deleteNestedValue(item, lastSegment);
           }
         });
       } else {
         // Multiple levels: "sections[].items[].extra"
-        console.log(`[DEBUG] Multiple level array processing`);
         // Reconstruct the remaining path for recursion
         const remainingSegments = segments.slice(1);
         // Clean up leading dots from remaining segments
@@ -124,17 +116,13 @@ function processFieldPath(obj: any, fieldPath: string): void {
           cleanSegments.join('[]') + '[]' + (lastSegment ? '.' + lastSegment : '');
         array.forEach((item, index) => {
           if (typeof item === 'object' && item !== null) {
-            console.log(`[DEBUG] Recursing into element ${index} with path: "${nextFieldPath}"`);
             processFieldPath(item, nextFieldPath);
           }
         });
       }
-    } else {
-      console.log(`[DEBUG] Path "${firstArrayPath}" is not an array`);
     }
   } else {
     // Simple field removal
-    console.log(`[DEBUG] Simple field removal: "${fieldPath}"`);
     deleteNestedValue(obj, fieldPath);
   }
 }
@@ -158,10 +146,6 @@ export class RemoveFieldsProcessorV2 implements RemoveFieldsProcessor {
       throw new Error('Input data must be an array');
     }
 
-    console.log(`[RemoveFieldsV2] Processing ${data.length} records`);
-    console.log(`[RemoveFieldsV2] Fields to remove:`);
-    console.log(config.remove_fields);
-
     return data.map((record, index) => {
       // Check condition first
       if (!matchesCondition(record, config.condition)) {
@@ -173,7 +157,6 @@ export class RemoveFieldsProcessorV2 implements RemoveFieldsProcessor {
 
       // Process each field path
       config.remove_fields.forEach((fieldPath) => {
-        console.log(`[RemoveFieldsV2] Processing field path: ${fieldPath} for record ${index}`);
         processFieldPath(processedRecord, fieldPath);
       });
 

@@ -2,15 +2,9 @@
 name: 'AVIF-PERK Merge Pipeline'
 description: 'Merge AVIF records with their related PERK records'
 input: '../output/parsing-pipeline/lorerim/avif-analysis.json'
-output: '../output/parsing-pipeline/lorerim/processed/player-perk-docs.json'
+output: '../output/parsing-pipeline/lorerim/processed/player-perk-docs-pre.json'
 
 stages:
-  - name: 'Sample Records'
-    type: 'sample-records'
-    description: 'Sample records from the processed data for testing'
-    sampleSize: 1
-    randomSeed: 42
-
   - name: 'Remove Processing Fields'
     type: 'remove-fields'
     description: 'Remove fields that were only needed for processing'
@@ -60,7 +54,6 @@ stages:
       - 'perkSections[].PRKH'
 
       # Trim Perk Records - Direct fields
-      - 'perkSections[].PERK.FULL'
       - 'perkSections[].PERK.CTDA[].unknown'
       - 'perkSections[].PERK.CTDA[].unknown2'
       - 'perkSections[].PERK.CTDA[].unknown3'
@@ -92,17 +85,3 @@ stages:
       - 'perkSections[].PERK.sections[].DATA.padding'
       - 'perkSections[].PERK.sections[].DATA.padding2'
       - 'perkSections[].PERK.sections[].DATA.padding3'
-
-  # - name: 'Flatten PNAM in perkSections'
-  #   type: 'flatten-fields'
-  #   description: 'Flatten the PNAM object inside each perkSections element'
-  #   fields: ['perkSections[].PNAM']
-
-  # - name: 'Standardize Field Names'
-  #   type: 'rename-fields'
-  #   description: 'Rename EDID and FULL fields to standardized names'
-  #   mappings:
-  #     'EDID': 'editorId'
-  #     'FULL': 'name'
-  #     'perkSections[].PNAM.EDID': 'editorId'
-  #     'perkSections[].PNAM.FULL': 'name'

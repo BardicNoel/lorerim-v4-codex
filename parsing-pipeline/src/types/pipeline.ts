@@ -5,7 +5,7 @@ export type JsonValue = string | number | boolean | null | JsonObject | JsonArra
 export interface JsonObject {
   [key: string]: JsonValue;
 }
-export type JsonArray = ParsedRecord[]; // Use platform's record format
+export type JsonArray = any[]; // Allow any array of objects for flexibility
 export type JsonRecord = ParsedRecord; // Use extractor's record format as our standard
 
 // Stage types
@@ -18,7 +18,8 @@ export type StageType =
   | 'flatten-fields'
   | 'merge-records'
   | 'rename-fields'
-  | 'sample-records';
+  | 'sample-records'
+  | 'doc-gen';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -141,6 +142,18 @@ export interface SampleRecordsConfig extends BaseStageConfig {
   seed?: number; // Random seed for reproducible sampling
 }
 
+// Doc-gen stage configuration
+export interface DocGenConfig extends BaseStageConfig {
+  type: 'doc-gen';
+  docType: 'player-perk' | 'skill-perk-docs'; // Available document types
+  outputFormat?: 'markdown' | 'html' | 'json';
+  template?: string; // Optional template path
+  includeConditions?: boolean;
+  includeEffects?: boolean;
+  groupByCategory?: boolean;
+  sortBy?: 'name' | 'level' | 'category';
+}
+
 // Stage configuration union type
 export type StageConfig =
   | FilterRecordsConfig
@@ -151,7 +164,8 @@ export type StageConfig =
   | FlattenFieldsConfig
   | MergeRecordsConfig
   | RenameFieldsConfig
-  | SampleRecordsConfig;
+  | SampleRecordsConfig
+  | DocGenConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {

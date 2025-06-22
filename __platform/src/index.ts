@@ -5,3 +5,4 @@ export * from "./binary/header-flags";
 export * from "./binary/record-decompressor";
 export * from "./binary/binary-const";
 export * from "./binary/form-id";
+export * from "./uesp";

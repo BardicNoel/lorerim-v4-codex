@@ -9,6 +9,7 @@ import { createMergeRecordsProcessor } from './merge-records';
 import { createRenameFieldsProcessor } from './rename-fields';
 import { createSampleRecordsProcessor } from './sample-records';
 import { removeFieldsProcessorV2 } from './remove-fields-v2';
+import { createDocGenProcessor } from '../doc-gen/doc-gen';
 
 // Core processor interface
 export interface Processor {
@@ -37,6 +38,8 @@ export function createProcessor(stage: StageConfig): Processor {
       return createRenameFieldsProcessor(stage as any);
     case 'sample-records':
       return createSampleRecordsProcessor(stage);
+    case 'doc-gen':
+      return createDocGenProcessor(stage);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }

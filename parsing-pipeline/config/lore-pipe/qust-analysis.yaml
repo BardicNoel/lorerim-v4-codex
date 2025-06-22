@@ -16,12 +16,20 @@ stages:
         value: true
 
   - from: 'local'
-    name: 'Sample Records'
-    type: 'sample-records'
-    description: 'Sample 500 records for analysis'
-    sampleSize: 500
-    randomSeed: 42
+    name: 'Filter QUST Records'
+    type: 'filter-records'
+    description: 'Filter to only include records from Wintersun plugin'
+    criteria:
+      - field: 'meta.plugin'
+        operator: 'contains'
+        value: 'Wintersun'
 
+  # - from: 'local'
+  #   name: 'Sample Records'
+  #   type: 'sample-records'
+  #   description: 'Get 3 sample records for analysis'
+  #   sampleSize: 3
+  #   randomSeed: 42
   - from: 'local'
     name: 'Decode Binary Records'
     type: 'buffer-decoder'
