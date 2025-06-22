@@ -1,11 +1,12 @@
-import { FieldSchema } from './schemaTypes';
+import { CTDA_FUNCTION_INDICES } from './ctdaFunctionIndices';
+import { FieldSchema } from '../schemaTypes';
 import {
   CTDA_COMPARE_OPERATORS,
   CTDA_FLAGS,
   CTDA_RUN_ON_TYPES,
   ctdaOperatorParser,
   ctdaRunOnTypeParser,
-} from './sharedFields';
+} from '../sharedFields';
 
 /**
  * Comprehensive CTDA (Condition) field schema based on UESP documentation
@@ -13,6 +14,58 @@ import {
  * CTDA fields are used in many Skyrim record types to provide conditions that must be met.
  * The field structure is complex with bit-packed operators and various parameter types.
  */
+
+/**
+ * Parser for CTDA function indices
+ * Maps function index to function name and provides additional context
+ */
+function ctdaFunctionIndexParser(functionIndex: number): {
+  functionName: string;
+  functionIndex: number;
+  description?: string;
+  isSkillCheck?: boolean;
+  skillName?: string;
+} {
+  const functionName = CTDA_FUNCTION_INDICES[functionIndex] || `UnknownFunction_${functionIndex}`;
+
+  // Check if this is a skill check (ActorValue indices 6-23)
+  const isSkillCheck = functionIndex >= 6 && functionIndex <= 23;
+
+  let skillName: string | undefined;
+  if (isSkillCheck) {
+    const skillNames = [
+      'OneHanded',
+      'TwoHanded',
+      'Marksman',
+      'Block',
+      'Smithing',
+      'HeavyArmor',
+      'LightArmor',
+      'Pickpocket',
+      'Lockpicking',
+      'Sneak',
+      'Alchemy',
+      'Speechcraft',
+      'Alteration',
+      'Conjuration',
+      'Destruction',
+      'Illusion',
+      'Restoration',
+      'Enchanting',
+    ];
+    skillName = skillNames[functionIndex - 6];
+  }
+
+  return {
+    functionName,
+    functionIndex,
+    isSkillCheck,
+    skillName,
+    description: isSkillCheck
+      ? `Check ${skillName} skill level`
+      : `Function index ${functionIndex}`,
+  };
+}
 
 // CTDA field schema - 32 bytes total
 const CTDA_SCHEMA: FieldSchema = {
@@ -24,7 +77,7 @@ const CTDA_SCHEMA: FieldSchema = {
     { name: 'unknown2', type: 'uint8' },
     { name: 'unknown3', type: 'uint8' },
     { name: 'comparisonValue', type: 'float32' },
-    { name: 'functionIndex', type: 'uint16' },
+    { name: 'functionIndex', type: 'uint16', parser: ctdaFunctionIndexParser },
     { name: 'padding', type: 'uint8' },
     { name: 'padding2', type: 'uint8' },
     { name: 'param1', type: 'uint32' },
@@ -77,14 +130,6 @@ export function isStringParameter(paramValue: number): boolean {
 }
 
 /**
- * Calculates the actual function index from the stored value
- * The stored FunctionIndex is UESP index minus 4096
- */
-export function getActualFunctionIndex(storedIndex: number): number {
-  return storedIndex + 4096;
-}
-
-/**
  * Determines if ComparisonValue should be treated as a GLOB formid
  * This happens when the UseGlobal flag (0x04) is set
  */
@@ -104,9 +149,10 @@ export function generateConditionStatement(ctdaData: any): string {
   const operatorData = typeof operator === 'object' ? operator : ctdaOperatorParser(operator);
   const compareOp = operatorData.compareOperator;
 
-  // Get function name (would need function lookup table)
-  const actualFunctionIndex = getActualFunctionIndex(functionIndex);
-  const functionName = `Function_${actualFunctionIndex}`; // Placeholder
+  // Get function info using the new parser
+  const functionInfo =
+    typeof functionIndex === 'object' ? functionIndex : ctdaFunctionIndexParser(functionIndex);
+  const functionName = functionInfo.functionName;
 
   // Format parameters
   const params = [];
@@ -126,6 +172,11 @@ export function generateConditionStatement(ctdaData: any): string {
   // Format reference
   const refString =
     reference !== 0 ? `REF_${reference.toString(16).padStart(8, '0').toUpperCase()}` : 'PlayerRef';
+
+  // Create human-readable condition
+  if (functionInfo.isSkillCheck && functionInfo.skillName) {
+    return `${functionInfo.skillName} ${compareOp} ${valueString}`;
+  }
 
   return `${refString}.${functionName}(${paramString}) ${compareOp} ${valueString}`;
 }
@@ -199,6 +250,8 @@ export {
   CTDA_COMPARE_OPERATORS,
   CTDA_FLAGS,
   CTDA_RUN_ON_TYPES,
+  CTDA_FUNCTION_INDICES,
   ctdaOperatorParser,
   ctdaRunOnTypeParser,
+  ctdaFunctionIndexParser,
 };

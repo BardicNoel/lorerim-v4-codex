@@ -1,6 +1,6 @@
 import { RecordSpecificSchemas, FieldSchema } from '../schemaTypes';
 import { createSchema } from '../createSchema';
-import { CTDA_ARRAY_SCHEMA } from '../ctdaSchema';
+import { CTDA_ARRAY_SCHEMA } from '../ctda/ctdaSchema';
 
 // PERK DATA flags (main perk flags)
 export const PERK_DATA_FLAGS = {

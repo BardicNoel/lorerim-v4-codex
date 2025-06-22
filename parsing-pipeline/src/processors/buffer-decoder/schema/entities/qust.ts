@@ -1,7 +1,7 @@
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
 import { flagParserGenerator } from '../generics';
-import { CTDA_ARRAY_SCHEMA, CTDA_RELATED_SCHEMAS } from '../ctdaSchema';
+import { CTDA_ARRAY_SCHEMA, CTDA_RELATED_SCHEMAS } from '../ctda/ctdaSchema';
 
 // QUST DNAM flags (first byte)
 const QUST_DNAM_FLAGS_1 = {

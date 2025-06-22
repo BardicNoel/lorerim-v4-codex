@@ -50,6 +50,8 @@ stages:
       # Trim AVIF perkSection Values
       - 'perkSections[].SNAM'
       - 'perkSections[].FNAM'
+      - 'perkSections[].HNAM'
+      - 'perkSections[].VNAM'
       - 'perkSections[].PNAM'
       - 'perkSections[].DATA'
       - 'perkSections[].PRKE'
