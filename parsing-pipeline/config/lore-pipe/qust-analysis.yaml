@@ -1,8 +1,8 @@
 # Import base pipeline configuration
-name: 'MGEF Analysis Pipeline'
-description: 'Process MGEF data for analysis'
-input: '../output/skyrim-extractor/lorerim/MGEF.json'
-output: '../output/parsing-pipeline/lorerim/mgef-analysis.json'
+name: 'QUST Analysis Pipeline'
+description: 'Process QUST data for analysis'
+input: '../output/skyrim-extractor/lorerim/QUST.json'
+output: '../output/parsing-pipeline/lorerim/qust-analysis.json'
 
 # Use stages from base template
 stages:
@@ -16,20 +16,27 @@ stages:
         value: true
 
   - from: 'local'
+    name: 'Sample Records'
+    type: 'sample-records'
+    description: 'Sample 500 records for analysis'
+    sampleSize: 500
+    randomSeed: 42
+
+  - from: 'local'
     name: 'Decode Binary Records'
     type: 'buffer-decoder'
     description: 'Decode binary record data into structured format'
-    recordType: 'MGEF'
+    recordType: 'QUST'
     loadPluginMetadata: true
     pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
-    multithreaded: true
-    maxWorkers: 4
+    # multithreaded: true
+    # maxWorkers: 4
 
   - from: 'local'
-    name: 'Remove MGEF Specific Fields'
+    name: 'Remove QUST Specific Fields'
     type: 'remove-fields'
-    description: 'Remove MGEF-specific fields that are not needed for analysis'
+    description: 'Remove QUST-specific fields that are not needed for analysis'
     fields:
       data: 'all'
       header: 'all'
-      # record: 'all'
+      record: 'all'

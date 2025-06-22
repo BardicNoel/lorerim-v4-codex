@@ -80,8 +80,8 @@ function validateStage(stage: any): StageConfig {
       }
       break;
     case 'remove-fields':
-      if (!stage.fields) {
-        throw new Error('Remove fields stage must have fields');
+      if (!stage.fields && !stage.remove_fields) {
+        throw new Error('Remove fields stage must have fields or remove_fields');
       }
       break;
     case 'keep-fields':

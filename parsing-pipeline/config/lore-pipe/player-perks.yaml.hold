@@ -43,53 +43,53 @@ stages:
   - name: 'Remove Noise Fields'
     type: 'remove-fields'
     description: 'Remove technical noise fields while keeping essential documentation data'
-    remove_fields:
+    fields:
       # TRIM AVIF Values
-      - 'AVSK'
+      'AVSK': 'all'
 
       # Trim AVIF perkSection Values
-      - 'perkSections[].SNAM'
-      - 'perkSections[].FNAM'
-      - 'perkSections[].PNAM'
-      - 'perkSections[].DATA'
-      - 'perkSections[].PRKE'
-      - 'perkSections[].PRKC'
-      - 'perkSections[].EPFT'
-      - 'perkSections[].PRKH'
+      'perkSections[]':
+        - 'PNAM'
+        - 'DATA'
+        - 'PRKE'
+        - 'PRKC'
+        - 'EPFT'
+        - 'PRKH'
 
       # Trim Perk Records - Direct fields
-      - 'perkSections[].PERK.FULL'
-      - 'perkSections[].PERK.CTDA[].unknown'
-      - 'perkSections[].PERK.CTDA[].unknown2'
-      - 'perkSections[].PERK.CTDA[].unknown3'
-      - 'perkSections[].PERK.CTDA[].padding'
-      - 'perkSections[].PERK.CTDA[].padding2'
-      - 'perkSections[].PERK.CTDA[].param1'
-      - 'perkSections[].PERK.CTDA[].param2'
-      - 'perkSections[].PERK.CTDA[].unknown4'
-      - 'perkSections[].PERK.CTDA[].operator.rawOperator'
-      - 'perkSections[].PERK.CTDA[].operator.rawCompareOperator'
-      - 'perkSections[].PERK.CTDA[].operator.rawFlags'
+      'perkSections[].PERK':
+        - 'FULL'
+        - 'CTDA[]':
+            - 'unknown'
+            - 'unknown2'
+            - 'unknown3'
+            - 'padding'
+            - 'padding2'
+            - 'param1'
+            - 'param2'
+            - 'unknown4'
+            - 'operator':
+                - 'rawOperator'
+                - 'rawCompareOperator'
+                - 'rawFlags'
 
       # Trim Perk Records - Nested sections
-      - 'perkSections[].PERK.sections[].CTDA[].unknown'
-      - 'perkSections[].PERK.sections[].CTDA[].unknown2'
-      - 'perkSections[].PERK.sections[].CTDA[].unknown3'
-      - 'perkSections[].PERK.sections[].CTDA[].padding'
-      - 'perkSections[].PERK.sections[].CTDA[].padding2'
-      - 'perkSections[].PERK.sections[].CTDA[].param1'
-      - 'perkSections[].PERK.sections[].CTDA[].param2'
-      - 'perkSections[].PERK.sections[].CTDA[].unknown4'
-      - 'perkSections[].PERK.sections[].CTDA[].operator.rawOperator'
-      - 'perkSections[].PERK.sections[].CTDA[].operator.rawCompareOperator'
-      - 'perkSections[].PERK.sections[].CTDA[].operator.rawFlags'
-      - 'perkSections[].PERK.sections[].CTDA[].reference'
-      - 'perkSections[].PERK.sections[].CTDA[].comparisonValue'
-      - 'perkSections[].PERK.sections[].PRKF'
-      - 'perkSections[].PERK.sections[].EPFD'
-      - 'perkSections[].PERK.sections[].DATA.padding'
-      - 'perkSections[].PERK.sections[].DATA.padding2'
-      - 'perkSections[].PERK.sections[].DATA.padding3'
+      'perkSections[].PERK.sections[]':
+        - 'CTDA[]':
+            - 'unknown'
+            - 'unknown2'
+            - 'unknown3'
+            - 'padding'
+            - 'padding2'
+            - 'param1'
+            - 'param2'
+            - 'unknown4'
+            - 'operator':
+                - 'rawOperator'
+                - 'rawCompareOperator'
+                - 'rawFlags'
+        - 'PRKF'
+        - 'EPFD'
 
   # - name: 'Flatten PNAM in perkSections'
   #   type: 'flatten-fields'

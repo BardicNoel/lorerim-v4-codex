@@ -122,6 +122,7 @@ export interface MergeRecordsConfig extends BaseStageConfig {
   mergeField: string; // Field to store merged data in target records (e.g., 'mergedData')
   mergeStrategy: 'first' | 'all' | 'count'; // How to handle multiple matches
   overwriteReference?: boolean; // If true, replace original field values with referenced records
+  siblingField?: string; // If specified, create a sibling field with this name instead of overwriting
 }
 
 // Rename fields stage configuration

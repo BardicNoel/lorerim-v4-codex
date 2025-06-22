@@ -324,11 +324,25 @@ export class BufferDecoder {
     const endOffset = offset + length;
 
     while (currentOffset < endOffset) {
+      // Check if we have enough buffer space for the next element
+      if (currentOffset >= buffer.length) {
+        console.warn(
+          `[WARN] Array parsing reached buffer end at offset ${currentOffset}, stopping`
+        );
+        break;
+      }
+
       switch (elementSchema.type) {
         case 'string':
           if (!('encoding' in elementSchema))
             throw new Error('String element must specify encoding');
           const strLength = buffer.readUInt16LE(currentOffset);
+          if (currentOffset + 2 + strLength > buffer.length) {
+            console.warn(
+              `[WARN] String element would exceed buffer bounds, stopping array parsing`
+            );
+            break;
+          }
           results.push(
             this.parseString(
               buffer.slice(currentOffset + 2, currentOffset + 2 + strLength),
@@ -346,6 +360,12 @@ export class BufferDecoder {
           let structSize: number;
           if ('size' in elementSchema && typeof elementSchema.size === 'number') {
             structSize = elementSchema.size;
+            if (currentOffset + structSize > buffer.length) {
+              console.warn(
+                `[WARN] Struct element would exceed buffer bounds, stopping array parsing`
+              );
+              break;
+            }
             const structData = this.parseStruct(
               buffer,
               currentOffset,
@@ -358,6 +378,12 @@ export class BufferDecoder {
             currentOffset += structSize;
           } else {
             const structLength = buffer.readUInt16LE(currentOffset);
+            if (currentOffset + 2 + structLength > buffer.length) {
+              console.warn(
+                `[WARN] Struct element would exceed buffer bounds, stopping array parsing`
+              );
+              break;
+            }
             const structData = this.parseStruct(
               buffer,
               currentOffset + 2,
@@ -372,6 +398,12 @@ export class BufferDecoder {
           break;
 
         case 'formid':
+          if (currentOffset + 4 > buffer.length) {
+            console.warn(
+              `[WARN] FormID element would exceed buffer bounds, stopping array parsing`
+            );
+            break;
+          }
           const formId = this.parseFormId(
             buffer.slice(currentOffset, currentOffset + 4),
             0,
@@ -386,8 +418,17 @@ export class BufferDecoder {
         case 'uint16':
         case 'uint32':
         case 'float32':
-          results.push(this.parseNumeric(buffer, currentOffset, elementSchema.type));
-          currentOffset += this.getTypeSize(elementSchema.type);
+          const typeSize = this.getTypeSize(elementSchema.type);
+          if (currentOffset + typeSize > buffer.length) {
+            console.warn(
+              `[WARN] ${elementSchema.type} element would exceed buffer bounds, stopping array parsing`
+            );
+            break;
+          }
+          results.push(
+            this.parseNumeric(buffer, currentOffset, elementSchema.type, elementSchema.parser)
+          );
+          currentOffset += typeSize;
           break;
 
         default:
@@ -472,17 +513,16 @@ function decodeField(
   fieldData: any[],
   schema: FieldSchema,
   decoder: BufferDecoder,
-  contextPluginName?: string
+  contextPluginName?: string,
+  decodedData?: Record<string, any>
 ): any {
   if (!Array.isArray(fieldData) || fieldData.length === 0) {
     return null;
   }
-
   const buffer = createBufferFromFieldData(fieldData);
   if (!buffer) {
     return null;
   }
-
   switch (schema.type) {
     case 'string':
       if (!('encoding' in schema)) throw new Error('String field must specify encoding');
@@ -495,10 +535,13 @@ function decodeField(
     case 'uint16':
     case 'uint32':
     case 'float32':
-      return decoder.parseNumeric(buffer, 0, schema.type);
+      return decoder.parseNumeric(buffer, 0, schema.type, schema.parser);
 
     case 'struct':
-      return decoder.parseStruct(buffer, 0, buffer.length, schema.fields, true, contextPluginName);
+      // Use the size property if available, otherwise use buffer length
+      const structSize =
+        'size' in schema && typeof schema.size === 'number' ? schema.size : buffer.length;
+      return decoder.parseStruct(buffer, 0, structSize, schema.fields, true, contextPluginName);
 
     case 'array':
       return decoder.parseArray(buffer, 0, buffer.length, schema.element, contextPluginName);
@@ -556,6 +599,7 @@ const parseGroupedFields = (
     const subrecord = parsedRecord.record[processedFields + offset];
     // check for terminator tag
     if (subrecord.tag === terminatorTag) {
+      console.log(`[DEBUG] Found terminator tag ${terminatorTag}, stopping grouped field parsing`);
       break;
     }
 
@@ -564,10 +608,15 @@ const parseGroupedFields = (
       console.warn(
         `[WARN] No schema found for field ${parsedRecord.meta.globalFormId} ${subrecord.tag} in grouped field`
       );
-      console.log(decodedFirstSubrecord);
+      console.log(`[DEBUG] Available schema keys:`, Object.keys(currentSchema));
+      console.log(`[DEBUG] First subrecord data:`, decodedFirstSubrecord);
       processedFields++;
       continue;
     }
+
+    console.log(
+      `[DEBUG] Processing grouped field ${subrecord.tag} with schema type: ${subrecordSchema.type}`
+    );
 
     const decodedSubrecord = decodeField(
       [subrecord.buffer],
