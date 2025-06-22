@@ -77,7 +77,7 @@ const CTDA_SCHEMA: FieldSchema = {
     { name: 'unknown2', type: 'uint8' },
     { name: 'unknown3', type: 'uint8' },
     { name: 'comparisonValue', type: 'float32' },
-    { name: 'functionIndex', type: 'uint16', parser: ctdaFunctionIndexParser },
+    { name: 'function', type: 'uint16', parser: ctdaFunctionIndexParser },
     { name: 'padding', type: 'uint8' },
     { name: 'padding2', type: 'uint8' },
     { name: 'param1', type: 'uint32' },
@@ -142,8 +142,15 @@ export function isGlobalComparison(operator: number): boolean {
  * Generates a human-readable condition statement
  */
 export function generateConditionStatement(ctdaData: any): string {
-  const { operator, comparisonValue, functionIndex, param1, param2, runOnType, reference } =
-    ctdaData;
+  const {
+    operator,
+    comparisonValue,
+    function: functionData,
+    param1,
+    param2,
+    runOnType,
+    reference,
+  } = ctdaData;
 
   // Parse operator
   const operatorData = typeof operator === 'object' ? operator : ctdaOperatorParser(operator);
@@ -151,7 +158,7 @@ export function generateConditionStatement(ctdaData: any): string {
 
   // Get function info using the new parser
   const functionInfo =
-    typeof functionIndex === 'object' ? functionIndex : ctdaFunctionIndexParser(functionIndex);
+    typeof functionData === 'object' ? functionData : ctdaFunctionIndexParser(functionData);
   const functionName = functionInfo.functionName;
 
   // Format parameters
