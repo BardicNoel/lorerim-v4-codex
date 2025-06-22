@@ -58,16 +58,16 @@ stages:
             - 'EPFT'
             - 'PRKH'
 
-  - name: 'Flatten PNAM in perkSections'
-    type: 'flatten-fields'
-    description: 'Flatten the PNAM object inside each perkSections element'
-    fields: ['perkSections[].PNAM']
+  # - name: 'Flatten PNAM in perkSections'
+  #   type: 'flatten-fields'
+  #   description: 'Flatten the PNAM object inside each perkSections element'
+  #   fields: ['perkSections[].PNAM']
 
-  - name: 'Standardize Field Names'
-    type: 'rename-fields'
-    description: 'Rename EDID and FULL fields to standardized names'
-    mappings:
-      'EDID': 'editorId'
-      'FULL': 'name'
-      'perkSections[].PNAM.EDID': 'editorId'
-      'perkSections[].PNAM.FULL': 'name'
+  # - name: 'Standardize Field Names'
+  #   type: 'rename-fields'
+  #   description: 'Rename EDID and FULL fields to standardized names'
+  #   mappings:
+  #     'EDID': 'editorId'
+  #     'FULL': 'name'
+  #     'perkSections[].PNAM.EDID': 'editorId'
+  #     'perkSections[].PNAM.FULL': 'name'

@@ -2,7 +2,6 @@ import { Worker } from "worker_threads";
 import { BufferMeta, WorkerMessage, ThreadPoolConfig } from "./types";
 import * as path from "path";
 import { ParsedRecord, PluginMeta } from "@lorerim/platform-types";
-import { mergeTypeDictionaries } from "./parsedRecordDataStructs";
 import { StatsCollector, ProcessingStats } from "../utils/statsCollector";
 
 export class ThreadPool {

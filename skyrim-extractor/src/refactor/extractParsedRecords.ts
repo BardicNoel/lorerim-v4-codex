@@ -59,23 +59,35 @@ export function extractParsedRecords(
 
       offset += 6 + size;
     }
-    const globalFormId = resolveGlobalFromLocal(
-      meta.formId!,
-      plugin.loadOrder,
-      plugin.isEsl
-    );
 
-    records.push({
+    // const globalFormId = resolveGlobalFromLocal(
+    //   meta.formId!,
+    //   plugin.inTypeOrder,
+    //   plugin.isEsl
+    // );
+
+    // if (plugin.name.toLowerCase() === "lorerim - weaponmaster.esp") {
+    //   console.log(meta.formId, plugin, globalFormId);
+    // }
+
+    const newRecord: ParsedRecord = {
       meta: {
         type: meta.tag,
         formId: formatFormId(meta.formId!),
-        globalFormId: formatFormId(globalFormId),
+        globalFormId: formatFormId(0), // GLOBAL should be set by post-processing, it needs to consider masters
         plugin: meta.sourcePlugin,
         stackOrder: plugin.loadOrder,
       },
       record,
       header,
-    });
+    };
+
+    // if (plugin.name.toLowerCase() === "lorerim - weaponmaster.esp") {
+    //   console.log(formatFormId(globalFormId));
+    //   console.log(newRecord.meta);
+    // }
+
+    records.push(newRecord);
   }
 
   return records;

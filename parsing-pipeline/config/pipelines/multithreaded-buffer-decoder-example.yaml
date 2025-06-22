@@ -1,0 +1,32 @@
+name: 'Multithreaded Buffer Decoder Example'
+description: 'Example pipeline showing how to use multithreaded buffer decoding for improved performance'
+input: 'input/records.json'
+output: 'output/decoded-records.json'
+
+stages:
+  - name: 'Multithreaded PERK Decoder'
+    type: 'buffer-decoder'
+    description: 'Decode PERK records using multiple worker threads for improved performance'
+    recordType: 'PERK'
+    multithreaded: true
+    maxWorkers: 4 # Optional: limit to 4 workers
+    loadPluginMetadata: true
+    inputFilePath: 'input/records.json'
+    enabled: true
+
+  - name: 'Multithreaded SPEL Decoder'
+    type: 'buffer-decoder'
+    description: 'Decode SPEL records using multiple worker threads'
+    recordType: 'SPEL'
+    multithreaded: true
+    # maxWorkers not specified - will use default (CPU cores, capped at 8)
+    loadPluginMetadata: true
+    inputFilePath: 'input/records.json'
+    enabled: true
+
+  - name: 'Sample Records'
+    type: 'sample-records'
+    description: 'Sample 100 records from the decoded output'
+    sampleSize: 100
+    method: 'random'
+    enabled: true

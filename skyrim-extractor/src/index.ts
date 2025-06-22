@@ -94,7 +94,15 @@ export async function main(
       recordTypeFilter: config.recordTypeFilter,
     });
 
-    const parsedRecordDict = flagWinners(mergeTypeDictionaries(parsedRecords));
+    // map plugin names to PluginMeta
+    const pluginRegistry = Object.fromEntries(
+      plugins.map((plugin) => [plugin.name, plugin])
+    );
+
+    const parsedRecordDict = flagWinners(
+      mergeTypeDictionaries(parsedRecords),
+      pluginRegistry
+    );
 
     // We need to apply the isWinner flag to the parsedRecords
 
@@ -102,9 +110,6 @@ export async function main(
     const processingTime = endTime - startTime;
 
     printHeader("Processing Complete");
-
-    // Print processing statistics
-    // StatsReporter.report(stats);
 
     // Generate report file
     const reportPath = path.join(

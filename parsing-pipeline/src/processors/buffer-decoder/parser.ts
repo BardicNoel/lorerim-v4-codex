@@ -9,12 +9,13 @@ import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline
 import { Processor } from '../core';
 import { formatFormId, PluginMeta } from '@lorerim/platform-types';
 import { resolveGlobalFromReference } from '@lorerim/platform-types';
-import { parentPort } from 'worker_threads';
+import { parentPort, Worker } from 'worker_threads';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import * as os from 'os';
 
 // Error logging function that works in both worker and main thread
-function errorLog(message: string, error?: any) {
+export function errorLog(message: string, error?: any) {
   console.error(`[ERROR] ${message}`, error);
   if (parentPort) {
     parentPort.postMessage({ type: 'error', message, error: error?.message || error });
@@ -22,7 +23,7 @@ function errorLog(message: string, error?: any) {
 }
 
 // Helper function to extract FormID from record metadata
-function getFormIdFromRecord(record: ParsedRecord): string {
+export function getFormIdFromRecord(record: ParsedRecord): string {
   if (record.meta?.globalFormId) {
     return record.meta.globalFormId;
   }
@@ -99,6 +100,7 @@ export class BufferDecoder {
    */
   private resolveFormId(rawFormId: number, contextPluginName: string): string {
     if (!this.pluginMetadataLoaded || Object.keys(this.pluginRegistry).length === 0) {
+      console.warn('No plugin metadata loaded, using raw FormID');
       // Fall back to simple formatting if no metadata available
       return formatFormId(rawFormId);
     }
@@ -525,6 +527,12 @@ const parseGroupedFields = (
     contextPluginName
   );
 
+  if (parsedRecord.meta.formId === '0x0000044F' && firstSubrecord.tag === 'PNAM') {
+    const buffer = createBufferFromFieldData([firstSubrecord.buffer]);
+    console.log(formatFormId(buffer?.readUInt32LE(0) ?? 0), decodedFirstSubrecord);
+    console.log(contextPluginName);
+  }
+
   const decodedField = {
     [virtualField]: {
       [firstSubrecord.tag]: decodedFirstSubrecord,
@@ -578,7 +586,7 @@ const parseGroupedFields = (
   };
 };
 
-function processRecordFields(
+export function processRecordFields(
   record: ParsedRecord,
   config: BufferDecoderConfig,
   decoder: BufferDecoder
@@ -686,6 +694,14 @@ function processRecordFields(
 }
 
 export function createBufferDecoderProcessor(config: BufferDecoderConfig): Processor {
+  // Use multithreaded version if enabled
+  if (config.multithreaded) {
+    console.log(`[INFO] Using multithreaded buffer decoder processor`);
+    return createMultithreadedBufferDecoderProcessor(config);
+  }
+
+  // Use single-threaded version
+  console.log(`[INFO] Using single-threaded buffer decoder processor`);
   const decoder = new BufferDecoder();
   let stats = {
     recordsProcessed: 0,
@@ -761,4 +777,346 @@ export function createBufferDecoderProcessor(config: BufferDecoderConfig): Proce
 
     getStats: () => stats,
   };
+}
+
+export function createMultithreadedBufferDecoderProcessor(config: BufferDecoderConfig): Processor {
+  let stats = {
+    recordsProcessed: 0,
+    recordsDecoded: 0,
+    errors: 0,
+    totalFields: 0,
+    skippedFields: 0,
+  };
+
+  return {
+    async transform(records: JsonArray): Promise<JsonArray> {
+      const startTime = Date.now();
+      const totalRecords = records.length;
+
+      // Determine number of worker threads
+      const cpuCores = os.cpus().length;
+      const defaultMaxWorkers = Math.min(cpuCores, 8);
+      const maxWorkers = config.maxWorkers || defaultMaxWorkers;
+      const numWorkers = Math.min(maxWorkers, Math.max(4, Math.floor(totalRecords / 500)));
+
+      console.log(`[INFO] Starting multithreaded buffer decoder with ${numWorkers} workers`);
+      console.log(`[INFO] Processing ${totalRecords} records`);
+      console.log(`[INFO] CPU cores available: ${cpuCores}, Max workers: ${maxWorkers}`);
+
+      // Calculate batch sizes
+      const batchSize = Math.ceil(totalRecords / numWorkers);
+      const workers: Worker[] = [];
+      const workerPromises: Promise<ParsedRecord[]>[] = [];
+
+      // Create and initialize workers
+      for (let i = 0; i < numWorkers; i++) {
+        const startIndex = i * batchSize;
+        const endIndex = Math.min(startIndex + batchSize, totalRecords);
+
+        if (startIndex >= totalRecords) break;
+
+        const worker = new Worker(
+          path.join(__dirname, '../../../dist/src/processors/buffer-decoder/parser.js'),
+          {
+            workerData: { config },
+          }
+        );
+
+        console.log(`[DEBUG] Created worker ${i + 1} with PID: ${worker.threadId}`);
+
+        const workerPromise = new Promise<ParsedRecord[]>((resolve, reject) => {
+          let workerStats = {
+            recordsProcessed: 0,
+            recordsDecoded: 0,
+            errors: 0,
+          };
+
+          // Add timeout to detect stalled workers
+          const timeout = setTimeout(() => {
+            console.error(`[ERROR] Worker ${i + 1} timed out after 30 seconds`);
+            reject(new Error(`Worker ${i + 1} timed out`));
+          }, 30000);
+
+          worker.on('message', (message: any) => {
+            console.log(`[DEBUG] Worker ${i + 1} (PID: ${worker.threadId}) message:`, message.type);
+            switch (message.type) {
+              case 'ready':
+                console.log(
+                  `[DEBUG] Worker ${i + 1} is ready, sending batch of ${endIndex - startIndex} records`
+                );
+                clearTimeout(timeout);
+                // Worker is ready, send it the batch to process
+                worker.postMessage({
+                  type: 'process',
+                  data: {
+                    records: records.slice(startIndex, endIndex),
+                    config,
+                    startIndex,
+                    endIndex,
+                  },
+                });
+                break;
+
+              case 'progress':
+                // Log progress from worker
+                console.log(
+                  `[WORKER ${i + 1}] Progress: ${message.progress.current}/${message.progress.total} - ${message.progress.formId}`
+                );
+                break;
+
+              case 'result':
+                console.log(
+                  `[DEBUG] Worker ${i + 1} completed processing ${message.data.processedRecords.length} records`
+                );
+                clearTimeout(timeout);
+                // Worker completed processing
+                workerStats = message.data.stats;
+                stats.recordsProcessed += workerStats.recordsProcessed;
+                stats.recordsDecoded += workerStats.recordsDecoded;
+                stats.errors += workerStats.errors;
+                resolve(message.data.processedRecords);
+                break;
+
+              case 'error':
+                console.error(`[ERROR] Worker ${i + 1} error:`, message.error);
+                clearTimeout(timeout);
+                reject(new Error(`Worker ${i + 1} failed: ${message.error}`));
+                break;
+            }
+          });
+
+          worker.on('error', (error) => {
+            console.error(`[ERROR] Worker ${i + 1} (PID: ${worker.threadId}) crashed:`, error);
+            clearTimeout(timeout);
+            reject(error);
+          });
+
+          worker.on('exit', (code) => {
+            console.log(
+              `[DEBUG] Worker ${i + 1} (PID: ${worker.threadId}) exited with code: ${code}`
+            );
+            clearTimeout(timeout);
+            // Only treat non-zero exit codes as errors
+            if (code !== 0 && code !== null) {
+              console.error(`[ERROR] Worker ${i + 1} exited with code ${code}`);
+              reject(new Error(`Worker ${i + 1} exited with code ${code}`));
+            }
+          });
+
+          // Send init message to start worker initialization
+          console.log(`[DEBUG] Sending init message to worker ${i + 1}`);
+          worker.postMessage({ type: 'init' });
+        });
+
+        workers.push(worker);
+        workerPromises.push(workerPromise);
+      }
+
+      try {
+        // Wait for all workers to complete
+        const results = await Promise.all(workerPromises);
+
+        // Combine results in order
+        const processedRecords: ParsedRecord[] = [];
+        for (const result of results) {
+          processedRecords.push(...result);
+        }
+
+        const duration = Date.now() - startTime;
+        console.log(`===== Multithreaded Buffer Decoder Transform Complete =====`);
+        console.log(`Buffer decoder completed in ${duration}ms`);
+        console.log(
+          `Successfully decoded ${stats.recordsDecoded}/${stats.recordsProcessed} records`
+        );
+        if (stats.errors > 0) {
+          console.log(`Encountered ${stats.errors} errors during decoding`);
+        }
+
+        return processedRecords;
+      } finally {
+        // Clean up workers
+        for (const worker of workers) {
+          worker.terminate();
+        }
+      }
+    },
+
+    getStats: () => stats,
+  };
+}
+
+// Worker thread detection and handling
+if (parentPort) {
+  console.log('[DEBUG] Worker thread starting...');
+  // This file is being run as a worker thread
+  const { workerData } = require('worker_threads');
+
+  console.log('[DEBUG] Worker data received:', workerData ? 'yes' : 'no');
+
+  let decoder: BufferDecoder;
+  let config: BufferDecoderConfig;
+
+  // Initialize the worker
+  async function initializeWorker() {
+    try {
+      console.log('[DEBUG] Initializing worker...');
+      decoder = new BufferDecoder();
+      config = workerData.config;
+
+      console.log('[DEBUG] Config received:', config ? 'yes' : 'no');
+      console.log('[DEBUG] Record type:', config?.recordType);
+      console.log('[DEBUG] Load plugin metadata:', config?.loadPluginMetadata);
+
+      // Load plugin metadata if requested
+      if (config.loadPluginMetadata) {
+        console.log('[DEBUG] Loading plugin metadata...');
+        await decoder.loadPluginMetadata(config.inputFilePath, config.pluginMetadataPath);
+        console.log('[DEBUG] Plugin metadata loaded successfully');
+      }
+
+      console.log('[DEBUG] Worker initialization complete, sending ready message');
+      parentPort?.postMessage({ type: 'ready' });
+    } catch (error) {
+      console.error('[DEBUG] Worker initialization failed:', error);
+      parentPort?.postMessage({
+        type: 'error',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  // Process a batch of records
+  async function processBatch(records: ParsedRecord[], startIndex: number, endIndex: number) {
+    console.log(
+      `[DEBUG] Starting batch processing: ${records.length} records (${startIndex}-${endIndex})`
+    );
+
+    const stats = {
+      recordsProcessed: 0,
+      recordsDecoded: 0,
+      errors: 0,
+    };
+
+    const processedRecords: ParsedRecord[] = [];
+    const totalRecords = endIndex - startIndex;
+    const logInterval = Math.max(1, Math.floor(totalRecords / 10));
+
+    for (let i = 0; i < records.length; i++) {
+      const recordIndex = startIndex + i;
+      const record = records[i];
+
+      // Send progress updates
+      if (i % logInterval === 0) {
+        console.log(
+          `[DEBUG] Processing record ${i + 1}/${records.length} - ${getFormIdFromRecord(record)}`
+        );
+        parentPort?.postMessage({
+          type: 'progress',
+          progress: {
+            current: i + 1,
+            total: totalRecords,
+            formId: getFormIdFromRecord(record),
+          },
+        });
+      }
+
+      try {
+        if (!record.meta || !record.record || !record.header) {
+          processedRecords.push(record);
+          stats.recordsProcessed++;
+          continue;
+        }
+
+        const { processedRecord, hasDecodedFields, recordErrors } = processRecordFields(
+          record,
+          config,
+          decoder
+        );
+
+        processedRecords.push(processedRecord);
+        stats.recordsProcessed++;
+
+        if (hasDecodedFields) {
+          stats.recordsDecoded++;
+        }
+        if (recordErrors > 0) {
+          stats.errors++;
+        }
+      } catch (error) {
+        console.error(`[ERROR] Failed to process record ${getFormIdFromRecord(record)}:`, error);
+        stats.errors++;
+        processedRecords.push(record);
+      }
+    }
+
+    console.log(`[DEBUG] Batch processing complete. Stats:`, stats);
+    return {
+      type: 'result',
+      data: {
+        processedRecords,
+        stats,
+        startIndex,
+        endIndex,
+      },
+    };
+  }
+
+  // Handle messages from the main thread
+  parentPort?.on('message', async (message: any) => {
+    console.log(`[DEBUG] Worker received message:`, message.type);
+    try {
+      switch (message.type) {
+        case 'init':
+          console.log('[DEBUG] Received init message, starting initialization');
+          await initializeWorker();
+          break;
+
+        case 'process':
+          console.log('[DEBUG] Received process message, starting batch processing');
+          if (!message.data) {
+            throw new Error('No data provided for processing');
+          }
+
+          const result = await processBatch(
+            message.data.records,
+            message.data.startIndex,
+            message.data.endIndex
+          );
+
+          console.log('[DEBUG] Sending result back to main thread');
+          parentPort?.postMessage(result);
+
+          // Exit cleanly after sending result
+          console.log('[DEBUG] Worker completed successfully, exiting');
+          process.exit(0);
+          break;
+
+        default:
+          throw new Error(`Unknown message type: ${message.type}`);
+      }
+    } catch (error) {
+      console.error('[DEBUG] Worker error:', error);
+      parentPort?.postMessage({
+        type: 'error',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  });
+
+  // Handle worker errors
+  process.on('uncaughtException', (error) => {
+    console.error('[DEBUG] Worker uncaught exception:', error);
+    parentPort?.postMessage({
+      type: 'error',
+      error: error.message,
+    });
+  });
+
+  process.on('unhandledRejection', (reason) => {
+    console.error('[DEBUG] Worker unhandled rejection:', reason);
+    parentPort?.postMessage({
+      type: 'error',
+      error: reason instanceof Error ? reason.message : String(reason),
+    });
+  });
 }
