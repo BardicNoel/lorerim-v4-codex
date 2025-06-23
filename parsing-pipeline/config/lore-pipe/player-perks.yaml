@@ -72,8 +72,8 @@ stages:
       - 'perkSections[].PERK.sections[].CTDA[].unknown3'
       - 'perkSections[].PERK.sections[].CTDA[].padding'
       - 'perkSections[].PERK.sections[].CTDA[].padding2'
-      - 'perkSections[].PERK.sections[].CTDA[].param1'
-      - 'perkSections[].PERK.sections[].CTDA[].param2'
+      # - 'perkSections[].PERK.sections[].CTDA[].param1'
+      # - 'perkSections[].PERK.sections[].CTDA[].param2'
       - 'perkSections[].PERK.sections[].CTDA[].unknown4'
       - 'perkSections[].PERK.sections[].CTDA[].operator.rawOperator'
       - 'perkSections[].PERK.sections[].CTDA[].operator.rawCompareOperator'
@@ -85,3 +85,11 @@ stages:
       - 'perkSections[].PERK.sections[].DATA.padding'
       - 'perkSections[].PERK.sections[].DATA.padding2'
       - 'perkSections[].PERK.sections[].DATA.padding3'
+
+  - name: 'Filter One-Handed Skill Records'
+    type: 'filter-records'
+    description: 'Filter to only include One-Handed skill (AVOneHanded) records'
+    criteria:
+      - field: 'EDID'
+        operator: 'equals'
+        value: 'AVOneHanded'

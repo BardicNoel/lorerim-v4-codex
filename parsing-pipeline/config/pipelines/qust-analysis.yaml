@@ -54,5 +54,6 @@ stages:
     type: 'remove-fields'
     description: 'Remove QUST-specific fields that are not needed for analysis'
     fields:
+      data: 'all'
       header: 'all'
-      # record: 'all'
+      record: 'all'

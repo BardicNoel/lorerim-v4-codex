@@ -1,0 +1,25 @@
+# Import base pipeline configuration
+name: 'KYWD Analysis Pipeline'
+description: 'Process KYWD data for analysis'
+input: '../output/skyrim-extractor/lorerim/KYWD.json'
+output: '../output/parsing-pipeline/lorerim/kywd-analysis.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'KYWD'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
+
+  - from: 'local'
+    name: 'Remove KYWD Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove KYWD-specific fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      # record: 'all'

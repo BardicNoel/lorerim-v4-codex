@@ -1,6 +1,7 @@
 import { JsonArray, ProcessingResult } from '../../types/pipeline';
 import { DocGenerator } from './doc-gen';
 import { keywordFormIdMap } from '@lorerim/platform-types';
+import { resolveGlobalFromLocal } from '@lorerim/platform-types';
 
 interface SkillPerkDoc {
   skillName: string;
@@ -238,18 +239,52 @@ function extractKeywords(perk: any, allPerkSections: any[], skillName: string): 
 }
 
 function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: string): void {
-  // DEBUG: Log the CTDA object to inspect its structure
-  if (process.env.DEBUG_SKILL_PERK_DOCS) {
-    // Only log if the debug env var is set
-    // eslint-disable-next-line no-console
-    console.log('[DEBUG][CTDA]', JSON.stringify(ctda, null, 2));
-  }
-
   const functionIndex = ctda.function?.functionIndex;
   const functionName = ctda.function?.functionName;
 
+  // DEBUG: Focused logging for function names and keywords/IDs
+  if (process.env.DEBUG_SKILL_PERK_DOCS) {
+    const debugInfo = {
+      functionName,
+      functionIndex,
+      reference: ctda.reference,
+      param1: ctda.param1,
+      param2: ctda.param2,
+      comparisonValue: ctda.comparisonValue,
+      resolvedKeyword:
+        ctda.reference && ctda.reference !== '0x00000000'
+          ? keywordFormIdMap[ctda.reference] || `Keyword: ${ctda.reference}`
+          : null,
+      resolvedParam1:
+        ctda.param1 && ctda.param1 !== 0
+          ? keywordFormIdMap[ctda.param1] || `Param1: ${ctda.param1}`
+          : null,
+      resolvedParam2:
+        ctda.param2 && ctda.param2 !== 0
+          ? keywordFormIdMap[ctda.param2] || `Param2: ${ctda.param2}`
+          : null,
+    };
+    // eslint-disable-next-line no-console
+    console.log('[DEBUG][CTDA]', JSON.stringify(debugInfo, null, 2));
+  }
+
   // Always include the skill name
   keywords.push(skillName);
+
+  // Helper function to resolve FormID and get keyword
+  const resolveFormIdToKeyword = (formId: number | string): string | null => {
+    if (!formId || formId === 0 || formId === '0x00000000') return null;
+
+    // Convert to number if it's a string
+    const numericFormId = typeof formId === 'string' ? parseInt(formId, 16) : formId;
+
+    // Try to resolve using the keyword mapping
+    const resolved = keywordFormIdMap[numericFormId];
+    if (resolved) return resolved;
+
+    // If not in mapping, return the FormID as hex string
+    return `FormID: ${numericFormId.toString(16).padStart(8, '0').toUpperCase()}`;
+  };
 
   // Handle by function index first (more reliable)
   switch (functionIndex) {
@@ -257,22 +292,34 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
     case 682: // WornHasKeyword
     case 699: // HasMagicEffectKeyword
     case 693: // EPMagic_SpellHasKeyword
-      if (ctda.reference && ctda.reference !== '0x00000000') {
-        const resolved = keywordFormIdMap[ctda.reference] || `Keyword: ${ctda.reference}`;
-        keywords.push(resolved);
+      // Check reference first, then param1, then param2
+      const keywordRef =
+        resolveFormIdToKeyword(ctda.reference) ||
+        resolveFormIdToKeyword(ctda.param1) ||
+        resolveFormIdToKeyword(ctda.param2);
+      if (keywordRef) {
+        keywords.push(keywordRef);
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`[CTDA] HasKeyword function missing reference: ${JSON.stringify(ctda)}`);
+        console.warn(
+          `[CTDA] HasKeyword function missing reference: ${functionName || functionIndex}`
+        );
       }
       break;
 
     case 182: // GetEquipped
     case 597: // GetEquippedItemType
-      if (ctda.reference && ctda.reference !== '0x00000000') {
-        keywords.push(`Equipment: ${ctda.reference}`);
+      const equipmentRef =
+        resolveFormIdToKeyword(ctda.reference) ||
+        resolveFormIdToKeyword(ctda.param1) ||
+        resolveFormIdToKeyword(ctda.param2);
+      if (equipmentRef) {
+        keywords.push(`Equipment: ${equipmentRef}`);
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`[CTDA] GetEquipped function missing reference: ${JSON.stringify(ctda)}`);
+        console.warn(
+          `[CTDA] GetEquipped function missing reference: ${functionName || functionIndex}`
+        );
       }
       break;
 
@@ -344,9 +391,7 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
         keywords.push(skillName);
       } else {
         // eslint-disable-next-line no-console
-        console.warn(
-          `[CTDA] GetActorValue function with non-skill reference: ${JSON.stringify(ctda)}`
-        );
+        console.warn(`[CTDA] GetActorValue function with non-skill reference: ${ctda.reference}`);
       }
       break;
 
@@ -380,7 +425,7 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
 
     case 72: // GetIsID
       // eslint-disable-next-line no-console
-      console.warn(`[CTDA] Unhandled GetIsID function: ${JSON.stringify(ctda)}`);
+      console.warn(`[CTDA] Unhandled GetIsID function: ${functionName || functionIndex}`);
       break;
 
     case 389: // IsAttackType (example index, update if needed)
@@ -403,7 +448,7 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
       } else {
         // eslint-disable-next-line no-console
         console.warn(
-          `[CTDA] IsAttackType function missing comparison value: ${JSON.stringify(ctda)}`
+          `[CTDA] IsAttackType function missing comparison value: ${functionName || functionIndex}`
         );
       }
       break;
@@ -413,11 +458,15 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
       break;
 
     case 448: // HasPerk
-      if (ctda.reference && ctda.reference !== '0x00000000') {
-        keywords.push(`Perk: ${ctda.reference}`);
+      const perkRef =
+        resolveFormIdToKeyword(ctda.reference) ||
+        resolveFormIdToKeyword(ctda.param1) ||
+        resolveFormIdToKeyword(ctda.param2);
+      if (perkRef) {
+        keywords.push(`Perk: ${perkRef}`);
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`[CTDA] HasPerk function missing reference: ${JSON.stringify(ctda)}`);
+        console.warn(`[CTDA] HasPerk function missing reference: ${functionName || functionIndex}`);
       }
       break;
 
@@ -429,24 +478,29 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
           case 'WornHasKeyword':
           case 'HasMagicEffectKeyword':
           case 'EPMagic_SpellHasKeyword':
-            if (ctda.reference && ctda.reference !== '0x00000000') {
-              const resolved = keywordFormIdMap[ctda.reference] || `Keyword: ${ctda.reference}`;
-              keywords.push(resolved);
+            const keywordRef2 =
+              resolveFormIdToKeyword(ctda.reference) ||
+              resolveFormIdToKeyword(ctda.param1) ||
+              resolveFormIdToKeyword(ctda.param2);
+            if (keywordRef2) {
+              keywords.push(keywordRef2);
             } else {
               // eslint-disable-next-line no-console
-              console.warn(`[CTDA] HasKeyword function missing reference: ${JSON.stringify(ctda)}`);
+              console.warn(`[CTDA] HasKeyword function missing reference: ${functionName}`);
             }
             break;
 
           case 'GetEquipped':
           case 'GetEquippedItemType':
-            if (ctda.reference && ctda.reference !== '0x00000000') {
-              keywords.push(`Equipment: ${ctda.reference}`);
+            const equipmentRef2 =
+              resolveFormIdToKeyword(ctda.reference) ||
+              resolveFormIdToKeyword(ctda.param1) ||
+              resolveFormIdToKeyword(ctda.param2);
+            if (equipmentRef2) {
+              keywords.push(`Equipment: ${equipmentRef2}`);
             } else {
               // eslint-disable-next-line no-console
-              console.warn(
-                `[CTDA] GetEquipped function missing reference: ${JSON.stringify(ctda)}`
-              );
+              console.warn(`[CTDA] GetEquipped function missing reference: ${functionName}`);
             }
             break;
 
@@ -520,7 +574,7 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
             } else {
               // eslint-disable-next-line no-console
               console.warn(
-                `[CTDA] GetActorValue function with non-skill reference: ${JSON.stringify(ctda)}`
+                `[CTDA] GetActorValue function with non-skill reference: ${ctda.reference}`
               );
             }
             break;
@@ -555,7 +609,7 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
 
           case 'GetIsID':
             // eslint-disable-next-line no-console
-            console.warn(`[CTDA] Unhandled GetIsID function: ${JSON.stringify(ctda)}`);
+            console.warn(`[CTDA] Unhandled GetIsID function: ${functionName}`);
             break;
 
           case 'IsAttackType':
@@ -579,7 +633,7 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
             } else {
               // eslint-disable-next-line no-console
               console.warn(
-                `[CTDA] IsAttackType function missing comparison value: ${JSON.stringify(ctda)}`
+                `[CTDA] IsAttackType function missing comparison value: ${functionName}`
               );
             }
             break;
@@ -589,24 +643,26 @@ function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: strin
             break;
 
           case 'HasPerk':
-            if (ctda.reference && ctda.reference !== '0x00000000') {
-              keywords.push(`Perk: ${ctda.reference}`);
+            const perkRef2 =
+              resolveFormIdToKeyword(ctda.reference) ||
+              resolveFormIdToKeyword(ctda.param1) ||
+              resolveFormIdToKeyword(ctda.param2);
+            if (perkRef2) {
+              keywords.push(`Perk: ${perkRef2}`);
             } else {
               // eslint-disable-next-line no-console
-              console.warn(`[CTDA] HasPerk function missing reference: ${JSON.stringify(ctda)}`);
+              console.warn(`[CTDA] HasPerk function missing reference: ${functionName}`);
             }
             break;
 
           default:
             // eslint-disable-next-line no-console
-            console.warn(
-              `[CTDA] Unhandled function: ${functionName} (Index: ${functionIndex}) - ${JSON.stringify(ctda)}`
-            );
+            console.warn(`[CTDA] Unhandled function: ${functionName} (Index: ${functionIndex})`);
             break;
         }
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`[CTDA] Unknown function index: ${functionIndex} - ${JSON.stringify(ctda)}`);
+        console.warn(`[CTDA] Unknown function index: ${functionIndex}`);
       }
       break;
   }

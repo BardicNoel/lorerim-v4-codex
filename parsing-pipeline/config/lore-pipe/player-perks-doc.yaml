@@ -5,6 +5,14 @@ input: '../output/parsing-pipeline/lorerim/processed/player-perk-docs-pre.json'
 output: '../output/parsing-pipeline/lorerim/processed/player-perk-docs.json'
 
 stages:
+  - name: 'Filter One-Handed Skill Records'
+    type: 'filter-records'
+    description: 'Filter to only include One-Handed skill (AVOneHanded) records'
+    criteria:
+      - field: 'EDID'
+        operator: 'equals'
+        value: 'AVOneHanded'
+
   - name: 'Generate Skills and Perks Documentation'
     type: 'doc-gen'
     description: 'Transform AVIF+PERK data into clean skills and perks documentation format'

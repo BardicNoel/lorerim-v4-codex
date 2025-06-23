@@ -4,15 +4,17 @@ import {
   ParsedRecord,
   StringEncoding,
   recordSpecificSchemas,
+  RecordSpecificSchemas,
 } from './schema';
 import { JsonArray, BufferDecoderConfig, JsonRecord } from '../../types/pipeline';
 import { Processor } from '../core';
-import { formatFormId, PluginMeta } from '@lorerim/platform-types';
+import { extractSubrecords, formatFormId, PluginMeta } from '@lorerim/platform-types';
 import { resolveGlobalFromReference } from '@lorerim/platform-types';
 import { parentPort, Worker } from 'worker_threads';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
+import * as iconv from 'iconv-lite';
 
 // Warning suppression to prevent log flooding
 const warningSuppression = new Set<string>();
@@ -146,7 +148,23 @@ export class BufferDecoder {
     encoding: StringEncoding,
     postParse?: (value: string) => any
   ): string {
-    const value = buffer.toString(encoding).replace(/\0+$/, '');
+    let value: string;
+
+    // Handle different encodings
+    switch (encoding) {
+      case 'windows-1252':
+        // Use iconv-lite for proper Windows-1252 support
+        value = iconv.decode(buffer, 'win1252').replace(/\0+$/, '');
+        break;
+      case 'utf8':
+      case 'utf16le':
+      case 'ascii':
+        value = buffer.toString(encoding).replace(/\0+$/, '');
+        break;
+      default:
+        throw new Error(`Unsupported encoding: ${encoding}`);
+    }
+
     return postParse ? postParse(value) : value;
   }
 
@@ -565,6 +583,185 @@ export class BufferDecoder {
         throw new Error(`Unsupported type size: ${type}`);
     }
   }
+
+  /**
+   * Parse a buffer using a referenced schema
+   */
+  public parseRecordWithSchema(
+    buffer: Buffer,
+    schema: RecordSpecificSchemas[string],
+    contextPluginName?: string
+  ): any {
+    const result: any = {};
+    let currentOffset = 0;
+
+    // Iterate through the schema fields and parse them
+    for (const [fieldName, fieldSchema] of Object.entries(schema)) {
+      if (currentOffset >= buffer.length) {
+        break; // Stop if we've reached the end of the buffer
+      }
+
+      try {
+        const typedFieldSchema = fieldSchema as FieldSchema;
+
+        switch (typedFieldSchema.type) {
+          case 'string':
+            if (!('encoding' in typedFieldSchema)) continue;
+            const strLength = buffer.readUInt16LE(currentOffset);
+            if (currentOffset + 2 + strLength > buffer.length) break;
+            result[fieldName] = this.parseString(
+              buffer,
+              currentOffset + 2,
+              typedFieldSchema.encoding,
+              typedFieldSchema.parser
+            );
+            currentOffset += 2 + strLength;
+            break;
+
+          case 'formid':
+            if (currentOffset + 4 > buffer.length) break;
+            result[fieldName] = this.parseFormId(
+              buffer,
+              currentOffset,
+              typedFieldSchema.parser,
+              contextPluginName
+            );
+            currentOffset += 4;
+            break;
+
+          case 'uint8':
+          case 'uint16':
+          case 'uint32':
+          case 'float32':
+          case 'int32':
+            const typeSize = this.getTypeSize(typedFieldSchema.type);
+            if (currentOffset + typeSize > buffer.length) break;
+            result[fieldName] = this.parseNumeric(
+              buffer,
+              currentOffset,
+              typedFieldSchema.type,
+              typedFieldSchema.parser
+            );
+            currentOffset += typeSize;
+            break;
+
+          case 'struct':
+            if (!('fields' in typedFieldSchema)) continue;
+            const structLength = buffer.readUInt16LE(currentOffset);
+            if (currentOffset + 2 + structLength > buffer.length) break;
+            result[fieldName] = this.parseStruct(
+              buffer,
+              currentOffset + 2,
+              structLength,
+              typedFieldSchema.fields,
+              false,
+              contextPluginName
+            );
+            currentOffset += 2 + structLength;
+            break;
+
+          case 'array':
+            if (!('element' in typedFieldSchema)) continue;
+            const arrayLength = buffer.readUInt16LE(currentOffset);
+            if (currentOffset + 2 + arrayLength > buffer.length) break;
+            result[fieldName] = this.parseArray(
+              buffer,
+              currentOffset + 2,
+              arrayLength,
+              typedFieldSchema.element,
+              contextPluginName
+            );
+            currentOffset += 2 + arrayLength;
+            break;
+
+          case 'unknown':
+            if (typedFieldSchema.parser) {
+              // Use custom parser if provided
+              const parserArgs: any = {
+                buffer,
+                offset: currentOffset,
+                length: buffer.length - currentOffset,
+              };
+
+              // Pass context data if available (like scriptCount for VMAD)
+              if (fieldName === 'scriptData' && result.scriptCount !== undefined) {
+                parserArgs.scriptCount = result.scriptCount;
+              }
+
+              result[fieldName] = typedFieldSchema.parser(parserArgs);
+              // For unknown fields with custom parsers, we need to be careful about offset advancement
+              // The parser should handle its own offset management
+              break;
+            } else {
+              // Skip unknown fields without parsers
+              const unknownLength = buffer.readUInt16LE(currentOffset);
+              if (currentOffset + 2 + unknownLength > buffer.length) break;
+              currentOffset += 2 + unknownLength;
+              break;
+            }
+
+          case 'schemaReference':
+            if (!('schemaName' in typedFieldSchema))
+              throw new Error('Schema reference must specify schemaName');
+            // Get the referenced schema
+            const referencedSchema = recordSpecificSchemas[typedFieldSchema.schemaName];
+            if (!referencedSchema) {
+              throw new Error(`Referenced schema '${typedFieldSchema.schemaName}' not found`);
+            }
+
+            // Debug: Print a small hex dump of the buffer
+            const hexDump = buffer.toString('hex').substring(0, 64);
+            console.log(
+              `[DEBUG] Schema reference ${typedFieldSchema.schemaName}: buffer hex (first 32 bytes): ${hexDump}`
+            );
+
+            // Split the buffer into subrecords first
+            const subrecords = extractSubrecords(buffer);
+            const subrecordTags = subrecords.map((sr) => sr.tag);
+            console.log(
+              `[DEBUG] Schema reference ${typedFieldSchema.schemaName}: extracted ${subrecords.length} subrecords: [${subrecordTags.join(', ')}]`
+            );
+
+            // Process each subrecord according to the referenced schema
+            const decodedData: Record<string, any> = {};
+
+            for (const subrecord of subrecords) {
+              const subrecordSchema = referencedSchema[subrecord.tag];
+              if (!subrecordSchema) {
+                console.warn(
+                  `[WARN] No schema found for subrecord '${subrecord.tag}' in ${typedFieldSchema.schemaName}`
+                );
+                continue;
+              }
+
+              // Convert base64 string back to buffer for processing
+              const subrecordBuffer = Buffer.from(subrecord.buffer, 'base64');
+              const decodedSubrecord = decodeField(
+                [subrecordBuffer],
+                subrecordSchema,
+                this,
+                contextPluginName
+              );
+
+              if (decodedSubrecord !== null) {
+                decodedData[subrecord.tag] = decodedSubrecord;
+              }
+            }
+
+            return decodedData;
+
+          default:
+            // Skip unsupported field types
+            break;
+        }
+      } catch (error) {
+        console.warn(`[WARN] Failed to parse field ${fieldName} in schema reference:`, error);
+        break; // Stop parsing on error
+      }
+    }
+
+    return result;
+  }
 }
 
 function createBufferFromFieldData(fieldData: any[]): Buffer | null {
@@ -652,6 +849,69 @@ function decodeField(
 
     case 'array':
       return decoder.parseArray(buffer, 0, buffer.length, schema.element, contextPluginName);
+
+    case 'unknown':
+      if (schema.parser) {
+        // Use custom parser if provided
+        const parserArgs: any = {
+          buffer,
+          offset: 0,
+          length: buffer.length,
+        };
+        return schema.parser(parserArgs);
+      } else {
+        // Return raw buffer data if no parser
+        return buffer.toString('base64');
+      }
+
+    case 'schemaReference':
+      if (!('schemaName' in schema)) throw new Error('Schema reference must specify schemaName');
+      // Get the referenced schema
+      const referencedSchema = recordSpecificSchemas[schema.schemaName];
+      if (!referencedSchema) {
+        throw new Error(`Referenced schema '${schema.schemaName}' not found`);
+      }
+
+      // Debug: Print a small hex dump of the buffer
+      const hexDump = buffer.toString('hex').substring(0, 64);
+      console.log(
+        `[DEBUG] Schema reference ${schema.schemaName}: buffer hex (first 32 bytes): ${hexDump}`
+      );
+
+      // Split the buffer into subrecords first
+      const subrecords = extractSubrecords(buffer);
+      const subrecordTags = subrecords.map((sr) => sr.tag);
+      console.log(
+        `[DEBUG] Schema reference ${schema.schemaName}: extracted ${subrecords.length} subrecords: [${subrecordTags.join(', ')}]`
+      );
+
+      // Process each subrecord according to the referenced schema
+      const decodedData: Record<string, any> = {};
+
+      for (const subrecord of subrecords) {
+        const subrecordSchema = referencedSchema[subrecord.tag];
+        if (!subrecordSchema) {
+          console.warn(
+            `[WARN] No schema found for subrecord '${subrecord.tag}' in ${schema.schemaName}`
+          );
+          continue;
+        }
+
+        // Convert base64 string back to buffer for processing
+        const subrecordBuffer = Buffer.from(subrecord.buffer, 'base64');
+        const decodedSubrecord = decodeField(
+          [subrecordBuffer],
+          subrecordSchema,
+          decoder,
+          contextPluginName
+        );
+
+        if (decodedSubrecord !== null) {
+          decodedData[subrecord.tag] = decodedSubrecord;
+        }
+      }
+
+      return decodedData;
 
     default:
       return null;

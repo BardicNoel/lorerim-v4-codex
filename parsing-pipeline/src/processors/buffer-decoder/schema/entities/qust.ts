@@ -2,6 +2,7 @@ import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
 import { flagParserGenerator } from '../generics';
 import { CTDA_ARRAY_SCHEMA, CTDA_RELATED_SCHEMAS } from '../ctda/ctdaSchema';
+import iconv from 'iconv-lite';
 
 // QUST DNAM flags (first byte)
 const QUST_DNAM_FLAGS_1 = {
@@ -82,159 +83,217 @@ const QUST_ALIAS_FLAGS = {
   0x00020000: 'ClearsNameWhenRemoved',
 };
 
-// VMAD Property Type constants
-const VMAD_PROPERTY_TYPES = {
-  0x01: 'String',
-  0x02: 'Integer',
-  0x03: 'Float',
-  0x04: 'Boolean',
-  0x05: 'FormID',
-  0x06: 'Array',
-} as const;
-
-// Custom VMAD parser that handles the specific VMAD format
-const vmadParser = (args: any): any => {
-  const buffer = args.buffer || args[0];
-  const offset = args.offset || 0;
-
-  const result: any = {
-    version: buffer.readUInt16LE(offset),
-    objectFormat: buffer.readUInt16LE(offset + 2),
-    scriptCount: buffer.readUInt16LE(offset + 4),
-    scripts: [],
-  };
-
-  let currentOffset = offset + 6;
-
-  for (let i = 0; i < result.scriptCount; i++) {
-    if (currentOffset >= buffer.length) break;
-
-    // Read script name length
-    const scriptNameLength = buffer.readUInt16LE(currentOffset);
-    currentOffset += 2;
-
-    if (currentOffset + scriptNameLength > buffer.length) break;
-    const scriptName = buffer.toString('utf8', currentOffset, currentOffset + scriptNameLength);
-    currentOffset += scriptNameLength;
-
-    // Read fragment name length
-    const fragmentNameLength = buffer.readUInt16LE(currentOffset);
-    currentOffset += 2;
-
-    if (currentOffset + fragmentNameLength > buffer.length) break;
-    const fragmentName = buffer.toString('utf8', currentOffset, currentOffset + fragmentNameLength);
-    currentOffset += fragmentNameLength;
-
-    // Read fragment index
-    if (currentOffset + 2 > buffer.length) break;
-    const fragmentIndex = buffer.readUInt16LE(currentOffset);
-    currentOffset += 2;
-
-    // Read property count
-    if (currentOffset + 2 > buffer.length) break;
-    const propertyCount = buffer.readUInt16LE(currentOffset);
-    currentOffset += 2;
-
-    const script: any = {
-      scriptName,
-      fragmentName,
-      fragmentIndex,
-      propertyCount,
-      properties: [],
-    };
-
-    // Read properties
-    for (let j = 0; j < propertyCount; j++) {
-      if (currentOffset >= buffer.length) break;
-
-      // Read property name length
-      const propertyNameLength = buffer.readUInt16LE(currentOffset);
-      currentOffset += 2;
-
-      if (currentOffset + propertyNameLength > buffer.length) break;
-      const propertyName = buffer.toString(
-        'utf8',
-        currentOffset,
-        currentOffset + propertyNameLength
-      );
-      currentOffset += propertyNameLength;
-
-      // Read property type
-      if (currentOffset + 1 > buffer.length) break;
-      const propertyType = buffer.readUInt8(currentOffset);
-      currentOffset += 1;
-
-      // Read property value based on type
-      let propertyValue: any = null;
-      switch (propertyType) {
-        case 0x01: // String
-          if (currentOffset + 2 <= buffer.length) {
-            const valueLength = buffer.readUInt16LE(currentOffset);
-            currentOffset += 2;
-            if (currentOffset + valueLength <= buffer.length) {
-              propertyValue = buffer.toString('utf8', currentOffset, currentOffset + valueLength);
-              currentOffset += valueLength;
-            }
-          }
-          break;
-        case 0x02: // Integer
-          if (currentOffset + 4 <= buffer.length) {
-            propertyValue = buffer.readInt32LE(currentOffset);
-            currentOffset += 4;
-          }
-          break;
-        case 0x03: // Float
-          if (currentOffset + 4 <= buffer.length) {
-            propertyValue = buffer.readFloatLE(currentOffset);
-            currentOffset += 4;
-          }
-          break;
-        case 0x04: // Boolean
-          if (currentOffset + 1 <= buffer.length) {
-            propertyValue = buffer.readUInt8(currentOffset) !== 0;
-            currentOffset += 1;
-          }
-          break;
-        case 0x05: // FormID
-          if (currentOffset + 4 <= buffer.length) {
-            propertyValue = buffer.readUInt32LE(currentOffset);
-            currentOffset += 4;
-          }
-          break;
-        default:
-          // Skip unknown types
-          break;
-      }
-
-      script.properties.push({
-        propertyName,
-        propertyType:
-          VMAD_PROPERTY_TYPES[propertyType as keyof typeof VMAD_PROPERTY_TYPES] ||
-          `Unknown(${propertyType})`,
-        propertyValue,
-      });
-    }
-
-    result.scripts.push(script);
-  }
-
-  return result;
-};
-
 export const questSchema: RecordSpecificSchemas = createSchema('QUST', {
   // Script Info
   VMAD: {
-    type: 'struct',
-    fields: [
-      { name: 'version', type: 'uint16' },
-      { name: 'objectFormat', type: 'uint16' },
-      { name: 'scriptCount', type: 'uint16' },
-      {
-        name: 'scriptData',
-        type: 'unknown',
-        parser: vmadParser,
-      },
-    ],
+    type: 'unknown',
+    parser: (args: any) => {
+      const buffer = args.buffer || args[0];
+      const offset = args.offset || 0;
+
+      if (!buffer || buffer.length < 6) {
+        console.log(`[DEBUG] VMAD Parser: buffer too small (${buffer?.length} bytes)`);
+        return { scripts: [] };
+      }
+
+      const version = buffer.readUInt16LE(offset);
+      const objectFormat = buffer.readUInt16LE(offset + 2);
+      const scriptCount = buffer.readUInt16LE(offset + 4);
+      let currentOffset = offset + 6;
+
+      const result: any = {
+        version,
+        objectFormat,
+        scriptCount,
+        scripts: [],
+      };
+
+      for (let i = 0; i < scriptCount; i++) {
+        // Read scriptName (wstring: uint16 length, then Windows-1252 string)
+        if (currentOffset + 2 > buffer.length) break;
+        const scriptNameLen = buffer.readUInt16LE(currentOffset);
+        currentOffset += 2;
+        if (currentOffset + scriptNameLen > buffer.length) break;
+        const scriptNameBuffer = buffer.slice(currentOffset, currentOffset + scriptNameLen);
+        const scriptName = iconv.decode(scriptNameBuffer, 'win1252');
+        const scriptNameHex = buffer.toString('hex', currentOffset, currentOffset + scriptNameLen);
+        console.log(
+          `[DEBUG] VMAD Parser: script ${i} name (len=${scriptNameLen}) at offset ${currentOffset}: "${scriptName}" [hex: ${scriptNameHex}]`
+        );
+        currentOffset += scriptNameLen;
+        // Read status (uint8, only if version >= 4)
+        let scriptStatus = 0;
+        if (version >= 4) {
+          if (currentOffset + 1 > buffer.length) break;
+          scriptStatus = buffer.readUInt8(currentOffset);
+          currentOffset += 1;
+        }
+        // Read propertyCount (uint16)
+        if (currentOffset + 2 > buffer.length) break;
+        const propertyCount = buffer.readUInt16LE(currentOffset);
+        currentOffset += 2;
+        console.log(
+          `[DEBUG] VMAD Parser: script ${i} propertyCount = ${propertyCount} at offset ${currentOffset}`
+        );
+        const script: any = { scriptName, scriptStatus, propertyCount, properties: [] };
+        for (let j = 0; j < propertyCount; j++) {
+          const propStartOffset = currentOffset;
+          // Read propertyName (wstring)
+          if (currentOffset + 2 > buffer.length) break;
+          const propertyNameLen = buffer.readUInt16LE(currentOffset);
+          currentOffset += 2;
+          if (currentOffset + propertyNameLen > buffer.length) break;
+          const propertyNameBuffer = buffer.slice(currentOffset, currentOffset + propertyNameLen);
+          const propertyName = iconv.decode(propertyNameBuffer, 'win1252');
+          const propertyNameHex = buffer.toString(
+            'hex',
+            currentOffset,
+            currentOffset + propertyNameLen
+          );
+          console.log(
+            `[DEBUG] VMAD Parser: property ${j} name (len=${propertyNameLen}) at offset ${currentOffset}: "${propertyName}" [hex: ${propertyNameHex}]`
+          );
+          currentOffset += propertyNameLen;
+          // Read propertyType (uint8)
+          if (currentOffset + 1 > buffer.length) break;
+          const propertyType = buffer.readUInt8(currentOffset);
+          currentOffset += 1;
+          // Read propertyStatus (uint8, only if version >= 4)
+          let propertyStatus = 1;
+          if (version >= 4) {
+            if (currentOffset + 1 > buffer.length) break;
+            propertyStatus = buffer.readUInt8(currentOffset);
+            currentOffset += 1;
+          }
+          console.log(
+            `[DEBUG] VMAD Parser: property ${j} type=${propertyType} status=${propertyStatus} at offset ${currentOffset}`
+          );
+          // Parse propertyValue based on type
+          let propertyValue: any = null;
+          const valueStartOffset = currentOffset;
+          switch (propertyType) {
+            case 1: // object
+              if (objectFormat === 1) {
+                if (currentOffset + 8 > buffer.length) break;
+                const formId = buffer.readUInt32LE(currentOffset);
+                const alias = buffer.readUInt16LE(currentOffset + 4);
+                propertyValue = { formId, alias };
+                currentOffset += 8;
+              } else if (objectFormat === 2) {
+                if (currentOffset + 8 > buffer.length) break;
+                const alias = buffer.readUInt16LE(currentOffset + 2);
+                const formId = buffer.readUInt32LE(currentOffset + 4);
+                propertyValue = { formId, alias };
+                currentOffset += 8;
+              }
+              break;
+            case 2: // wstring
+              if (currentOffset + 2 > buffer.length) break;
+              const strLen = buffer.readUInt16LE(currentOffset);
+              currentOffset += 2;
+              if (currentOffset + strLen > buffer.length) break;
+              const strBuffer = buffer.slice(currentOffset, currentOffset + strLen);
+              propertyValue = iconv.decode(strBuffer, 'win1252');
+              currentOffset += strLen;
+              break;
+            case 3: // int
+              if (currentOffset + 4 > buffer.length) break;
+              propertyValue = buffer.readInt32LE(currentOffset);
+              currentOffset += 4;
+              break;
+            case 4: // float
+              if (currentOffset + 4 > buffer.length) break;
+              propertyValue = buffer.readFloatLE(currentOffset);
+              currentOffset += 4;
+              break;
+            case 5: // bool (int8)
+              if (currentOffset + 1 > buffer.length) break;
+              propertyValue = buffer.readUInt8(currentOffset) !== 0;
+              currentOffset += 1;
+              break;
+            case 11: // array of objects
+              if (currentOffset + 4 > buffer.length) break;
+              const objArrLen = buffer.readUInt32LE(currentOffset);
+              currentOffset += 4;
+              propertyValue = [];
+              for (let k = 0; k < objArrLen; k++) {
+                if (objectFormat === 1) {
+                  if (currentOffset + 8 > buffer.length) break;
+                  const formId = buffer.readUInt32LE(currentOffset);
+                  const alias = buffer.readUInt16LE(currentOffset + 4);
+                  propertyValue.push({ formId, alias });
+                  currentOffset += 8;
+                } else if (objectFormat === 2) {
+                  if (currentOffset + 8 > buffer.length) break;
+                  const alias = buffer.readUInt16LE(currentOffset + 2);
+                  const formId = buffer.readUInt32LE(currentOffset + 4);
+                  propertyValue.push({ formId, alias });
+                  currentOffset += 8;
+                }
+              }
+              break;
+            case 12: // array of wstrings
+              if (currentOffset + 4 > buffer.length) break;
+              const strArrLen = buffer.readUInt32LE(currentOffset);
+              currentOffset += 4;
+              propertyValue = [];
+              for (let k = 0; k < strArrLen; k++) {
+                if (currentOffset + 2 > buffer.length) break;
+                const arrStrLen = buffer.readUInt16LE(currentOffset);
+                currentOffset += 2;
+                if (currentOffset + arrStrLen > buffer.length) break;
+                const arrStrBuffer = buffer.slice(currentOffset, currentOffset + arrStrLen);
+                propertyValue.push(iconv.decode(arrStrBuffer, 'win1252'));
+                currentOffset += arrStrLen;
+              }
+              break;
+            case 13: // array of ints
+              if (currentOffset + 4 > buffer.length) break;
+              const intArrLen = buffer.readUInt32LE(currentOffset);
+              currentOffset += 4;
+              propertyValue = [];
+              for (let k = 0; k < intArrLen; k++) {
+                if (currentOffset + 4 > buffer.length) break;
+                propertyValue.push(buffer.readInt32LE(currentOffset));
+                currentOffset += 4;
+              }
+              break;
+            case 14: // array of floats
+              if (currentOffset + 4 > buffer.length) break;
+              const floatArrLen = buffer.readUInt32LE(currentOffset);
+              currentOffset += 4;
+              propertyValue = [];
+              for (let k = 0; k < floatArrLen; k++) {
+                if (currentOffset + 4 > buffer.length) break;
+                propertyValue.push(buffer.readFloatLE(currentOffset));
+                currentOffset += 4;
+              }
+              break;
+            case 15: // array of bools
+              if (currentOffset + 4 > buffer.length) break;
+              const boolArrLen = buffer.readUInt32LE(currentOffset);
+              currentOffset += 4;
+              propertyValue = [];
+              for (let k = 0; k < boolArrLen; k++) {
+                if (currentOffset + 1 > buffer.length) break;
+                propertyValue.push(buffer.readUInt8(currentOffset) !== 0);
+                currentOffset += 1;
+              }
+              break;
+            default:
+              propertyValue = { unknownType: propertyType };
+              break;
+          }
+          console.log(
+            `[DEBUG] VMAD Parser: property ${j} value at offset ${valueStartOffset} to ${currentOffset}:`,
+            propertyValue
+          );
+          script.properties.push({ propertyName, propertyType, propertyStatus, propertyValue });
+        }
+        result.scripts.push(script);
+      }
+      return result;
+    },
   },
   // Quest Data
   DNAM: {
