@@ -10,7 +10,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="fixed left-0 top-16 h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+    <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-screen">
       <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Files</h2>
@@ -27,7 +27,7 @@ export function Sidebar() {
             </p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2 max-h-[calc(100vh-8rem)] overflow-y-auto">
             {loaded.map((file) => (
               <div
                 key={file.id}

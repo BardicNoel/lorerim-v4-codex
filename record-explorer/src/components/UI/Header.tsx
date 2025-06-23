@@ -1,8 +1,19 @@
 import { useAppStore } from '../../store/appStore';
 import { SunIcon, MoonIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { SearchBar } from './SearchBar';
+import type { SearchResult } from '../../services/searchService';
 
-export function Header() {
-  const { ui, toggleSidebar, setTheme } = useAppStore();
+interface HeaderProps {
+  onSearchResults: (results: SearchResult[]) => void;
+  onSearchClear: () => void;
+}
+
+export function Header({ onSearchResults, onSearchClear }: HeaderProps) {
+  const { ui, toggleSidebar, setTheme, files } = useAppStore();
+  const { loaded, activeFileId } = files;
+
+  const activeFile = loaded.find(file => file.id === activeFileId);
+  const activeData = activeFile?.data || [];
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16 flex items-center justify-between px-4">
@@ -20,18 +31,14 @@ export function Header() {
       </div>
 
       <div className="flex items-center space-x-4">
-        {/* Global search - placeholder for now */}
-        <div className="relative">
-          <input
-            type="text"
+        {/* Global search */}
+        <div className="w-64">
+          <SearchBar
+            data={activeData}
+            onSearchResults={onSearchResults}
+            onSearchClear={onSearchClear}
             placeholder="Search records..."
-            className="w-64 px-4 py-2 pl-10 pr-4 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
         </div>
 
         {/* Theme toggle */}

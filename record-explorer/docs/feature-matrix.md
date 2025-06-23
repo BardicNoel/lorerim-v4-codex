@@ -17,6 +17,9 @@
 | Feature | Implementation | Testing | Verification | Notes |
 |---------|---------------|---------|--------------|-------|
 | Table View | ✅ | ❌ | ❌ | Basic table display with column types |
+| Nested Object Handling | ✅ | ❌ | ❌ | Expandable rows for objects and arrays |
+| Object Viewer | ✅ | ❌ | ❌ | Detailed view of nested objects |
+| Array Viewer | ✅ | ❌ | ❌ | List view of array items |
 | Tree View | ❌ | ❌ | ❌ | No implementation yet |
 | JSON View | ❌ | ❌ | ❌ | No implementation yet |
 | Column Management | ❌ | ❌ | ❌ | No show/hide/resize features |

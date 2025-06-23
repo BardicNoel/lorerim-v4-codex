@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useAppStore } from '../../store/appStore';
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import type { LoadedFile } from '../../types/file';
+import { generateSampleNestedData, generateSimpleNestedData } from '../../utils/sampleData';
 
 export function FileManager() {
   const { addFile, setLoading } = useAppStore();
@@ -108,6 +109,29 @@ export function FileManager() {
     event.target.value = '';
   }, [addFile, setLoading]);
 
+  const loadDemoData = useCallback((type: 'simple' | 'complex') => {
+    setLoading(true);
+    
+    try {
+      const data = type === 'simple' ? generateSimpleNestedData() : generateSampleNestedData(5);
+      const loadedFile: LoadedFile = {
+        id: `demo-${type}-${Date.now()}`,
+        name: `Demo ${type === 'simple' ? 'Simple' : 'Complex'} Nested Data`,
+        path: `demo-${type}.json`,
+        size: JSON.stringify(data).length,
+        data,
+        schema: null,
+        loadedAt: new Date(),
+      };
+
+      addFile(loadedFile);
+    } catch (error) {
+      console.error('Error loading demo data:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [addFile, setLoading]);
+
   return (
     <div className="space-y-4">
       <div className="flex space-x-4">
@@ -152,6 +176,22 @@ export function FileManager() {
               cursor-pointer"
           />
         </div>
+      </div>
+
+      {/* Demo data buttons */}
+      <div className="flex space-x-4">
+        <button
+          onClick={() => loadDemoData('simple')}
+          className="px-4 py-2 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+        >
+          Load Simple Demo Data
+        </button>
+        <button
+          onClick={() => loadDemoData('complex')}
+          className="px-4 py-2 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 rounded-lg border border-orange-200 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors"
+        >
+          Load Complex Demo Data
+        </button>
       </div>
 
       {/* Drag and drop area */}
