@@ -37,8 +37,19 @@ stages:
   - from: "local"
     name: "Extract VMAD Properties"
     type: "extract-field"
-    description: "Extract properties from VMAD scripts and make them top-level documents"
+    description: "Extract properties from VMAD scripts and make them siblings of decodedData"
     field: "decodedData.VMAD.scripts[0].properties"
+    outputMode: "sibling"
+    preserveSource: false
+
+  - from: "local"
+    name: "Remove Technical Fields"
+    type: "remove-fields"
+    description: "Remove decodedData, header, and record fields to clean up the output"
+    fields:
+      - "decodedData"
+      - "header"
+      - "record"
 
   - from: "local"
     name: "Filter Wintersun Records"
