@@ -69,6 +69,7 @@ function validateStage(stage: any): StageConfig {
       'sample-records',
       'doc-gen',
       'extract-field',
+      'formid-resolver',
     ].includes(stage.type)
   ) {
     throw new Error(`Invalid stage type: ${stage.type}`);
@@ -147,6 +148,21 @@ function validateStage(stage: any): StageConfig {
     case 'extract-field':
       if (!stage.field) {
         throw new Error('Extract field stage must have field');
+      }
+      break;
+    case 'formid-resolver':
+      if (!stage.pluginRegistryPath) {
+        throw new Error('FormID resolver stage must have pluginRegistryPath');
+      }
+      if (!stage.contextPluginField) {
+        throw new Error('FormID resolver stage must have contextPluginField');
+      }
+      if (
+        !stage.targetFields ||
+        !Array.isArray(stage.targetFields) ||
+        stage.targetFields.length === 0
+      ) {
+        throw new Error('FormID resolver stage must have targetFields array');
       }
       break;
   }

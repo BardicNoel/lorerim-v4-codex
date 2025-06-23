@@ -11,6 +11,7 @@ import { createSampleRecordsProcessor } from './sample-records';
 import { removeFieldsProcessorV2 } from './remove-fields-v2';
 import { createDocGenProcessor } from '../doc-gen/doc-gen';
 import { createExtractFieldProcessor } from './extract-field';
+import { createFormIdResolverProcessor } from './formid-resolver';
 
 // Core processor interface
 export interface Processor {
@@ -43,6 +44,8 @@ export function createProcessor(stage: StageConfig): Processor {
       return createDocGenProcessor(stage);
     case 'extract-field':
       return createExtractFieldProcessor(stage as any);
+    case 'formid-resolver':
+      return createFormIdResolverProcessor(stage as any);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }

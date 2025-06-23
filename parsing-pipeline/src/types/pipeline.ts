@@ -20,7 +20,8 @@ export type StageType =
   | 'rename-fields'
   | 'sample-records'
   | 'doc-gen'
-  | 'extract-field';
+  | 'extract-field'
+  | 'formid-resolver';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -161,6 +162,22 @@ export interface ExtractFieldConfig extends BaseStageConfig {
   field: string; // e.g., 'decodedData.VMAD.scripts[0].properties'
 }
 
+// FormID resolver stage configuration
+export interface FormIdResolverConfig extends BaseStageConfig {
+  type: 'formid-resolver';
+  pluginRegistryPath: string; // Path to the plugin registry file
+  contextPluginField: string; // Field path to get the context plugin name (e.g., 'meta.plugin')
+  targetFields: {
+    field: FieldPath; // Field path to resolve (e.g., 'decodedData.PNAM')
+    outputField?: FieldPath; // Optional output field path (defaults to field + '_resolved')
+  }[];
+  conditions?: {
+    field: FieldPath;
+    operator: 'equals' | 'not-equals' | 'contains' | 'not-contains';
+    value: any;
+  }[];
+}
+
 // Stage configuration union type
 export type StageConfig =
   | FilterRecordsConfig
@@ -173,7 +190,8 @@ export type StageConfig =
   | RenameFieldsConfig
   | SampleRecordsConfig
   | DocGenConfig
-  | ExtractFieldConfig;
+  | ExtractFieldConfig
+  | FormIdResolverConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {
