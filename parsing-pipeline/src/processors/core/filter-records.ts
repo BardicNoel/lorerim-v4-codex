@@ -10,8 +10,21 @@ function evaluateCriteria(
   return criteria.every((criterion) => {
     const value = getNestedValue(record, criterion.field);
 
+    // Debug logging for Wintersun filter
+    if (criterion.field === 'propertyName') {
+      console.log(
+        `[DEBUG] Filter: field=${criterion.field}, value=${value}, operator=${criterion.operator}`
+      );
+      if (criterion.operator === 'in-list') {
+        console.log(`[DEBUG] Filter: checking if ${value} is in list:`, criterion.value);
+      }
+    }
+
     // Handle undefined/null values
     if (value === undefined || value === null) {
+      if (criterion.field === 'propertyName') {
+        console.log(`[DEBUG] Filter: value is undefined/null for field ${criterion.field}`);
+      }
       return false;
     }
 
@@ -29,7 +42,11 @@ function evaluateCriteria(
       case 'less-than':
         return typeof value === 'number' && value < criterion.value;
       case 'in-list':
-        return Array.isArray(criterion.value) && criterion.value.includes(value);
+        const result = Array.isArray(criterion.value) && criterion.value.includes(value);
+        if (criterion.field === 'propertyName') {
+          console.log(`[DEBUG] Filter: in-list result = ${result}`);
+        }
+        return result;
       case 'not-in-list':
         return Array.isArray(criterion.value) && !criterion.value.includes(value);
       default:
@@ -45,6 +62,16 @@ export function createFilterRecordsProcessor(config: FilterRecordsConfig): Proce
   return {
     async transform(data: JsonArray): Promise<JsonArray> {
       totalRecords = data.length;
+      console.log(`[DEBUG] Filter: Processing ${totalRecords} records`);
+
+      // Log a sample record structure for debugging
+      if (data.length > 0) {
+        console.log(`[DEBUG] Filter: Sample record keys:`, Object.keys(data[0]));
+        if (data[0].propertyName) {
+          console.log(`[DEBUG] Filter: Sample propertyName:`, data[0].propertyName);
+        }
+      }
+
       const result = data.filter((record) => {
         const matches = evaluateCriteria(record as ParsedRecord, config.criteria);
         if (!matches) {
@@ -52,6 +79,10 @@ export function createFilterRecordsProcessor(config: FilterRecordsConfig): Proce
         }
         return matches;
       });
+
+      console.log(
+        `[DEBUG] Filter: Kept ${result.length} records, filtered out ${recordsFiltered} records`
+      );
 
       return result;
     },

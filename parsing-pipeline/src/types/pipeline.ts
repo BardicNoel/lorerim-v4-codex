@@ -19,7 +19,8 @@ export type StageType =
   | 'merge-records'
   | 'rename-fields'
   | 'sample-records'
-  | 'doc-gen';
+  | 'doc-gen'
+  | 'extract-field';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -154,6 +155,12 @@ export interface DocGenConfig extends BaseStageConfig {
   sortBy?: 'name' | 'level' | 'category';
 }
 
+// Extract field stage configuration
+export interface ExtractFieldConfig extends BaseStageConfig {
+  type: 'extract-field';
+  field: string; // e.g., 'decodedData.VMAD.scripts[0].properties'
+}
+
 // Stage configuration union type
 export type StageConfig =
   | FilterRecordsConfig
@@ -165,7 +172,8 @@ export type StageConfig =
   | MergeRecordsConfig
   | RenameFieldsConfig
   | SampleRecordsConfig
-  | DocGenConfig;
+  | DocGenConfig
+  | ExtractFieldConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {

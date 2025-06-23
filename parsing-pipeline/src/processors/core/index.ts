@@ -10,6 +10,7 @@ import { createRenameFieldsProcessor } from './rename-fields';
 import { createSampleRecordsProcessor } from './sample-records';
 import { removeFieldsProcessorV2 } from './remove-fields-v2';
 import { createDocGenProcessor } from '../doc-gen/doc-gen';
+import { createExtractFieldProcessor } from './extract-field';
 
 // Core processor interface
 export interface Processor {
@@ -40,6 +41,8 @@ export function createProcessor(stage: StageConfig): Processor {
       return createSampleRecordsProcessor(stage);
     case 'doc-gen':
       return createDocGenProcessor(stage);
+    case 'extract-field':
+      return createExtractFieldProcessor(stage as any);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }

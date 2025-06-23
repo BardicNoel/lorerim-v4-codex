@@ -68,6 +68,7 @@ function validateStage(stage: any): StageConfig {
       'rename-fields',
       'sample-records',
       'doc-gen',
+      'extract-field',
     ].includes(stage.type)
   ) {
     throw new Error(`Invalid stage type: ${stage.type}`);
@@ -141,6 +142,11 @@ function validateStage(stage: any): StageConfig {
       }
       if (!['player-perk', 'skill-perk-docs'].includes(stage.docType)) {
         throw new Error(`Invalid docType: ${stage.docType}`);
+      }
+      break;
+    case 'extract-field':
+      if (!stage.field) {
+        throw new Error('Extract field stage must have field');
       }
       break;
   }

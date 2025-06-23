@@ -53,4 +53,5 @@ data/
 
 # Outputs
 output/
+pipeline-projects/**/*.json
 skyrim-extractor/validation-report.json

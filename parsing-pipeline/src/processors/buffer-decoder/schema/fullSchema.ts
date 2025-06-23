@@ -5,7 +5,6 @@ import { perkSchema } from './entities/perk';
 import { avifSchema } from './entities/avif';
 import { questSchema } from './entities/qust';
 import { flstSchema } from './entities/flst';
-import { vmadSchema } from './entities/vmad';
 import { kywdSchema } from './entities/kywd';
 
 // Record-specific schemas that use common fields and shared fragments

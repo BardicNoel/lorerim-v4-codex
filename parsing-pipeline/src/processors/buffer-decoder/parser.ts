@@ -249,12 +249,12 @@ export class BufferDecoder {
     const endOffset = offset + length;
 
     // Only log struct start for VMAD to reduce noise
-    const isVMAD = fields.length > 0 && fields[0]?.name === 'version';
-    if (isVMAD) {
-      console.log(
-        `[DEBUG] parseStruct: VMAD struct - start: ${offset}, length: ${length}, buffer: ${buffer.length}`
-      );
-    }
+    // const isVMAD = fields.length > 0 && fields[0]?.name === 'version';
+    // if (isVMAD) {
+    //   console.log(
+    //     `[DEBUG] parseStruct: VMAD struct - start: ${offset}, length: ${length}, buffer: ${buffer.length}`
+    //   );
+    // }
 
     for (let fieldIndex = 0; fieldIndex < fields.length; fieldIndex++) {
       const field = fields[fieldIndex];
@@ -424,11 +424,11 @@ export class BufferDecoder {
     // For VMAD arrays, use the actual buffer length instead of the provided length
     const actualEndOffset = isVMADArray ? buffer.length : endOffset;
 
-    if (isVMADArray) {
-      console.log(
-        `[DEBUG] parseArray: VMAD array - start: ${offset}, buffer length: ${buffer.length}, element type: ${elementSchema.type}`
-      );
-    }
+    // if (isVMADArray) {
+    //   console.log(
+    //     `[DEBUG] parseArray: VMAD array - start: ${offset}, buffer length: ${buffer.length}, element type: ${elementSchema.type}`
+    //   );
+    // }
 
     while (currentOffset < actualEndOffset) {
       // Check if we have enough buffer space for the next element
@@ -559,11 +559,11 @@ export class BufferDecoder {
     }
 
     // Only log completion for VMAD arrays
-    if (isVMADArray) {
-      console.log(
-        `[DEBUG] parseArray: VMAD array completed - processed ${results.length} elements, final offset: ${currentOffset}`
-      );
-    }
+    // if (isVMADArray) {
+    //   console.log(
+    //     `[DEBUG] parseArray: VMAD array completed - processed ${results.length} elements, final offset: ${currentOffset}`
+    //   );
+    // }
 
     return results;
   }
@@ -699,57 +699,6 @@ export class BufferDecoder {
               currentOffset += 2 + unknownLength;
               break;
             }
-
-          case 'schemaReference':
-            if (!('schemaName' in typedFieldSchema))
-              throw new Error('Schema reference must specify schemaName');
-            // Get the referenced schema
-            const referencedSchema = recordSpecificSchemas[typedFieldSchema.schemaName];
-            if (!referencedSchema) {
-              throw new Error(`Referenced schema '${typedFieldSchema.schemaName}' not found`);
-            }
-
-            // Debug: Print a small hex dump of the buffer
-            const hexDump = buffer.toString('hex').substring(0, 64);
-            console.log(
-              `[DEBUG] Schema reference ${typedFieldSchema.schemaName}: buffer hex (first 32 bytes): ${hexDump}`
-            );
-
-            // Split the buffer into subrecords first
-            const subrecords = extractSubrecords(buffer);
-            const subrecordTags = subrecords.map((sr) => sr.tag);
-            console.log(
-              `[DEBUG] Schema reference ${typedFieldSchema.schemaName}: extracted ${subrecords.length} subrecords: [${subrecordTags.join(', ')}]`
-            );
-
-            // Process each subrecord according to the referenced schema
-            const decodedData: Record<string, any> = {};
-
-            for (const subrecord of subrecords) {
-              const subrecordSchema = referencedSchema[subrecord.tag];
-              if (!subrecordSchema) {
-                console.warn(
-                  `[WARN] No schema found for subrecord '${subrecord.tag}' in ${typedFieldSchema.schemaName}`
-                );
-                continue;
-              }
-
-              // Convert base64 string back to buffer for processing
-              const subrecordBuffer = Buffer.from(subrecord.buffer, 'base64');
-              const decodedSubrecord = decodeField(
-                [subrecordBuffer],
-                subrecordSchema,
-                this,
-                contextPluginName
-              );
-
-              if (decodedSubrecord !== null) {
-                decodedData[subrecord.tag] = decodedSubrecord;
-              }
-            }
-
-            return decodedData;
-
           default:
             // Skip unsupported field types
             break;
@@ -864,55 +813,6 @@ function decodeField(
         return buffer.toString('base64');
       }
 
-    case 'schemaReference':
-      if (!('schemaName' in schema)) throw new Error('Schema reference must specify schemaName');
-      // Get the referenced schema
-      const referencedSchema = recordSpecificSchemas[schema.schemaName];
-      if (!referencedSchema) {
-        throw new Error(`Referenced schema '${schema.schemaName}' not found`);
-      }
-
-      // Debug: Print a small hex dump of the buffer
-      const hexDump = buffer.toString('hex').substring(0, 64);
-      console.log(
-        `[DEBUG] Schema reference ${schema.schemaName}: buffer hex (first 32 bytes): ${hexDump}`
-      );
-
-      // Split the buffer into subrecords first
-      const subrecords = extractSubrecords(buffer);
-      const subrecordTags = subrecords.map((sr) => sr.tag);
-      console.log(
-        `[DEBUG] Schema reference ${schema.schemaName}: extracted ${subrecords.length} subrecords: [${subrecordTags.join(', ')}]`
-      );
-
-      // Process each subrecord according to the referenced schema
-      const decodedData: Record<string, any> = {};
-
-      for (const subrecord of subrecords) {
-        const subrecordSchema = referencedSchema[subrecord.tag];
-        if (!subrecordSchema) {
-          console.warn(
-            `[WARN] No schema found for subrecord '${subrecord.tag}' in ${schema.schemaName}`
-          );
-          continue;
-        }
-
-        // Convert base64 string back to buffer for processing
-        const subrecordBuffer = Buffer.from(subrecord.buffer, 'base64');
-        const decodedSubrecord = decodeField(
-          [subrecordBuffer],
-          subrecordSchema,
-          decoder,
-          contextPluginName
-        );
-
-        if (decodedSubrecord !== null) {
-          decodedData[subrecord.tag] = decodedSubrecord;
-        }
-      }
-
-      return decodedData;
-
     default:
       return null;
   }
@@ -966,7 +866,7 @@ const parseGroupedFields = (
     const subrecord = parsedRecord.record[processedFields + offset];
     // check for terminator tag
     if (subrecord.tag === terminatorTag) {
-      console.log(`[DEBUG] Found terminator tag ${terminatorTag}, stopping grouped field parsing`);
+      // console.log(`[DEBUG] Found terminator tag ${terminatorTag}, stopping grouped field parsing`);
       break;
     }
 
@@ -981,9 +881,9 @@ const parseGroupedFields = (
       continue;
     }
 
-    console.log(
-      `[DEBUG] Processing grouped field ${subrecord.tag} with schema type: ${subrecordSchema.type}`
-    );
+    // console.log(
+    //   `[DEBUG] Processing grouped field ${subrecord.tag} with schema type: ${subrecordSchema.type}`
+    // );
 
     const decodedSubrecord = decodeField(
       [subrecord.buffer],

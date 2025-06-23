@@ -150,9 +150,6 @@ export const questSchema: RecordSpecificSchemas = createSchema('QUST', {
             currentOffset,
             currentOffset + propertyNameLen
           );
-          console.log(
-            `[DEBUG] VMAD Parser: property ${j} name (len=${propertyNameLen}) at offset ${currentOffset}: "${propertyName}" [hex: ${propertyNameHex}]`
-          );
           currentOffset += propertyNameLen;
           // Read propertyType (uint8)
           if (currentOffset + 1 > buffer.length) break;
@@ -165,9 +162,6 @@ export const questSchema: RecordSpecificSchemas = createSchema('QUST', {
             propertyStatus = buffer.readUInt8(currentOffset);
             currentOffset += 1;
           }
-          console.log(
-            `[DEBUG] VMAD Parser: property ${j} type=${propertyType} status=${propertyStatus} at offset ${currentOffset}`
-          );
           // Parse propertyValue based on type
           let propertyValue: any = null;
           const valueStartOffset = currentOffset;
@@ -284,10 +278,6 @@ export const questSchema: RecordSpecificSchemas = createSchema('QUST', {
               propertyValue = { unknownType: propertyType };
               break;
           }
-          console.log(
-            `[DEBUG] VMAD Parser: property ${j} value at offset ${valueStartOffset} to ${currentOffset}:`,
-            propertyValue
-          );
           script.properties.push({ propertyName, propertyType, propertyStatus, propertyValue });
         }
         result.scripts.push(script);
