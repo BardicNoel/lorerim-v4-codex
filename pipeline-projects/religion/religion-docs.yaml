@@ -1,0 +1,11 @@
+name: "Religion Documentation Pipeline"
+description: "Generate comprehensive religion documentation from Wintersun QUST and SPEL data"
+input: "wintersun-qust.json"
+output: "wintersun-religion-docs.json"
+
+stages:
+  - name: "Generate Religion Documentation"
+    type: "doc-gen"
+    description: "Generate structured religion documentation with spell effects"
+    docType: "religion-docs"
+    configFile: "religion-docs-config.yaml"

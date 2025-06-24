@@ -1,10 +1,9 @@
 import { JsonArray, KeepFieldsConfig, ProcessingResult } from '../../types/pipeline';
 import { Processor } from './index';
-import { ParsedRecord } from '@lorerim/platform-types';
 import { getNestedValue } from '../../utils/field-access';
 
 function evaluateCondition(
-  record: ParsedRecord,
+  record: any,
   condition: { field: string; operator: string; value: any }
 ): boolean {
   const fieldValue = getNestedValue(record, condition.field);
@@ -27,6 +26,21 @@ function evaluateCondition(
   }
 }
 
+/**
+ * Safely set a nested value in an object
+ */
+function setNestedValue(obj: any, path: string, value: any): void {
+  const keys = path.split('.');
+  const lastKey = keys.pop()!;
+  const target = keys.reduce((current, key) => {
+    if (!(key in current) || typeof current[key] !== 'object') {
+      current[key] = {};
+    }
+    return current[key];
+  }, obj);
+  target[lastKey] = value;
+}
+
 export function createKeepFieldsProcessor(config: KeepFieldsConfig): Processor {
   let stats: ProcessingResult = {
     recordsProcessed: 0,
@@ -39,54 +53,32 @@ export function createKeepFieldsProcessor(config: KeepFieldsConfig): Processor {
       stats.fieldsKept = 0;
 
       return data.map((record) => {
-        const parsedRecord = record as ParsedRecord;
         const shouldProcess =
           !config.conditions ||
-          config.conditions.every((condition) => evaluateCondition(parsedRecord, condition));
+          config.conditions.every((condition) => evaluateCondition(record, condition));
 
-        // Prepare new meta
-        const newMeta = { ...parsedRecord.meta };
-        // Prepare new record array
-        let newRecordArr: { tag: string; buffer: string }[] = [];
-
-        if (shouldProcess) {
-          // Only keep specified fields
-          for (const fieldPath of config.fields) {
-            const parts = fieldPath.split('.');
-            if (parts[0] === 'record') {
-              const tag = parts[1];
-              const found = parsedRecord.record.find((r) => r.tag === tag);
-              if (found) {
-                newRecordArr.push({ tag: found.tag, buffer: found.buffer });
-                stats.fieldsKept!++;
-              }
-            } else if (parts[0] === 'meta') {
-              const fieldName = parts[1];
-              // Only assign known meta fields
-              if (
-                fieldName === 'type' ||
-                fieldName === 'formId' ||
-                fieldName === 'plugin' ||
-                fieldName === 'stackOrder' ||
-                fieldName === 'isWinner'
-              ) {
-                (newMeta as any)[fieldName] =
-                  parsedRecord.meta[fieldName as keyof typeof parsedRecord.meta];
-                stats.fieldsKept!++;
-              }
-              // Skip unknown meta fields
-            }
-          }
-        } else {
-          // If conditions aren't met, keep all subrecords
-          newRecordArr = [...parsedRecord.record];
+        if (!shouldProcess) {
+          return record; // Keep the record unchanged if conditions aren't met
         }
 
-        return {
-          meta: newMeta,
-          record: newRecordArr,
-          header: parsedRecord.header,
-        };
+        // Create a new object with only the specified fields
+        const newRecord: any = {};
+
+        for (const fieldPath of config.fields) {
+          const fieldValue = getNestedValue(record, fieldPath);
+          if (fieldValue !== undefined) {
+            // If it's a simple field (no dots), just copy it directly
+            if (!fieldPath.includes('.')) {
+              newRecord[fieldPath] = fieldValue;
+            } else {
+              // For nested fields, preserve the structure
+              setNestedValue(newRecord, fieldPath, fieldValue);
+            }
+            stats.fieldsKept!++;
+          }
+        }
+
+        return newRecord;
       });
     },
 

@@ -1,34 +1,43 @@
 # Religion Documentation Configuration
 # This config defines how religion data should be processed and formatted
 
-name: "Religion Documentation Config"
-description: "Configuration for generating structured religion documentation"
+name: "Wintersun Religion Documentation"
+description: "Generate comprehensive documentation for Wintersun religion system"
 
 # Output format options
-outputFormat: "json"  # Options: json, markdown, html
+outputFormat: "both" # Options: json, markdown, html
 
 # Grouping and organization options
-groupByType: true     # Group deities by their divine type (Divine, Ancestor, Daedric Prince, etc.)
-sortByName: true      # Sort deities alphabetically within groups
-includeFormIds: true  # Include FormID references for effects
+groupByType: true # Group deities by their divine type (Divine, Ancestor, Daedric Prince, etc.)
+sortByName: true # Sort deities alphabetically within groups
+includeFormIds: true # Include FormID references for effects
 
 # Content filtering options
 includeBlessings: true
 includeBoons: true
 includeTenets: true
 includeFavoredRaces: true
+includeSpellDetails: true
+includeEffectDetails: true
 
 # Race name mapping (for better display)
 raceNameMapping:
   "0x00013743": "Altmer"
-  "0x00013749": "Bosmer"
+  "0x00088840": "Bosmer"
+  "0x00013749": "Dunmer"
+  "0x00088884": "Argonian"
   "0x00013742": "Breton"
   "0x00013741": "Imperial"
-  "0x00013740": "Nord"
+  "0x00013747": "Nord"
+  "0x00013740": "Orc"
   "0x00013746": "Redguard"
-  "0x00013745": "Orc"
-  "0x00013747": "Khajiit"
-  "0x00088840": "Argonian"
+  "0x00013745": "Khajiit"
+  "0x0008883C": "Wood Elf"
+  "0x0008883D": "Dark Elf"
+  "0x000A82B9": "Falmer"
+  "0x0008883A": "Orc"
+  "0x00088794": "Khajiit"
+  "0x00088845": "Argonian"
   "0x00000000": "None"
 
 # Divine type descriptions
@@ -37,6 +46,11 @@ divineTypeDescriptions:
   "Ancestor": "Ancestor spirits and cultural deities"
   "Daedric Prince": "The Daedric Princes, powerful entities of Oblivion"
   "Cultural": "Deities specific to particular cultures and regions"
+  "Deity": "General divine entities"
+  "Yokudan Deity": "Deities from Yokudan mythology"
+  "Nordic Deity": "Deities from Nordic mythology"
+  "Khajiiti Deity": "Deities from Khajiiti mythology"
+  "Tribunal": "The Tribunal, the living gods of Morrowind"
   "Other": "Other divine entities and spirits"
 
 # Markdown template options (if outputFormat is markdown)
@@ -56,10 +70,10 @@ htmlTemplate:
 
 # Effect resolution options
 effectResolution:
-  resolveSpellNames: true      # Try to resolve spell names from FormIDs
-  resolveEffectDescriptions: true  # Include effect descriptions
-  includeMagnitude: true       # Include effect magnitude if available
-  includeDuration: true        # Include effect duration if available
+  resolveSpellNames: true # Try to resolve spell names from FormIDs
+  resolveEffectDescriptions: true # Include effect descriptions
+  includeMagnitude: true # Include effect magnitude if available
+  includeDuration: true # Include effect duration if available
 
 # Validation options
 validation:
@@ -72,4 +86,8 @@ validation:
 performance:
   batchSize: 1000
   enableCaching: true
-  parallelProcessing: false 
+  parallelProcessing: false
+
+# Additional options
+spellDataFile: "wintersun-spel.json"
+qustDataFile: "wintersun-qust.json"

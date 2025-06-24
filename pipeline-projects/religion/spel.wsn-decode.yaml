@@ -32,4 +32,4 @@ stages:
     loadPluginMetadata: true
     pluginMetadataPath: "../output/skyrim-extractor/lorerim/plugin-metadata-map.json"
     multithreaded: true
-    maxWorkers: 4 
+    maxWorkers: 4
