@@ -89,5 +89,5 @@ performance:
   parallelProcessing: false
 
 # Additional options
-spellDataFile: "wintersun-spel.json"
-qustDataFile: "wintersun-qust.json"
+spellDataFile: "../pipeline-projects/religion/wintersun-spel.json"
+qustDataFile: "../pipeline-projects/religion/wintersun-qust.json"

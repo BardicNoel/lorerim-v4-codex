@@ -4,61 +4,61 @@
 
 Religion is polytheistic in Skyrim, your character is free to receive blessings from deities other than the one followed
 
-- *blessing of akatosh*: Resist 15% of magic.
-- *blessing of arkay*: Increases your Health by 40 points.
-- *blessing of dibella*: Prices are 20% better.
-- *blessing of julianos*: Increases your Magicka by 40 points.
-- *blessing of kynareth*: Increases your Stamina by 40 points.
-- *blessing of mara*: Restoration spells cost 10% less to cast.
-- *blessing of stendarr*: Block 10% more damage.
-- *blessing of talos*: Time between shouts is reduced.
-- *blessing of zenithar*: Able to improve items 5% better.
-- *blessing of almalexia*: 
-- *blessing of sotha sil*: 
-- *blessing of vivec*: 
-- *blessing of auriel*: You are 10% more effective with missile weapons.
-- *blessing of jephre*: Carrying capacity increased by 50 points.
-- *blessing of magnus*: 10% chance to absorb a hostile spell and recharge your Magicka.
-- *blessing of phynaster*: Potions and poisons you mix are 10% stronger.
-- *blessing of syrabane*: Regenerate 2% of your maximum Magicka per second.
-- *blessing of trinimac*: You are 10% more effective with two-handed weapons.
-- *blessing of xarxes*: Scrolls are 25% more effective.
-- *blessing of z'en*: Alteration spells cost 10% less to cast.
-- *blessing of azura*: Resist 10% of magic.
-- *blessing of boethiah*: You are 10% more effective with one-handed weapons.
-- *blessing of clavicus vile*: Conjuration spells cost 10% less to cast.
-- *blessing of hermaeus mora*: Spells and effects you cast on yourself last 15% longer.
-- *blessing of hircine*: Regenerate 2% of your maximum Stamina per second.
-- *blessing of jyggalag*: Deal 15% more attack damage and critical damage against daedra.
-- *blessing of malacath*: Your power attacks cost 10% less Stamina.
-- *blessing of mehrunes dagon*: Destruction spells are 10% more effective.
-- *blessing of mephala*: Poisons you mix are 15% more effective.
-- *blessing of meridia*: Restoration spells are ***10***% more effective.
-- *blessing of molag bal*: Destruction spells cost 10% less to cast.
-- *blessing of namira*: Increases Disease Resistance by 25%.
-- *blessing of nocturnal*: You are 25% harder to detect.
-- *blessing of peryite*: Increases Poison Resistance by 50%.
-- *blessing of sanguine*: Using beneficial potions and alchemical ingredients is 15% better.
-- *blessing of sheogorath*: Grants a random blessing!
-- *blessing of vaermina*: Illusion spells cost 10% less to cast.
-- *blessing of baan dar*: Pickpocketing is 10% easier.
-- *blessing of ebonarm*: Armor rating of heavy armor pieces is increased by 10%.
-- *blessing of mannimarco*: Conjuration spells are 10% more effective.
-- *blessing of sai*: Armor rating of light armor pieces is increased by 10%.
-- *blessing of shor*: Deal 15% more attack damage and critical damage against elves.
-- *blessing of sithis*: Sneak attacks deal 15% more damage.
-- *blessing of st. alessia*: Followers within 20 feet gain ***50*** points of armor and ***10***% magic resistance.
-- *blessing of the all-maker*: Deal 15% more attack damage and critical damage against animals.
-- *blessing of the hist*: Tough scales increase armor by 50 points.
-- *blessing of the magna-ge*: Alteration spells are ***10***% more effective.
-- *blessing of leki*: Armor rating of light armor pieces is increased by 10%.
-- *blessing of morwha*: Healing spells restore 15% more Health.
-- *blessing of satakal*: Regenerate 2% of your maximum Health per second.
-- *blessing of tall papa*: Items are enchanted 10% stronger.
-- *blessing of the hoonding*: Stagger from attacks and bashes is 50% more effective.
-- *blessing of rajhin*: Lockpicking is 10% easier.
-- *blessing of riddle'thar*: Unarmed strikes do 20 additional damage.
-- *blessing of the animal gods*: Deal 15% more attack damage and critical damage against animals.
+- *Blessing of Akatosh*: Resist 15% of magic.
+- *Blessing of Almalexia*: Increases your Health by 10 points.
+- *Blessing of Arkay*: Increases your Health by 40 points.
+- *Blessing of Auriel*: You are 10% more effective with missile weapons.
+- *Blessing of Azura*: Resist 10% of magic.
+- *Blessing of Baan Dar*: Pickpocketing is 10% easier.
+- *Blessing of Boethiah*: You are 10% more effective with one-handed weapons.
+- *Blessing of Clavicus Vile*: Conjuration spells cost 10% less to cast.
+- *Blessing of Dibella*: Prices are 20% better.
+- *Blessing of Ebonarm*: Armor rating of heavy armor pieces is increased by 10%.
+- *Blessing of Hermaeus Mora*: Spells and effects you cast on yourself last 15% longer.
+- *Blessing of Hircine*: Regenerate 2% of your maximum Stamina per second.
+- *Blessing of Jephre*: Carrying capacity increased by 50 points.
+- *Blessing of Julianos*: Increases your Magicka by 40 points.
+- *Blessing of Jyggalag*: Deal 15% more attack damage and critical damage against daedra.
+- *Blessing of Kynareth*: Increases your Stamina by 40 points.
+- *Blessing of Leki*: Armor rating of light armor pieces is increased by 10%.
+- *Blessing of Magnus*: 10% chance to absorb a hostile spell and recharge your Magicka.
+- *Blessing of Malacath*: Your power attacks cost 10% less Stamina.
+- *Blessing of Mannimarco*: Conjuration spells are 10% more effective.
+- *Blessing of Mara*: Restoration spells cost 10% less to cast.
+- *Blessing of Mehrunes Dagon*: Destruction spells are 10% more effective.
+- *Blessing of Mephala*: Poisons you mix are 15% more effective.
+- *Blessing of Meridia*: Restoration spells are ***10***% more effective.
+- *Blessing of Molag Bal*: Destruction spells cost 10% less to cast.
+- *Blessing of Morwha*: Healing spells restore 15% more Health.
+- *Blessing of Namira*: Increases Disease Resistance by 25%.
+- *Blessing of Nocturnal*: You are 25% harder to detect.
+- *Blessing of Peryite*: Increases Poison Resistance by 50%.
+- *Blessing of Phynaster*: Potions and poisons you mix are 10% stronger.
+- *Blessing of Rajhin*: Lockpicking is 10% easier.
+- *Blessing of Riddle'Thar*: Unarmed strikes do 20 additional damage.
+- *Blessing of Sai*: Armor rating of light armor pieces is increased by 10%.
+- *Blessing of Sanguine*: Using beneficial potions and alchemical ingredients is 15% better.
+- *Blessing of Satakal*: Regenerate 2% of your maximum Health per second.
+- *Blessing of Sheogorath*: Grants a random blessing!
+- *Blessing of Shor*: Deal 15% more attack damage and critical damage against elves.
+- *Blessing of Sithis*: Sneak attacks deal 15% more damage.
+- *Blessing of Sotha Sil*: Increases your Magicka by 5 points.
+- *Blessing of St. Alessia*: Followers within 20 feet gain ***50*** points of armor and ***10***% magic resistance.
+- *Blessing of Stendarr*: Block 10% more damage.
+- *Blessing of Syrabane*: Regenerate 2% of your maximum Magicka per second.
+- *Blessing of Tall Papa*: Items are enchanted 10% stronger.
+- *Blessing of Talos*: Time between shouts is reduced.
+- *Blessing of The All-Maker*: Deal 15% more attack damage and critical damage against animals.
+- *Blessing of The Animal Gods*: Deal 15% more attack damage and critical damage against animals.
+- *Blessing of The Hist*: Tough scales increase armor by 50 points.
+- *Blessing of The HoonDing*: Stagger from attacks and bashes is 50% more effective.
+- *Blessing of The Magna-Ge*: Alteration spells are ***10***% more effective.
+- *Blessing of Trinimac*: You are 10% more effective with two-handed weapons.
+- *Blessing of Vaermina*: Illusion spells cost 10% less to cast.
+- *Blessing of Vivec*: Sneak is increased by 5 points.
+- *Blessing of Xarxes*: Scrolls are 25% more effective.
+- *Blessing of Z'en*: Alteration spells cost 10% less to cast.
+- *Blessing of Zenithar*: Able to improve items 5% better.
 
 # Divine
 
@@ -66,7 +66,6 @@ Religion is polytheistic in Skyrim, your character is free to receive blessings 
 
 *blessing of akatosh*: Resist 15% of magic.
 **Tenets of Akatosh**
-
 Fulfill your destiny by saving Tamriel. Raise your character level. Absorb dragon souls. Never openly break the laws of Skyrim.
 
 **Follower of Akatosh**
@@ -80,7 +79,6 @@ Fulfill your destiny by saving Tamriel. Raise your character level. Absorb drago
 
 *blessing of arkay*: Increases your Health by 40 points.
 **Tenets of Arkay**
-
 Slay the undead and their summoners. Perform ***Arkay's*** ***Rites***. Never openly break the laws of Skyrim. Never summon the undead or become one of them.
 
 **Follower of Arkay**
@@ -102,7 +100,6 @@ Slay the undead and their summoners. Perform ***Arkay's*** ***Rites***. Never op
 
 *blessing of dibella*: Prices are 20% better.
 **Tenets of Dibella**
-
 Persuade others. Receive the blessing of Lover's Comfort. Find a new Sybil for my Temple. Pray only in the nude. Never openly break the laws of Skyrim.
 
 **Follower of Dibella**
@@ -116,7 +113,6 @@ Persuade others. Receive the blessing of Lover's Comfort. Find a new Sybil for m
 
 *blessing of julianos*: Increases your Magicka by 40 points.
 **Tenets of Julianos**
-
 Master the skills of the Mage. Strive to raise your Magicka. Never openly break the laws of Skyrim.
 
 **Follower of Julianos**
@@ -130,7 +126,6 @@ Master the skills of the Mage. Strive to raise your Magicka. Never openly break 
 
 *blessing of kynareth*: Increases your Stamina by 40 points.
 **Tenets of Kynareth**
-
 Explore new locations. Strive to raise your Stamina. Receive the Voice of the Sky. Pray only outdoors. Never openly break the laws of Skyrim.
 
 **Follower of Kynareth**
@@ -146,7 +141,6 @@ Explore new locations. Strive to raise your Stamina. Receive the Voice of the Sk
 
 *blessing of mara*: Restoration spells cost 10% less to cast.
 **Tenets of Mara**
-
 Be married. Own one or more houses. Be generous to beggars and children. Receive the blessing of Lover's Comfort. Never openly break the laws of Skyrim.
 
 **Follower of Mara**
@@ -162,7 +156,6 @@ Be married. Own one or more houses. Be generous to beggars and children. Receive
 
 *blessing of stendarr*: Block 10% more damage.
 **Tenets of Stendarr**
-
 Clear dungeons of evil. Slay daedra and the undead. Complete side quests. Never openly break the laws of Skyrim. Never practice the foul summoning arts.
 
 **Follower of Stendarr**
@@ -178,7 +171,6 @@ Clear dungeons of evil. Slay daedra and the undead. Complete side quests. Never 
 
 *blessing of talos*: Time between shouts is reduced.
 **Tenets of Talos**
-
 Bring the Civil War to a conclusion. Learn the dragon tongue. Absorb dragon souls. Slay elves and the Thalmor. Never openly break the laws of Skyrim.
 
 **Follower of Talos**
@@ -192,7 +184,6 @@ Bring the Civil War to a conclusion. Learn the dragon tongue. Absorb dragon soul
 
 *blessing of zenithar*: Able to improve items 5% better.
 **Tenets of Zenithar**
-
 Invest in stores and merchants. Seek out skill training. Make weapons and armor. Never openly break the laws of Skyrim.
 
 **Follower of Zenithar**
@@ -206,9 +197,8 @@ Invest in stores and merchants. Seek out skill training. Make weapons and armor.
 
 ## Almalexia
 
-*blessing of almalexia*: 
+*blessing of almalexia*: Increases your Health by 10 points.
 **Tenets of Almalexia**
-
 Vanquish the threats facing Solstheim. Be generous to beggars and children. Receive the blessing of Lover's Comfort. Dark Elves are most deserving of my favor.
 
 **Follower of Almalexia**
@@ -220,9 +210,8 @@ Vanquish the threats facing Solstheim. Be generous to beggars and children. Rece
 
 ## Sotha Sil
 
-*blessing of sotha sil*: 
+*blessing of sotha sil*: Increases your Magicka by 5 points.
 **Tenets of Sotha Sil**
-
 Uncover the secrets of Dwemer ruins. Create enchanted items. Master the skills of the Mage. Dark Elves and those skilled in Enchanting are most deserving of my favor.
 
 **Follower of Sotha Sil**
@@ -236,9 +225,8 @@ Uncover the secrets of Dwemer ruins. Create enchanted items. Master the skills o
 
 ## Vivec
 
-*blessing of vivec*: 
+*blessing of vivec*: Sneak is increased by 5 points.
 **Tenets of Vivec**
-
 Fulfill your destiny by saving Tamriel. Read the stories of others. Defeat epic foes. Dark Elves and those skilled in Speechcraft are most deserving of my favor.
 
 **Follower of Vivec**
@@ -254,7 +242,6 @@ Fulfill your destiny by saving Tamriel. Read the stories of others. Defeat epic 
 
 *blessing of auriel*: You are 10% more effective with missile weapons.
 **Tenets of Auriel**
-
 Fulfill your destiny by saving Tamriel. Master all skills. Become my Champion at my sacred Chantry. High Elves are most deserving of my favor.
 
 **Follower of Auriel**
@@ -268,7 +255,6 @@ Fulfill your destiny by saving Tamriel. Master all skills. Become my Champion at
 
 *blessing of jephre*: Carrying capacity increased by 50 points.
 **Tenets of Jephre**
-
 Explore new locations. Read the stories of others. Hunt animals. Wood Elves are most deserving of my favor.
 
 **Follower of Jephre**
@@ -287,7 +273,6 @@ Explore new locations. Read the stories of others. Hunt animals. Wood Elves are 
 
 *blessing of magnus*: 10% chance to absorb a hostile spell and recharge your Magicka.
 **Tenets of Magnus**
-
 Practice magic successfully while praying. Safeguard the Eye of Magnus. Create enchanted items.
 
 **Follower of Magnus**
@@ -303,7 +288,6 @@ Practice magic successfully while praying. Safeguard the Eye of Magnus. Create e
 
 *blessing of phynaster*: Potions and poisons you mix are 10% stronger.
 **Tenets of Phynaster**
-
 Explore new locations. Find the standing stones of Skyrim. Harvest the fruits of nature. Bretons are most deserving of my favor.
 
 **Follower of Phynaster**
@@ -322,7 +306,6 @@ Explore new locations. Find the standing stones of Skyrim. Harvest the fruits of
 
 *blessing of syrabane*: Regenerate 2% of your maximum Magicka per second.
 **Tenets of Syrabane**
-
 Read books that teach new skills. Study a wide variety of spells. High Elves are most deserving of my favor.
 
 **Follower of Syrabane**
@@ -336,7 +319,6 @@ Read books that teach new skills. Study a wide variety of spells. High Elves are
 
 *blessing of trinimac*: You are 10% more effective with two-handed weapons.
 **Tenets of Trinimac**
-
 Slay humans. Defeat epic foes. Never accept Boethiah's blessing or serve her. Those skilled in Two-Handed are most deserving of my favor.
 
 **Follower of Trinimac**
@@ -352,7 +334,6 @@ Slay humans. Defeat epic foes. Never accept Boethiah's blessing or serve her. Th
 
 *blessing of xarxes*: Scrolls are 25% more effective.
 **Tenets of Xarxes**
-
 Explore new locations. Read the stories of others. Study a wide variety of spells. Bretons are most deserving of my favor.
 
 **Follower of Xarxes**
@@ -366,7 +347,6 @@ Explore new locations. Read the stories of others. Study a wide variety of spell
 
 *blessing of z'en*: Alteration spells cost 10% less to cast.
 **Tenets of Z'en**
-
 Bribe people as needed. Harvest the fruits of nature. Eat as much food as you want. Those skilled in Speech are most deserving of my favor.
 
 **Follower of Z'en**
@@ -382,7 +362,6 @@ Bribe people as needed. Harvest the fruits of nature. Eat as much food as you wa
 
 *blessing of azura*: Resist 10% of magic.
 **Tenets of Azura**
-
 Trap souls in my name. Explore new locations. Pray only at twilight, preferably outside. Dark Elves and those skilled in Illusion are most deserving of my favor.
 
 **Follower of Azura**
@@ -396,7 +375,6 @@ Trap souls in my name. Explore new locations. Pray only at twilight, preferably 
 
 *blessing of boethiah*: You are 10% more effective with one-handed weapons.
 **Tenets of Boethiah**
-
 Murder the innocent. Slay people who stand in your way. Strike unseen with sneak attacks. Dark Elves are most deserving of my favor.
 
 **Follower of Boethiah**
@@ -410,7 +388,6 @@ Murder the innocent. Slay people who stand in your way. Strike unseen with sneak
 
 *blessing of clavicus vile*: Conjuration spells cost 10% less to cast.
 **Tenets of Clavicus Vile**
-
 Pray to accept a Pact and complete it as written within the allotted time. Never break or ignore my Pacts.
 
 **Follower of Clavicus Vile**
@@ -424,7 +401,6 @@ Pray to accept a Pact and complete it as written within the allotted time. Never
 
 *blessing of hermaeus mora*: Spells and effects you cast on yourself last 15% longer.
 **Tenets of Hermaeus Mora**
-
 Read ***Eldritch*** ***Pages*** and bind them into ***Eldritch*** ***Tomes***. Read books that teach new skills. Become my Champion at the Summit of Apocrypha.
 
 **Follower of Hermaeus Mora**
@@ -438,7 +414,6 @@ Read ***Eldritch*** ***Pages*** and bind them into ***Eldritch*** ***Tomes***. R
 
 *blessing of hircine*: Regenerate 2% of your maximum Stamina per second.
 **Tenets of Hircine**
-
 Slay the living in open combat, especially those stronger than you. Live as a werewolf. Pray in the wild. Those skilled in Light Armor are most deserving of my favor.
 
 **Follower of Hircine**
@@ -452,7 +427,6 @@ Slay the living in open combat, especially those stronger than you. Live as a we
 
 *blessing of jyggalag*: Deal 15% more attack damage and critical damage against daedra.
 **Tenets of Jyggalag**
-
 Activate my Obelisks of Order. Clear dungeons of evil. Slay daedra. Never serve Sheogorath. Those skilled in Heavy Armor are most deserving of my favor.
 
 **Follower of Jyggalag**
@@ -469,7 +443,6 @@ Activate my Obelisks of Order. Clear dungeons of evil. Slay daedra. Never serve 
 
 *blessing of malacath*: Your power attacks cost 10% less Stamina.
 **Tenets of Malacath**
-
 Defeat epic foes. Improve weapons and armor. Never commit a crime against the strongholds. Orcs and those skilled in Smithing are most deserving of my favor.
 
 **Follower of Malacath**
@@ -483,7 +456,6 @@ Defeat epic foes. Improve weapons and armor. Never commit a crime against the st
 
 *blessing of mehrunes dagon*: Destruction spells are 10% more effective.
 **Tenets of Mehrunes Dagon**
-
 Slay people who stand in your way. Defile the shrines of my enemies. Those skilled in Destruction are most deserving of my favor.
 
 **Follower of Mehrunes Dagon**
@@ -497,7 +469,6 @@ Slay people who stand in your way. Defile the shrines of my enemies. Those skill
 
 *blessing of mephala*: Poisons you mix are 15% more effective.
 **Tenets of Mephala**
-
 Poison your weapons. Strike unseen with sneak attacks. Intimidate the weak. Dark Elves are most deserving of my favor.
 
 **Follower of Mephala**
@@ -511,7 +482,6 @@ Poison your weapons. Strike unseen with sneak attacks. Intimidate the weak. Dark
 
 *blessing of meridia*: Restoration spells are ***10***% more effective.
 **Tenets of Meridia**
-
 Slay the undead. Never summon the undead or become one of them. High Elves and those skilled in Restoration are most deserving of my favor.
 
 **Follower of Meridia**
@@ -528,7 +498,6 @@ Slay the undead. Never summon the undead or become one of them. High Elves and t
 
 *blessing of molag bal*: Destruction spells cost 10% less to cast.
 **Tenets of Molag Bal**
-
 Slay people who stand in your way. Trap souls in my name. Live as a vampire and never seek a cure. Those skilled in Destruction are most deserving of my favor.
 
 **Follower of Molag Bal**
@@ -544,7 +513,6 @@ Slay people who stand in your way. Trap souls in my name. Live as a vampire and 
 
 *blessing of namira*: Increases Disease Resistance by 25%.
 **Tenets of Namira**
-
 Murder the innocent. Poison your weapons. Eat the corpses of the dead with my Ring. Be generous to beggars.
 
 **Follower of Namira**
@@ -558,7 +526,6 @@ Murder the innocent. Poison your weapons. Eat the corpses of the dead with my Ri
 
 *blessing of nocturnal*: You are 25% harder to detect.
 **Tenets of Nocturnal**
-
 Pickpocket ***Mysterious*** ***Coinpurses***. Pick locks successfully. Pray only at night, preferably in darkness. Those skilled in Sneak are most deserving of my favor.
 
 **Follower of Nocturnal**
@@ -572,7 +539,6 @@ Pickpocket ***Mysterious*** ***Coinpurses***. Pick locks successfully. Pray only
 
 *blessing of peryite*: Increases Poison Resistance by 50%.
 **Tenets of Peryite**
-
 Catch as many diseases as you can. Accept my Gifts of pestilence. Pray only while diseased. Never accept a cure for your afflictions.
 
 **Follower of Peryite**
@@ -588,7 +554,6 @@ Catch as many diseases as you can. Accept my Gifts of pestilence. Pray only whil
 
 *blessing of sanguine*: Using beneficial potions and alchemical ingredients is 15% better.
 **Tenets of Sanguine**
-
 Make mischief and commit misdemeanors and crimes worthy of a bounty. Indulge in mead, wine and ale. Find your own way out of jail.
 
 **Follower of Sanguine**
@@ -605,7 +570,6 @@ Make mischief and commit misdemeanors and crimes worthy of a bounty. Indulge in 
 
 *blessing of sheogorath*: Grants a random blessing!
 **Tenets of Sheogorath**
-
 Pray often and receive Sheogorath's ***Touch*** ***of*** ***Madness***. Never disrespect cheese.
 
 **Follower of Sheogorath**
@@ -621,7 +585,6 @@ Pray often and receive Sheogorath's ***Touch*** ***of*** ***Madness***. Never di
 
 *blessing of vaermina*: Illusion spells cost 10% less to cast.
 **Tenets of Vaermina**
-
 Witness the death of those under your mind affecting spells. Kill people in their sleep. Sleep to pray. Those skilled in Illusion are most deserving of my favor.
 
 **Follower of Vaermina**
@@ -639,7 +602,6 @@ Witness the death of those under your mind affecting spells. Kill people in thei
 
 *blessing of baan dar*: Pickpocketing is 10% easier.
 **Tenets of Baan Dar**
-
 Pick locks and pockets successfully. Khajiit and those skilled in Archery are most deserving of my favor.
 
 **Follower of Baan Dar**
@@ -653,7 +615,6 @@ Pick locks and pockets successfully. Khajiit and those skilled in Archery are mo
 
 *blessing of ebonarm*: Armor rating of heavy armor pieces is increased by 10%.
 **Tenets of Ebonarm**
-
 Slay daedra. Defeat epic foes. Complete miscellaneous quests for the people of Skyrim. Those skilled in Block are most deserving of my favor.
 
 **Follower of Ebonarm**
@@ -667,7 +628,6 @@ Slay daedra. Defeat epic foes. Complete miscellaneous quests for the people of S
 
 *blessing of mannimarco*: Conjuration spells are 10% more effective.
 **Tenets of Mannimarco**
-
 Trap souls in my name. Pray only at night. Never accept Arkay's blessing. Those skilled in Conjuration are most deserving of my favor.
 
 **Follower of Mannimarco**
@@ -683,7 +643,6 @@ Trap souls in my name. Pray only at night. Never accept Arkay's blessing. Those 
 
 *blessing of sai*: Armor rating of light armor pieces is increased by 10%.
 **Tenets of Sai**
-
 Gamble while meditating and win.
 
 **Follower of Sai**
@@ -697,7 +656,6 @@ Gamble while meditating and win.
 
 *blessing of shor*: Deal 15% more attack damage and critical damage against elves.
 **Tenets of Shor**
-
 Fulfill your destiny by saving Tamriel. Master the skills of the Warrior. Slay elves. Defeat epic foes.
 
 **Follower of Shor**
@@ -711,7 +669,6 @@ Fulfill your destiny by saving Tamriel. Master the skills of the Warrior. Slay e
 
 *blessing of sithis*: Sneak attacks deal 15% more damage.
 **Tenets of Sithis**
-
 Murder the innocent. Pray while sacrificing a Human Heart or Human Flesh. Send your victims to the Void. Argonians are most deserving of my favor.
 
 **Follower of Sithis**
@@ -725,7 +682,6 @@ Murder the innocent. Pray while sacrificing a Human Heart or Human Flesh. Send y
 
 *blessing of st. alessia*: Followers within 20 feet gain ***50*** points of armor and ***10***% magic resistance.
 **Tenets of St. Alessia**
-
 Have a follower at your side. Slay elves. Receive the blessing of a Divine.
 
 **Follower of St. Alessia**
@@ -739,7 +695,6 @@ Have a follower at your side. Slay elves. Receive the blessing of a Divine.
 
 *blessing of the all-maker*: Deal 15% more attack damage and critical damage against animals.
 **Tenets of the All-Maker**
-
 Cleanse the All-Maker Stones. Hunt animals. Explore new locations. Pray only outdoors. Nords are most deserving of my favor.
 
 **Follower of the All-Maker**
@@ -753,7 +708,6 @@ Cleanse the All-Maker Stones. Hunt animals. Explore new locations. Pray only out
 
 *blessing of the hist*: Tough scales increase armor by 50 points.
 **Tenets of the Hist**
-
 Explore new locations. Slay daedra. Pray only outdoors. Never summon a daedra.
 
 **Follower of the Hist**
@@ -769,7 +723,6 @@ Explore new locations. Slay daedra. Pray only outdoors. Never summon a daedra.
 
 *blessing of the magna-ge*: Alteration spells are ***10***% more effective.
 **Tenets of the Magna-Ge**
-
 Create enchanted items. Explore new locations. Pray only outdoors at night. High Elves and those skilled in Alteration are most deserving of our favor.
 
 **Follower of the Magna-Ge**
@@ -785,7 +738,6 @@ Create enchanted items. Explore new locations. Pray only outdoors at night. High
 
 *blessing of leki*: Armor rating of light armor pieces is increased by 10%.
 **Tenets of Leki**
-
 Bring the Civil War to a conclusion. Make and improve weapons. Master the skills of the Warrior.
 
 **Follower of Leki**
@@ -799,7 +751,6 @@ Bring the Civil War to a conclusion. Make and improve weapons. Master the skills
 
 *blessing of morwha*: Healing spells restore 15% more Health.
 **Tenets of Morwha**
-
 Be married. Receive the blessing of Lover's Comfort. Harvest the fruits of nature. Eat as much food as you want.
 
 **Follower of Morwha**
@@ -813,7 +764,6 @@ Be married. Receive the blessing of Lover's Comfort. Harvest the fruits of natur
 
 *blessing of satakal*: Regenerate 2% of your maximum Health per second.
 **Tenets of Satakal**
-
 Fulfill your destiny by saving Tamriel. Strive to raise your Health. Absorb dragon souls.
 
 **Follower of Satakal**
@@ -827,7 +777,6 @@ Fulfill your destiny by saving Tamriel. Strive to raise your Health. Absorb drag
 
 *blessing of tall papa*: Items are enchanted 10% stronger.
 **Tenets of Tall Papa**
-
 Touch the ***Fractures*** scattered around Skyrim. Create enchanted items. Those skilled in Enchanting are most deserving of my favor.
 
 **Follower of Tall Papa**
@@ -844,7 +793,6 @@ Touch the ***Fractures*** scattered around Skyrim. Create enchanted items. Those
 
 *blessing of the hoonding*: Stagger from attacks and bashes is 50% more effective.
 **Tenets of the HoonDing**
-
 Slay your foes in open combat, especially those stronger than you. Those skilled in One-Handed are most deserving of my favor.
 
 **Follower of the HoonDing**
@@ -862,7 +810,6 @@ Slay your foes in open combat, especially those stronger than you. Those skilled
 
 *blessing of rajhin*: Lockpicking is 10% easier.
 **Tenets of Rajhin**
-
 Explore new locations. Bribe people as needed. Pick locks successfully. Those skilled in Lockpicking are most deserving of my favor.
 
 **Follower of Rajhin**
@@ -876,7 +823,6 @@ Explore new locations. Bribe people as needed. Pick locks successfully. Those sk
 
 *blessing of riddle'thar*: Unarmed strikes do 20 additional damage.
 **Tenets of Riddle'Thar**
-
 Master the skills of the Warrior, Thief and Mage. Strive to raise your Health, Magicka and Stamina. Each is as important as the others. Pray only at night.
 
 **Follower of the Riddle'Thar**
@@ -892,7 +838,6 @@ Master the skills of the Warrior, Thief and Mage. Strive to raise your Health, M
 
 *blessing of the animal gods*: Deal 15% more attack damage and critical damage against animals.
 **Tenets of the Old Ways**
-
 Slay people who stand in your way. Absorb dragon souls. Assume our powers through prayer. Nords are most deserving of our favor.
 
 **Follower of the Old Ways**

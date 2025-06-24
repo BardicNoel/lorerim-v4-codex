@@ -3,7 +3,7 @@ import { DocGenerator, DocGenConfig } from './doc-gen';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
-import { CTDA_FUNCTION_INDICES } from '../../../../__platform/src/uesp/ctdaFunctionIndices';
+import { CTDA_FUNCTION_INDICES } from '@lorerim/platform-types'
 
 interface ReligionProperty {
   name: string;
@@ -65,6 +65,7 @@ interface ReligionConfig {
   includeFavoredRaces: boolean;
   includeSpellDetails: boolean;
   includeEffectDetails: boolean;
+  debug: boolean;
   raceNameMapping: Record<string, string>;
   divineTypeDescriptions: Record<string, string>;
   spellDataFile?: string;
@@ -150,9 +151,10 @@ function debugLogZeroOrUndefined(
   context: string,
   deityName: string,
   effectName: string,
-  value: any
+  value: any,
+  config?: ReligionConfig
 ) {
-  if (value === 0 || value === undefined || value === null || value === '') {
+  if (config?.debug && (value === undefined || value === null || value === '')) {
     // eslint-disable-next-line no-console
     console.log(`[DEBUG][${context}] Deity: ${deityName}, Effect: ${effectName}, Value:`, value);
   }
@@ -163,7 +165,8 @@ function formatBoonSection(
   deityName: string,
   spellData: Record<string, any>,
   isOldWays: boolean,
-  boonNum: 1 | 2
+  boonNum: 1 | 2,
+  config: ReligionConfig
 ): string {
   if (!boon || !Array.isArray(boon.effects) || boon.effects.length === 0) return '';
   let out = `**${boon.spellName || 'Boon'}**\n`;
@@ -173,8 +176,8 @@ function formatBoonSection(
     let desc = applyReplacements(mainEffect.effectDescription || '');
     desc = replaceMagTag(desc, mainEffect.magnitude);
     desc = emphasizeAngleTags(desc);
-    debugLogZeroOrUndefined('Boon', deityName, mainEffect.effectName, mainEffect.magnitude);
-    debugLogZeroOrUndefined('Boon', deityName, mainEffect.effectName, desc);
+    debugLogZeroOrUndefined('Boon', deityName, mainEffect.effectName, mainEffect.magnitude, config);
+    debugLogZeroOrUndefined('Boon', deityName, mainEffect.effectName, desc, config);
     out += `- ${mainEffect.effectName}: ${desc}\n`;
   }
   // Additional effects as Notes
@@ -185,8 +188,8 @@ function formatBoonSection(
       let desc = applyReplacements(eff.effectDescription || '');
       desc = replaceMagTag(desc, eff.magnitude);
       desc = emphasizeAngleTags(desc);
-      debugLogZeroOrUndefined('Boon', deityName, eff.effectName, eff.magnitude);
-      debugLogZeroOrUndefined('Boon', deityName, eff.effectName, desc);
+      debugLogZeroOrUndefined('Boon', deityName, eff.effectName, eff.magnitude, config);
+      debugLogZeroOrUndefined('Boon', deityName, eff.effectName, desc, config);
       out += `  - ${eff.effectName}: ${desc}\n`;
     }
   }
@@ -204,13 +207,15 @@ function formatBoonSection(
           'Totem',
           deityName,
           totemEffect?.MGEF?.FULL || totemEffect?.EDID || 'Unknown Totem',
-          totemEffect?.EFIT?.magnitude
+          totemEffect?.EFIT?.magnitude,
+          config
         );
         debugLogZeroOrUndefined(
           'Totem',
           deityName,
           totemEffect?.MGEF?.FULL || totemEffect?.EDID || 'Unknown Totem',
-          totemDesc
+          totemDesc,
+          config
         );
         out += `  - ${totem.FULL || totem.EDID}: ${totemDesc}\n`;
       });
@@ -220,57 +225,47 @@ function formatBoonSection(
   return out;
 }
 
-function loadReligionConfig(configPath?: string): ReligionConfig {
+function loadReligionConfig(configPath?: string, debug: boolean = false): ReligionConfig {
   const defaultConfig: ReligionConfig = {
-    name: 'Religion Documentation Config',
-    description: 'Configuration for generating structured religion documentation',
+    name: 'Default Religion Config',
+    description: 'Default configuration for religion documentation generation',
     outputFormat: 'json',
     groupByType: true,
     sortByName: true,
-    includeFormIds: true,
+    includeFormIds: false,
     includeBlessings: true,
     includeBoons: true,
     includeTenets: true,
     includeFavoredRaces: true,
     includeSpellDetails: true,
     includeEffectDetails: true,
+    debug: debug,
     raceNameMapping: {
       '0x00013743': 'Altmer',
-      '0x00088840': 'Bosmer',
-      '0x00013749': 'Dunmer',
-      '0x00088884': 'Argonian',
-      '0x00013742': 'Breton',
-      '0x00013741': 'Imperial',
-      '0x00013747': 'Nord',
-      '0x00013740': 'Orc',
-      '0x00013746': 'Redguard',
-      '0x00013745': 'Khajiit',
-      '0x0008883C': 'Wood Elf',
-      '0x0008883D': 'Dark Elf',
-      '0x000A82B9': 'Falmer',
-      '0x0008883A': 'Orc',
-      '0x00088794': 'Khajiit',
-      '0x00088845': 'Argonian',
-      '0x00000000': 'None',
+      '0x00013744': 'Argonian',
+      '0x00013745': 'Bosmer',
+      '0x00013746': 'Breton',
+      '0x00013747': 'Dunmer',
+      '0x00013748': 'Imperial',
+      '0x00013749': 'Khajiit',
+      '0x0001374A': 'Nord',
+      '0x0001374B': 'Orc',
+      '0x0001374C': 'Redguard',
+      '0x0008883D': 'Reachman',
     },
     divineTypeDescriptions: {
-      Divine: 'The Nine Divines, the primary deities of the Imperial pantheon',
-      Ancestor: 'Ancestor spirits and cultural deities',
-      'Daedric Prince': 'The Daedric Princes, powerful entities of Oblivion',
-      Cultural: 'Deities specific to particular cultures and regions',
-      Deity: 'General divine entities',
-      'Yokudan Deity': 'Deities from Yokudan mythology',
-      'Nordic Deity': 'Deities from Nordic mythology',
-      'Khajiiti Deity': 'Deities from Khajiiti mythology',
-      Tribunal: 'The Tribunal, the living gods of Morrowind',
-      Other: 'Other divine entities and spirits',
+      'Aedra': 'The Aedra are the original spirits who gave up their immortality to create the mortal world.',
+      'Daedra': 'The Daedra are powerful spirits who refused to participate in the creation of the mortal world.',
+      'Tribunal': 'The Tribunal are the living gods of Morrowind, worshipped by the Dunmer.',
+      'Old Ways': 'The Old Ways represent the ancient traditions and totemic worship of the Nords.',
+      'Reachman': 'The Reachmen follow the Old Ways with their own unique traditions.',
     },
     markdownTemplate: {
       includeHeader: true,
       includeTableOfContents: true,
       includeTypeSections: true,
       includeEffectDetails: true,
-      includeFormIdReferences: true,
+      includeFormIdReferences: false,
     },
     htmlTemplate: {
       includeCSS: true,
@@ -287,11 +282,11 @@ function loadReligionConfig(configPath?: string): ReligionConfig {
     validation: {
       requireName: true,
       requireType: true,
-      validateFormIds: true,
+      validateFormIds: false,
       checkForMissingData: true,
     },
     performance: {
-      batchSize: 1000,
+      batchSize: 100,
       enableCaching: true,
       parallelProcessing: false,
     },
@@ -299,44 +294,36 @@ function loadReligionConfig(configPath?: string): ReligionConfig {
   };
 
   if (!configPath) {
-    console.log('[RELIGION-DOCS] No config file provided, using default config');
     return defaultConfig;
   }
 
   try {
-    // Try to load config from the pipeline directory
-    const candidatePaths = [
-      path.resolve(process.cwd(), configPath),
-      path.resolve(process.cwd(), '..', 'pipeline-projects', 'religion', configPath),
-      path.resolve(__dirname, '..', '..', '..', 'pipeline-projects', 'religion', configPath),
-    ];
-    let configFile = '';
-    for (const candidate of candidatePaths) {
-      if (fs.existsSync(candidate)) {
-        configFile = candidate;
-        break;
-      }
-    }
-    if (!configFile) {
-      return defaultConfig;
-    }
+    const configFile = path.isAbsolute(configPath)
+      ? configPath
+      : path.resolve(process.cwd(), configPath);
     const configContent = fs.readFileSync(configFile, 'utf8');
     const loadedConfig = yaml.load(configContent) as Partial<ReligionConfig>;
     // Attach the config file directory for later use
     (loadedConfig as any).__configDir = path.dirname(configFile);
     // Debug: Log config file resolution
-    console.log(`[RELIGION-DOCS][DEBUG] Loading CONFIG from path: ${configFile}`);
+    if (debug) {
+      console.log(`[RELIGION-DOCS][DEBUG] Loading CONFIG from path: ${configFile}`);
+    }
     // Load QUST data if specified
     const loadedConfigAny = loadedConfig as any;
     if (loadedConfigAny.qustDataFile && !loadedConfigAny.rawQustData) {
       const qustPath = path.isAbsolute(loadedConfigAny.qustDataFile)
         ? loadedConfigAny.qustDataFile
-        : path.resolve(path.dirname(configFile), loadedConfigAny.qustDataFile);
-      console.log(`[RELIGION-DOCS][DEBUG] Loading QUST from path: ${qustPath}`);
+        : path.resolve(process.cwd(), loadedConfigAny.qustDataFile);
+      if (debug) {
+        console.log(`[RELIGION-DOCS][DEBUG] Loading QUST from path: ${qustPath}`);
+      }
       if (fs.existsSync(qustPath)) {
         loadedConfigAny.rawQustData = JSON.parse(fs.readFileSync(qustPath, 'utf8'));
       } else {
-        console.log(`[RELIGION-DOCS][DEBUG] QUST file not found at path: ${qustPath}`);
+        if (debug) {
+          console.log(`[RELIGION-DOCS][DEBUG] QUST file not found at path: ${qustPath}`);
+        }
       }
     }
     return { ...defaultConfig, ...loadedConfig };
@@ -347,30 +334,34 @@ function loadReligionConfig(configPath?: string): ReligionConfig {
   return defaultConfig;
 }
 
-function loadSpellData(spellDataFile?: string, configDir?: string): Record<string, any> {
+function loadSpellData(spellDataFile?: string, configDir?: string, debug: boolean = false): Record<string, any> {
   if (!spellDataFile) {
+    if (debug) {
+      console.log(`[RELIGION-DOCS][DEBUG] No spell data file specified`);
+    }
     return {};
   }
 
   try {
     let spellFile = spellDataFile;
+    if (debug) {
+      console.log(`[RELIGION-DOCS][DEBUG] Original spell file path: ${spellDataFile}`);
+      console.log(`[RELIGION-DOCS][DEBUG] Is absolute path: ${path.isAbsolute(spellDataFile)}`);
+    }
     if (!path.isAbsolute(spellDataFile)) {
-      if (configDir) {
-        spellFile = path.resolve(configDir, spellDataFile);
-      } else {
-        spellFile = path.resolve(
-          process.cwd(),
-          '..',
-          'pipeline-projects',
-          'religion',
-          spellDataFile
-        );
+      spellFile = path.resolve(process.cwd(), spellDataFile);
+      if (debug) {
+        console.log(`[RELIGION-DOCS][DEBUG] Resolved relative path to: ${spellFile}`);
       }
     }
-    console.log(`[RELIGION-DOCS][DEBUG] Loading SPELL from path: ${spellFile}`);
+    if (debug) {
+      console.log(`[RELIGION-DOCS][DEBUG] Final spell file path: ${spellFile}`);
+      console.log(`[RELIGION-DOCS][DEBUG] File exists: ${fs.existsSync(spellFile)}`);
+    }
     if (fs.existsSync(spellFile)) {
       const spellContent = fs.readFileSync(spellFile, 'utf8');
       const spellData = JSON.parse(spellContent);
+
 
       // Create a lookup map by FormID
       const spellMap: Record<string, any> = {};
@@ -380,9 +371,15 @@ function loadSpellData(spellDataFile?: string, configDir?: string): Record<strin
         }
       });
 
+      if (debug) {
+        console.log(`[RELIGION-DOCS][DEBUG] Loaded ${spellData.length} spell records, mapped ${Object.keys(spellMap).length} by FormID`);
+      }
+
       return spellMap;
     } else {
-      console.log(`[RELIGION-DOCS][DEBUG] SPELL file not found at path: ${spellFile}`);
+      if (debug) {
+        console.log(`[RELIGION-DOCS][DEBUG] SPELL file not found at path: ${spellFile}`);
+      }
     }
   } catch (error) {
     console.warn(`[RELIGION-DOCS] Could not load spell data file ${spellDataFile}:`, error);
@@ -399,7 +396,7 @@ function extractSpellEffects(spell: any): SpellEffect[] {
   return spell.effects.map((effect: any) => {
     const spellEffect: SpellEffect = {
       magnitude: effect.EFIT?.magnitude || 0,
-      area: effect.EFIT?.area || 0,
+    area: effect.EFIT?.area || 0,
       duration: effect.EFIT?.duration || 0,
       effectName: effect.MGEF?.FULL || effect.MGEF?.EDID || 'Unknown Effect',
       effectDescription: effect.MGEF?.DNAM || '',
@@ -511,6 +508,9 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
 
   // Altar Blessings List (simple list at the top)
   const allDeities: any[] = config.groupByType ? data.flatMap((group: any) => group.deities) : data;
+  
+  // Create sorted list of altar blessings
+  const altarBlessings: string[] = [];
   allDeities.forEach((deity: any) => {
     const deityName = toTitleCase(deity.name);
     if (
@@ -523,10 +523,15 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
       let desc = applyReplacements(effect.effectDescription || '');
       desc = replaceMagTag(desc, effect.magnitude);
       desc = emphasizeAngleTags(desc);
-      debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude);
-      debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc);
-      markdown += `- *blessing of ${deityName.toLowerCase()}*: ${desc}\n`;
+      debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude, config);
+      debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc, config);
+      altarBlessings.push(`- *Blessing of ${deityName}*: ${desc}`);
     }
+  });
+  
+  // Sort alphabetically and add to markdown
+  altarBlessings.sort().forEach(blessing => {
+    markdown += `${blessing}\n`;
   });
   markdown += '\n';
 
@@ -548,17 +553,17 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
           let desc = applyReplacements(effect.effectDescription || '');
           desc = replaceMagTag(desc, effect.magnitude);
           desc = emphasizeAngleTags(desc);
-          debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude);
-          debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc);
+          debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude, config);
+          debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc, config);
           markdown += `*blessing of ${deityName.toLowerCase()}*: ${desc}\n`;
         }
         // Tenets
         if (config.includeTenets && deity.tenet) {
-          markdown += `**${deity.tenet.header}**\n\n`;
+          markdown += `**${deity.tenet.header}**\n`;
           if (deity.tenet.description) {
             let tenetDesc = applyReplacements(deity.tenet.description);
             tenetDesc = emphasizeAngleTags(tenetDesc);
-            debugLogZeroOrUndefined('Tenet', deityName, 'description', tenetDesc);
+            debugLogZeroOrUndefined('Tenet', deityName, 'description', tenetDesc, config);
             markdown += `${tenetDesc}\n\n`;
           }
         }
@@ -577,7 +582,8 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
             deityName,
             {}, // spellData not needed, already resolved
             deityName === 'The Animal Gods',
-            1
+            1,
+            config
           );
         }
         // Devotee (Boon 2)
@@ -587,7 +593,8 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
             deityName,
             {}, // spellData not needed, already resolved
             deityName === 'The Animal Gods',
-            2
+            2,
+            config
           );
         }
         markdown += '\n';
@@ -608,17 +615,17 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
         let desc = applyReplacements(effect.effectDescription || '');
         desc = replaceMagTag(desc, effect.magnitude);
         desc = emphasizeAngleTags(desc);
-        debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude);
-        debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc);
+        debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude, config);
+        debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc, config);
         markdown += `*blessing of ${deityName.toLowerCase()}*: ${desc}\n`;
       }
       // Tenets
       if (config.includeTenets && deity.tenet) {
-        markdown += `**${deity.tenet.header}**\n\n`;
+        markdown += `**${deity.tenet.header}**\n`;
         if (deity.tenet.description) {
           let tenetDesc = applyReplacements(deity.tenet.description);
           tenetDesc = emphasizeAngleTags(tenetDesc);
-          debugLogZeroOrUndefined('Tenet', deityName, 'description', tenetDesc);
+          debugLogZeroOrUndefined('Tenet', deityName, 'description', tenetDesc, config);
           markdown += `${tenetDesc}\n\n`;
         }
       }
@@ -637,7 +644,8 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
           deityName,
           {}, // spellData not needed, already resolved
           deityName === 'The Animal Gods',
-          1
+          1,
+          config
         );
       }
       // Devotee (Boon 2)
@@ -647,7 +655,8 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
           deityName,
           {}, // spellData not needed, already resolved
           deityName === 'The Animal Gods',
-          2
+          2,
+          config
         );
       }
       markdown += '\n';
@@ -655,6 +664,25 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
   }
 
   return markdown;
+}
+
+function findAltarBlessingEffect(spell: any): any | null {
+  if (!spell?.effects || !Array.isArray(spell.effects)) {
+    return null;
+  }
+  
+  // Look for an effect that contains "AltarBlessing" in its EDID
+  for (const effect of spell.effects) {
+    const effectEdid = effect.MGEF?.EDID || '';
+    
+    // Check EDID for AltarBlessing pattern
+    if (effectEdid.toLowerCase().includes('altarblessing')) {
+      return effect;
+    }
+  }
+  
+  // If no AltarBlessing effect found, return the first effect as fallback
+  return spell.effects[0] || null;
 }
 
 export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator {
@@ -665,13 +693,14 @@ export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator 
       console.log('[RELIGION-DOCS] Processing religion data...');
 
       // Load configuration
-      const religionConfig = loadReligionConfig(config.configFile);
+      const religionConfig = loadReligionConfig(config.configFile, true);
       console.log(`[RELIGION-DOCS] Using config: ${religionConfig.name}`);
 
       // Load spell data if configured
       const spellData = loadSpellData(
         religionConfig.spellDataFile,
-        (religionConfig as any).__configDir
+        (religionConfig as any).__configDir,
+        religionConfig.debug
       );
       console.log(`[RELIGION-DOCS] Loaded ${Object.keys(spellData).length} spell records`);
 
@@ -682,6 +711,10 @@ export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator 
           propertyArrays[record.religionData.name] = record.religionData.values || [];
         }
       });
+
+      if (religionConfig.debug) {
+        console.log(`[RELIGION-DOCS][DEBUG] QUST data loaded: ${Object.keys(propertyArrays).length} property arrays`);
+      }
 
       // Determine the number of deities (length of WSN_DeityName)
       const deityCount = propertyArrays['WSN_DeityName']?.length || 0;
@@ -696,6 +729,27 @@ export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator 
         const type = propertyArrays['WSN_DivineType']?.[i] || '';
         const blessingSpellId = propertyArrays['WSN_Blessing']?.[i];
         const blessingSpell = spellData[blessingSpellId];
+        
+        // Simple logging for altar blessing selection
+        if (blessingSpellId && blessingSpell) {
+          const altarBlessingEffect = findAltarBlessingEffect(blessingSpell);
+          if (altarBlessingEffect) {
+            const effectEdid = altarBlessingEffect.MGEF?.EDID || 'Unknown';
+            console.log(`[RELIGION-DOCS] ${name}: Altar blessing MGEF = ${effectEdid}`);
+            
+            // Debug for Tribunal deities to see what effects are available
+            if (type === 'Tribunal' && blessingSpell.effects) {
+              console.log(`[RELIGION-DOCS] ${name}: Spell has ${blessingSpell.effects.length} effects:`);
+              blessingSpell.effects.forEach((effect: any, index: number) => {
+                const effectName = effect.MGEF?.FULL || effect.MGEF?.EDID || 'Unknown';
+                console.log(`[RELIGION-DOCS] ${name}: Effect ${index}: ${effectName}`);
+              });
+            }
+          } else {
+            console.error(`[RELIGION-DOCS] ERROR: ${name}: No altar blessing effect found in spell ${blessingSpellId}`);
+          }
+        }
+
         const boon1SpellId = propertyArrays['WSN_Boon1']?.[i];
         const boon1Spell = spellData[boon1SpellId];
         const boon2SpellId = propertyArrays['WSN_Boon2']?.[i];
@@ -704,17 +758,6 @@ export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator 
         const tenetSpell = spellData[tenetSpellId];
         const favoredRace0 = propertyArrays['WSN_FavoredRace0']?.[i];
         const favoredRace1 = propertyArrays['WSN_FavoredRace1']?.[i];
-
-        console.log(`[RELIGION-DOCS][DEBUG] index ${i}`, {
-          name,
-          type,
-          blessingSpellId,
-          boon1SpellId,
-          boon2SpellId,
-          tenetSpellId,
-          favoredRace0,
-          favoredRace1,
-        });
 
         // Build tenet object if possible
         let tenet = undefined;
@@ -770,7 +813,22 @@ export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator 
                 spellId: blessingSpellId,
                 spellName: blessingSpell?.FULL || blessingSpell?.EDID || 'Unknown Blessing',
                 effects: religionConfig.includeEffectDetails
-                  ? extractSpellEffects(blessingSpell)
+                  ? (() => {
+                      const altarBlessingEffect = findAltarBlessingEffect(blessingSpell);
+                      if (altarBlessingEffect) {
+                        return [{
+                          magnitude: altarBlessingEffect.EFIT?.magnitude || 0,
+                          area: altarBlessingEffect.EFIT?.area || 0,
+                          duration: altarBlessingEffect.EFIT?.duration || 0,
+                          effectName: altarBlessingEffect.MGEF?.FULL || altarBlessingEffect.MGEF?.EDID || 'Unknown Effect',
+                          effectDescription: altarBlessingEffect.MGEF?.DNAM || '',
+                          effectType: altarBlessingEffect.MGEF?.DATA?.effectType?.toString() || 'Unknown',
+                          targetAttribute: altarBlessingEffect.MGEF?.DATA?.primaryAV?.name || null,
+                          keywords: altarBlessingEffect.MGEF?.KWDA || [],
+                        }];
+                      }
+                      return [];
+                    })()
                   : null,
               }
             : undefined,
@@ -879,3 +937,4 @@ export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator 
     getStats: () => stats,
   };
 }
+

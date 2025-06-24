@@ -62,7 +62,7 @@ stages:
       - "effects[].CTDA[].unknown3"
       - "effects[].CTDA[].padding"
       - "effects[].CTDA[].padding2"
-      - "effects[].CTDA[].param1"
+      # - "effects[].CTDA[].param1"
       - "effects[].CTDA[].param2"
       - "effects[].CTDA[].unknown4"
       - "effects[].CTDA[].operator.rawOperator"
