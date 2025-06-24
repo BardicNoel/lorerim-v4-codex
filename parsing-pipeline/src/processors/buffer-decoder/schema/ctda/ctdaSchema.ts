@@ -56,15 +56,29 @@ function ctdaFunctionIndexParser(functionIndex: number): {
     skillName = skillNames[functionIndex - 6];
   }
 
-  return {
+  // Build result object, only including defined properties
+  const result: {
+    functionName: string;
+    functionIndex: number;
+    description?: string;
+    isSkillCheck?: boolean;
+    skillName?: string;
+  } = {
     functionName,
     functionIndex,
-    isSkillCheck,
-    skillName,
-    description: isSkillCheck
-      ? `Check ${skillName} skill level`
-      : `Function index ${functionIndex}`,
   };
+
+  if (isSkillCheck) {
+    result.isSkillCheck = true;
+    result.description = `Check ${skillName} skill level`;
+    if (skillName) {
+      result.skillName = skillName;
+    }
+  } else {
+    result.description = `Function index ${functionIndex}`;
+  }
+
+  return result;
 }
 
 // CTDA field schema - 32 bytes total

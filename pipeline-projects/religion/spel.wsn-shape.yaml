@@ -1,0 +1,75 @@
+# SPEL to MGEF Merge Pipeline
+name: 'SPEL-MGEF Merge Pipeline'
+description: 'Merge SPEL records with their related MGEF records'
+input: "../pipeline-projects/religion/wintersun-spel-decoded.json"
+output: "../pipeline-projects/religion/wintersun-spel.json"
+
+stages:
+  - name: 'Remove Processing Fields'
+    type: 'remove-fields'
+    description: 'Remove fields that were only needed for processing'
+    fields:
+      record: 'all'
+      header: 'all'
+      meta: 'all'
+
+  - name: 'Flatten decodedData Fields'
+    type: 'flatten-fields'
+    description: 'Flatten the decodedData field to make nested data more accessible'
+    fields: ['decodedData']
+
+  # Merge MGEF Records
+  - from: 'local'
+    name: 'Merge MGEF Records'
+    type: 'merge-records'
+    description: 'Merge MGEF records that are referenced by SPEL effects'
+    sourceFile: '../pipeline-projects/religion/wintersun-mgef.json'
+    sourceRecordType: 'MGEF'
+    mappings:
+      - sourceField: 'mgef-mapping'
+        targetField: 'effects[].EFID'
+        matchField: 'meta.globalFormId'
+        dataField: 'decodedData'
+        matchType: 'exact'
+    mergeField: 'MGEF'
+    mergeStrategy: 'first'
+
+  - name: 'Remove Noise Fields'
+    type: 'remove-fields'
+    description: 'Remove technical noise fields while keeping essential documentation data'
+    remove_fields:
+      # Trim SPEL Values
+      - 'OBND'
+      - 'MDOB'
+      
+      # # Trim SPEL effect values
+      # - 'effects[].EFIT.magnitude'
+      # - 'effects[].EFIT.area'
+      # - 'effects[].EFIT.duration'
+      
+      # Trim CTDA noise fields
+      - 'effects[].CTDA[].unknown'
+      - 'effects[].CTDA[].unknown2'
+      - 'effects[].CTDA[].unknown3'
+      - 'effects[].CTDA[].padding'
+      - 'effects[].CTDA[].padding2'
+      - 'effects[].CTDA[].param1'
+      - 'effects[].CTDA[].param2'
+      - 'effects[].CTDA[].unknown4'
+      - 'effects[].CTDA[].operator.rawOperator'
+      - 'effects[].CTDA[].operator.rawCompareOperator'
+      - 'effects[].CTDA[].operator.rawFlags'
+      
+      # Trim MGEF noise fields
+      - 'effects[].MGEF.OBND'
+      # - 'effects[].MGEF.FULL'
+      # - 'effects[].MGEF.DESC'
+      - 'effects[].MGEF.ICON'
+      - 'effects[].MGEF.MODL'
+      - 'effects[].MGEF.MODT'
+      # - 'effects[].MGEF.DNAM'
+      - 'effects[].MGEF.ESCE'
+      - 'effects[].MGEF.SNDD'
+      - 'effects[].MGEF.record'
+      - 'effects[].MGEF.header'
+      # - 'effects[].MGEF.meta' 

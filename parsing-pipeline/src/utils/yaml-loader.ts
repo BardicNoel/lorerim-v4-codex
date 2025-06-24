@@ -70,6 +70,7 @@ function validateStage(stage: any): StageConfig {
       'doc-gen',
       'extract-field',
       'formid-resolver',
+      'pluck-array-values',
     ].includes(stage.type)
   ) {
     throw new Error(`Invalid stage type: ${stage.type}`);
@@ -141,7 +142,7 @@ function validateStage(stage: any): StageConfig {
       if (!stage.docType) {
         throw new Error('Doc-gen stage must have docType');
       }
-      if (!['player-perk', 'skill-perk-docs'].includes(stage.docType)) {
+      if (!['player-perk', 'skill-perk-docs', 'religion-docs'].includes(stage.docType)) {
         throw new Error(`Invalid docType: ${stage.docType}`);
       }
       break;
@@ -163,6 +164,14 @@ function validateStage(stage: any): StageConfig {
         stage.targetFields.length === 0
       ) {
         throw new Error('FormID resolver stage must have targetFields array');
+      }
+      break;
+    case 'pluck-array-values':
+      if (!stage.arrayField) {
+        throw new Error('Pluck array values stage must have arrayField');
+      }
+      if (!stage.targetField) {
+        throw new Error('Pluck array values stage must have targetField');
       }
       break;
   }

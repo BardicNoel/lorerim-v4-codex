@@ -1,0 +1,75 @@
+# Religion Documentation Configuration
+# This config defines how religion data should be processed and formatted
+
+name: "Religion Documentation Config"
+description: "Configuration for generating structured religion documentation"
+
+# Output format options
+outputFormat: "json"  # Options: json, markdown, html
+
+# Grouping and organization options
+groupByType: true     # Group deities by their divine type (Divine, Ancestor, Daedric Prince, etc.)
+sortByName: true      # Sort deities alphabetically within groups
+includeFormIds: true  # Include FormID references for effects
+
+# Content filtering options
+includeBlessings: true
+includeBoons: true
+includeTenets: true
+includeFavoredRaces: true
+
+# Race name mapping (for better display)
+raceNameMapping:
+  "0x00013743": "Altmer"
+  "0x00013749": "Bosmer"
+  "0x00013742": "Breton"
+  "0x00013741": "Imperial"
+  "0x00013740": "Nord"
+  "0x00013746": "Redguard"
+  "0x00013745": "Orc"
+  "0x00013747": "Khajiit"
+  "0x00088840": "Argonian"
+  "0x00000000": "None"
+
+# Divine type descriptions
+divineTypeDescriptions:
+  "Divine": "The Nine Divines, the primary deities of the Imperial pantheon"
+  "Ancestor": "Ancestor spirits and cultural deities"
+  "Daedric Prince": "The Daedric Princes, powerful entities of Oblivion"
+  "Cultural": "Deities specific to particular cultures and regions"
+  "Other": "Other divine entities and spirits"
+
+# Markdown template options (if outputFormat is markdown)
+markdownTemplate:
+  includeHeader: true
+  includeTableOfContents: true
+  includeTypeSections: true
+  includeEffectDetails: true
+  includeFormIdReferences: true
+
+# HTML template options (if outputFormat is html)
+htmlTemplate:
+  includeCSS: true
+  includeNavigation: true
+  includeSearch: true
+  responsiveDesign: true
+
+# Effect resolution options
+effectResolution:
+  resolveSpellNames: true      # Try to resolve spell names from FormIDs
+  resolveEffectDescriptions: true  # Include effect descriptions
+  includeMagnitude: true       # Include effect magnitude if available
+  includeDuration: true        # Include effect duration if available
+
+# Validation options
+validation:
+  requireName: true
+  requireType: true
+  validateFormIds: true
+  checkForMissingData: true
+
+# Performance options
+performance:
+  batchSize: 1000
+  enableCaching: true
+  parallelProcessing: false 

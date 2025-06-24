@@ -12,6 +12,7 @@ import { removeFieldsProcessorV2 } from './remove-fields-v2';
 import { createDocGenProcessor } from '../doc-gen/doc-gen';
 import { createExtractFieldProcessor } from './extract-field';
 import { createFormIdResolverProcessor } from './formid-resolver';
+import { createPluckArrayValuesProcessor } from './pluck-array-values';
 
 // Core processor interface
 export interface Processor {
@@ -46,6 +47,8 @@ export function createProcessor(stage: StageConfig): Processor {
       return createExtractFieldProcessor(stage as any);
     case 'formid-resolver':
       return createFormIdResolverProcessor(stage as any);
+    case 'pluck-array-values':
+      return createPluckArrayValuesProcessor(stage as any);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }

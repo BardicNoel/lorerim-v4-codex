@@ -1132,7 +1132,7 @@ export function createMultithreadedBufferDecoderProcessor(config: BufferDecoderC
         if (startIndex >= totalRecords) break;
 
         const worker = new Worker(
-          path.join(__dirname, '../../../dist/src/processors/buffer-decoder/parser.js'),
+          path.join(__dirname, '../../../../parsing-pipeline/dist/parsing-pipeline/src/processors/buffer-decoder/parser.js'),
           {
             workerData: { config },
           }
@@ -1273,7 +1273,7 @@ if (parentPort) {
   let config: BufferDecoderConfig;
 
   // Initialize the worker
-  async function initializeWorker() {
+  const initializeWorker = async () => {
     try {
       console.log('[DEBUG] Initializing worker...');
       decoder = new BufferDecoder();
@@ -1299,10 +1299,10 @@ if (parentPort) {
         error: error instanceof Error ? error.message : String(error),
       });
     }
-  }
+  };
 
   // Process a batch of records
-  async function processBatch(records: ParsedRecord[], startIndex: number, endIndex: number) {
+  const processBatch = async (records: ParsedRecord[], startIndex: number, endIndex: number) => {
     console.log(
       `[DEBUG] Starting batch processing: ${records.length} records (${startIndex}-${endIndex})`
     );
@@ -1375,7 +1375,7 @@ if (parentPort) {
         endIndex,
       },
     };
-  }
+  };
 
   // Handle messages from the main thread
   parentPort?.on('message', async (message: any) => {

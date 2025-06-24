@@ -235,7 +235,7 @@ function extractKeywords(perk: any, allPerkSections: any[], skillName: string): 
     });
   }
 
-  return [...new Set(keywords)]; // Remove duplicates
+  return Array.from(new Set(keywords)); // Remove duplicates
 }
 
 function extractKeywordsFromCTDA(ctda: any, keywords: string[], skillName: string): void {

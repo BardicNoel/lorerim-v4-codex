@@ -1,8 +1,8 @@
 # Import base pipeline configuration
-name: "QUST Analysis Pipeline"
-description: "Process QUST data for analysis"
+name: "QUST Religion Documentation Pipeline"
+description: "Process QUST data and generate structured religion documentation"
 input: "../output/skyrim-extractor/lorerim/QUST.json"
-output: "../pipeline-projects/religion/wintersun-qust.json"
+output: "../pipeline-projects/religion/wintersun-deities-docs.json"
 
 # Use stages from base template
 stages:
@@ -40,8 +40,6 @@ stages:
     recordType: "QUST"
     loadPluginMetadata: true
     pluginMetadataPath: "../output/skyrim-extractor/lorerim/plugin-metadata-map.json"
-    # multithreaded: true
-    # maxWorkers: 4
 
   - from: "local"
     name: "Extract VMAD Properties"
@@ -115,16 +113,16 @@ stages:
         value: "Wintersun"
 
   - from: "local"
-    name: "Remove Unused Fields"
-    type: "remove-fields"
-    description: "Remove unused fields to clean up the data structure"
-    remove_fields:
-      - "religionData.values[].formId"
-      - "religionData.values[].alias"
-
-  - from: "local"
     name: "Pluck FormID Resolved"
     type: "pluck-array-values"
     description: "Replace objects in religionData.values with their formId_resolved value, but only if they have that field."
     arrayField: "religionData.values"
     targetField: "formId_resolved"
+
+  - from: "local"
+    name: "Generate Religion Documentation"
+    type: "doc-gen"
+    description: "Generate structured religion documentation from deity data"
+    docType: "religion-docs"
+    outputFormat: "json"
+    configFile: "religion-docs-config.yaml" 

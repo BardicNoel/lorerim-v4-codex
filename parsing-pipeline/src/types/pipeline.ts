@@ -21,7 +21,8 @@ export type StageType =
   | 'sample-records'
   | 'doc-gen'
   | 'extract-field'
-  | 'formid-resolver';
+  | 'formid-resolver'
+  | 'pluck-array-values';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -178,6 +179,13 @@ export interface FormIdResolverConfig extends BaseStageConfig {
   }[];
 }
 
+// Pluck array values stage configuration
+export interface PluckArrayValuesConfig extends BaseStageConfig {
+  type: 'pluck-array-values';
+  arrayField: string; // e.g., 'religionData.values'
+  targetField: string; // e.g., 'formId_resolved'
+}
+
 // Stage configuration union type
 export type StageConfig =
   | FilterRecordsConfig
@@ -191,7 +199,8 @@ export type StageConfig =
   | SampleRecordsConfig
   | DocGenConfig
   | ExtractFieldConfig
-  | FormIdResolverConfig;
+  | FormIdResolverConfig
+  | PluckArrayValuesConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {

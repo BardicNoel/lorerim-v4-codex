@@ -11,6 +11,11 @@ export interface ExtractFieldConfig {
   outputPath?: string; // For 'custom' mode, specify where to place extracted data
   preserveSource?: boolean; // Whether to keep the original field in the source record
   flattenArrays?: boolean; // Whether to flatten arrays into individual records (default: true)
+  /**
+   * If set, and the extracted value is an array of objects, replace each object with the value at this key.
+   * Example: pluck: 'foo' turns [{foo: 1}, {foo: 2}] into [1, 2]
+   */
+  pluck?: string;
 }
 
 /**
@@ -78,13 +83,21 @@ export function createExtractFieldProcessor(config: ExtractFieldConfig): Process
       const outputMode = config.outputMode || 'root';
       const preserveSource = config.preserveSource ?? false;
       const flattenArrays = config.flattenArrays ?? true;
+      const pluck = config.pluck;
 
       if (outputMode === 'root') {
         // Original behavior - extract to root level
         const extractedData: JsonArray = [];
 
         for (const record of data) {
-          const extractedValue = getNestedValue(record, config.field);
+          let extractedValue = getNestedValue(record, config.field);
+
+          // If pluck is set and value is array of objects, pluck the value
+          if (pluck && Array.isArray(extractedValue)) {
+            extractedValue = extractedValue.map((item) =>
+              item && typeof item === 'object' && pluck in item ? item[pluck] : item
+            );
+          }
 
           if (extractedValue !== undefined) {
             if (Array.isArray(extractedValue) && flattenArrays) {
@@ -107,7 +120,14 @@ export function createExtractFieldProcessor(config: ExtractFieldConfig): Process
         const processedData: JsonArray = [];
 
         for (const record of data) {
-          const extractedValue = getNestedValue(record, config.field);
+          let extractedValue = getNestedValue(record, config.field);
+
+          // If pluck is set and value is array of objects, pluck the value
+          if (pluck && Array.isArray(extractedValue)) {
+            extractedValue = extractedValue.map((item) =>
+              item && typeof item === 'object' && pluck in item ? item[pluck] : item
+            );
+          }
 
           if (extractedValue !== undefined) {
             if (Array.isArray(extractedValue) && flattenArrays) {

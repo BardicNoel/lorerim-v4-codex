@@ -2,6 +2,7 @@ import { JsonArray, ProcessingResult } from '../../types/pipeline';
 import { Processor } from '../core';
 import { createPlayerPerkDocGenerator } from './hold-player-perk-gen-md';
 import { createSkillPerkDocsGenerator } from './skill-perk-docs';
+import { createReligionDocsGenerator } from './religion-docs';
 
 // Document generator interface
 export interface DocGenerator {
@@ -10,7 +11,7 @@ export interface DocGenerator {
 }
 
 // Available document types
-export type DocType = 'player-perk' | 'skill-perk-docs';
+export type DocType = 'player-perk' | 'skill-perk-docs' | 'religion-docs';
 
 // Doc-gen stage configuration
 export interface DocGenConfig {
@@ -28,6 +29,7 @@ export interface DocGenConfig {
 const docGenerators: Record<DocType, (config: DocGenConfig) => DocGenerator> = {
   'player-perk': createPlayerPerkDocGenerator,
   'skill-perk-docs': createSkillPerkDocsGenerator,
+  'religion-docs': createReligionDocsGenerator,
 };
 
 export function createDocGenProcessor(config: DocGenConfig): Processor {
