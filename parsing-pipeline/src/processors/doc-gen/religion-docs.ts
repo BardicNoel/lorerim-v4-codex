@@ -3,6 +3,7 @@ import { DocGenerator, DocGenConfig } from './doc-gen';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
+import { CTDA_FUNCTION_INDICES } from '../../../../__platform/src/uesp/ctdaFunctionIndices';
 
 interface ReligionProperty {
   name: string;
@@ -37,6 +38,7 @@ interface StructuredDeity {
   favoredRaces: string[];
   description?: string;
   icon?: string;
+  worshipRestrictions?: string[];
 }
 
 interface SpellEffect {
@@ -104,6 +106,9 @@ const REPLACEMENTS: Record<string, string> = {
   'Global=WSN_Favor_Global_Fractional3': 'x',
   'Global=WSN_Favor_Global_Fractional2': 'x',
   'Global=WSN_Favor_Global_Fractional': 'x',
+  'Global=WSN_Favor_Global': 'x',
+  'Global=WSN_Effect_Global_MehrunesExplodes': 'x',
+  'Global=WSN_Effect_Global_MehrunesExplodesMax': 'x',
 };
 
 function applyReplacements(text: string): string {
@@ -135,6 +140,24 @@ function replaceMagTag(desc: string, magnitude: number | undefined): string {
   return desc;
 }
 
+// Utility to emphasize any remaining <...> tags (not <mag>)
+function emphasizeAngleTags(desc: string): string {
+  // Replace <...> with ***...***, but skip <mag>
+  return desc.replace(/<(?!mag)([^>]+)>/gi, (_match, p1) => `***${p1.trim()}***`);
+}
+
+function debugLogZeroOrUndefined(
+  context: string,
+  deityName: string,
+  effectName: string,
+  value: any
+) {
+  if (value === 0 || value === undefined || value === null || value === '') {
+    // eslint-disable-next-line no-console
+    console.log(`[DEBUG][${context}] Deity: ${deityName}, Effect: ${effectName}, Value:`, value);
+  }
+}
+
 function formatBoonSection(
   boon: any,
   deityName: string,
@@ -149,12 +172,9 @@ function formatBoonSection(
   if (mainEffect) {
     let desc = applyReplacements(mainEffect.effectDescription || '');
     desc = replaceMagTag(desc, mainEffect.magnitude);
-    if (!desc.includes('<mag>') && desc.includes('%') && mainEffect.magnitude) {
-      desc = desc.replace(/(\d*)%/, `${mainEffect.magnitude}%`);
-      if (!desc.match(/\d+%/)) {
-        desc = desc.replace(/%/, `${mainEffect.magnitude}%`);
-      }
-    }
+    desc = emphasizeAngleTags(desc);
+    debugLogZeroOrUndefined('Boon', deityName, mainEffect.effectName, mainEffect.magnitude);
+    debugLogZeroOrUndefined('Boon', deityName, mainEffect.effectName, desc);
     out += `- ${mainEffect.effectName}: ${desc}\n`;
   }
   // Additional effects as Notes
@@ -164,12 +184,9 @@ function formatBoonSection(
       const eff = boon.effects[i];
       let desc = applyReplacements(eff.effectDescription || '');
       desc = replaceMagTag(desc, eff.magnitude);
-      if (!desc.includes('<mag>') && desc.includes('%') && eff.magnitude) {
-        desc = desc.replace(/(\d*)%/, `${eff.magnitude}%`);
-        if (!desc.match(/\d+%/)) {
-          desc = desc.replace(/%/, `${eff.magnitude}%`);
-        }
-      }
+      desc = emphasizeAngleTags(desc);
+      debugLogZeroOrUndefined('Boon', deityName, eff.effectName, eff.magnitude);
+      debugLogZeroOrUndefined('Boon', deityName, eff.effectName, desc);
       out += `  - ${eff.effectName}: ${desc}\n`;
     }
   }
@@ -182,16 +199,19 @@ function formatBoonSection(
         const totemEffect = totem.effects && totem.effects[0];
         let totemDesc = totemEffect?.MGEF?.DNAM ? applyReplacements(totemEffect.MGEF.DNAM) : '';
         totemDesc = replaceMagTag(totemDesc, totemEffect?.EFIT?.magnitude);
-        if (
-          !totemDesc.includes('<mag>') &&
-          totemDesc.includes('%') &&
+        totemDesc = emphasizeAngleTags(totemDesc);
+        debugLogZeroOrUndefined(
+          'Totem',
+          deityName,
+          totemEffect?.MGEF?.FULL || totemEffect?.EDID || 'Unknown Totem',
           totemEffect?.EFIT?.magnitude
-        ) {
-          totemDesc = totemDesc.replace(/(\d*)%/, `${totemEffect.EFIT.magnitude}%`);
-          if (!totemDesc.match(/\d+%/)) {
-            totemDesc = totemDesc.replace(/%/, `${totemEffect.EFIT.magnitude}%`);
-          }
-        }
+        );
+        debugLogZeroOrUndefined(
+          'Totem',
+          deityName,
+          totemEffect?.MGEF?.FULL || totemEffect?.EDID || 'Unknown Totem',
+          totemDesc
+        );
         out += `  - ${totem.FULL || totem.EDID}: ${totemDesc}\n`;
       });
     }
@@ -434,6 +454,53 @@ function findAltarBlessingSpellByFormId(
   return null;
 }
 
+function extractWorshipRestrictions(
+  ctdaArray: any[],
+  raceNameMapping: Record<string, string>
+): string[] {
+  if (!Array.isArray(ctdaArray)) return [];
+  const restrictions: string[] = [];
+  for (const ctda of ctdaArray) {
+    const fnIndex = ctda.function?.functionIndex;
+    const fnName = CTDA_FUNCTION_INDICES[fnIndex] || ctda.function?.functionName;
+    switch (fnIndex) {
+      case 43: // SameRace
+      case 69: // GetIsRace
+      case 130: // GetPCIsRace
+        {
+          const raceFormId = ctda.reference || ctda.param1;
+          const raceName = raceNameMapping[raceFormId] || raceFormId;
+          restrictions.push(`Requires race: ${raceName}`);
+        }
+        break;
+      case 56: // GetQuestRunning
+        {
+          const questFormId = ctda.reference || ctda.param1;
+          restrictions.push(`Requires quest ${questFormId} to be running`);
+        }
+        break;
+      case 58: // GetStage
+      case 59: // GetStageDone
+        {
+          const questFormId = ctda.reference || ctda.param1;
+          restrictions.push(`Requires quest ${questFormId} at stage ${ctda.comparisonValue}`);
+        }
+        break;
+      case 74: // GetGlobalValue
+        restrictions.push(`Requires global ${ctda.param1} = ${ctda.comparisonValue}`);
+        break;
+      default:
+        if (fnName) {
+          restrictions.push(
+            `Restriction: ${fnName} (params: ref=${ctda.reference}, param1=${ctda.param1}, value=${ctda.comparisonValue})`
+          );
+        }
+        break;
+    }
+  }
+  return restrictions;
+}
+
 function generateMarkdown(data: any[], config: ReligionConfig): string {
   let markdown = '';
 
@@ -455,14 +522,9 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
       const effect = deity.blessing.effects[0];
       let desc = applyReplacements(effect.effectDescription || '');
       desc = replaceMagTag(desc, effect.magnitude);
-      // Also merge magnitude into % if present and <mag> is not used
-      if (!desc.includes('<mag>') && desc.includes('%') && effect.magnitude) {
-        desc = desc.replace(/(\d*)%/, `${effect.magnitude}%`);
-        if (!desc.match(/\d+%/)) {
-          desc = desc.replace(/%/, `${effect.magnitude}%`);
-        }
-      }
-      // Output as a bulleted list
+      desc = emphasizeAngleTags(desc);
+      debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude);
+      debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc);
       markdown += `- *blessing of ${deityName.toLowerCase()}*: ${desc}\n`;
     }
   });
@@ -485,20 +547,28 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
           const effect = deity.blessing.effects[0];
           let desc = applyReplacements(effect.effectDescription || '');
           desc = replaceMagTag(desc, effect.magnitude);
-          if (!desc.includes('<mag>') && desc.includes('%') && effect.magnitude) {
-            desc = desc.replace(/(\d*)%/, `${effect.magnitude}%`);
-            if (!desc.match(/\d+%/)) {
-              desc = desc.replace(/%/, `${effect.magnitude}%`);
-            }
-          }
+          desc = emphasizeAngleTags(desc);
+          debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude);
+          debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc);
           markdown += `*blessing of ${deityName.toLowerCase()}*: ${desc}\n`;
         }
         // Tenets
         if (config.includeTenets && deity.tenet) {
           markdown += `**${deity.tenet.header}**\n\n`;
           if (deity.tenet.description) {
-            markdown += `${applyReplacements(deity.tenet.description)}\n\n`;
+            let tenetDesc = applyReplacements(deity.tenet.description);
+            tenetDesc = emphasizeAngleTags(tenetDesc);
+            debugLogZeroOrUndefined('Tenet', deityName, 'description', tenetDesc);
+            markdown += `${tenetDesc}\n\n`;
           }
+        }
+        // Worship Restrictions
+        if (deity.worshipRestrictions && deity.worshipRestrictions.length > 0) {
+          markdown += `**Worship Restrictions**\n`;
+          deity.worshipRestrictions.forEach((r: string) => {
+            markdown += `- ${r}\n`;
+          });
+          markdown += '\n';
         }
         // Follower (Boon 1)
         if (config.includeBoons && deity.boon1) {
@@ -537,20 +607,28 @@ function generateMarkdown(data: any[], config: ReligionConfig): string {
         const effect = deity.blessing.effects[0];
         let desc = applyReplacements(effect.effectDescription || '');
         desc = replaceMagTag(desc, effect.magnitude);
-        if (!desc.includes('<mag>') && desc.includes('%') && effect.magnitude) {
-          desc = desc.replace(/(\d*)%/, `${effect.magnitude}%`);
-          if (!desc.match(/\d+%/)) {
-            desc = desc.replace(/%/, `${effect.magnitude}%`);
-          }
-        }
+        desc = emphasizeAngleTags(desc);
+        debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, effect.magnitude);
+        debugLogZeroOrUndefined('AltarBlessing', deityName, effect.effectName, desc);
         markdown += `*blessing of ${deityName.toLowerCase()}*: ${desc}\n`;
       }
       // Tenets
       if (config.includeTenets && deity.tenet) {
         markdown += `**${deity.tenet.header}**\n\n`;
         if (deity.tenet.description) {
-          markdown += `${applyReplacements(deity.tenet.description)}\n\n`;
+          let tenetDesc = applyReplacements(deity.tenet.description);
+          tenetDesc = emphasizeAngleTags(tenetDesc);
+          debugLogZeroOrUndefined('Tenet', deityName, 'description', tenetDesc);
+          markdown += `${tenetDesc}\n\n`;
         }
+      }
+      // Worship Restrictions
+      if (deity.worshipRestrictions && deity.worshipRestrictions.length > 0) {
+        markdown += `**Worship Restrictions**\n`;
+        deity.worshipRestrictions.forEach((r: string) => {
+          markdown += `- ${r}\n`;
+        });
+        markdown += '\n';
       }
       // Follower (Boon 1)
       if (config.includeBoons && deity.boon1) {
@@ -672,6 +750,18 @@ export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator 
           }
         }
 
+        const failSpellId = propertyArrays['WSN_WorshipFail']?.[i];
+        const failSpell = spellData[failSpellId];
+        let worshipRestrictions: string[] = [];
+        if (failSpell && failSpell.effects && failSpell.effects[0]?.MGEF?.CTDA) {
+          worshipRestrictions = extractWorshipRestrictions(
+            failSpell.effects[0].MGEF.CTDA,
+            religionConfig.raceNameMapping
+          );
+        } else {
+          console.log(`[DEBUG][WorshipRestriction] No fail spell found for deity:`, name);
+        }
+
         structuredDeities.push({
           name,
           type,
@@ -704,6 +794,7 @@ export function createReligionDocsGenerator(config: DocGenConfig): DocGenerator 
             : undefined,
           tenet,
           favoredRaces,
+          worshipRestrictions,
         });
       }
 

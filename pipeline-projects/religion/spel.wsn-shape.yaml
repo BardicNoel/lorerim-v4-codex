@@ -50,12 +50,12 @@ stages:
       - "OBND"
       - "MDOB"
 
-      # # Trim SPEL effect values
-      # - 'effects[].EFIT.magnitude'
-      # - 'effects[].EFIT.area'
-      # - 'effects[].EFIT.duration'
+      # Trim SPEL effect values
+      # - "effects[].EFIT.magnitude"
+      # - "effects[].EFIT.area"
+      # - "effects[].EFIT.duration"
 
-      # Trim CTDA noise fields
+      #Trim CTDA noise fields
       - "effects[].EFID"
       - "effects[].CTDA[].unknown"
       - "effects[].CTDA[].unknown2"
@@ -69,9 +69,10 @@ stages:
       - "effects[].CTDA[].operator.rawCompareOperator"
       - "effects[].CTDA[].operator.rawFlags"
 
-      # Trim MGEF noise fields
+      #Trim MGEF noise fields
       - "effects[].MGEF.OBND"
       - "effects[].MGEF.MDOB"
+      - "effects[].MGEF.VMAD"
       # - 'effects[].MGEF.FULL'
       # - 'effects[].MGEF.DESC'
       - "effects[].MGEF.ICON"
@@ -82,4 +83,3 @@ stages:
       - "effects[].MGEF.SNDD"
       - "effects[].MGEF.record"
       - "effects[].MGEF.header"
-      # - 'effects[].MGEF.meta'
