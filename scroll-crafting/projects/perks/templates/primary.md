@@ -1,9 +1,5 @@
-# {{title}}
+# Skyrim Perks
 
-{{intro}}
-
-## Items
-
-{{#each items}}
+{{#each perks}}
 {{> perk_block }}
 {{/each}}

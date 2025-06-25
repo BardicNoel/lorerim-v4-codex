@@ -1,8 +1,6 @@
 ### {{name}}
 
-- **EDID:** `{{edid}}`
-- **FormID:** `{{formid}}`
-- **Effects:**
-  {{#each effects}}
-  - {{this}}
-    {{/each}}
+**EDID:** `{{edid}}`  
+**FormID:** `{{formid}}`
+
+{{description}}
