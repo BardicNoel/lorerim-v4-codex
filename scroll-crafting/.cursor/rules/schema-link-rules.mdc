@@ -1,6 +1,6 @@
 ---
 description: 
-globs: 
+globs: scroll-crafting/**
 alwaysApply: false
 ---
 # Schema Linker Rule
