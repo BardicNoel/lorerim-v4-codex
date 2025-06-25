@@ -289,6 +289,64 @@ Example:
 
 Note: If the input data has fewer records than the requested sample size, all records will be returned.
 
+### 10. Document Generation
+
+Generates documentation from processed data using specialized document generators. This processor is designed for creating human-readable documentation from structured data.
+
+```yaml
+type: 'doc-gen'
+docType: string # Type of document to generate (e.g., 'player-perk', 'skill-perk-docs')
+outputFormat?: 'markdown' | 'html' | 'json' # Output format, defaults to 'markdown'
+template?: string # Optional template path
+includeConditions?: boolean # Whether to include conditions in documentation
+includeEffects?: boolean # Whether to include effects in documentation
+groupByCategory?: boolean # Whether to group items by category
+sortBy?: 'name' | 'level' | 'category' # How to sort items
+```
+
+The doc-gen processor supports:
+
+- **Multiple document types**: Different generators for different types of data
+- **Multiple output formats**: Markdown, HTML, or JSON output
+- **Configurable content**: Include/exclude conditions, effects, etc.
+- **Organized output**: Group by categories, sort by various criteria
+- **Template support**: Use custom templates for formatting
+- **Flexible data format**: Works with the actual data format received (not ParsedRecord format)
+
+Currently supported document types:
+
+- **player-perk**: Generates documentation for player perks with categories, levels, descriptions, and effects
+- **skill-perk-docs**: Generates documentation for skill trees with their associated perks
+
+**Important Note**: Doc-gen processors work with the actual data format they receive (e.g., skill data directly, perk data directly), not the ParsedRecord format used by other processors. This allows them to focus on the content rather than the metadata structure.
+
+Example:
+
+```yaml
+- name: 'Generate Skill Documentation'
+  type: 'doc-gen'
+  description: 'Generate JSON documentation for skill trees and perks'
+  docType: 'skill-perk-docs'
+  outputFormat: 'json'
+  includePositionalData: false
+```
+
+Example:
+
+```yaml
+- name: 'Generate Perk Documentation'
+  type: 'doc-gen'
+  description: 'Generate markdown documentation for player perks'
+  docType: 'player-perk'
+  outputFormat: 'markdown'
+  includeConditions: true
+  includeEffects: true
+  groupByCategory: true
+  sortBy: 'name'
+```
+
+Note: The doc-gen processor transforms the input data into documentation sections, each containing a title, content, and metadata. The output maintains the same structure as other processors but contains documentation content instead of raw data.
+
 ## Complete Example
 
 Here's a complete example of a pipeline configuration:

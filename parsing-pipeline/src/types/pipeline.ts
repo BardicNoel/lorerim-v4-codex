@@ -5,7 +5,7 @@ export type JsonValue = string | number | boolean | null | JsonObject | JsonArra
 export interface JsonObject {
   [key: string]: JsonValue;
 }
-export type JsonArray = ParsedRecord[]; // Use platform's record format
+export type JsonArray = any[]; // Allow any array of objects for flexibility
 export type JsonRecord = ParsedRecord; // Use extractor's record format as our standard
 
 // Stage types
@@ -18,7 +18,11 @@ export type StageType =
   | 'flatten-fields'
   | 'merge-records'
   | 'rename-fields'
-  | 'sample-records';
+  | 'sample-records'
+  | 'doc-gen'
+  | 'extract-field'
+  | 'formid-resolver'
+  | 'pluck-array-values';
 
 // Field path type for nested fields (e.g., "user.profile.status")
 export type FieldPath = string;
@@ -122,6 +126,7 @@ export interface MergeRecordsConfig extends BaseStageConfig {
   mergeField: string; // Field to store merged data in target records (e.g., 'mergedData')
   mergeStrategy: 'first' | 'all' | 'count'; // How to handle multiple matches
   overwriteReference?: boolean; // If true, replace original field values with referenced records
+  siblingField?: string; // If specified, create a sibling field with this name instead of overwriting
 }
 
 // Rename fields stage configuration
@@ -140,6 +145,47 @@ export interface SampleRecordsConfig extends BaseStageConfig {
   seed?: number; // Random seed for reproducible sampling
 }
 
+// Doc-gen stage configuration
+export interface DocGenConfig extends BaseStageConfig {
+  type: 'doc-gen';
+  docType: 'player-perk' | 'skill-perk-docs'; // Available document types
+  outputFormat?: 'markdown' | 'html' | 'json';
+  template?: string; // Optional template path
+  includeConditions?: boolean;
+  includeEffects?: boolean;
+  groupByCategory?: boolean;
+  sortBy?: 'name' | 'level' | 'category';
+}
+
+// Extract field stage configuration
+export interface ExtractFieldConfig extends BaseStageConfig {
+  type: 'extract-field';
+  field: string; // e.g., 'decodedData.VMAD.scripts[0].properties'
+}
+
+// FormID resolver stage configuration
+export interface FormIdResolverConfig extends BaseStageConfig {
+  type: 'formid-resolver';
+  pluginRegistryPath: string; // Path to the plugin registry file
+  contextPluginField: string; // Field path to get the context plugin name (e.g., 'meta.plugin')
+  targetFields: {
+    field: FieldPath; // Field path to resolve (e.g., 'decodedData.PNAM')
+    outputField?: FieldPath; // Optional output field path (defaults to field + '_resolved')
+  }[];
+  conditions?: {
+    field: FieldPath;
+    operator: 'equals' | 'not-equals' | 'contains' | 'not-contains';
+    value: any;
+  }[];
+}
+
+// Pluck array values stage configuration
+export interface PluckArrayValuesConfig extends BaseStageConfig {
+  type: 'pluck-array-values';
+  arrayField: string; // e.g., 'religionData.values'
+  targetField: string; // e.g., 'formId_resolved'
+}
+
 // Stage configuration union type
 export type StageConfig =
   | FilterRecordsConfig
@@ -150,7 +196,11 @@ export type StageConfig =
   | FlattenFieldsConfig
   | MergeRecordsConfig
   | RenameFieldsConfig
-  | SampleRecordsConfig;
+  | SampleRecordsConfig
+  | DocGenConfig
+  | ExtractFieldConfig
+  | FormIdResolverConfig
+  | PluckArrayValuesConfig;
 
 // Pipeline configuration
 export interface PipelineConfig {

@@ -1,0 +1,39 @@
+name: 'Player Perk Documentation Generator'
+description: 'Generate comprehensive documentation for player perks'
+input: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+output: '../output/parsing-pipeline/lorerim/player-perk-documentation.json'
+
+stages:
+  - name: 'Filter Player Perks'
+    type: 'filter-records'
+    description: 'Keep only perks that are available to players'
+    criteria:
+      - field: 'decodedData.FULL'
+        operator: 'not-contains'
+        value: 'NPC'
+      - field: 'decodedData.FULL'
+        operator: 'not-contains'
+        value: 'Monster'
+
+  - name: 'Remove Technical Fields'
+    type: 'remove-fields'
+    description: 'Remove technical fields not needed for documentation'
+    fields:
+      - 'decodedData.EDID'
+      - 'decodedData.ICON'
+      - 'decodedData.MICO'
+      - 'decodedData.ANAM'
+      - 'decodedData.JNAM'
+      - 'decodedData.INAM'
+      - 'decodedData.ENAM'
+      - 'decodedData.NAM9'
+
+  - name: 'Generate Perk Documentation'
+    type: 'doc-gen'
+    description: 'Generate markdown documentation for player perks'
+    docType: 'player-perk'
+    outputFormat: 'markdown'
+    includeConditions: true
+    includeEffects: true
+    groupByCategory: true
+    sortBy: 'name'

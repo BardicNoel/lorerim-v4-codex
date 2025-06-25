@@ -48,9 +48,6 @@ function resolveGlobalFromReference(
 
   const localFormId = rawFormID & 0x00ffffff;
 
-  if (highByte === 0xfe) {
-    console.log("ESL Reference, resolving to ESL plugin");
-  }
   const pluginMastersIndex = highByte;
 
   const pluginName =
@@ -59,19 +56,6 @@ function resolveGlobalFromReference(
       : contextPlugin.name; // If the index is out of bounds, it means the record is in the same plugin
 
   const resolvedPlugin = registry[pluginName.toLowerCase()];
-
-  if (
-    contextPlugin.name.toLowerCase() ===
-      "Synthesis - Gameplay Overwrite.esp".toLowerCase() &&
-    highByte !== 0
-  ) {
-    console.log(
-      contextPlugin.name,
-      pluginName,
-      pluginMastersIndex,
-      resolvedPlugin.name
-    );
-  }
 
   if (!resolvedPlugin) {
     console.warn(

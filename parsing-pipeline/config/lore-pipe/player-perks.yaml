@@ -2,27 +2,10 @@
 name: 'AVIF-PERK Merge Pipeline'
 description: 'Merge AVIF records with their related PERK records'
 input: '../output/parsing-pipeline/lorerim/avif-analysis.json'
-output: '../output/parsing-pipeline/lorerim/processed/player-perk-docs.json'
+output: '../output/parsing-pipeline/lorerim/processed/player-perk-docs-pre.json'
 
 stages:
-  - from: 'local'
-    name: 'Merge PERK Records'
-    type: 'merge-records'
-    description: 'Merge PERK records that are referenced by AVIF perkSections'
-    sourceFile: '../output/parsing-pipeline/lorerim/perk-analysis.json'
-    sourceRecordType: 'PERK'
-    mappings:
-      - sourceField: 'perk-mapping'
-        targetField: 'decodedData.perkSections[].PNAM'
-        matchField: 'meta.globalFormId'
-        dataField: 'decodedData'
-        matchType: 'exact'
-    mergeField: 'relatedPerks'
-    mergeStrategy: 'first'
-    overwriteReference: true
-
-  - from: 'local'
-    name: 'Remove Processing Fields'
+  - name: 'Remove Processing Fields'
     type: 'remove-fields'
     description: 'Remove fields that were only needed for processing'
     fields:
@@ -35,38 +18,78 @@ stages:
     description: 'Flatten the decodedData field to make nested data more accessible'
     fields: ['decodedData']
 
-  - name: 'Remove Deep Fields, unneeded'
+  # Merge PERK Records
+  - from: 'local'
+    name: 'Merge PERK Records'
+    type: 'merge-records'
+    description: 'Merge PERK records that are referenced by AVIF perkSections'
+    sourceFile: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+    sourceRecordType: 'PERK'
+    mappings:
+      - sourceField: 'perk-mapping'
+        targetField: 'perkSections[].PNAM'
+        matchField: 'meta.globalFormId'
+        dataField: 'decodedData'
+        matchType: 'exact'
+    mergeField: 'PERK'
+    mergeStrategy: 'first'
+
+  - name: 'Remove Noise Fields'
     type: 'remove-fields'
-    description: 'Remove the decodedData field and clean up perkSections'
-    fields:
-      'CNAM': 'all'
-      'AVSK': 'all'
-      'perkSections[]':
-        - 'FNAM'
-        - 'XNAM'
-        - 'YNAM'
-        - 'HNAM'
-        - 'VNAM'
-        - 'SNAM'
-        - 'CNAM'
-        - 'INAM'
-        - 'PNAM':
-            - 'DATA'
-            - 'PRKE'
-            - 'PRKC'
-            - 'EPFT'
-            - 'PRKH'
+    description: 'Remove technical noise fields while keeping essential documentation data'
+    remove_fields:
+      # TRIM AVIF Values
+      - 'AVSK'
 
-  # - name: 'Flatten PNAM in perkSections'
-  #   type: 'flatten-fields'
-  #   description: 'Flatten the PNAM object inside each perkSections element'
-  #   fields: ['perkSections[].PNAM']
+      # Trim AVIF perkSection Values
+      - 'perkSections[].SNAM'
+      - 'perkSections[].FNAM'
+      - 'perkSections[].HNAM'
+      - 'perkSections[].VNAM'
+      - 'perkSections[].PNAM'
+      - 'perkSections[].DATA'
+      - 'perkSections[].PRKE'
+      - 'perkSections[].PRKC'
+      - 'perkSections[].EPFT'
+      - 'perkSections[].PRKH'
 
-  # - name: 'Standardize Field Names'
-  #   type: 'rename-fields'
-  #   description: 'Rename EDID and FULL fields to standardized names'
-  #   mappings:
-  #     'EDID': 'editorId'
-  #     'FULL': 'name'
-  #     'perkSections[].PNAM.EDID': 'editorId'
-  #     'perkSections[].PNAM.FULL': 'name'
+      # Trim Perk Records - Direct fields
+      - 'perkSections[].PERK.CTDA[].unknown'
+      - 'perkSections[].PERK.CTDA[].unknown2'
+      - 'perkSections[].PERK.CTDA[].unknown3'
+      - 'perkSections[].PERK.CTDA[].padding'
+      - 'perkSections[].PERK.CTDA[].padding2'
+      - 'perkSections[].PERK.CTDA[].param1'
+      - 'perkSections[].PERK.CTDA[].param2'
+      - 'perkSections[].PERK.CTDA[].unknown4'
+      - 'perkSections[].PERK.CTDA[].operator.rawOperator'
+      - 'perkSections[].PERK.CTDA[].operator.rawCompareOperator'
+      - 'perkSections[].PERK.CTDA[].operator.rawFlags'
+
+      # Trim Perk Records - Nested sections
+      - 'perkSections[].PERK.sections[].CTDA[].unknown'
+      - 'perkSections[].PERK.sections[].CTDA[].unknown2'
+      - 'perkSections[].PERK.sections[].CTDA[].unknown3'
+      - 'perkSections[].PERK.sections[].CTDA[].padding'
+      - 'perkSections[].PERK.sections[].CTDA[].padding2'
+      # - 'perkSections[].PERK.sections[].CTDA[].param1'
+      # - 'perkSections[].PERK.sections[].CTDA[].param2'
+      - 'perkSections[].PERK.sections[].CTDA[].unknown4'
+      - 'perkSections[].PERK.sections[].CTDA[].operator.rawOperator'
+      - 'perkSections[].PERK.sections[].CTDA[].operator.rawCompareOperator'
+      - 'perkSections[].PERK.sections[].CTDA[].operator.rawFlags'
+      - 'perkSections[].PERK.sections[].CTDA[].reference'
+      - 'perkSections[].PERK.sections[].CTDA[].comparisonValue'
+      - 'perkSections[].PERK.sections[].PRKF'
+      - 'perkSections[].PERK.sections[].EPFD'
+      - 'perkSections[].PERK.sections[].DATA.padding'
+      - 'perkSections[].PERK.sections[].DATA.padding2'
+      - 'perkSections[].PERK.sections[].DATA.padding3'
+
+  - name: 'Filter One-Handed Skill Records'
+    type: 'filter-records'
+    description: 'Filter to only include One-Handed skill (AVOneHanded) records'
+    criteria:
+      - field: 'EDID'
+        operator: 'equals'
+        value: 'AVOneHanded'

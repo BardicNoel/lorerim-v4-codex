@@ -13,7 +13,7 @@ export type FieldType =
   | 'grouped'
   | 'unknown';
 
-export type StringEncoding = 'utf8' | 'utf16le' | 'ascii';
+export type StringEncoding = 'utf8' | 'utf16le' | 'ascii' | 'windows-1252';
 
 export interface BaseFieldSchema {
   type: FieldType;

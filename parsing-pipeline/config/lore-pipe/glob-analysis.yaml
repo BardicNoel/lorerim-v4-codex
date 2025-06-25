@@ -1,0 +1,33 @@
+# Import base pipeline configuration
+name: 'GLOB Analysis Pipeline'
+description: 'Process GLOB data for analysis'
+input: '../output/skyrim-extractor/lorerim/GLOB.json'
+output: '../output/parsing-pipeline/lorerim/glob-analysis.json'
+
+stages:
+  - from: 'local'
+    name: 'Filter GLOB Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'GLOB'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
+
+  - from: 'local'
+    name: 'Remove GLOB Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove GLOB-specific fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'

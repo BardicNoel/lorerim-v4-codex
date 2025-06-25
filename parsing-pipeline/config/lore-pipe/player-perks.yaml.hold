@@ -1,0 +1,106 @@
+# AVIF to PERK Merge Pipeline
+name: 'AVIF-PERK Merge Pipeline'
+description: 'Merge AVIF records with their related PERK records'
+input: '../output/parsing-pipeline/lorerim/avif-analysis.json'
+output: '../output/parsing-pipeline/lorerim/processed/player-perk-docs.json'
+
+stages:
+  - name: 'Sample Records'
+    type: 'sample-records'
+    description: 'Sample records from the processed data for testing'
+    sampleSize: 1
+    randomSeed: 42
+
+  - name: 'Remove Processing Fields'
+    type: 'remove-fields'
+    description: 'Remove fields that were only needed for processing'
+    fields:
+      record: 'all'
+      header: 'all'
+      meta: 'all'
+
+  - name: 'Flatten decodedData Fields'
+    type: 'flatten-fields'
+    description: 'Flatten the decodedData field to make nested data more accessible'
+    fields: ['decodedData']
+
+  # Merge PERK Records
+  - from: 'local'
+    name: 'Merge PERK Records'
+    type: 'merge-records'
+    description: 'Merge PERK records that are referenced by AVIF perkSections'
+    sourceFile: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+    sourceRecordType: 'PERK'
+    mappings:
+      - sourceField: 'perk-mapping'
+        targetField: 'perkSections[].PNAM'
+        matchField: 'meta.globalFormId'
+        dataField: 'decodedData'
+        matchType: 'exact'
+    mergeField: 'PERK'
+    mergeStrategy: 'first'
+
+  - name: 'Remove Noise Fields'
+    type: 'remove-fields'
+    description: 'Remove technical noise fields while keeping essential documentation data'
+    fields:
+      # TRIM AVIF Values
+      'AVSK': 'all'
+
+      # Trim AVIF perkSection Values
+      'perkSections[]':
+        - 'PNAM'
+        - 'DATA'
+        - 'PRKE'
+        - 'PRKC'
+        - 'EPFT'
+        - 'PRKH'
+
+      # Trim Perk Records - Direct fields
+      'perkSections[].PERK':
+        - 'FULL'
+        - 'CTDA[]':
+            - 'unknown'
+            - 'unknown2'
+            - 'unknown3'
+            - 'padding'
+            - 'padding2'
+            - 'param1'
+            - 'param2'
+            - 'unknown4'
+            - 'operator':
+                - 'rawOperator'
+                - 'rawCompareOperator'
+                - 'rawFlags'
+
+      # Trim Perk Records - Nested sections
+      'perkSections[].PERK.sections[]':
+        - 'CTDA[]':
+            - 'unknown'
+            - 'unknown2'
+            - 'unknown3'
+            - 'padding'
+            - 'padding2'
+            - 'param1'
+            - 'param2'
+            - 'unknown4'
+            - 'operator':
+                - 'rawOperator'
+                - 'rawCompareOperator'
+                - 'rawFlags'
+        - 'PRKF'
+        - 'EPFD'
+
+  # - name: 'Flatten PNAM in perkSections'
+  #   type: 'flatten-fields'
+  #   description: 'Flatten the PNAM object inside each perkSections element'
+  #   fields: ['perkSections[].PNAM']
+
+  # - name: 'Standardize Field Names'
+  #   type: 'rename-fields'
+  #   description: 'Rename EDID and FULL fields to standardized names'
+  #   mappings:
+  #     'EDID': 'editorId'
+  #     'FULL': 'name'
+  #     'perkSections[].PNAM.EDID': 'editorId'
+  #     'perkSections[].PNAM.FULL': 'name'

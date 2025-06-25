@@ -1,6 +1,5 @@
 import { JsonArray, StageConfig, ProcessingResult } from '../../types/pipeline';
 import { createFilterRecordsProcessor } from './filter-records';
-import { createRemoveFieldsProcessor } from './remove-fields';
 import { createKeepFieldsProcessor } from './keep-fields';
 import { createSanitizeFieldsProcessor } from './sanitize-fields';
 import { createBufferDecoderProcessor } from '../buffer-decoder/parser';
@@ -9,6 +8,11 @@ import { createFlattenFieldsProcessor } from './flatten-fields';
 import { createMergeRecordsProcessor } from './merge-records';
 import { createRenameFieldsProcessor } from './rename-fields';
 import { createSampleRecordsProcessor } from './sample-records';
+import { removeFieldsProcessorV2 } from './remove-fields-v2';
+import { createDocGenProcessor } from '../doc-gen/doc-gen';
+import { createExtractFieldProcessor } from './extract-field';
+import { createFormIdResolverProcessor } from './formid-resolver';
+import { createPluckArrayValuesProcessor } from './pluck-array-values';
 
 // Core processor interface
 export interface Processor {
@@ -37,9 +41,48 @@ export function createProcessor(stage: StageConfig): Processor {
       return createRenameFieldsProcessor(stage as any);
     case 'sample-records':
       return createSampleRecordsProcessor(stage);
+    case 'doc-gen':
+      return createDocGenProcessor(stage);
+    case 'extract-field':
+      return createExtractFieldProcessor(stage as any);
+    case 'formid-resolver':
+      return createFormIdResolverProcessor(stage as any);
+    case 'pluck-array-values':
+      return createPluckArrayValuesProcessor(stage as any);
     default:
       throw new Error(`Unknown stage type: ${(stage as any).type}`);
   }
+}
+
+function createRemoveFieldsProcessor(stage: StageConfig) {
+  let removeFields: string[] = [];
+
+  // Handle new format: remove_fields array
+  if ((stage as any).remove_fields) {
+    removeFields = (stage as any).remove_fields;
+  }
+  // Handle old format: fields object with 'all' values
+  else if ((stage as any).fields) {
+    const fields = (stage as any).fields;
+    if (typeof fields === 'object') {
+      // Convert fields with 'all' values to field paths
+      Object.keys(fields).forEach((fieldPath) => {
+        if (fields[fieldPath] === 'all') {
+          removeFields.push(fieldPath);
+        }
+      });
+    }
+  }
+
+  const config = {
+    remove_fields: removeFields,
+    condition: (stage as any).condition,
+  };
+
+  return {
+    transform: (data: any[]) => Promise.resolve(removeFieldsProcessorV2.process(data, config)),
+    getStats: () => ({}),
+  };
 }
 
 // Create a pipeline from multiple stages

@@ -1,7 +1,8 @@
 import { flagParserGenerator, mapParserGenerator } from '../generics';
 import { RecordSpecificSchemas } from '../schemaTypes';
-import { actorValueMap } from '../actorValueMapRecord';
 import { createSchema } from '../createSchema';
+import { actorValueMap } from '@lorerim/platform-types';
+import { CTDA_ARRAY_SCHEMA } from '../ctda/ctdaSchema';
 
 export const MGEFFlags: Record<number, string> = {
   0x00000001: 'Hostile',
@@ -27,8 +28,18 @@ export const MGEFFlags: Record<number, string> = {
 };
 
 export const mgefSchema: RecordSpecificSchemas = createSchema('MGEF', {
+  // Editor ID
+  EDID: { type: 'string', encoding: 'utf8' },
+  // VMAD (Papyrus script data) - optional, variable binary
+  VMAD: { type: 'unknown' },
+  // Full name - optional
+  FULL: { type: 'string', encoding: 'utf8' },
+  // Menu Display Object - optional
   MDOB: { type: 'formid' },
-  ESCE: { type: 'formid' },
+  // Keyword count - optional
+  KSIZ: { type: 'uint32' },
+  // Keywords - optional
+  KWDA: { type: 'array', element: { type: 'formid' } },
   DATA: {
     type: 'struct',
     fields: [
@@ -72,5 +83,12 @@ export const mgefSchema: RecordSpecificSchemas = createSchema('MGEF', {
       { name: 'scriptAIDataDelayTime', type: 'float32' },
     ],
   },
-  // SSND omitted
+  // Counter Effects - optional
+  ESCE: { type: 'formid' },
+  // Sound Data - optional, variable binary
+  SNDD: { type: 'unknown' },
+  // Description - optional
+  DNAM: { type: 'string', encoding: 'utf8' },
+  // Conditions (array of CTDA)
+  CTDA: CTDA_ARRAY_SCHEMA,
 });

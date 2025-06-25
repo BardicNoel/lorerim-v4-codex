@@ -67,6 +67,10 @@ function validateStage(stage: any): StageConfig {
       'merge-records',
       'rename-fields',
       'sample-records',
+      'doc-gen',
+      'extract-field',
+      'formid-resolver',
+      'pluck-array-values',
     ].includes(stage.type)
   ) {
     throw new Error(`Invalid stage type: ${stage.type}`);
@@ -80,8 +84,8 @@ function validateStage(stage: any): StageConfig {
       }
       break;
     case 'remove-fields':
-      if (!stage.fields) {
-        throw new Error('Remove fields stage must have fields');
+      if (!stage.fields && !stage.remove_fields) {
+        throw new Error('Remove fields stage must have fields or remove_fields');
       }
       break;
     case 'keep-fields':
@@ -132,6 +136,42 @@ function validateStage(stage: any): StageConfig {
       }
       if (typeof stage.sampleSize !== 'number' || stage.sampleSize <= 0) {
         throw new Error('Sample records stage sampleSize must be a positive number');
+      }
+      break;
+    case 'doc-gen':
+      if (!stage.docType) {
+        throw new Error('Doc-gen stage must have docType');
+      }
+      if (!['player-perk', 'skill-perk-docs', 'religion-docs'].includes(stage.docType)) {
+        throw new Error(`Invalid docType: ${stage.docType}`);
+      }
+      break;
+    case 'extract-field':
+      if (!stage.field) {
+        throw new Error('Extract field stage must have field');
+      }
+      break;
+    case 'formid-resolver':
+      if (!stage.pluginRegistryPath) {
+        throw new Error('FormID resolver stage must have pluginRegistryPath');
+      }
+      if (!stage.contextPluginField) {
+        throw new Error('FormID resolver stage must have contextPluginField');
+      }
+      if (
+        !stage.targetFields ||
+        !Array.isArray(stage.targetFields) ||
+        stage.targetFields.length === 0
+      ) {
+        throw new Error('FormID resolver stage must have targetFields array');
+      }
+      break;
+    case 'pluck-array-values':
+      if (!stage.arrayField) {
+        throw new Error('Pluck array values stage must have arrayField');
+      }
+      if (!stage.targetField) {
+        throw new Error('Pluck array values stage must have targetField');
       }
       break;
   }

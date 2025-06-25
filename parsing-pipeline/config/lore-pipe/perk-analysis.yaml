@@ -15,13 +15,6 @@ stages:
         operator: 'equals'
         value: true
 
-  # - name: 'Sample 1000 Records'
-  #   type: 'sample-records'
-  #   description: 'Sample 1000 records from the decoded output for analysis'
-  #   sampleSize: 1000
-  #   method: 'random'
-  #   enabled: true
-
   - name: 'Multithreaded PERK Decoder'
     type: 'buffer-decoder'
     description: 'Decode PERK records using multiple worker threads for improved performance'

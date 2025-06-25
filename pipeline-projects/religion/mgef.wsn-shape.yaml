@@ -1,0 +1,52 @@
+# Import base pipeline configuration
+name: "MGEF Wintersun Analysis Pipeline"
+description: "Process MGEF data for Wintersun religion effects"
+
+input: "../pipeline-projects/religion/wintersun-mgef-decoded.json"
+output: "../pipeline-projects/religion/wintersun-mgef.json"
+# Use stages from base template
+stages:
+  - from: "local"
+    name: "Remove Technical Fields from decodedData"
+    type: "remove-fields"
+    description: "Remove technical fields from decodedData that are not needed for religion documentation"
+    remove_fields:
+      - header
+      - record
+      - decodedData.DATA.baseCost
+      - decodedData.DATA.relatedID
+      - decodedData.DATA.skill
+      - decodedData.DATA.resistanceAV
+      - decodedData.DATA.unknown1
+      - decodedData.DATA.castingLight
+      - decodedData.DATA.taperWeight
+      - decodedData.DATA.hitShader
+      - decodedData.DATA.enchantShader
+      - decodedData.DATA.skillLevel
+      - decodedData.DATA.area
+      - decodedData.DATA.castingTime
+      - decodedData.DATA.taperCurve
+      - decodedData.DATA.taperDuration
+      - decodedData.DATA.secondAVWeight
+      # - decodedData.DATA.effectType
+      # - decodedData.DATA.primaryAV
+      - decodedData.DATA.projectileID
+      - decodedData.DATA.explosionID
+      - decodedData.DATA.castType
+      - decodedData.DATA.deliveryType
+      - decodedData.DATA.secondAV
+      - decodedData.DATA.castingArt
+      - decodedData.DATA.hitEffectArt
+      - decodedData.DATA.impactDataID
+      - decodedData.DATA.skillUsageMult
+      - decodedData.DATA.dualCastID
+      - decodedData.DATA.dualCastScale
+      - decodedData.DATA.enchantArtID
+      - decodedData.DATA.nullData1
+      - decodedData.DATA.nullData2
+      - decodedData.DATA.equipAbility
+      - decodedData.DATA.imageSpaceModID
+      - decodedData.DATA.perkID
+      - decodedData.DATA.soundVolume
+      - decodedData.DATA.scriptAIDataScore
+      - decodedData.DATA.scriptAIDataDelayTime

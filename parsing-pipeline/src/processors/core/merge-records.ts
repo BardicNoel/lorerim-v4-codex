@@ -239,20 +239,44 @@ export function createMergeRecordsProcessor(config: MergeRecordsConfig): Process
                 recordsMerged++;
               }
             } else {
-              // Store in merged data (original behavior)
-              const mappingKey = `${mapping.sourceField}_${mapping.targetField}`;
-              if (!mergedData[mappingKey]) {
-                mergedData[mappingKey] = [];
+              // Store merged data as sibling field at the same location as targetField
+              const replacementValues = mappingMatches.map((match) => match.sourceRecords);
+              const flatReplacementValues =
+                config.mergeStrategy === 'all' ? replacementValues.flat() : replacementValues;
+
+              // Create sibling field name from mergeField
+              const siblingFieldName = config.mergeField;
+
+              // For array fields, add sibling to each matching element
+              if (isArray && basePath && arrayField) {
+                for (const match of mappingMatches) {
+                  const baseValue = getNestedValue(targetRecord, basePath);
+                  if (Array.isArray(baseValue)) {
+                    for (let i = 0; i < baseValue.length; i++) {
+                      const item = baseValue[i];
+                      if (typeof item === 'object' && item !== null && item !== undefined) {
+                        const itemValue = getNestedValue(item, arrayField);
+                        if (itemValue === match.targetValue) {
+                          // Add sibling field to this element
+                          setNestedValue(item, siblingFieldName, match.sourceRecords);
+                          break;
+                        }
+                      }
+                    }
+                  }
+                }
+              } else {
+                // For non-array fields, add sibling at the same level
+                const targetParts = mapping.targetField.split('.');
+                const parentPath = targetParts.slice(0, -1).join('.');
+                const siblingPath = parentPath
+                  ? `${parentPath}.${siblingFieldName}`
+                  : siblingFieldName;
+                setNestedValue(targetRecord, siblingPath, flatReplacementValues);
               }
-              mergedData[mappingKey].push(...mappingMatches);
+              recordsMerged++;
             }
           }
-        }
-
-        // Add merged data to target record (only if not using overwriteReference)
-        if (!config.overwriteReference && Object.keys(mergedData).length > 0) {
-          setNestedValue(targetRecord, config.mergeField, mergedData);
-          recordsMerged++;
         }
 
         return targetRecord;
