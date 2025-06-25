@@ -1,0 +1,68 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Schema Linker Rule
+
+This rule defines expectations for shared logic that links Skyrim mod records together based on known schema relationships.
+
+## Purpose
+
+To provide a reusable, Skyrim-aware mechanism for resolving references between decoded records using:
+
+- FormID references
+- EDID pattern matching
+- Known subrecord structures
+
+## Responsibilities
+
+- Handle general-purpose linking between common Skyrim record types.
+- Avoid project-specific assumptions — logic must be reusable across generators.
+- Refer to the [UESP Skyrim Mod File Format](https://en.uesp.net/wiki/Skyrim_Mod\:Mod_File_Format) for authoritative record structures and relationships.
+
+## Supported Patterns
+
+Examples of built-in relationships the linker must support:
+
+- `SPEL` → `MGEF[]` via effect list
+- `PERK` → `MGEF` (e.g., Apply Spell or Entry Point Effect)
+- `QUST.VMAD.Properties` → references to `BOOK`, `SPEL`, `GLOB`, etc.
+- `AVIF`, `GLOB`, `KYWD`, `CLAS`, `RACE`, and others via direct FormID usage
+
+## Implementation Guidelines
+
+- Implemented as utility functions in `utils/` (e.g., `linkRecords.ts`)
+- All linking should be opt-in: consumers decide when to use enriched data
+- Avoid hardcoding project-specific logic — that belongs in `logic/`
+- Field matching may use `formid`, `edid`, or inferred naming patterns
+- When linking a record:
+  - First check the project-specific `records/`
+  - If not found, fallback to `primaries/` **only if** the type is approved
+  - If fallback is used and the type is **not** in the approved list, issue a warning
+  - If no record is found in either location, throw an error
+
+## Cursor Agent Notes
+
+- Always use schema linker utilities for cross-record resolution
+- Never inline linking logic inside `generate.ts`
+- Cite the UESP page for any new pattern being supported
+
+### ✅ Good Example
+
+```ts
+const spellsWithEffects = linkSpellEffects(spells, {
+  mgefRecords: await loadRecordSet('MGEF', projectDir, primariesDir, {
+    approvedPrimaries: ['MGEF'],
+  })
+});
+```
+
+### ❌ Bad Example
+
+```ts
+// Inline linkage in generator without fallbacks or type checks
+const enriched = spells.map(spell => spell.effects.map(id => allEffects.find(e => e.formid === id)));
+```
+
+
