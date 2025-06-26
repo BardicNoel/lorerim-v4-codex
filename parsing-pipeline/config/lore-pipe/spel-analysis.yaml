@@ -11,6 +11,10 @@ stages:
     type: 'buffer-decoder'
     description: 'Decode binary record data into structured format'
     recordType: 'SPEL'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
 
   - from: 'local'
     name: 'Remove SPEL Specific Fields'
