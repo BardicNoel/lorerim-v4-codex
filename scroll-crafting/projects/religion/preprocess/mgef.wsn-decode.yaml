@@ -1,0 +1,35 @@
+# Import base pipeline configuration
+name: "MGEF Wintersun Analysis Pipeline"
+description: "Process MGEF data for Wintersun religion effects"
+input: "../output/skyrim-extractor/lorerim/MGEF.json"
+output: "../pipeline-projects/religion/wintersun-mgef-decoded.json"
+
+# Use stages from base template
+stages:
+  - from: "local"
+    name: "Filter Winner Records"
+    type: "filter-records"
+    description: "Filter to only include records where isWinner is true"
+    criteria:
+      - field: "meta.isWinner"
+        operator: "equals"
+        value: true
+
+  # - from: "local"
+  #   name: "Filter Wintersun Records"
+  #   type: "filter-records"
+  #   description: "Filter to only include records from Wintersun plugin"
+  #   criteria:
+  #     - field: "meta.plugin"
+  #       operator: "contains"
+  #       value: "Wintersun"
+
+  - from: "local"
+    name: "Decode Binary Records"
+    type: "buffer-decoder"
+    description: "Decode binary record data into structured format"
+    recordType: "MGEF"
+    loadPluginMetadata: true
+    pluginMetadataPath: "../output/skyrim-extractor/lorerim/plugin-metadata-map.json"
+    multithreaded: true
+    maxWorkers: 4

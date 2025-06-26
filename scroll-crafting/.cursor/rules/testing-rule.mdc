@@ -1,0 +1,76 @@
+---
+description: 
+globs: scroll-crafting/**
+alwaysApply: false
+---
+# Testing Rule
+
+This rule defines expectations for test coverage and test-driven development (TDD) across all generator projects and shared utilities in the Lorerim Codex system.
+
+## Philosophy
+
+Testing is a **forward feature**. All new logic must be written using **test-driven development**:
+
+- Write small, focused unit tests before implementing behavior.
+- Verification is part of the write step.
+- Tests reduce back-and-forth and improve confidence in generator correctness.
+
+## Framework
+
+All testing must use [`vitest`](https://vitest.dev/):
+
+- Supports TypeScript and ESM out of the box
+- Fast, lightweight, and works well with CLI-focused utilities
+- Defined in the top-level `devDependencies` of `package.json`
+
+## Test Locations
+
+- Each project may include a `__tests__/` folder if it contains `logic/` or local utilities
+- Shared utilities in `utils/` must place tests in `utils/__tests__/`
+- Do **not** co-locate tests in output or template folders
+
+### Example Layout
+
+```
+projects/perks/
+├── logic/
+│   └── resolvePerkTree.ts
+├── __tests__/
+│   └── resolvePerkTree.test.ts
+```
+
+## Test Structure
+
+- Use `describe()` + `it()` or `test()` blocks for grouping and clarity
+- All exported functions from `logic/` or `utils/` must be tested
+- Favor small inputs and expected outputs over large mocks
+- Tests should cover both expected and edge-case behaviors
+
+## Cursor Agent Notes
+
+- Cursor agents must begin implementation by writing at least one test per function or module
+- Do not leave logic untested
+- If a helper function is written but unused in tests, it should be deleted or tested
+
+### ✅ Good Example
+
+```ts
+import { resolvePerkTree } from '../logic/resolvePerkTree';
+
+test('groups perks by tree and orders by rank', () => {
+  const input = [/* test perks */];
+  const result = resolvePerkTree(input);
+  expect(result.OneHanded).toHaveLength(3);
+});
+```
+
+### ❌ Bad Example
+
+```ts
+// No test coverage for new resolver
+export function resolvePerkTree(...) {
+  // logic...
+}
+```
+
+

@@ -1,0 +1,75 @@
+---
+description: 
+globs: scroll-crafting/projects/*/generate.ts
+alwaysApply: false
+---
+# Generator Structure Rule
+
+This rule governs the structure and behavior of every `generate.ts` file in a Lorerim doc generator project.
+
+## Required Inputs
+
+- Load one or more record types from the project’s `records/` directory.
+- For any required record type not found in the project, fall back to the shared `primaries/` directory.
+- Maintain a list of **approved primary links** for fallback. These include common shared types like `KYWD`, `AVIF`, `GLOB`.
+- If a record is accessed from `primaries/` but is **not** on the approved list, issue a console warning.
+- If a required record is missing from both the project and `primaries/`, the script must throw an error.
+- Accept only JSON-encoded records. Parsing is handled by preprocessing, not in the generator.
+
+## Output Expectations
+
+- Must produce both:
+  - A structured JSON file written to `output/<project>.json`
+  - A Markdown document written to `output/<project>.md`
+- All writes must be scoped to the generator’s `output/` folder.
+
+## Template Integration
+
+- Must use the `primary.md` template located in `templates/`.
+- May use secondary partials (e.g., `perk_block.md`) registered via Handlebars.
+- The context passed to templates must be well-structured and typed.
+
+## File Naming & Location
+
+- Generator script must be named `generate.ts`.
+- It must live at the top level of the project folder (e.g., `projects/perks/generate.ts`).
+- Output files must match the project scope (e.g., `perks.md`, `perks.json`).
+
+## Script Behavior
+
+- Must be runnable as a standalone Node script via `ts-node`.
+- Should log basic status to the console (e.g., "Writing output/perks.md...").
+- Should catch and log any errors gracefully.
+
+## Directory Structure Assumptions
+
+- `records/` and `templates/` must exist in the project directory.
+- `output/` will be created automatically by the script if not present.
+- `primaries/` must exist at the root of the repository.
+
+## Cursor Agent Notes
+
+- This rule must be followed precisely for all new generators.
+- Cursor agents must use utility functions in `utils/` when available.
+- Do not write or modify files outside the project folder.
+- Do not import or rely on other project folders' logic.
+
+### ✅ Good Example
+
+```ts
+const keywords = await loadRecordSet('KYWD', projectDir, primaryDir, {
+  approvedPrimaries: ['KYWD'],
+});
+```
+
+### ❌ Bad Example
+
+```ts
+const globals = await loadRecordSet('GLOB', projectDir, primaryDir); // no approval check or warning
+
+const effects = JSON.parse(fs.readFileSync('../../other-project/records/MGEF/xyz.json'));
+```
+
+*This rule is always in effect alongside the Code Quality Rule.*
+
+
