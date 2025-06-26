@@ -98,7 +98,26 @@ const resolveConflicts = (
   // Iterate over each record
   for (const recordType in newDict) {
     const records = newDict[recordType];
-    for (const record of records) {
+    console.log(
+      "Resolving globalFormIds and winners for",
+      recordType,
+      `(${records.length}) records`
+    );
+    const totalRecords = records.length;
+    let lastLoggedPercent = -1;
+    for (let i = 0; i < records.length; i++) {
+      const record = records[i];
+      // Progress indicator: log every 10% or every 1000 records
+      const percent = Math.floor((i / totalRecords) * 100);
+      if (
+        (percent > lastLoggedPercent && percent % 10 === 0) ||
+        i % 1000 === 0
+      ) {
+        console.log(
+          `${recordType} progress: ${percent}% (${i}/${totalRecords})`
+        );
+        lastLoggedPercent = percent;
+      }
       const formIdNumeric = parseInt(record.meta.formId, 16);
       const globalFormId = resolveGlobalFromReference(
         formIdNumeric,

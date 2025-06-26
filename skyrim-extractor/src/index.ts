@@ -94,10 +94,13 @@ export async function main(
       recordTypeFilter: config.recordTypeFilter,
     });
 
+    console.log("Plugin Scan Complete");
+
     // map plugin names to PluginMeta
     const pluginRegistry = Object.fromEntries(
       plugins.map((plugin) => [plugin.name, plugin])
     );
+    console.log("Plugin Registry Complete");
 
     const parsedRecordDict = flagWinners(
       mergeTypeDictionaries(parsedRecords),
