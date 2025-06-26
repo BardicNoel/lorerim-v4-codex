@@ -6,25 +6,22 @@ export async function loadRecordSet<T>(
   projectDir: string,
   fallbackDir: string
 ): Promise<T[]> {
-  const projectPath = path.join(projectDir, tag);
-  const fallbackPath = path.join(fallbackDir, tag);
+  const projectFile = path.join(projectDir, `${tag.toLowerCase()}.json`);
+  const fallbackFile = path.join(fallbackDir, `${tag.toLowerCase()}.json`);
 
-  const entries = fs.existsSync(projectPath) ? fs.readdirSync(projectPath) : [];
-  const fallbackEntries = fs.existsSync(fallbackPath)
-    ? fs.readdirSync(fallbackPath)
-    : [];
-
-  const allFiles = new Set([...entries, ...fallbackEntries]);
-
-  const records: T[] = [];
-
-  for (const file of allFiles) {
-    const basePath = fs.existsSync(path.join(projectPath, file))
-      ? projectPath
-      : fallbackPath;
-    const content = fs.readFileSync(path.join(basePath, file), "utf-8");
-    records.push(JSON.parse(content));
+  // First, try project-specific file
+  if (fs.existsSync(projectFile)) {
+    const content = fs.readFileSync(projectFile, "utf-8");
+    const data = JSON.parse(content);
+    return Array.isArray(data) ? data : [data];
   }
 
-  return records;
+  // Fall back to primaries file
+  if (fs.existsSync(fallbackFile)) {
+    const content = fs.readFileSync(fallbackFile, "utf-8");
+    const data = JSON.parse(content);
+    return Array.isArray(data) ? data : [data];
+  }
+
+  return [];
 }

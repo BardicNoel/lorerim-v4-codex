@@ -9,12 +9,16 @@ export function renderMarkdownTemplate(
   const primaryTemplate = fs.readFileSync(templatePath, "utf-8");
 
   const partialsDir = path.dirname(templatePath);
-  const blockPath = path.join(partialsDir, "perk_block.md");
-  if (fs.existsSync(blockPath)) {
-    Handlebars.registerPartial(
-      "perk_block",
-      fs.readFileSync(blockPath, "utf-8")
-    );
+  // Register all .md files in the partials directory as partials
+  const files = fs.readdirSync(partialsDir);
+  for (const file of files) {
+    if (file.endsWith('.md') && file !== path.basename(templatePath)) {
+      const partialName = path.basename(file, '.md');
+      Handlebars.registerPartial(
+        partialName,
+        fs.readFileSync(path.join(partialsDir, file), "utf-8")
+      );
+    }
   }
 
   const template = Handlebars.compile(primaryTemplate);
