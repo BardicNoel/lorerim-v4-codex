@@ -1,0 +1,77 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Template Construction Rule
+
+This rule defines how Markdown templates must be structured and written for use in Lorerim doc generator projects.
+
+## Purpose
+
+Templates define the final structure and formatting of Markdown output. They allow for consistent document rendering across generators and enable Cursor to inject structured data into readable output.
+
+## File Structure
+
+Each project must include:
+
+```
+projects/<name>/templates/
+├── primary.md         # The main document layout
+├── <block>.md         # One or more reusable partials (e.g., perk_block.md)
+```
+
+## Templating Engine
+
+All templates must be written using **Handlebars-compatible syntax**, including:
+
+- `{{variable}}` for direct substitution
+- `{{#each list}}` for iteration
+- `{{> partialName }}` for partial includes
+- No logic beyond basic iteration and interpolation
+
+## Content Structure
+
+- `primary.md` must define all major sections of the output document
+- Section headers should use proper Markdown levels (e.g., `##`, `###`)
+- Use bullet lists (`-`) or tables where appropriate
+- Partial templates should render **only one item** each (e.g., one perk block)
+- Templates should be written to communicate **conceptual content**, not raw data
+
+## Variable Naming
+
+- Template context should use descriptive, lowercase camelCase names (e.g., `perks`, `blessings`, `resolvedEffects`)
+- Favor descriptive fields like `name`, `prerequisites`, `effectDescription`, `category`, etc.
+- Do not expose plugin internals like `EDID`, `FormID`, or subrecord tags in templates — these may be included in JSON output but should not appear in Markdown
+- All data passed into the template must be type-safe and pre-validated
+
+## Cursor Agent Notes
+
+- Always use a `primary.md` file as the entry point
+- Do not place branching logic in templates — move decisions to logic or generator script
+- Each block template must represent one item in a list and should not include layout concerns (e.g., headers)
+- Favor narrative labeling over technical metadata unless the document explicitly calls for it
+
+### ✅ Good Example: `perk_block.md`
+
+```md
+### {{name}}
+
+- **Description:** {{description}}
+- **Required Perks:** {{prerequisites}}
+- **Skill Tree:** {{tree}}
+```
+
+### ❌ Bad Example
+
+```md
+### {{name}}
+
+- **EDID:** `{{edid}}`
+- **FormID:** `{{formid}}`
+- **Flags:** {{dnam.flags}}
+```
+
+*This rule is always in effect alongside the Generator Structure and Code Quality rules.*
+
+
