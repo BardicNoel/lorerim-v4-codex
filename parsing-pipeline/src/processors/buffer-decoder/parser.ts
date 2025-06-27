@@ -996,13 +996,12 @@ export function processRecordFields(
         fieldPath: `record.${fieldName}`,
         details: {
           bufferLength: fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.length : 0,
-          hex: fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.toString('hex') : '',
           recordType: config.recordType,
           formId: getFormIdFromRecord(record),
         },
       };
       recordErrors++;
-      i++; // Skip to next record on error
+      i++;
     }
   }
 
