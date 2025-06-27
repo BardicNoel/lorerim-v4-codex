@@ -4,9 +4,9 @@
 {{description}}
 {{/if}}
 
-{{#if effects}}
+{{#if powers}}
 **Powers:**
-{{#each effects}}
-- {{this}}
+{{#each powers}}
+- **{{name}}**: {{description}}
 {{/each}}
 {{/if}} 

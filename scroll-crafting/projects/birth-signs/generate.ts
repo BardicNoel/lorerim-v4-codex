@@ -3,12 +3,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { loadRecordSet } from "../../utils/loadRecordSet.js";
 import { renderMarkdownTemplate } from "../../utils/renderMarkdownTemplate.js";
+import { findByFormId } from "../../utils/findByFormId.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_DIR = path.resolve(__dirname);
 const RECORD_DIR = path.join(PROJECT_DIR, "records");
-const PRIMARY_DIR = path.resolve("primaries"); // shared root-level fallback
+const PRIMARY_DIR = path.resolve(__dirname, "../../primaries"); // shared root-level fallback
 const OUTPUT_DIR = path.join(PROJECT_DIR, "output");
 const TEMPLATE_DIR = path.join(PROJECT_DIR, "templates");
 
@@ -18,7 +19,14 @@ interface Birthsign {
   edid?: string;
   formid?: string;
   description?: string;
-  effects?: string[];
+  powers?: Power[];
+}
+
+interface Power {
+  name: string;
+  description: string;
+  magnitude?: number;
+  duration?: number;
 }
 
 interface BirthsignGroup {
@@ -55,7 +63,7 @@ async function parseBirthsignStructure(mesgData: any[]): Promise<{groups: Births
           name,
           group: groupName,
           description: `Sign of the ${name}`,
-          effects: []
+          powers: []
         }));
         
         groups.push({
@@ -86,7 +94,7 @@ async function parseBirthsignStructure(mesgData: any[]): Promise<{groups: Births
   return { groups, promptMessage, promptNote: note };
 }
 
-async function enrichBirthsignsWithSpellData(birthsignGroups: BirthsignGroup[], spelData: any[]): Promise<BirthsignGroup[]> {
+async function enrichBirthsignsWithSpellData(birthsignGroups: BirthsignGroup[], spelData: any[], mgefData: any[]): Promise<BirthsignGroup[]> {
   for (const group of birthsignGroups) {
     for (const birthsign of group.birthsigns) {
       // Find SPEL record with FULL value matching "Sign of the [BirthsignName]" (case insensitive)
@@ -101,46 +109,120 @@ async function enrichBirthsignsWithSpellData(birthsignGroups: BirthsignGroup[], 
         birthsign.edid = spellRecord.decodedData?.EDID;
         birthsign.formid = spellRecord.meta?.formId;
         birthsign.description = spellRecord.decodedData?.DESC || birthsign.description;
+
+        // Extract power names from DESC using angle brackets
+        const desc = spellRecord.decodedData?.DESC || "";
+        const powerMatches = desc.match(/<([^>]+)>|&lt;([^&]+)&gt;/g);
+        const powers: Power[] = [];
         
-        // Look for powers mentioned in the description
-        const powerMatches = spellRecord.decodedData?.DESC?.match(/&lt;([^&]+)&gt;|<([^>]+)>/g);
         if (powerMatches) {
-          const powers: string[] = [];
           for (const match of powerMatches) {
-            const powerName = match.replace(/&lt;|&gt;|<|>/g, '');
-            // Only treat as a power if a matching SPEL record exists with a non-empty DESC
-            const powerSpell = spelData.find(record => {
-              const fullName = record.decodedData?.FULL;
-              const desc = record.decodedData?.DESC;
-              return fullName === powerName && desc && desc.trim() !== '';
+            const powerName = match.replace(/<|>|&lt;|&gt;/g, '').trim();
+            // Skip numeric/stat placeholders
+            if (!powerName || !isNaN(parseInt(powerName, 10))) continue;
+
+            // Find related SPEL records by EDID or FULL containing the power name
+            const relatedSpells = spelData.filter(record => {
+              const edid = record.decodedData?.EDID || '';
+              const full = record.decodedData?.FULL || '';
+              return edid.toLowerCase().includes(powerName.toLowerCase()) ||
+                     full.toLowerCase().includes(powerName.toLowerCase());
             });
-            if (powerSpell) {
-              powers.push(`**${powerName}**: ${powerSpell.decodedData.DESC}`);
+
+            for (const relatedSpell of relatedSpells) {
+              // Prefer DESC from the spell
+              let spellDesc = relatedSpell.decodedData?.DESC;
+              let powerDescription = '';
+              let magnitude: number | undefined;
+              let duration: number | undefined;
+
+              if (spellDesc && spellDesc.length > 0 && !spellDesc.includes('{') && !spellDesc.includes('}')) {
+                powerDescription = spellDesc;
+              } else {
+                // Fallback: use DNAM from MGEF effects
+                const effects = relatedSpell.decodedData?.effects;
+                if (effects && effects.length > 0) {
+                  for (const effect of effects) {
+                    const efid = effect.EFID;
+                    if (!efid) continue;
+                    
+                    // Use findByFormId to look up MGEF record
+                    const mgefRecord = findByFormId(mgefData, efid);
+                    if (mgefRecord && mgefRecord.decodedData?.DNAM) {
+                      powerDescription = mgefRecord.decodedData.DNAM;
+                      
+                      // Extract magnitude and duration from the SPEL effect data
+                      if (effect.EFIT) {
+                        magnitude = effect.EFIT.magnitude;
+                        duration = effect.EFIT.duration;
+                      }
+                      break; // Use first effect's description
+                    }
+                  }
+                }
+              }
+
+              if (powerDescription) {
+                // Replace <mag> and <dur> tags with values if present
+                let descWithSubs = powerDescription;
+                if (typeof magnitude === 'number') {
+                  descWithSubs = descWithSubs.replace(/<mag>|&lt;mag&gt;/gi, `<${magnitude}>`);
+                }
+                if (typeof duration === 'number') {
+                  descWithSubs = descWithSubs.replace(/<dur>|&lt;dur&gt;/gi, `<${duration}>`);
+                }
+                powers.push({
+                  name: powerName,
+                  description: descWithSubs,
+                  magnitude,
+                  duration
+                });
+                break; // Use first matching spell
+              }
             }
-            // else: ignore numeric/stat placeholders
           }
-          if (powers.length > 0) {
-            birthsign.effects = powers;
-          } else {
-            delete birthsign.effects;
-          }
+        }
+        
+        if (powers.length > 0) {
+          birthsign.powers = powers;
         } else {
-          delete birthsign.effects;
+          delete birthsign.powers;
         }
       }
     }
   }
-
   return birthsignGroups;
 }
 
 async function generate() {
+  console.log("Project directory:", PROJECT_DIR);
+  console.log("Record directory:", RECORD_DIR);
+  console.log("Primary directory:", PRIMARY_DIR);
+  console.log("Primary MESG file:", path.join(PRIMARY_DIR, "mesg.json"));
+  console.log("Primary MESG file exists:", fs.existsSync(path.join(PRIMARY_DIR, "mesg.json")));
+  
   // 1. Load MESG records from primaries
   const mesgRecords: any[] = await loadRecordSet<any>(
     "MESG",
     RECORD_DIR,
     PRIMARY_DIR
   );
+
+  console.log(`Loaded ${mesgRecords.length} MESG records`);
+  
+  // Debug: Check for the specific record
+  const targetRecord = mesgRecords.find(record => 
+    record.decodedData?.EDID === "REQ_Message_Birthsign_Group"
+  );
+  
+  if (targetRecord) {
+    console.log("Found target record:", targetRecord.decodedData?.EDID);
+  } else {
+    console.log("Target record not found. Available EDIDs:");
+    mesgRecords.slice(0, 10).forEach(record => {
+      console.log(`  - ${record.decodedData?.EDID}`);
+    });
+  }
 
   // 2. Load SPEL records from primaries
   const spelRecords: any[] = await loadRecordSet<any>(
@@ -149,13 +231,20 @@ async function generate() {
     PRIMARY_DIR
   );
 
-  // 3. Parse birthsign structure from the main message
+  // 3. Load MGEF records from primaries
+  const mgefRecords: any[] = await loadRecordSet<any>(
+    "MGEF",
+    RECORD_DIR,
+    PRIMARY_DIR
+  );
+
+  // 4. Parse birthsign structure from the main message
   const { groups, promptMessage, promptNote } = await parseBirthsignStructure(mesgRecords);
 
-  // 4. Enrich birthsigns with spell data
-  const enrichedBirthsignGroups = await enrichBirthsignsWithSpellData(groups, spelRecords);
+  // 5. Enrich birthsigns with spell data
+  const enrichedBirthsignGroups = await enrichBirthsignsWithSpellData(groups, spelRecords, mgefRecords);
 
-  // 5. Render Markdown
+  // 6. Render Markdown
   const markdown = renderMarkdownTemplate(
     path.join(TEMPLATE_DIR, "primary.md"),
     { birthsignGroups: enrichedBirthsignGroups, promptMessage, promptNote } // pass context into the template
@@ -164,7 +253,7 @@ async function generate() {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   fs.writeFileSync(path.join(OUTPUT_DIR, "birthsigns.md"), markdown);
 
-  // 6. Write JSON for web use or ingestion
+  // 7. Write JSON for web use or ingestion
   fs.writeFileSync(
     path.join(OUTPUT_DIR, "birthsigns.json"),
     JSON.stringify(enrichedBirthsignGroups, null, 2)

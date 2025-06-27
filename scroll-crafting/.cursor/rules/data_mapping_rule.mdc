@@ -1,10 +1,39 @@
-# Data Mapping & Resolution Rule
-
-This rule defines how raw record data must be mapped, transformed, and resolved before being passed into output templates. It governs the structure, naming, and enrichment process used to convert plugin records into high-level structured data.
-
-## Purpose
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Data Mapping Rule
 
 To create clean, consistent, and concept-driven data structures from Skyrim plugin records, suitable for Markdown and JSON output. This mapping layer acts as the semantic bridge between raw record formats and user-facing content.
+
+## Data Structure
+
+All parsed records follow the `ParsedRecord` interface structure:
+
+```typescript
+interface ParsedRecord {
+  meta: {
+    isWinner?: boolean;
+    type: string; // e.g., 'PERK', 'SPEL', 'MGEF'
+    formId: string; // e.g., '0x00058F80'
+    globalFormId: string; // e.g., "0x2C058F80" (0x2C is the load order)
+    stackOrder?: number | null;
+    plugin: string; // e.g., 'Requiem.esp'
+  };
+  record: {
+    tag: string;
+    buffer: string; // base64 encoded
+  }[];
+  decodedData?: {
+    [key: string]: any; // Decoded data by subrecord ID
+  };
+  decodedErrors?: {
+    [key: string]: any; // Decoded errors by subrecord ID
+  };
+  header: string; // Raw 24-byte record header in base64
+}
+```
 
 ## Responsibilities
 
@@ -18,17 +47,26 @@ To create clean, consistent, and concept-driven data structures from Skyrim plug
 - Mapping is performed in `logic/` or `utils/`, not templates
 - All mappings should be typed and consistent per record type
 - Contextual meaning should guide output field names (e.g., `prerequisites`, `blessingEffects`, `draconicCategory`)
+- **Always access record data through the `decodedData` field**
+- Use `findByFormId()` utility for cross-record lookups using `meta.globalFormId`
 
 ## Examples
 
-### Raw:
+### Raw ParsedRecord:
 
 ```json
 {
-  "EDID": "PerkDualFlurry02",
-  "FULL": "Dual Flurry",
-  "PRKE": ["00058F60"],
-  "DNAM": { "description": "Dual-wielding attacks are 35% faster." }
+  "meta": {
+    "type": "PERK",
+    "globalFormId": "0x2C058F80",
+    "plugin": "Requiem.esp"
+  },
+  "decodedData": {
+    "EDID": "PerkDualFlurry02",
+    "FULL": "Dual Flurry",
+    "PRKE": ["00058F60"],
+    "DNAM": { "description": "Dual-wielding attacks are 35% faster." }
+  }
 }
 ```
 
@@ -43,11 +81,32 @@ To create clean, consistent, and concept-driven data structures from Skyrim plug
 }
 ```
 
+## Cross-Record Lookups
+
+When resolving references between records:
+
+1. Use `findByFormId(recordSet, formId)` to find records by their `meta.globalFormId`
+2. Access the target record's data through `record.decodedData`
+3. Map the resolved data to semantic field names
+
+### Example Lookup:
+
+```typescript
+// Find a spell record by formId
+const spellRecord = findByFormId(spellRecords, "0x2C123456");
+if (spellRecord) {
+  const spellName = spellRecord.decodedData?.FULL || spellRecord.decodedData?.EDID;
+  // Use spellName in mapping...
+}
+```
+
 ## Cursor Agent Notes
 
 - Always transform record data into high-level structures before templating
 - Do not pass raw plugin keys like `EDID`, `DNAM`, `VMAD`, etc., into templates
 - Prefer semantic field names that reflect meaning in context
+- **Always access record data through `decodedData`, never directly from the record**
+- Use `findByFormId()` for cross-record resolution
 - If new mappings or relationships are discovered, update this rule with examples
 
 *This rule is always in effect alongside the Project Logic, Template Construction, and Output Format rules.*
