@@ -1,8 +1,8 @@
 // Shared helpers for markdown rendering, record resolution, etc. (to be implemented)
 
-export { loadRecordSet } from "./loadRecordSet";
-export { renderMarkdownTemplate } from "./renderMarkdownTemplate";
-export { findByFormId } from "./findByFormId";
+export { loadRecordSet } from "./loadRecordSet.js";
+export { renderMarkdownTemplate } from "./renderMarkdownTemplate.js";
+export { findByFormId } from "./findByFormId.js";
 
 /**
  * Given a SPEL record and an array of MGEF records, returns all related MGEF records

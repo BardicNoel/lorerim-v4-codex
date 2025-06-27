@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PrimaryRecordSchema } from "./recordSchema";
+import { PrimaryRecordSchema } from "./recordSchema.js";
 
 // Shape for the SPIT subfield inside SPEL data
 const SpelSpitSchema = z.object({

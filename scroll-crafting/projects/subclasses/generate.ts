@@ -1,12 +1,17 @@
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 import {
   loadRecordSet,
   findByFormId,
   renderMarkdownTemplate,
-} from "../../utils";
-import { resolveSubclasses } from "./logic/resolveSubclasses";
+} from "../../utils/index.js";
+import { resolveSubclasses } from "./logic/resolveSubclasses.js";
 import { ParsedRecord } from "@lorerim/platform-types";
+
+// ESM-compatible __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PROJECT_DIR = path.resolve(__dirname);
 const RECORD_DIR = path.join(PROJECT_DIR, "records");

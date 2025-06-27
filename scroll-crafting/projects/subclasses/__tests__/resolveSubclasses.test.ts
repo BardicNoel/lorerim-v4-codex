@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { resolveSubclasses, ParsedRecord } from "../logic/resolveSubclasses";
+import { resolveSubclasses } from "../logic/resolveSubclasses.js";
+import { ParsedRecord } from "@lorerim/platform-types";
 
 describe("resolveSubclasses", () => {
   it("returns an array (stub)", () => {

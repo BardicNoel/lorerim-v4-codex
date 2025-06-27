@@ -1,6 +1,6 @@
-import { EnrichedSpel, EnrichedSpelEffect } from "../types/records";
-import { SpelRecordFromSchema } from "../types/spelSchema";
-import { MgefRecordFromSchema } from "../types/mgefSchema";
+import { EnrichedSpel, EnrichedSpelEffect } from "../types/records.js";
+import { SpelRecordFromSchema } from "../types/spelSchema.js";
+import { MgefRecordFromSchema } from "../types/mgefSchema.js";
 
 export function resolveEnrichedSpel(
   spel: SpelRecordFromSchema,

@@ -8,6 +8,10 @@
     "doc": "docs"
   },
   "scripts": {
+    "generate:subclasses": "node --loader ts-node/esm projects/subclasses/generate.ts",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit",
     "test": "vitest"
   },
   "keywords": [],
