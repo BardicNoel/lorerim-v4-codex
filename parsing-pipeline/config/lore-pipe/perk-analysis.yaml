@@ -2,7 +2,8 @@
 name: 'PERK Analysis Pipeline'
 description: 'Process PERK data for analysis'
 input: '../output/skyrim-extractor/lorerim/PERK.json'
-output: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+# output: '../output/parsing-pipeline/lorerim/perk-analysis.json'
+output: '../scroll-crafting/primaries/perks.json'
 
 # Use stages from base template
 stages:

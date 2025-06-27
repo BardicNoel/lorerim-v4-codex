@@ -2,7 +2,8 @@
 name: 'FLST Analysis Pipeline'
 description: 'Process FLST data for analysis'
 input: '../output/skyrim-extractor/lorerim/FLST.json'
-output: '../output/parsing-pipeline/lorerim/flst-analysis.json'
+# output: '../output/parsing-pipeline/lorerim/flst-analysis.json'
+output: '../scroll-crafting/primaries/flst.json'
 
 # Use stages from base template
 stages:
