@@ -797,7 +797,15 @@ function decodeField(
       return decoder.parseStruct(buffer, 0, structSize, schema.fields, true, contextPluginName);
 
     case 'array':
-      return decoder.parseArray(buffer, 0, buffer.length, schema.element, contextPluginName);
+      // If multiple buffers, decode each as an element
+      if (fieldData.length > 1) {
+        return fieldData.map((buf) =>
+          decodeField([buf], schema.element, decoder, contextPluginName)
+        );
+      } else {
+        // Fallback to current logic for single buffer
+        return decoder.parseArray(buffer, 0, buffer.length, schema.element, contextPluginName);
+      }
 
     case 'unknown':
       if (schema.parser) {
@@ -919,19 +927,18 @@ export function processRecordFields(
   while (i < processedRecord.record.length) {
     const subrecord = processedRecord.record[i];
     const fieldName = subrecord.tag;
-    const fieldData = [subrecord.buffer]; // buffer is a base64 string
+    let fieldData: any[] = []; // Ensure fieldData is always defined
+    const schema = decoder.getFieldSchema(config.recordType, fieldName);
+
+    if (!schema) {
+      i++; // Skip to next record if no schema found
+      continue;
+    }
+
+    let fieldCount = 1; // Default to 1 for non-grouped fields
+    const decodedData: Record<string, any> = {};
 
     try {
-      // Get the schema for this field
-      const schema = decoder.getFieldSchema(config.recordType, fieldName);
-
-      if (!schema) {
-        i++; // Skip to next record if no schema found
-        continue;
-      }
-
-      let fieldCount = 1; // Default to 1 for non-grouped fields
-      const decodedData: Record<string, any> = {};
       if (schema.type === 'grouped') {
         const { decodedField: df, fieldCount: fc } = parseGroupedFields(
           processedRecord,
@@ -947,18 +954,36 @@ export function processRecordFields(
           const existingData = processedRecord.decodedData?.[schema.virtualField] ?? [];
           decodedData[schema.virtualField] = [...existingData, df[schema.virtualField]];
         }
+      } else if (schema.type === 'array') {
+        // Collect all consecutive subrecords with the same tag
+        fieldData = [];
+        let j = i;
+        while (j < processedRecord.record.length && processedRecord.record[j].tag === fieldName) {
+          fieldData.push(processedRecord.record[j].buffer);
+          j++;
+        }
+        fieldCount = fieldData.length;
+        // Debugging output
+        // console.log(`[DEBUG][ARRAY] Field: ${fieldName}, Count: ${fieldCount}, FormID: ${getFormIdFromRecord(processedRecord)}`);
+        if (fieldCount > 0) {
+          const decodedField = decodeField(fieldData, schema, decoder, contextPluginName);
+          // console.log(`[DEBUG][ARRAY] Decoded result for ${fieldName}:`, decodedField);
+          if (decodedField !== null) {
+            decodedData[fieldName] = decodedField;
+          }
+        }
       } else {
+        fieldData = [subrecord.buffer];
         const decodedField = decodeField(fieldData, schema, decoder, contextPluginName);
         if (decodedField !== null) {
           decodedData[fieldName] = decodedField;
         }
       }
 
-      if (decodedData !== null) {
+      if (decodedData !== null && Object.keys(decodedData).length > 0) {
         if (!processedRecord.decodedData) {
           processedRecord.decodedData = {};
         }
-
         processedRecord.decodedData = {
           ...processedRecord.decodedData,
           ...decodedData,
@@ -966,7 +991,7 @@ export function processRecordFields(
         hasDecodedFields = true;
       }
 
-      // Skip ahead by the number of fields processed (supports grouped fields)
+      // Skip ahead by the number of fields processed (supports grouped fields and arrays)
       i += fieldCount;
     } catch (error) {
       console.error(`[ERROR] Failed to parse record for ${fieldName}:`, error);
@@ -995,7 +1020,8 @@ export function processRecordFields(
         error: error instanceof Error ? error.message : String(error),
         fieldPath: `record.${fieldName}`,
         details: {
-          bufferLength: fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.length : 0,
+          bufferLength:
+            fieldData && fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.length : 0,
           recordType: config.recordType,
           formId: getFormIdFromRecord(record),
         },
@@ -1131,7 +1157,10 @@ export function createMultithreadedBufferDecoderProcessor(config: BufferDecoderC
         if (startIndex >= totalRecords) break;
 
         const worker = new Worker(
-          path.join(__dirname, '../../../../parsing-pipeline/dist/parsing-pipeline/src/processors/buffer-decoder/parser.js'),
+          path.join(
+            __dirname,
+            '../../../../parsing-pipeline/dist/parsing-pipeline/src/processors/buffer-decoder/parser.js'
+          ),
           {
             workerData: { config },
           }

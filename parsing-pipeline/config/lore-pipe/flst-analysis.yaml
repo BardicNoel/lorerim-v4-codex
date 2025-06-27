@@ -16,6 +16,13 @@ stages:
         operator: 'equals'
         value: true
 
+  # - from: 'local'
+  #   name: 'Sample Records'
+  #   type: 'sample-records'
+  #   description: 'Get 3 sample records for analysis'
+  #   sampleSize: 3
+  #   randomSeed: 42
+
   - from: 'local'
     name: 'Decode Binary Records'
     type: 'buffer-decoder'
@@ -33,11 +40,3 @@ stages:
     fields:
       header: 'all'
       record: 'all'
-
-  - from: 'local'
-    name: 'Flatten Meta and Decoded Data'
-    type: 'flatten-fields'
-    description: 'Flatten meta and decoded data fields to simplify the record structure'
-    fields:
-      - 'meta'
-      - 'decodedData'
