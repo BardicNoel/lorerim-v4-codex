@@ -1,0 +1,352 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Post-Processing YAML Generation Rule
+
+This rule defines the standard pattern for creating post-processing YAML configurations that clean and transform decoded Skyrim mod record data.
+
+## Purpose
+To establish a consistent template for generating post-processing pipeline configurations that clean up decoded data and prepare it for scroll crafting primaries.
+
+## Standard Post-Processing YAML Structure
+
+### Basic Template
+```yaml
+# Import base pipeline configuration
+name: '${RECORD_TYPE} Analysis Pipeline'
+description: 'Process ${RECORD_TYPE} data for analysis'
+input: 'config/scroll-craft-pre/${recordType}/decode.json'
+output: '../scroll-crafting/primaries/${recordType}.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Remove Header Fields'
+    type: 'remove-fields'
+    description: 'Remove header fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Remove ${RECORD_TYPE} Data Fields'
+    type: 'remove-fields'
+    description: 'Remove specific ${RECORD_TYPE} data fields to clean up the dataset'
+    remove_fields:
+      # Add record-specific fields to remove
+      - 'decodedData.FIELD1'
+      - 'decodedData.FIELD2'
+
+  - from: 'local'
+    name: 'Rename decodedData to ${RECORD_TYPE}'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to ${RECORD_TYPE} for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'
+```
+
+## Required Components
+
+### 1. Pipeline Metadata
+- **name**: `'${RECORD_TYPE} Analysis Pipeline'` (e.g., 'WEAP Analysis Pipeline')
+- **description**: `'Process ${RECORD_TYPE} data for analysis'`
+- **input**: Path to the decoded JSON file from the decode stage
+- **output**: Path to the scroll crafting primaries directory
+
+### 2. Standard Stages
+
+#### Remove Header Fields Stage (Required)
+```yaml
+- from: 'local'
+  name: 'Remove Header Fields'
+  type: 'remove-fields'
+  description: 'Remove header fields that are not needed for analysis'
+  fields:
+    header: 'all'
+    record: 'all'
+```
+
+#### Remove Record-Specific Fields Stage (Required)
+```yaml
+- from: 'local'
+  name: 'Remove ${RECORD_TYPE} Data Fields'
+  type: 'remove-fields'
+  description: 'Remove specific ${RECORD_TYPE} data fields to clean up the dataset'
+  remove_fields:
+    # Record-specific fields to remove
+    - 'decodedData.FIELD1'
+    - 'decodedData.FIELD2'
+```
+
+#### Rename Fields Stage (Required)
+```yaml
+- from: 'local'
+  name: 'Rename decodedData to ${RECORD_TYPE}'
+  type: 'rename-fields'
+  description: 'Rename decodedData field to ${RECORD_TYPE} for scroll crafting primaries'
+  mappings:
+    decodedData: 'data'
+```
+
+## Configuration Parameters
+
+### File Path Conventions
+- **Input**: `config/scroll-craft-pre/${recordType}/decode.json`
+- **Output**: `../scroll-crafting/primaries/${recordType}.json`
+
+### Field Removal Patterns
+- **Header/Record Fields**: Always remove `header: 'all'` and `record: 'all'`
+- **Record-Specific Fields**: Remove fields that are not needed for scroll crafting
+- **Padding Fields**: Remove padding and unused fields from complex structures
+
+## Record Type Specific Considerations
+
+### 1. WEAP Records
+```yaml
+remove_fields:
+  # Remove model data
+  - 'decodedData.MODT'
+  - 'decodedData.MODS'
+  
+  # Remove impact data
+  - 'decodedData.BAMT'
+  - 'decodedData.BIDS'
+  - 'decodedData.INAM'
+  
+  # Remove sound data
+  - 'decodedData.NAM7'
+  - 'decodedData.NAM8'
+  - 'decodedData.NAM9'
+  - 'decodedData.SNAM'
+  - 'decodedData.TNAM'
+  - 'decodedData.UNAM'
+  - 'decodedData.XNAM'
+  - 'decodedData.YNAM'
+  - 'decodedData.ZNAM'
+  - 'decodedData.VNAM'
+  
+  # Remove script data
+  - 'decodedData.VMAD'
+  
+  # Remove misc fields
+  - 'decodedData.NNAM'
+  - 'decodedData.WNAM'
+  
+  # Remove padding fields
+  - 'decodedData.DNAM.padding1'
+  - 'decodedData.DNAM.padding2'
+  - 'decodedData.DNAM.padding3'
+  - 'decodedData.DNAM.padding4'
+  - 'decodedData.CRDT.unused1'
+  - 'decodedData.CRDT.padding1'
+  - 'decodedData.CRDT.padding2'
+  - 'decodedData.CRDT.padding3'
+```
+
+### 2. SPEL Records
+```yaml
+remove_fields:
+  - 'decodedData.SNDD'
+  - 'decodedData.OBND'
+  - 'decodedData.DATA.unknown1'
+```
+
+### 3. PERK Records
+```yaml
+# PERK records typically only need header/record removal
+# and field renaming, minimal field-specific cleanup
+```
+
+### 4. MGEF Records
+```yaml
+remove_fields:
+  # Remove effect-specific fields not needed for scroll crafting
+  - 'decodedData.OBND'
+  - 'decodedData.DATA.unknown1'
+  # Add MGEF-specific fields as needed
+```
+
+## Generation Guidelines
+
+### 1. Naming Conventions
+- Use uppercase for record types in names and descriptions
+- Use lowercase for file paths and directories
+- Follow the pattern: `${RECORD_TYPE} Analysis Pipeline`
+
+### 2. Stage Order
+1. Remove header/record fields (always first)
+2. Remove record-specific fields (customize per record type)
+3. Rename decodedData to 'data' (always last)
+
+### 3. Field Removal Strategy
+- **Always Remove**: Header and record metadata fields
+- **Conditionally Remove**: Record-specific fields that aren't needed for scroll crafting
+- **Preserve**: Core data fields needed for scroll crafting logic
+
+### 4. Output Format
+- Always rename `decodedData` to `data` for consistency
+- Ensure output goes to scroll crafting primaries directory
+- Use appropriate file naming convention
+
+## Example Implementations
+
+### Basic Post-Processing (PERK)
+```yaml
+name: 'Perk Analysis Pipeline'
+description: 'Process Perk data for analysis'
+input: 'config/scroll-craft-pre/perk/decode.json'
+output: '../scroll-crafting/primaries/perks.json'
+
+stages:
+  - from: 'local'
+    name: 'Remove Perk Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove Perk-specific fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Rename decodedData to Perk'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to Perk for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'
+```
+
+### Complex Post-Processing (WEAP)
+```yaml
+name: 'WEAP Analysis Pipeline'
+description: 'Process WEAP data for analysis'
+input: 'config/scroll-craft-pre/weap/decode.json'
+output: '../scroll-crafting/primaries/weap.json'
+
+stages:
+  - from: 'local'
+    name: 'Remove Header Fields'
+    type: 'remove-fields'
+    description: 'Remove header fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Remove WEAP Data Fields'
+    type: 'remove-fields'
+    description: 'Remove specific WEAP data fields to clean up the dataset'
+    remove_fields:
+      # Remove model data
+      - 'decodedData.MODT'
+      - 'decodedData.MODS'
+      
+      # Remove impact data
+      - 'decodedData.BAMT'
+      - 'decodedData.BIDS'
+      - 'decodedData.INAM'
+      
+      # Remove sound data
+      - 'decodedData.NAM7'
+      - 'decodedData.NAM8'
+      - 'decodedData.NAM9'
+      - 'decodedData.SNAM'
+      - 'decodedData.TNAM'
+      - 'decodedData.UNAM'
+      - 'decodedData.XNAM'
+      - 'decodedData.YNAM'
+      - 'decodedData.ZNAM'
+      - 'decodedData.VNAM'
+      
+      # Remove script data
+      - 'decodedData.VMAD'
+      
+      # Remove misc fields
+      - 'decodedData.NNAM'
+      - 'decodedData.WNAM'
+      
+      # Remove padding fields
+      - 'decodedData.DNAM.padding1'
+      - 'decodedData.DNAM.padding2'
+      - 'decodedData.DNAM.padding3'
+      - 'decodedData.DNAM.padding4'
+      - 'decodedData.CRDT.unused1'
+      - 'decodedData.CRDT.padding1'
+      - 'decodedData.CRDT.padding2'
+      - 'decodedData.CRDT.padding3'
+
+  - from: 'local'
+    name: 'Rename decodedData to WEAP'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to WEAP for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'
+```
+
+## Validation Checklist
+
+Before using a generated post-processing YAML:
+
+- [ ] Input file path points to decode.json output
+- [ ] Output path goes to scroll crafting primaries directory
+- [ ] Header and record fields are removed
+- [ ] Record-specific fields are appropriately removed
+- [ ] decodedData is renamed to 'data'
+- [ ] Stage order follows standard pattern
+- [ ] File paths use correct relative references
+- [ ] Record type is correctly specified in all stages
+
+## Common Issues and Solutions
+
+### 1. Missing Input File
+- Ensure decode stage has completed successfully
+- Verify input path is correct relative to YAML file location
+
+### 2. Field Removal Errors
+- Check field paths exist in the decoded data
+- Verify field names match the actual decoded structure
+- Test with small sample before full processing
+
+### 3. Output Path Issues
+- Ensure scroll crafting primaries directory exists
+- Check write permissions for output location
+- Verify file naming convention is correct
+
+### 4. Field Renaming Issues
+- Ensure decodedData field exists in input
+- Verify no conflicts with existing 'data' field
+- Test rename operation with sample data
+
+## Integration with Pipeline System
+
+Generated post-processing YAML files should be:
+
+1. Placed in appropriate subdirectories under `config/scroll-craft-pre/`
+2. Named consistently as `post.yaml`
+3. Run after decode stage completes successfully
+4. Tested with sample data before full processing
+5. Documented with record-specific field removal notes
+
+## Field Removal Best Practices
+
+### 1. Model and Visual Data
+- Remove model paths, textures, and visual assets
+- Remove impact data and visual effects
+- Remove sound and audio references
+
+### 2. Script and Logic Data
+- Remove VMAD (Virtual Machine Adapter) data
+- Remove script references and properties
+- Remove complex logic structures not needed for crafting
+
+### 3. Padding and Unused Fields
+- Remove padding fields from complex structures
+- Remove unused or deprecated fields
+- Remove fields marked as unknown or placeholder
+
+### 4. Metadata and References
+- Remove header and record metadata
+- Remove internal references not needed for crafting
+- Preserve only core data fields needed for scroll crafting logic
+
+This rule ensures consistent, maintainable, and reliable post-processing pipeline configurations across all Skyrim record types.

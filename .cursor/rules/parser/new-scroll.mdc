@@ -1,0 +1,259 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# New Record Directory Checklist
+
+This rule defines the complete checklist for introducing a new record directory in the scroll-craft-pre pipeline system.
+
+## Purpose
+To establish a systematic approach for adding new Skyrim record types to the scroll crafting pipeline, ensuring consistency and completeness across all record directories.
+
+## Prerequisites
+
+Before creating a new record directory, ensure:
+- [ ] The record type has been extracted by skyrim-extractor
+- [ ] The record type has schema support in the buffer decoder
+- [ ] The record type is relevant for scroll crafting
+
+## Directory Structure
+
+### Standard Directory Layout
+```
+parsing-pipeline/config/scroll-craft-pre/
+├── ${recordType}/
+│   ├── decode.yaml      # Decode pipeline configuration
+│   ├── post.yaml        # Post-processing pipeline configuration
+│   └── decode.json      # Output from decode stage (generated)
+├── weap/                # Example existing directory
+├── spel/                # Example existing directory
+├── perk/                # Example existing directory
+└── mgef/                # Example existing directory
+```
+
+## Complete Checklist
+
+### 1. Directory Creation
+- [ ] Create new directory: `parsing-pipeline/config/scroll-craft-pre/${recordType}/`
+- [ ] Ensure directory name uses lowercase (e.g., `ench`, `weap`, `spel`)
+- [ ] Verify directory is a sibling to existing record directories
+
+### 2. Decode Pipeline Configuration
+- [ ] Create `decode.yaml` in the new directory
+- [ ] Follow the **Decode YAML Generation Rule** (see [scroll-decode-yaml.mdc](mdc:.cursor/rules/parser/scroll-decode-yaml.mdc) )
+- [ ] Configure record type-specific settings
+- [ ] Set appropriate input path: `../output/skyrim-extractor/lorerim/${RECORD_TYPE}.json`
+- [ ] Set output path: `config/scroll-craft-pre/${recordType}/decode.json`
+- [ ] Enable plugin metadata loading for FormID resolution
+- [ ] Configure multithreading with appropriate worker count
+
+### 3. Post-Processing Pipeline Configuration
+- [ ] Create `post.yaml` in the new directory
+- [ ] Follow the **Post-Processing YAML Generation Rule** (see [scroll-post-yaml.mdc](mdc:.cursor/rules/parser/scroll-post-yaml.mdc) )
+- [ ] Configure record type-specific field removal
+- [ ] Set input path: `config/scroll-craft-pre/${recordType}/decode.json`
+- [ ] Set output path: `../scroll-crafting/primaries/${recordType}.json`
+- [ ] Include header and record field removal
+- [ ] Configure field renaming from `decodedData` to `data`
+
+### 4. Record Type Specific Configuration
+
+#### For ENCH Records (Example)
+```yaml
+# decode.yaml considerations
+- recordType: 'ENCH'
+- Consider winner filtering if applicable
+- Ensure ENCH schema support exists
+
+# post.yaml considerations
+remove_fields:
+  - 'decodedData.OBND'           # Object bounds
+  - 'decodedData.EFID'           # Effect IDs (if not needed)
+  - 'decodedData.EFIT'           # Effect data (if not needed)
+  - 'decodedData.CTDA'           # Condition data (if not needed)
+```
+
+#### For Other Record Types
+- [ ] Research record type structure using UESP documentation
+- [ ] Identify fields relevant to scroll crafting
+- [ ] Determine which fields to remove vs preserve
+- [ ] Consider FormID resolution requirements
+
+### 5. Pipeline Integration
+- [ ] Update pipeline runner scripts if needed
+- [ ] Add record type to any relevant configuration files
+- [ ] Update documentation with new record type
+- [ ] Consider adding to scroll crafting primaries index
+
+### 6. Testing and Validation
+- [ ] Test decode pipeline with small sample first
+- [ ] Verify decode.json output is generated correctly
+- [ ] Test post-processing pipeline
+- [ ] Validate final output structure
+- [ ] Check file sizes and processing times
+- [ ] Verify no critical data is lost
+
+### 7. Documentation
+- [ ] Document record type-specific considerations
+- [ ] Note any special field handling requirements
+- [ ] Document processing time expectations
+- [ ] Add troubleshooting notes if needed
+
+## Example Implementation: ENCH Records
+
+### Step 1: Create Directory
+```bash
+mkdir parsing-pipeline/config/scroll-craft-pre/ench
+```
+
+### Step 2: Create decode.yaml
+```yaml
+# Import base pipeline configuration
+name: 'ENCH Analysis Pipeline'
+description: 'Process ENCH data for analysis'
+input: '../output/skyrim-extractor/lorerim/ENCH.json'
+output: 'config/scroll-craft-pre/ench/decode.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Filter Winner Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'ENCH'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
+```
+
+### Step 3: Create post.yaml
+```yaml
+# Import base pipeline configuration
+name: 'ENCH Analysis Pipeline'
+description: 'Process ENCH data for analysis'
+input: 'config/scroll-craft-pre/ench/decode.json'
+output: '../scroll-crafting/primaries/ench.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Remove Header Fields'
+    type: 'remove-fields'
+    description: 'Remove header fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Remove ENCH Data Fields'
+    type: 'remove-fields'
+    description: 'Remove specific ENCH data fields to clean up the dataset'
+    remove_fields:
+      - 'decodedData.OBND'
+      - 'decodedData.EFID'
+      - 'decodedData.EFIT'
+      - 'decodedData.CTDA'
+
+  - from: 'local'
+    name: 'Rename decodedData to ENCH'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to ENCH for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'
+```
+
+## Sample Configuration Decision
+
+### Question: Start with Sample?
+When creating a new record directory, always ask:
+
+**"Do you want the decode pipeline to start with a sample of records for testing?"**
+
+If yes, add this stage to decode.yaml:
+```yaml
+- from: 'local'
+  name: 'Sample Records'
+  type: 'sample-records'
+  description: 'Take a random sample of records for testing'
+  sampleSize: 1000
+```
+
+## Validation Checklist
+
+After completing all steps, verify:
+
+### Directory Structure
+- [ ] Directory exists and is properly named
+- [ ] Directory is a sibling to existing record directories
+- [ ] Both decode.yaml and post.yaml files exist
+
+### File Paths
+- [ ] Input paths point to correct skyrim-extractor output
+- [ ] Output paths follow standard conventions
+- [ ] Relative paths are correct for file locations
+
+### Pipeline Configuration
+- [ ] decode.yaml follows decode generation rule
+- [ ] post.yaml follows post-processing generation rule
+- [ ] Record type is correctly specified
+- [ ] Plugin metadata loading is enabled
+- [ ] Multithreading is configured appropriately
+
+### Content Validation
+- [ ] Field removal lists are appropriate for record type
+- [ ] Field renaming is configured correctly
+- [ ] No critical data fields are accidentally removed
+- [ ] Output structure matches scroll crafting requirements
+
+## Common Issues and Solutions
+
+### 1. Missing Input File
+- **Issue**: Input file doesn't exist
+- **Solution**: Ensure skyrim-extractor has processed the record type
+- **Check**: Verify file exists at `../output/skyrim-extractor/lorerim/${RECORD_TYPE}.json`
+
+### 2. Schema Not Supported
+- **Issue**: Buffer decoder doesn't support record type
+- **Solution**: Add schema support in buffer decoder before proceeding
+- **Check**: Verify record type exists in `recordSpecificSchemas`
+
+### 3. Field Removal Errors
+- **Issue**: Fields don't exist in decoded data
+- **Solution**: Test with small sample first, adjust field list
+- **Check**: Examine actual decoded data structure
+
+### 4. Output Path Issues
+- **Issue**: Output directory doesn't exist
+- **Solution**: Create scroll crafting primaries directory
+- **Check**: Ensure `../scroll-crafting/primaries/` exists
+
+## Integration Notes
+
+### Pipeline Execution Order
+1. Run decode pipeline first: `npm run pipeline -- config/scroll-craft-pre/${recordType}/decode.yaml`
+2. Run post-processing pipeline: `npm run pipeline -- config/scroll-craft-pre/${recordType}/post.yaml`
+3. Verify output in scroll crafting primaries
+
+### File Naming Conventions
+- **Directory**: lowercase (e.g., `ench`, `weap`, `spel`)
+- **YAML files**: lowercase with extension (e.g., `decode.yaml`, `post.yaml`)
+- **Output files**: lowercase with .json extension (e.g., `ench.json`, `weap.json`)
+
+### Performance Considerations
+- Start with sample data for testing
+- Monitor processing time and memory usage
+- Adjust worker count based on system capabilities
+- Consider file size and processing requirements
+
+This checklist ensures consistent, complete, and reliable introduction of new record types to the scroll crafting pipeline system.

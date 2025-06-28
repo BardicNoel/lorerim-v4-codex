@@ -1,0 +1,67 @@
+# Import base pipeline configuration
+name: 'WEAP Analysis Pipeline'
+description: 'Process WEAP data for analysis'
+input: 'config/scroll-craft-pre/weap/decode.json'
+output: '../scroll-crafting/primaries/weap.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Remove Header Fields'
+    type: 'remove-fields'
+    description: 'Remove header fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Remove WEAP Data Fields'
+    type: 'remove-fields'
+    description: 'Remove specific WEAP data fields to clean up the dataset'
+    remove_fields:
+      # Remove model data
+      - 'decodedData.MODT'
+      - 'decodedData.MODS'
+
+      # Remove impact data
+      - 'decodedData.BAMT'
+      - 'decodedData.BIDS'
+      - 'decodedData.INAM'
+
+      # Remove sound data
+      - 'decodedData.NAM7'
+      - 'decodedData.NAM8'
+      - 'decodedData.NAM9'
+      - 'decodedData.SNAM'
+      - 'decodedData.TNAM'
+      - 'decodedData.UNAM'
+      - 'decodedData.XNAM'
+      - 'decodedData.YNAM'
+      - 'decodedData.ZNAM'
+      - 'decodedData.VNAM'
+
+      # Remove script data
+      - 'decodedData.VMAD'
+
+      # Remove misc fields
+      - 'decodedData.NNAM'
+      - 'decodedData.WNAM'
+
+      # Remove padding and unused fields from DNAM
+      - 'decodedData.DNAM.padding1'
+      - 'decodedData.DNAM.padding2'
+      - 'decodedData.DNAM.padding3'
+      - 'decodedData.DNAM.padding4'
+
+      # Remove padding from CRDT
+      - 'decodedData.CRDT.unused1'
+      - 'decodedData.CRDT.padding1'
+      - 'decodedData.CRDT.padding2'
+      - 'decodedData.CRDT.padding3'
+
+  - from: 'local'
+    name: 'Rename decodedData to WEAP'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to WEAP for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'

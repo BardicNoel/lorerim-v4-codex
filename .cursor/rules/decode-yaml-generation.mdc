@@ -1,0 +1,244 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Decode YAML Generation Rule
+
+This rule defines the standard pattern for creating decode YAML configurations for Skyrim mod record types.
+
+## Purpose
+To establish a consistent template for generating decode pipeline configurations that process binary record data into structured JSON format.
+
+## Standard Decode YAML Structure
+
+### Basic Template
+```yaml
+# Import base pipeline configuration
+name: '${RECORD_TYPE} Analysis Pipeline'
+description: 'Process ${RECORD_TYPE} data for analysis'
+input: '../output/skyrim-extractor/lorerim/${RECORD_TYPE}.json'
+output: 'config/scroll-craft-pre/${recordType}/decode.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Filter Winner Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: '${RECORD_TYPE}'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
+```
+
+## Required Components
+
+### 1. Pipeline Metadata
+- **name**: `'${RECORD_TYPE} Analysis Pipeline'` (e.g., 'WEAP Analysis Pipeline')
+- **description**: `'Process ${RECORD_TYPE} data for analysis'`
+- **input**: Path to the extracted JSON file from skyrim-extractor
+- **output**: Path to the output directory for decoded data
+
+### 2. Standard Stages
+
+#### Filter Winners Stage (Optional)
+```yaml
+- from: 'local'
+  name: 'Filter Winner Records'
+  type: 'filter-records'
+  description: 'Filter to only include records where isWinner is true'
+  criteria:
+    - field: 'meta.isWinner'
+      operator: 'equals'
+      value: true
+```
+
+#### Buffer Decoder Stage (Required)
+```yaml
+- from: 'local'
+  name: 'Decode Binary Records'
+  type: 'buffer-decoder'
+  description: 'Decode binary record data into structured format'
+  recordType: '${RECORD_TYPE}'
+  loadPluginMetadata: true
+  pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+  multithreaded: true
+  maxWorkers: 4
+```
+
+#### Record-Specific Cleanup Stage (Optional)
+```yaml
+- from: 'local'
+  name: 'Remove ${RECORD_TYPE} Specific Fields'
+  type: 'remove-fields'
+  description: 'Remove ${RECORD_TYPE}-specific fields that are not needed for analysis'
+  fields:
+    record: 'all'
+    header: 'all'
+```
+
+## Configuration Parameters
+
+### Buffer Decoder Configuration
+- **recordType**: The Skyrim record type (e.g., 'WEAP', 'SPEL', 'PERK', 'MGEF')
+- **loadPluginMetadata**: Always `true` for FormID resolution
+- **pluginMetadataPath**: Path to plugin-metadata-map.json
+- **multithreaded**: `true` for performance
+- **maxWorkers**: Number of worker threads (typically 4)
+
+### File Path Conventions
+- **Input**: `../output/skyrim-extractor/lorerim/${RECORD_TYPE}.json`
+- **Output**: `config/scroll-craft-pre/${recordType}/decode.json`
+- **Plugin Metadata**: `../output/skyrim-extractor/lorerim/plugin-metadata-map.json`
+
+## Record Type Specific Considerations
+
+### 1. PERK Records
+- Include winner filtering stage
+- May need additional cleanup for perk-specific fields
+
+### 2. SPEL Records
+- May include record/header field removal
+- Often needs FormID resolution for spell effects
+
+### 3. WEAP Records
+- Include winner filtering stage
+- May need weapon-specific field processing
+
+### 4. MGEF Records
+- Often needs extensive FormID resolution
+- May include effect-specific field cleanup
+
+## Generation Guidelines
+
+### 1. Naming Conventions
+- Use uppercase for record types in names and descriptions
+- Use lowercase for file paths and directories
+- Follow the pattern: `${RECORD_TYPE} Analysis Pipeline`
+
+### 2. Stage Order
+1. Filter winners (if applicable)
+2. Decode binary data (always required)
+3. Record-specific cleanup (if needed)
+
+### 3. Performance Settings
+- Always enable multithreading for buffer decoder
+- Use 4 workers as default (adjust based on system capabilities)
+- Enable plugin metadata loading for FormID resolution
+
+### 4. Error Handling
+- Ensure input file paths are correct
+- Validate plugin metadata path exists
+- Test with small sample before full processing
+
+## Example Implementations
+
+### Basic Decode (SPEL)
+```yaml
+name: 'SPEL Analysis Pipeline'
+description: 'Process SPEL data for analysis'
+input: '../output/skyrim-extractor/lorerim/SPEL.json'
+output: 'config/scroll-craft-pre/spel/decode.json'
+
+stages:
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'SPEL'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
+
+  - from: 'local'
+    name: 'Remove SPEL Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove SPEL-specific fields that are not needed for analysis'
+    fields:
+      record: 'all'
+      header: 'all'
+```
+
+### With Winner Filtering (PERK)
+```yaml
+name: 'Perk Analysis Pipeline'
+description: 'Process Perk data for analysis'
+input: '../output/skyrim-extractor/lorerim/PERK.json'
+output: 'config/scroll-craft-pre/perk/decode.json'
+
+stages:
+  - from: 'local'
+    name: 'Filter Perk Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'PERK'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
+```
+
+## Validation Checklist
+
+Before using a generated decode YAML:
+
+- [ ] Record type is correctly specified
+- [ ] Input file path exists and is accessible
+- [ ] Output directory exists or can be created
+- [ ] Plugin metadata path is correct
+- [ ] Buffer decoder stage is included
+- [ ] Multithreading is enabled
+- [ ] Worker count is appropriate for system
+- [ ] Stage order follows standard pattern
+- [ ] File paths use correct relative references
+
+## Common Issues and Solutions
+
+### 1. Missing Plugin Metadata
+- Ensure plugin-metadata-map.json exists in skyrim-extractor output
+- Verify path is correct relative to YAML file location
+
+### 2. Performance Issues
+- Reduce maxWorkers if system is overloaded
+- Check if input file is too large for available memory
+
+### 3. FormID Resolution Errors
+- Verify plugin metadata is loaded correctly
+- Check that record type has proper schema support
+
+### 4. Output Path Issues
+- Ensure output directory exists
+- Check write permissions for output location
+
+## Integration with Pipeline System
+
+Generated decode YAML files should be:
+
+1. Placed in appropriate subdirectories under `config/scroll-craft-pre/`
+2. Named consistently as `decode.yaml`
+3. Referenced by pipeline runner scripts
+4. Tested with sample data before full processing
+5. Documented with record-specific notes if needed
+
+This rule ensures consistent, maintainable, and reliable decode pipeline configurations across all Skyrim record types.
