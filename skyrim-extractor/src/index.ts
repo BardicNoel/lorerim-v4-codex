@@ -102,7 +102,7 @@ export async function main(
     );
     console.log("Plugin Registry Complete");
 
-    const parsedRecordDict = flagWinners(
+    const parsedRecordDict = await flagWinners(
       mergeTypeDictionaries(parsedRecords),
       pluginRegistry
     );
