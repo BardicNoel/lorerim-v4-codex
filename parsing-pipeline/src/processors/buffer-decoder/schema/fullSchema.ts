@@ -8,6 +8,7 @@ import { flstSchema } from './entities/flst';
 import { kywdSchema } from './entities/kywd';
 import { globSchema } from './entities/glob';
 import { mesgSchema } from './entities/mesg';
+import { weapSchema } from './entities/weap';
 
 // Record-specific schemas that use common fields and shared fragments
 export const recordSpecificSchemas: RecordSpecificSchemas = {
@@ -20,4 +21,5 @@ export const recordSpecificSchemas: RecordSpecificSchemas = {
   ...kywdSchema,
   ...globSchema,
   ...mesgSchema,
+  ...weapSchema,
 };

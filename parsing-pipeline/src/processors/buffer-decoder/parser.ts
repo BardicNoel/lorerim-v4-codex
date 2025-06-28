@@ -242,19 +242,12 @@ export class BufferDecoder {
     length: number,
     fields: FieldSchema[],
     useFieldLength = true,
-    contextPluginName?: string
+    contextPluginName?: string,
+    formId?: string
   ): any {
     const result: any = {};
     let currentOffset = offset;
     const endOffset = offset + length;
-
-    // Only log struct start for VMAD to reduce noise
-    // const isVMAD = fields.length > 0 && fields[0]?.name === 'version';
-    // if (isVMAD) {
-    //   console.log(
-    //     `[DEBUG] parseStruct: VMAD struct - start: ${offset}, length: ${length}, buffer: ${buffer.length}`
-    //   );
-    // }
 
     for (let fieldIndex = 0; fieldIndex < fields.length; fieldIndex++) {
       const field = fields[fieldIndex];
@@ -283,6 +276,9 @@ export class BufferDecoder {
               console.error(
                 `[ERROR] parseStruct: Would need ${currentOffset + 2 + strLength} bytes`
               );
+              if (formId) {
+                console.error(`[ERROR] parseStruct: Record FormID: ${formId}`);
+              }
               throw new Error(`String field ${field.name} would exceed buffer bounds`);
             }
             result[field.name] = this.parseString(
@@ -301,6 +297,9 @@ export class BufferDecoder {
             console.error(
               `[ERROR] parseStruct: Field: ${field.name}, Current offset: ${currentOffset}, Buffer length: ${buffer.length}`
             );
+            if (formId) {
+              console.error(`[ERROR] parseStruct: Record FormID: ${formId}`);
+            }
             throw new Error(`FormID field ${field.name} would exceed buffer bounds`);
           }
           result[field.name] = this.parseFormId(
@@ -323,6 +322,9 @@ export class BufferDecoder {
             console.error(
               `[ERROR] parseStruct: Field: ${field.name}, Type: ${field.type}, Current offset: ${currentOffset}, Type size: ${typeSize}, Buffer length: ${buffer.length}`
             );
+            if (formId) {
+              console.error(`[ERROR] parseStruct: Record FormID: ${formId}`);
+            }
             throw new Error(`Numeric field ${field.name} would exceed buffer bounds`);
           }
           result[field.name] = this.parseNumeric(buffer, currentOffset, field.type, field.parser);
@@ -340,6 +342,9 @@ export class BufferDecoder {
             console.error(
               `[ERROR] parseStruct: Would need ${currentOffset + 2 + structLength} bytes`
             );
+            if (formId) {
+              console.error(`[ERROR] parseStruct: Record FormID: ${formId}`);
+            }
             throw new Error(`Nested struct field ${field.name} would exceed buffer bounds`);
           }
           result[field.name] = this.parseStruct(
@@ -348,7 +353,8 @@ export class BufferDecoder {
             structLength,
             field.fields,
             false,
-            contextPluginName
+            contextPluginName,
+            formId
           );
           currentOffset += 2 + structLength;
           break;
@@ -364,6 +370,9 @@ export class BufferDecoder {
             console.error(
               `[ERROR] parseStruct: Would need ${currentOffset + 2 + arrayLength} bytes`
             );
+            if (formId) {
+              console.error(`[ERROR] parseStruct: Record FormID: ${formId}`);
+            }
             throw new Error(`Array field ${field.name} would exceed buffer bounds`);
           }
           result[field.name] = this.parseArray(
@@ -383,6 +392,9 @@ export class BufferDecoder {
             console.error(
               `[ERROR] parseStruct: Field: ${field.name}, Current offset: ${currentOffset}, Unknown length: ${unknownLength}, Buffer length: ${buffer.length}`
             );
+            if (formId) {
+              console.error(`[ERROR] parseStruct: Record FormID: ${formId}`);
+            }
             throw new Error(`Unknown field ${field.name} would exceed buffer bounds`);
           }
           currentOffset += 2 + unknownLength;
@@ -397,6 +409,9 @@ export class BufferDecoder {
         console.error(`[ERROR] parseStruct: Overrun by: ${currentOffset - endOffset} bytes`);
         console.error(`[ERROR] parseStruct: Field type: ${field.type}`);
         console.error(`[ERROR] parseStruct: Buffer length: ${buffer.length}`);
+        if (formId) {
+          console.error(`[ERROR] parseStruct: Record FormID: ${formId}`);
+        }
         throw new Error(`Struct parsing overran bounds for ${field.name}`);
       }
     }
@@ -767,7 +782,7 @@ function decodeField(
   schema: FieldSchema,
   decoder: BufferDecoder,
   contextPluginName?: string,
-  decodedData?: Record<string, any>
+  formId?: string
 ): any {
   if (!Array.isArray(fieldData) || fieldData.length === 0) {
     return null;
@@ -794,13 +809,21 @@ function decodeField(
       // Use the size property if available, otherwise use buffer length
       const structSize =
         'size' in schema && typeof schema.size === 'number' ? schema.size : buffer.length;
-      return decoder.parseStruct(buffer, 0, structSize, schema.fields, true, contextPluginName);
+      return decoder.parseStruct(
+        buffer,
+        0,
+        structSize,
+        schema.fields,
+        true,
+        contextPluginName,
+        formId
+      );
 
     case 'array':
       // If multiple buffers, decode each as an element
       if (fieldData.length > 1) {
         return fieldData.map((buf) =>
-          decodeField([buf], schema.element, decoder, contextPluginName)
+          decodeField([buf], schema.element, decoder, contextPluginName, formId)
         );
       } else {
         // Fallback to current logic for single buffer
@@ -834,6 +857,8 @@ const parseGroupedFields = (
 ): { decodedField: any; fieldCount: number } => {
   // Get context plugin name from record metadata
   const contextPluginName = parsedRecord.meta?.plugin;
+  // Get formId for error reporting
+  const formId = getFormIdFromRecord(parsedRecord);
 
   // Process the first subrecord, which is the group trigger but also sometimes a terminator
   const firstSubrecord = parsedRecord.record[offset];
@@ -842,7 +867,8 @@ const parseGroupedFields = (
     [firstSubrecord.buffer],
     firstSubrecordSchema,
     decoder,
-    contextPluginName
+    contextPluginName,
+    formId
   );
 
   if (parsedRecord.meta.formId === '0x0000044F' && firstSubrecord.tag === 'PNAM') {
@@ -874,7 +900,6 @@ const parseGroupedFields = (
     const subrecord = parsedRecord.record[processedFields + offset];
     // check for terminator tag
     if (subrecord.tag === terminatorTag) {
-      // console.log(`[DEBUG] Found terminator tag ${terminatorTag}, stopping grouped field parsing`);
       break;
     }
 
@@ -889,15 +914,12 @@ const parseGroupedFields = (
       continue;
     }
 
-    // console.log(
-    //   `[DEBUG] Processing grouped field ${subrecord.tag} with schema type: ${subrecordSchema.type}`
-    // );
-
     const decodedSubrecord = decodeField(
       [subrecord.buffer],
       subrecordSchema,
       decoder,
-      contextPluginName
+      contextPluginName,
+      formId
     );
     decodedField[virtualField][subrecord.tag] = decodedSubrecord;
 
@@ -921,6 +943,8 @@ export function processRecordFields(
 
   // Get context plugin name from record metadata
   const contextPluginName = processedRecord.meta?.plugin;
+  // Get formId for error reporting
+  const formId = getFormIdFromRecord(processedRecord);
 
   // Use indexed iterator for order-dependent processing with potential skip-ahead capability
   let i = 0;
@@ -955,7 +979,6 @@ export function processRecordFields(
           decodedData[schema.virtualField] = [...existingData, df[schema.virtualField]];
         }
       } else if (schema.type === 'array') {
-        // Collect all consecutive subrecords with the same tag
         fieldData = [];
         let j = i;
         while (j < processedRecord.record.length && processedRecord.record[j].tag === fieldName) {
@@ -963,18 +986,15 @@ export function processRecordFields(
           j++;
         }
         fieldCount = fieldData.length;
-        // Debugging output
-        // console.log(`[DEBUG][ARRAY] Field: ${fieldName}, Count: ${fieldCount}, FormID: ${getFormIdFromRecord(processedRecord)}`);
         if (fieldCount > 0) {
-          const decodedField = decodeField(fieldData, schema, decoder, contextPluginName);
-          // console.log(`[DEBUG][ARRAY] Decoded result for ${fieldName}:`, decodedField);
+          const decodedField = decodeField(fieldData, schema, decoder, contextPluginName, formId);
           if (decodedField !== null) {
             decodedData[fieldName] = decodedField;
           }
         }
       } else {
         fieldData = [subrecord.buffer];
-        const decodedField = decodeField(fieldData, schema, decoder, contextPluginName);
+        const decodedField = decodeField(fieldData, schema, decoder, contextPluginName, formId);
         if (decodedField !== null) {
           decodedData[fieldName] = decodedField;
         }
@@ -996,7 +1016,7 @@ export function processRecordFields(
     } catch (error) {
       console.error(`[ERROR] Failed to parse record for ${fieldName}:`, error);
       console.error(`[ERROR] Record EDID: ${record.meta?.type || 'unknown'}`);
-      console.error(`[ERROR] Record FormID: ${getFormIdFromRecord(record)}`);
+      console.error(`[ERROR] Record FormID: ${formId}`);
       console.error(`[ERROR] Record type: ${config.recordType}`);
       console.error(`[ERROR] Field index: ${i}`);
       console.error(`[ERROR] Total fields in record: ${processedRecord.record.length}`);
@@ -1005,11 +1025,6 @@ export function processRecordFields(
       const buffer = createBufferFromFieldData(fieldData);
       if (buffer) {
         console.error(`[ERROR] Buffer length: ${buffer.length}`);
-        console.error(
-          `[ERROR] Buffer hex (first 32 bytes): ${buffer.toString('hex').substring(0, 64)}`
-        );
-      } else {
-        console.error(`[ERROR] No buffer data available`);
       }
 
       errorLog(`Failed to decode field ${fieldName}:`, error);
@@ -1023,7 +1038,7 @@ export function processRecordFields(
           bufferLength:
             fieldData && fieldData.length > 0 ? createBufferFromFieldData(fieldData)?.length : 0,
           recordType: config.recordType,
-          formId: getFormIdFromRecord(record),
+          formId: formId,
         },
       };
       recordErrors++;
@@ -1299,6 +1314,7 @@ if (parentPort) {
 
   let decoder: BufferDecoder;
   let config: BufferDecoderConfig;
+  let currentFormId: string | undefined;
 
   // Initialize the worker
   const initializeWorker = async () => {
@@ -1348,18 +1364,17 @@ if (parentPort) {
     for (let i = 0; i < records.length; i++) {
       const recordIndex = startIndex + i;
       const record = records[i];
+      currentFormId = getFormIdFromRecord(record);
 
       // Send progress updates
       if (i % logInterval === 0) {
-        console.log(
-          `[DEBUG] Processing record ${i + 1}/${records.length} - ${getFormIdFromRecord(record)}`
-        );
+        console.log(`[DEBUG] Processing record ${i + 1}/${records.length} - ${currentFormId}`);
         parentPort?.postMessage({
           type: 'progress',
           progress: {
             current: i + 1,
             total: totalRecords,
-            formId: getFormIdFromRecord(record),
+            formId: currentFormId,
           },
         });
       }
@@ -1387,7 +1402,7 @@ if (parentPort) {
           stats.errors++;
         }
       } catch (error) {
-        console.error(`[ERROR] Failed to process record ${getFormIdFromRecord(record)}:`, error);
+        console.error(`[ERROR] Failed to process record ${currentFormId}:`, error);
         stats.errors++;
         processedRecords.push(record);
       }
@@ -1442,7 +1457,7 @@ if (parentPort) {
       console.error('[DEBUG] Worker error:', error);
       parentPort?.postMessage({
         type: 'error',
-        error: error instanceof Error ? error.message : String(error),
+        error: `${error instanceof Error ? error.message : String(error)} (FormID: ${currentFormId || 'unknown'})`,
       });
     }
   });
@@ -1452,7 +1467,7 @@ if (parentPort) {
     console.error('[DEBUG] Worker uncaught exception:', error);
     parentPort?.postMessage({
       type: 'error',
-      error: error.message,
+      error: `${error.message} (FormID: ${currentFormId || 'unknown'})`,
     });
   });
 
@@ -1460,7 +1475,7 @@ if (parentPort) {
     console.error('[DEBUG] Worker unhandled rejection:', reason);
     parentPort?.postMessage({
       type: 'error',
-      error: reason instanceof Error ? reason.message : String(reason),
+      error: `${reason instanceof Error ? reason.message : String(reason)} (FormID: ${currentFormId || 'unknown'})`,
     });
   });
 }
