@@ -1,40 +1,75 @@
-# Enchanted Weapons Index
+# Enchanted Weapons
 
-This is the main index for all enchanted weapons documentation. The weapons have been organized into separate documents based on their characteristics and usage.
+A comprehensive guide to enchanted weapons found in Skyrim, organized by uniqueness and enchantment type.
 
-## Document Categories
+**Generated:** {{generatedDate}}  
+**Total Weapons:** {{totalWeapons}}
 
-### [Unique Enchanted Weapons](unique-weapons.md)
+## Overview
 
-Truly unique weapons that don't follow standard patterns. These often have special names, unusual stats, multiple enchantment effects, or other distinctive characteristics.
+This document categorizes enchanted weapons into several types:
 
-**Count:** {{uniqueWeapons.length}} weapons
+- **Unique Weapons** ({{uniqueWeapons.length}}) - One-of-a-kind weapons with special properties
+- **General Weapon Templates** ({{generalWeaponTemplates.length}}) - Base weapons that can be enchanted
+- **Base Weapon Templates** ({{baseWeaponTemplates.length}}) - Unenchanted base weapons
+- **General Weapon Enchantments** ({{generalWeaponEnchantments.length}}) - Common enchantments for general weapons
+- **Bound & Mystic Weapons** ({{boundMysticWeapons.length}}) - Magically summoned weapons
+- **Wands & Staves** ({{wandStaffWeapons.length}}) - Magical implements
 
-### [Generic Weapon Enchantments](generic-weapon-enchants.md)
+## Quick Navigation
 
-Weapon patterns - groups of weapons that follow similar material + weapon type + enchantment combinations. These represent the standard enchanted weapons found throughout the world.
+- [Unique Weapons](#unique-weapons) - Special one-of-a-kind weapons
+- [General Weapon Templates](#general-weapon-templates) - Base weapon types
+- [Base Weapon Templates](#base-weapon-templates) - Unenchanted base weapons
+- [General Weapon Enchantments](#general-weapon-enchants) - Common enchantments
+- [Bound & Mystic Weapons](#bound--mystic-weapons) - Magically summoned weapons
+- [Wands & Staves](#wands--staves) - Magical implements
 
-**Count:** {{weaponPatterns.length}} patterns, {{totalPatternWeapons}} weapons
+## Unique Weapons
 
-### [Bound Weapon Manifestations](bound-weapons.md)
+{{#each uniqueWeapons}}
+{{> unique_weapon_block }}
+{{/each}}
 
-Magical weapon manifestations rather than physical weapons. They have no weight or value, but provide powerful magical capabilities.
+## General Weapon Templates
 
-**Count:** {{boundMysticWeapons.length}} weapons
+{{#each generalWeaponTemplates}}
+{{> general_weapon_template_block }}
+{{/each}}
 
-### [Wands and Staves](wands-staves.md)
+## Base Weapon Templates
 
-Enchanted wands and staves - magical implements that serve as both weapons and spellcasting tools.
+{{#each baseWeaponTemplates}}
+{{> base_weapon_template_block }}
+{{/each}}
 
-**Count:** {{wandStaffWeapons.length}} weapons
+## General Weapon Enchantments
 
-## Overall Summary
+{{#each generalWeaponEnchantments}}
+{{> general_weapon_enchantment_block }}
+{{/each}}
 
-- **Total Weapons Processed:** {{totalWeapons}}
+## Bound & Mystic Weapons
+
+{{#each boundMysticWeapons}}
+{{> bound_mystic_weapon_block }}
+{{/each}}
+
+## Wands & Staves
+
+{{#each wandStaffWeapons}}
+{{> wand_staff_block }}
+{{/each}}
+
+## Summary
+
+- **Total Enchanted Weapons:** {{totalWeapons}}
 - **Unique Weapons:** {{uniqueWeapons.length}}
-- **Pattern Weapons:** {{totalPatternWeapons}}
-- **Bound/Mystic Weapons:** {{boundMysticWeapons.length}}
-- **Wands and Staves:** {{wandStaffWeapons.length}}
+- **General Weapon Templates:** {{generalWeaponTemplates.length}}
+- **Base Weapon Templates:** {{baseWeaponTemplates.length}}
+- **General Weapon Enchantments:** {{generalWeaponEnchantments.length}}
+- **Bound & Mystic Weapons:** {{boundMysticWeapons.length}}
+- **Wands & Staves:** {{wandStaffWeapons.length}}
 - **Generated:** {{generatedDate}}
 
 ## Data Files

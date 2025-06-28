@@ -8,10 +8,11 @@ import {
   WeaponTypeKeywords,
 } from "../../../utils/weaponKeywordResolver.js";
 import { formIdResolver } from "../../../utils/formIdResolver.js";
-import { detectWeaponPatterns, WeaponPattern } from "./patternRecognition.js";
 import {
-  separateUniqueAndPatternWeapons,
+  separateUniqueAndGeneralWeapons,
   UniqueWeapon,
+  GeneralWeaponTemplate,
+  GeneralWeaponEnchantment,
 } from "./weaponClassification.js";
 import {
   EnchantedWeapon,
@@ -99,7 +100,7 @@ function determineWeaponTypeFromKeywords(keywords: string[]): string {
 
 /**
  * Resolves enchanted weapons by linking WEAP, ENCH, and MGEF records
- * Now includes pattern recognition and uniqueness classification
+ * Now uses CNAM-based classification for unique vs general weapons
  */
 export async function resolveEnchantedWeapons(
   weaponRecords: WeapRecord[],
@@ -107,8 +108,10 @@ export async function resolveEnchantedWeapons(
   magicEffectRecords: any[],
   keywordRecords: KywdRecord[]
 ): Promise<{
-  patterns: WeaponPattern[];
   uniqueWeapons: UniqueWeapon[];
+  generalWeaponTemplates: GeneralWeaponTemplate[];
+  generalWeaponEnchantments: GeneralWeaponEnchantment[];
+  baseWeaponTemplates: GeneralWeaponTemplate[];
   allWeapons: EnchantedWeapon[];
   boundMysticWeapons: BoundMysticWeapon[];
   wandStaffWeapons: WandStaffWeapon[];
@@ -219,7 +222,7 @@ export async function resolveEnchantedWeapons(
         description: weapon.data.DESC || null,
       };
 
-      // Early exit for bound/mystic weapons (skip pattern detection)
+      // Early exit for bound/mystic weapons (skip CNAM classification)
       if (isBoundMysticWeapon(enchantedWeapon)) {
         boundMysticWeapons.push(convertToBoundMysticWeapon(enchantedWeapon));
       } else if (isWandOrStaff(enchantedWeapon)) {
@@ -256,22 +259,23 @@ export async function resolveEnchantedWeapons(
     `⏱️  Total processing time: ${totalTime}ms (${finalRate.toFixed(1)} weapons/sec)`
   );
 
-  // Separate unique and pattern weapons
-  console.log("🔍 Classifying weapons as unique or pattern-based...");
-  const { uniqueWeapons, patternWeapons } =
-    separateUniqueAndPatternWeapons(enchantedWeapons);
+  // Classify weapons using CNAM-based approach
+  console.log("🔍 Classifying weapons using CNAM templates...");
+  const {
+    uniqueWeapons,
+    generalWeaponTemplates,
+    generalWeaponEnchantments,
+    baseWeaponTemplates,
+  } = separateUniqueAndGeneralWeapons(enchantedWeapons, weaponRecords);
   console.log(
-    `📊 Found ${uniqueWeapons.length} unique weapons and ${patternWeapons.length} pattern weapons`
+    `📊 Found ${uniqueWeapons.length} unique weapons, ${generalWeaponTemplates.length} general weapon templates, ${generalWeaponEnchantments.length} general enchantments, and ${baseWeaponTemplates.length} base weapon templates`
   );
 
-  // Detect patterns in the pattern weapons
-  console.log("🔍 Detecting weapon patterns...");
-  const patterns = detectWeaponPatterns(patternWeapons);
-  console.log(`📊 Identified ${patterns.length} weapon patterns`);
-
   return {
-    patterns,
     uniqueWeapons,
+    generalWeaponTemplates,
+    generalWeaponEnchantments,
+    baseWeaponTemplates,
     allWeapons: enchantedWeapons,
     boundMysticWeapons,
     wandStaffWeapons,

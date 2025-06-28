@@ -1,393 +1,342 @@
 import { EnchantedWeapon } from "./types.js";
-import { parseWeaponName, WEAPON_MATERIALS } from "./patternRecognition.js";
+import { WeapRecord } from "../../../types/weapSchema.js";
+import { errorLogger } from "../utils/errorLogger.js";
 
 export interface UniqueWeapon extends EnchantedWeapon {
   uniquenessFactors: string[];
 }
 
-export interface ClassificationResult {
-  isUnique: boolean;
-  uniquenessFactors: string[];
+export interface GeneralWeaponTemplate {
+  cnamFormId: string;
+  templateName: string;
+  weaponType: string;
+  baseDamage: number;
+  weight: number;
+  value: number;
+  material?: string;
+  examples: EnchantedWeapon[];
+  count: number;
+}
+
+export interface GeneralWeaponEnchantment {
+  name: string;
+  description: string;
+  cost: number;
+  chargeAmount: number;
+  effects: {
+    name: string;
+    description: string;
+    magnitude: number;
+    duration: number;
+    area: number;
+  }[];
+  examples: string[]; // Weapon names that use this enchantment
+  count: number;
 }
 
 /**
- * Classifies a weapon as unique or part of a pattern
- * This is a reusable utility that could be used in other weapon-related projects
+ * Classifies weapons based on CNAM (template) parameter
+ * Weapons with CNAM are general weapons based on templates
+ * Weapons without CNAM but with EFID are unique weapons
+ * Weapons without CNAM and without EFID are base weapon templates
  */
-export function classifyWeaponUniqueness(
-  weapon: EnchantedWeapon,
-  allWeapons: EnchantedWeapon[]
-): ClassificationResult {
-  const uniquenessFactors: string[] = [];
+export function separateUniqueAndGeneralWeapons(
+  weapons: EnchantedWeapon[],
+  weaponRecords: WeapRecord[]
+): {
+  uniqueWeapons: UniqueWeapon[];
+  generalWeaponTemplates: GeneralWeaponTemplate[];
+  generalWeaponEnchantments: GeneralWeaponEnchantment[];
+  baseWeaponTemplates: GeneralWeaponTemplate[];
+} {
+  console.log("🔍 Classifying weapons based on CNAM templates...");
 
-  // Skip weapons with corrupted names (treat as pattern weapons)
-  if (isCorruptedName(weapon.name)) {
-    return {
-      isUnique: false,
-      uniquenessFactors: [],
-    };
+  // Create a map of weapon records for CNAM lookup
+  const weaponRecordMap = new Map<string, WeapRecord>();
+  for (const record of weaponRecords) {
+    weaponRecordMap.set(record.meta.globalFormId, record);
   }
 
-  // Check if it's a named weapon
-  const parsedName = parseWeaponName(weapon.name);
-  if (parsedName && parsedName.isNamed) {
-    uniquenessFactors.push("Named weapon");
-  }
+  const uniqueWeapons: UniqueWeapon[] = [];
+  const generalWeapons: EnchantedWeapon[] = [];
+  const baseWeaponTemplates: GeneralWeaponTemplate[] = [];
+  const cnamGroups = new Map<string, EnchantedWeapon[]>();
+  const enchantmentGroups = new Map<string, EnchantedWeapon[]>();
 
-  // Check for unusual stats (outliers) - be more conservative
-  if (isStatOutlier(weapon, allWeapons)) {
-    uniquenessFactors.push("Unusual stats");
-  }
+  // Separate weapons based on CNAM and EFID
+  for (const weapon of weapons) {
+    const weaponRecord = weaponRecordMap.get(weapon.globalFormId);
 
-  // Check for multiple enchantment effects
-  if (weapon.enchantment.effects.length > 1) {
-    uniquenessFactors.push("Multiple effects");
-  }
+    if (!weaponRecord) {
+      errorLogger.logDataQuality(
+        "Weapon record not found for classification",
+        weapon.name,
+        weapon.globalFormId,
+        weapon.plugin
+      );
+      continue;
+    }
 
-  // Check for unique enchantments - be more conservative
-  if (isUniqueEnchantment(weapon.enchantment.name, allWeapons)) {
-    uniquenessFactors.push("Unique enchantment");
-  }
+    // Check if weapon has CNAM (template)
+    const cnamFormId = weaponRecord.data.CNAM;
+    const hasEnchantment =
+      weaponRecord.data.EITM && weaponRecord.data.EITM.trim() !== "";
 
-  // Check for quest reward weapons (common unique weapons)
-  if (isQuestRewardWeapon(weapon.name)) {
-    // Only add as uniqueness factor if not a pattern weapon
-    if (!parsedName || parsedName.isNamed) {
-      uniquenessFactors.push("Quest reward");
+    if (cnamFormId && cnamFormId.trim() !== "") {
+      // This is a general weapon based on a template
+      generalWeapons.push(weapon);
+
+      // Group by CNAM template
+      if (!cnamGroups.has(cnamFormId)) {
+        cnamGroups.set(cnamFormId, []);
+      }
+      cnamGroups.get(cnamFormId)!.push(weapon);
+
+      // Group by enchantment for enchantment analysis
+      const enchantmentKey = weapon.enchantment.name;
+      if (!enchantmentGroups.has(enchantmentKey)) {
+        enchantmentGroups.set(enchantmentKey, []);
+      }
+      enchantmentGroups.get(enchantmentKey)!.push(weapon);
+    } else if (hasEnchantment) {
+      // This is a unique weapon (no template but has enchantment)
+      const uniquenessFactors = determineUniquenessFactors(
+        weapon,
+        weaponRecord
+      );
+      uniqueWeapons.push({
+        ...weapon,
+        uniquenessFactors,
+      });
+    } else {
+      // This is a base weapon template (no template and no enchantment)
+      const baseTemplate = createBaseWeaponTemplate(weapon, weaponRecord);
+      if (baseTemplate) {
+        baseWeaponTemplates.push(baseTemplate);
+      }
     }
   }
 
-  // Check for special properties
-  if (hasSpecialProperties(weapon)) {
-    // Only add as uniqueness factor if not a pattern weapon
-    if (!parsedName || parsedName.isNamed) {
-      uniquenessFactors.push("Special properties");
+  console.log(
+    `📊 Found ${uniqueWeapons.length} unique weapons, ${generalWeapons.length} general weapons, and ${baseWeaponTemplates.length} base weapon templates`
+  );
+
+  // Create general weapon templates
+  const generalWeaponTemplates: GeneralWeaponTemplate[] = [];
+  for (const [cnamFormId, examples] of cnamGroups) {
+    const template = createGeneralWeaponTemplate(
+      cnamFormId,
+      examples,
+      weaponRecordMap
+    );
+    if (template) {
+      generalWeaponTemplates.push(template);
     }
   }
 
-  // Check for custom/unique names - be more conservative
-  if (isCustomNamedWeapon(weapon.name)) {
-    uniquenessFactors.push("Custom name");
+  // Create general weapon enchantments
+  const generalWeaponEnchantments: GeneralWeaponEnchantment[] = [];
+  for (const [enchantmentName, examples] of enchantmentGroups) {
+    const enchantment = createGeneralWeaponEnchantment(
+      enchantmentName,
+      examples
+    );
+    if (enchantment) {
+      generalWeaponEnchantments.push(enchantment);
+    }
   }
-
-  // If the weapon matches a material + weapon type + enchantment pattern, do not mark as unique just for quest reward or special properties
-  const isPatternWeapon =
-    parsedName &&
-    parsedName.material &&
-    parsedName.weaponType &&
-    parsedName.enchantment;
-  const filteredFactors = isPatternWeapon
-    ? uniquenessFactors.filter((f) =>
-        [
-          "Named weapon",
-          "Unusual stats",
-          "Multiple effects",
-          "Unique enchantment",
-          "Custom name",
-        ].includes(f)
-      )
-    : uniquenessFactors;
-
-  // A weapon is considered unique if it has at least TWO filtered uniqueness factors
-  const isUnique = filteredFactors.length >= 2;
 
   return {
-    isUnique,
-    uniquenessFactors: filteredFactors,
+    uniqueWeapons,
+    generalWeaponTemplates,
+    generalWeaponEnchantments,
+    baseWeaponTemplates,
   };
 }
 
 /**
- * Checks if a weapon name is corrupted or invalid
- * This is a reusable utility for name validation
+ * Creates a general weapon template from CNAM group
  */
-function isCorruptedName(name: string): boolean {
-  // Check for common corruption patterns
-  const corruptedPatterns = [
-    /^[^\x00-\x7F]+$/, // Non-ASCII characters only
-    /^[^\w\s]+$/, // No alphanumeric characters
-    /^[^\x20-\x7E]+$/, // No printable ASCII characters
-    /^ï¿½/, // Common corruption pattern
-    /^@\u0001/, // Another corruption pattern
-    /^\u0001/, // Control character at start
-    /^[^\x20-\x7E]*$/, // Only non-printable characters
-    /^[a-zA-Z]\u0001$/, // Single letter followed by control character
-    /^[^\x20-\x7E]+\u0001$/, // Non-printable followed by control character
-    /^[^\x20-\x7E]*[^\x20-\x7E]$/, // Ends with non-printable
-    /^[^\x20-\x7E]*[^\x20-\x7E]\u0001$/, // Non-printable ending with control character
-  ];
+function createGeneralWeaponTemplate(
+  cnamFormId: string,
+  examples: EnchantedWeapon[],
+  weaponRecordMap: Map<string, WeapRecord>
+): GeneralWeaponTemplate | null {
+  if (examples.length === 0) return null;
 
-  // Check if name is too short (likely corrupted)
-  if (name.length <= 2) {
-    return true;
+  // Get the template weapon record
+  const templateRecord = weaponRecordMap.get(cnamFormId);
+  if (!templateRecord) {
+    errorLogger.logDataQuality(
+      "Template weapon record not found",
+      undefined,
+      cnamFormId,
+      undefined
+    );
+    return null;
   }
 
-  // Check if name contains mostly control characters
-  const controlCharCount = (name.match(/[\x00-\x1F\x7F]/g) || []).length;
-  if (controlCharCount > name.length * 0.5) {
-    return true;
-  }
+  // Calculate stat ranges
+  const damages = examples.map((w) => w.baseDamage);
+  const weights = examples.map((w) => w.weight);
+  const values = examples.map((w) => w.value);
 
-  return corruptedPatterns.some((pattern) => pattern.test(name));
+  return {
+    cnamFormId,
+    templateName: templateRecord.data.FULL || templateRecord.data.EDID,
+    weaponType: examples[0].weaponType, // All examples should have same type
+    baseDamage: Math.min(...damages),
+    weight: Math.min(...weights),
+    value: Math.min(...values),
+    material: examples[0].material || undefined,
+    examples,
+    count: examples.length,
+  };
 }
 
 /**
- * Determines if a weapon has unusual stats compared to similar weapons
- * This is a reusable utility for outlier detection
+ * Creates a general weapon enchantment from enchantment group
  */
-function isStatOutlier(
-  weapon: EnchantedWeapon,
-  allWeapons: EnchantedWeapon[]
-): boolean {
-  // Get weapons of the same type
-  const sameTypeWeapons = allWeapons.filter(
-    (w) => w.weaponType === weapon.weaponType
-  );
-  if (sameTypeWeapons.length < 3) return false; // Need at least 3 for statistical analysis
-
-  // Calculate mean and standard deviation for each stat
-  const damages = sameTypeWeapons.map((w) => w.baseDamage);
-  const weights = sameTypeWeapons.map((w) => w.weight);
-  const values = sameTypeWeapons.map((w) => w.value);
-
-  const damageStats = calculateStats(damages);
-  const weightStats = calculateStats(weights);
-  const valueStats = calculateStats(values);
-
-  // Check if weapon is an outlier (more than 2 standard deviations from mean)
-  const isDamageOutlier =
-    Math.abs(weapon.baseDamage - damageStats.mean) > 2 * damageStats.stdDev;
-  const isWeightOutlier =
-    Math.abs(weapon.weight - weightStats.mean) > 2 * weightStats.stdDev;
-  const isValueOutlier =
-    Math.abs(weapon.value - valueStats.mean) > 2 * valueStats.stdDev;
-
-  return isDamageOutlier || isWeightOutlier || isValueOutlier;
-}
-
-/**
- * Calculates mean and standard deviation for a set of numbers
- * This is a reusable utility for statistical calculations
- */
-function calculateStats(numbers: number[]): { mean: number; stdDev: number } {
-  const mean = numbers.reduce((sum, num) => sum + num, 0) / numbers.length;
-  const variance =
-    numbers.reduce((sum, num) => sum + Math.pow(num - mean, 2), 0) /
-    numbers.length;
-  const stdDev = Math.sqrt(variance);
-
-  return { mean, stdDev };
-}
-
-/**
- * Determines if an enchantment is unique among all weapons
- * This is a reusable utility for enchantment analysis
- */
-function isUniqueEnchantment(
+function createGeneralWeaponEnchantment(
   enchantmentName: string,
-  allWeapons: EnchantedWeapon[]
-): boolean {
-  const enchantmentCount = allWeapons.filter(
-    (w) => w.enchantment.name === enchantmentName
-  ).length;
-  return enchantmentCount <= 1; // Consider enchantment unique if used on only 1 weapon
+  examples: EnchantedWeapon[]
+): GeneralWeaponEnchantment | null {
+  if (examples.length === 0) return null;
+
+  const firstExample = examples[0];
+  const enchantment = firstExample.enchantment;
+
+  return {
+    name: enchantmentName,
+    description: enchantment.effects.map((e) => e.description).join("; "),
+    cost: enchantment.cost,
+    chargeAmount: enchantment.chargeAmount,
+    effects: enchantment.effects.map((effect) => ({
+      name: effect.name,
+      description: effect.description,
+      magnitude: effect.magnitude,
+      duration: effect.duration,
+      area: effect.area,
+    })),
+    examples: examples.map((w) => w.name),
+    count: examples.length,
+  };
 }
 
 /**
- * Checks if a weapon is likely a quest reward based on its name
- * This is a reusable utility for quest reward detection
+ * Determines uniqueness factors for a weapon
  */
-function isQuestRewardWeapon(name: string): boolean {
-  const questRewardKeywords = [
-    "dawnbreaker",
-    "chillrend",
-    "windshear",
-    "mehrunes",
-    "razor",
-    "volendrung",
-    "mace",
-    "molag",
-    "bal",
-    "wabbajack",
-    "sanguine",
-    "rose",
-    "spellbreaker",
-    "peryite",
-    "shield",
-    "auriel",
-    "bow",
-    "hircine",
-    "ring",
-    "namira",
-    "ring",
-    "vaermina",
-    "skull",
-    "malacath",
-    "mace",
-    "boethiah",
-    "ebony",
-    "mail",
-    "clavicus",
-    "vile",
-    "masque",
-    "azura",
-    "star",
-    "black",
-    "star",
-    "meridia",
-    "beacon",
-    "nocturnal",
-    "skeleton",
-    "key",
-    "sheogorath",
-    "wabbajack",
+function determineUniquenessFactors(
+  weapon: EnchantedWeapon,
+  weaponRecord: WeapRecord
+): string[] {
+  const factors: string[] = [];
+
+  // No CNAM template
+  factors.push("No template (unique base weapon)");
+
+  // Check for named weapon (doesn't start with material)
+  const materialPrefixes = [
+    "Iron",
+    "Steel",
+    "Orcish",
+    "Dwarven",
+    "Elven",
+    "Glass",
+    "Ebony",
+    "Daedric",
+    "Dragonbone",
+    "Stalhrim",
+    "Nordic",
+    "Ancient Nord",
+    "Falmer",
+    "Chitin",
+    "Bonemold",
+    "Morag Tong",
+    "Blades",
+    "Imperial",
+    "Stormcloak",
+    "Thalmor",
   ];
 
-  const normalizedName = name.toLowerCase();
-  return questRewardKeywords.some((keyword) =>
-    normalizedName.includes(keyword)
+  const hasMaterialPrefix = materialPrefixes.some((material) =>
+    weapon.name.toLowerCase().startsWith(material.toLowerCase())
   );
+
+  if (!hasMaterialPrefix) {
+    factors.push("Named weapon");
+  }
+
+  // Check for unusual stats
+  if (weapon.baseDamage > 20) {
+    factors.push("High base damage");
+  }
+
+  if (weapon.value > 1000) {
+    factors.push("High value");
+  }
+
+  // Check for multiple effects
+  if (weapon.enchantment.effects.length > 1) {
+    factors.push("Multiple enchantment effects");
+  }
+
+  // Check for unique enchantment
+  if (
+    weapon.enchantment.name.toLowerCase().includes("unique") ||
+    weapon.enchantment.name.toLowerCase().includes("special")
+  ) {
+    factors.push("Unique enchantment");
+  }
+
+  // Check for quest-related keywords
+  if (weapon.keywords.some((k) => k.toLowerCase().includes("quest"))) {
+    factors.push("Quest-related");
+  }
+
+  return factors;
 }
 
 /**
- * Checks if a weapon has special properties that make it unique
- * This is a reusable utility for special property detection
+ * Creates a base weapon template from a weapon with no CNAM and no enchantment
  */
-function hasSpecialProperties(weapon: EnchantedWeapon): boolean {
-  // Check for special enchantment effects
-  const specialEffects = weapon.enchantment.effects.some(
-    (effect) =>
-      effect.description.toLowerCase().includes("unique") ||
-      effect.description.toLowerCase().includes("special") ||
-      effect.description.toLowerCase().includes("legendary")
-  );
-
-  // Check for unusual enchantment costs
-  const unusualCost =
-    weapon.enchantment.cost > 1000 || weapon.enchantment.cost < 10;
-
-  // Check for unusual charge amounts
-  const unusualCharge =
-    weapon.enchantment.chargeAmount > 10000 ||
-    weapon.enchantment.chargeAmount < 100;
-
-  return specialEffects || unusualCost || unusualCharge;
+function createBaseWeaponTemplate(
+  weapon: EnchantedWeapon,
+  weaponRecord: WeapRecord
+): GeneralWeaponTemplate | null {
+  return {
+    cnamFormId: weaponRecord.meta.globalFormId, // Use the weapon's own FormID as template
+    templateName: weaponRecord.data.FULL || weaponRecord.data.EDID,
+    weaponType: weapon.weaponType,
+    baseDamage: weapon.baseDamage,
+    weight: weapon.weight,
+    value: weapon.value,
+    material: weapon.material || undefined,
+    examples: [weapon], // Only this weapon uses this template
+    count: 1,
+  };
 }
 
 /**
- * Checks if a weapon has a custom/unique name
- * This is a reusable utility for name uniqueness detection
- */
-function isCustomNamedWeapon(name: string): boolean {
-  // Check if name doesn't follow standard patterns
-  const hasMaterialPrefix = WEAPON_MATERIALS.some((material) =>
-    name.toLowerCase().startsWith(material.toLowerCase())
-  );
-
-  const hasStandardPattern =
-    /(sword|dagger|axe|mace|bow|staff|crossbow)\s+of\s+/i.test(name);
-
-  // Custom names typically don't follow standard patterns
-  return !hasMaterialPrefix && !hasStandardPattern;
-}
-
-/**
- * Separates weapons into unique and pattern-based categories
- * This is the main function that could be reused in other projects
+ * Legacy function for backward compatibility
+ * @deprecated Use separateUniqueAndGeneralWeapons instead
  */
 export function separateUniqueAndPatternWeapons(weapons: EnchantedWeapon[]): {
   uniqueWeapons: UniqueWeapon[];
   patternWeapons: EnchantedWeapon[];
 } {
-  const uniqueWeapons: UniqueWeapon[] = [];
-  const patternWeapons: EnchantedWeapon[] = [];
+  console.warn(
+    "⚠️  Using deprecated pattern-based classification. Use CNAM-based classification instead."
+  );
 
-  for (const weapon of weapons) {
-    const classification = classifyWeaponUniqueness(weapon, weapons);
-
-    if (classification.isUnique) {
-      uniqueWeapons.push({
-        ...weapon,
-        uniquenessFactors: classification.uniquenessFactors,
-      });
-    } else {
-      patternWeapons.push(weapon);
-    }
-  }
-
-  return { uniqueWeapons, patternWeapons };
-}
-
-/**
- * Calculates statistical ranges for a group of weapons
- * This is a reusable utility for calculating stat ranges
- */
-export function calculateStatRanges(weapons: EnchantedWeapon[]): {
-  damageRange: [number, number];
-  weightRange: [number, number];
-  valueRange: [number, number];
-} {
-  if (weapons.length === 0) {
-    return {
-      damageRange: [0, 0],
-      weightRange: [0, 0],
-      valueRange: [0, 0],
-    };
-  }
-
-  const damages = weapons.map((w) => w.baseDamage);
-  const weights = weapons.map((w) => w.weight);
-  const values = weapons.map((w) => w.value);
+  // For backward compatibility, treat all weapons as unique for now
+  const uniqueWeapons: UniqueWeapon[] = weapons.map((weapon) => ({
+    ...weapon,
+    uniquenessFactors: ["Legacy classification - no CNAM data available"],
+  }));
 
   return {
-    damageRange: [Math.min(...damages), Math.max(...damages)] as [
-      number,
-      number,
-    ],
-    weightRange: [Math.min(...weights), Math.max(...weights)] as [
-      number,
-      number,
-    ],
-    valueRange: [Math.min(...values), Math.max(...values)] as [number, number],
+    uniqueWeapons,
+    patternWeapons: [],
   };
-}
-
-/**
- * Identifies weapons that are statistical outliers
- * This is a reusable utility for outlier detection
- */
-export function findOutlierWeapons(
-  weapons: EnchantedWeapon[],
-  threshold: number = 2
-): EnchantedWeapon[] {
-  const outliers: EnchantedWeapon[] = [];
-
-  for (const weapon of weapons) {
-    if (isStatOutlier(weapon, weapons)) {
-      outliers.push(weapon);
-    }
-  }
-
-  return outliers;
-}
-
-/**
- * Groups weapons by their uniqueness factors
- * This is a reusable utility for grouping by characteristics
- */
-export function groupWeaponsByUniquenessFactors(
-  uniqueWeapons: UniqueWeapon[]
-): Map<string, UniqueWeapon[]> {
-  const groups = new Map<string, UniqueWeapon[]>();
-
-  for (const weapon of uniqueWeapons) {
-    for (const factor of weapon.uniquenessFactors) {
-      if (!groups.has(factor)) {
-        groups.set(factor, []);
-      }
-      groups.get(factor)!.push(weapon);
-    }
-  }
-
-  return groups;
 }

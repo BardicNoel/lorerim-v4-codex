@@ -2,12 +2,15 @@
 export { resolveEnchantedWeapons } from "./resolveEnchantedWeapons.js";
 
 // Pattern recognition
-export { detectWeaponPatterns, parseWeaponName } from "./patternRecognition.js";
+export { detectWeaponPatterns } from "./patternRecognition.js";
 
 // Weapon classification
 export {
+  separateUniqueAndGeneralWeapons,
   separateUniqueAndPatternWeapons,
-  classifyWeaponUniqueness,
+  UniqueWeapon,
+  GeneralWeaponTemplate,
+  GeneralWeaponEnchantment,
 } from "./weaponClassification.js";
 
 // Weapon grouping
@@ -24,4 +27,14 @@ export type {
 } from "./types.js";
 
 export type { WeaponPattern } from "./patternRecognition.js";
-export type { UniqueWeapon } from "./weaponClassification.js";
+
+export { determineWeaponType } from "./weaponTypeDetection.js";
+
+export {
+  isBoundMysticWeapon,
+  convertToBoundMysticWeapon,
+  isWandOrStaff,
+  convertToWandStaffWeapon,
+} from "./weaponCategorization.js";
+
+export { processEnchantment } from "./enchantmentProcessor.js";

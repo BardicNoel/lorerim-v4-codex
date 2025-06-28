@@ -61,8 +61,10 @@ async function main() {
 
     // 2. Process records using logic
     const {
-      patterns,
       uniqueWeapons,
+      generalWeaponTemplates,
+      generalWeaponEnchantments,
+      baseWeaponTemplates,
       allWeapons,
       boundMysticWeapons,
       wandStaffWeapons,
@@ -82,12 +84,14 @@ async function main() {
     // Index document context
     const indexContext = {
       uniqueWeapons,
-      weaponPatterns: patterns,
+      generalWeaponTemplates,
+      generalWeaponEnchantments,
+      baseWeaponTemplates,
       boundMysticWeapons,
       wandStaffWeapons,
       totalWeapons:
         allWeapons.length + boundMysticWeapons.length + wandStaffWeapons.length,
-      totalPatternWeapons: allWeapons.length - uniqueWeapons.length,
+      totalGeneralWeapons: allWeapons.length - uniqueWeapons.length,
       generatedDate,
     };
 
@@ -97,10 +101,23 @@ async function main() {
       generatedDate,
     };
 
-    // Generic weapon enchants context
-    const genericContext = {
-      weaponPatterns: patterns,
-      totalPatternWeapons: allWeapons.length - uniqueWeapons.length,
+    // General weapon templates context
+    const generalTemplatesContext = {
+      generalWeaponTemplates,
+      totalGeneralWeapons: allWeapons.length - uniqueWeapons.length,
+      generatedDate,
+    };
+
+    // Base weapon templates context
+    const baseTemplatesContext = {
+      baseWeaponTemplates,
+      generatedDate,
+    };
+
+    // General weapon enchantments context
+    const generalEnchantmentsContext = {
+      generalWeaponEnchantments,
+      totalGeneralWeapons: allWeapons.length - uniqueWeapons.length,
       generatedDate,
     };
 
@@ -135,9 +152,19 @@ async function main() {
       uniqueContext
     );
 
-    const genericMarkdown = renderMarkdownTemplate(
-      path.join(TEMPLATE_DIR, "generic-weapon-enchants.md"),
-      genericContext
+    const generalTemplatesMarkdown = renderMarkdownTemplate(
+      path.join(TEMPLATE_DIR, "general-weapon-templates.md"),
+      generalTemplatesContext
+    );
+
+    const baseTemplatesMarkdown = renderMarkdownTemplate(
+      path.join(TEMPLATE_DIR, "base-weapon-templates.md"),
+      baseTemplatesContext
+    );
+
+    const generalEnchantmentsMarkdown = renderMarkdownTemplate(
+      path.join(TEMPLATE_DIR, "general-weapon-enchants.md"),
+      generalEnchantmentsContext
     );
 
     const boundMarkdown = renderMarkdownTemplate(
@@ -162,8 +189,16 @@ async function main() {
       uniqueMarkdown
     );
     fs.writeFileSync(
-      path.join(OUTPUT_DIR, "generic-weapon-enchants.md"),
-      genericMarkdown
+      path.join(OUTPUT_DIR, "general-weapon-templates.md"),
+      generalTemplatesMarkdown
+    );
+    fs.writeFileSync(
+      path.join(OUTPUT_DIR, "base-weapon-templates.md"),
+      baseTemplatesMarkdown
+    );
+    fs.writeFileSync(
+      path.join(OUTPUT_DIR, "general-weapon-enchants.md"),
+      generalEnchantmentsMarkdown
     );
     fs.writeFileSync(path.join(OUTPUT_DIR, "bound-weapons.md"), boundMarkdown);
     fs.writeFileSync(
@@ -178,8 +213,16 @@ async function main() {
       JSON.stringify(allWeapons, null, 2)
     );
     fs.writeFileSync(
-      path.join(OUTPUT_DIR, "weapon-patterns.json"),
-      JSON.stringify(patterns, null, 2)
+      path.join(OUTPUT_DIR, "general-weapon-templates.json"),
+      JSON.stringify(generalWeaponTemplates, null, 2)
+    );
+    fs.writeFileSync(
+      path.join(OUTPUT_DIR, "base-weapon-templates.json"),
+      JSON.stringify(baseWeaponTemplates, null, 2)
+    );
+    fs.writeFileSync(
+      path.join(OUTPUT_DIR, "general-weapon-enchants.json"),
+      JSON.stringify(generalWeaponEnchantments, null, 2)
     );
     fs.writeFileSync(
       path.join(OUTPUT_DIR, "unique-weapons.json"),
@@ -205,8 +248,16 @@ async function main() {
       "   📄 Unique Weapons: " + path.join(OUTPUT_DIR, "unique-weapons.md")
     );
     console.log(
-      "   📄 Generic Weapon Enchants: " +
-        path.join(OUTPUT_DIR, "generic-weapon-enchants.md")
+      "   📄 General Weapon Templates: " +
+        path.join(OUTPUT_DIR, "general-weapon-templates.md")
+    );
+    console.log(
+      "   📄 Base Weapon Templates: " +
+        path.join(OUTPUT_DIR, "base-weapon-templates.md")
+    );
+    console.log(
+      "   📄 General Weapon Enchants: " +
+        path.join(OUTPUT_DIR, "general-weapon-enchants.md")
     );
     console.log(
       "   📄 Bound Weapons: " + path.join(OUTPUT_DIR, "bound-weapons.md")
