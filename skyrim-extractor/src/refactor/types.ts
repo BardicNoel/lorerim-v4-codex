@@ -23,6 +23,7 @@ export interface WorkerMessage {
   bufferMetas?: BufferMeta[];
   parsedRecords?: ParsedRecord[];
   stats?: ProcessingStats;
+  plugin?: string;
 }
 
 export interface ThreadPoolConfig {

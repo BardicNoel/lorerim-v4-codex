@@ -4,6 +4,8 @@ import {
   PluginMeta,
   resolveGlobalFromReference,
 } from "@lorerim/platform-types";
+import { Worker } from "worker_threads";
+import * as path from "path";
 
 // Helper function to group records by a key
 function groupBy<T>(
@@ -77,64 +79,124 @@ function groupBy<T>(
 //     }
 //   }
 
-const resolveConflicts = (
+const MAX_THREADS = 4;
+
+const resolveConflicts = async (
   parsedRecords: Record<string, ParsedRecord[]>,
   pluginRegistry: Record<string, PluginMeta>
-): Record<string, ParsedRecord[]> => {
-  // Create a single copy of the input dictionary
-  const newDict = Object.fromEntries(
-    Object.entries(parsedRecords).map(([type, records]) => [
-      type,
-      records.map((record) => ({
-        ...record,
-      })),
-    ])
-  );
+): Promise<Record<string, ParsedRecord[]>> => {
+  const recordTypes = Object.keys(parsedRecords);
+  const results: Record<string, ParsedRecord[]> = {};
+  let current = 0;
+  let activeWorkers: Promise<void>[] = [];
 
-  // Grouping by FormID is fundamentally flawed. We need to group by globalFormId
-  // GlobalFormIds are defined by where the record is DEFINED and the load order of that
-  // once we have globalFormIds, we can group on GLOBALS and set winners
-
-  // Iterate over each record
-  for (const recordType in newDict) {
-    const records = newDict[recordType];
-    for (const record of records) {
-      const formIdNumeric = parseInt(record.meta.formId, 16);
-      const globalFormId = resolveGlobalFromReference(
-        formIdNumeric,
-        pluginRegistry[record.meta.plugin],
-        pluginRegistry
-      );
-      if (globalFormId) {
-        record.meta.globalFormId = formatFormId(globalFormId);
-      }
-      // Group by globalFormId
-      const globalFormIdGroups = groupBy(
-        records,
-        (record: ParsedRecord) => record.meta.globalFormId
-      );
-
-      for (const globalFormId in globalFormIdGroups) {
-        const groupRecords = globalFormIdGroups[globalFormId];
-        // Sort by stackOrder (highest is the winner)
-        groupRecords.sort((a: ParsedRecord, b: ParsedRecord) => {
-          const aOrder = a.meta.stackOrder ?? Number.MAX_SAFE_INTEGER;
-          const bOrder = b.meta.stackOrder ?? Number.MAX_SAFE_INTEGER;
-          return bOrder - aOrder;
-        });
-
-        // Set the isWinner flag to the one with the lowest stackOrder
-        groupRecords[0].meta.isWinner = true;
-        for (let i = 1; i < groupRecords.length; i++) {
-          groupRecords[i].meta.isWinner = false;
+  function runWorker(
+    recordType: string,
+    records: ParsedRecord[]
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(
+        path.join(__dirname, "resolveConflictsWorker.ts"),
+        {
+          execArgv: ["-r", "ts-node/register"],
+          workerData: {
+            recordType,
+            records,
+            pluginRegistry,
+          },
         }
+      );
+      worker.on(
+        "message",
+        (msg: { recordType: string; records: ParsedRecord[] }) => {
+          results[msg.recordType] = msg.records;
+          resolve();
+        }
+      );
+      worker.on("error", reject);
+      worker.on("exit", (code) => {
+        if (code !== 0)
+          reject(new Error(`Worker stopped with exit code ${code}`));
+      });
+    });
+  }
+
+  while (current < recordTypes.length) {
+    while (activeWorkers.length < MAX_THREADS && current < recordTypes.length) {
+      const recordType = recordTypes[current];
+      const records = parsedRecords[recordType];
+      activeWorkers.push(runWorker(recordType, records));
+      current++;
+    }
+    // Wait for any worker to finish before launching more
+    await Promise.race(activeWorkers);
+    // Remove all settled promises (fulfilled or rejected)
+    const settled = await Promise.allSettled(activeWorkers);
+    const firstSettledIndex = settled.findIndex(
+      (s) => s.status === "fulfilled" || s.status === "rejected"
+    );
+    if (firstSettledIndex !== -1) {
+      activeWorkers.splice(firstSettledIndex, 1);
+    }
+  }
+  // Wait for all remaining workers
+  await Promise.all(activeWorkers);
+  return results;
+};
+
+// Extracted per-record-type conflict resolution logic for worker use
+function resolveConflictsForType(
+  records: ParsedRecord[],
+  pluginRegistry: Record<string, PluginMeta>,
+  recordType: string
+): ParsedRecord[] {
+  // Defensive copy
+  const newRecords = records.map((record) => ({ ...record }));
+  const totalRecords = newRecords.length;
+  let lastLoggedPercent = -1;
+  for (let i = 0; i < newRecords.length; i++) {
+    const record = newRecords[i];
+    // Progress indicator: log every 10% or every 1000 records
+    const percent = Math.floor((i / totalRecords) * 100);
+    if ((percent > lastLoggedPercent && percent % 10 === 0) || i % 1000 === 0) {
+      // Only log if in main thread
+      if (typeof process !== "undefined" && process.send === undefined) {
+        console.log(
+          `${recordType} progress: ${percent}% (${i}/${totalRecords})`
+        );
+      }
+      lastLoggedPercent = percent;
+    }
+    const formIdNumeric = parseInt(record.meta.formId, 16);
+    const globalFormId = resolveGlobalFromReference(
+      formIdNumeric,
+      pluginRegistry[record.meta.plugin],
+      pluginRegistry
+    );
+    if (globalFormId) {
+      record.meta.globalFormId = formatFormId(globalFormId);
+    }
+    // Group by globalFormId
+    const globalFormIdGroups = groupBy(
+      newRecords,
+      (record: ParsedRecord) => record.meta.globalFormId
+    );
+    for (const globalFormId in globalFormIdGroups) {
+      const groupRecords = globalFormIdGroups[globalFormId];
+      // Sort by stackOrder (highest is the winner)
+      groupRecords.sort((a: ParsedRecord, b: ParsedRecord) => {
+        const aOrder = a.meta.stackOrder ?? Number.MAX_SAFE_INTEGER;
+        const bOrder = b.meta.stackOrder ?? Number.MAX_SAFE_INTEGER;
+        return bOrder - aOrder;
+      });
+      // Set the isWinner flag to the one with the lowest stackOrder
+      groupRecords[0].meta.isWinner = true;
+      for (let i = 1; i < groupRecords.length; i++) {
+        groupRecords[i].meta.isWinner = false;
       }
     }
   }
+  return newRecords;
+}
 
-  // For each globalFormId group, set the globalFormId to the one with the lowest stackOrder
-
-  return newDict;
-};
-
-export { resolveConflicts as flagWinners };
+export { resolveConflicts as flagWinners, resolveConflictsForType };

@@ -56,6 +56,7 @@ async function processPlugin(task: WorkerTask): Promise<void> {
       error: `Failed to process ${task.plugin.name}: ${
         error instanceof Error ? error.message : String(error)
       }`,
+      plugin: task.plugin.name,
     } as WorkerMessage);
   }
 }
@@ -67,6 +68,7 @@ parentPort.on("message", (task: WorkerTask) => {
       error: `Unexpected error processing ${task.plugin.name}: ${
         error instanceof Error ? error.message : String(error)
       }`,
+      plugin: task.plugin.name,
     } as WorkerMessage);
   });
 });

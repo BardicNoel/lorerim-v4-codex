@@ -6,5 +6,5 @@
     "modDir": "C:\\Modlists\\LoreRim\\mods"
   },
   "maxThreads": 4,
-  "recordTypeFilter": ["RACE", "CLAS", "FACT", "PERK", "AVIF", "MGEF", "SPEL", "ENCH", "GLOB", "FLST", "QUST", "KYWD"]
+  "recordTypeFilter": ["RACE", "CLAS", "FACT", "PERK", "AVIF", "MGEF", "SPEL", "ENCH", "GLOB", "FLST", "QUST", "KYWD", "MESG", "WEAP", "ARMO", "AMMO"]
 } 
