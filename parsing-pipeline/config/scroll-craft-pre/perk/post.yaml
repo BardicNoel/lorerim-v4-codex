@@ -1,0 +1,23 @@
+# Import base pipeline configuration
+name: 'Perk Analysis Pipeline'
+description: 'Process Perk data for analysis'
+input: 'config/scroll-craft-pre/perk/decode.json'
+output: '../scroll-crafting/primaries/perks.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Remove Perk Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove Perk-specific fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Rename decodedData to Perk'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to Perk for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'
+

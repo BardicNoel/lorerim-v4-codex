@@ -8,13 +8,19 @@
     "doc": "docs"
   },
   "scripts": {
+    "generate:subclasses": "node --loader ts-node/esm projects/subclasses/generate.ts",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit",
     "test": "vitest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "handlebars": "^4.7.8"
+    "@lorerim/platform-types": "file:../__platform",
+    "handlebars": "^4.7.8",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@types/handlebars": "^4.1.0",

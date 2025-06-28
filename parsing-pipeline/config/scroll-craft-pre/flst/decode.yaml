@@ -1,0 +1,28 @@
+# Import base pipeline configuration
+name: 'FLST Analysis Pipeline'
+description: 'Process FLST data for analysis'
+input: '../output/skyrim-extractor/lorerim/FLST.json'
+# output: '../output/parsing-pipeline/lorerim/flst-analysis.json'
+output: 'config/scroll-craft-pre/flst/decode.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Filter FLST Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'FLST'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
+

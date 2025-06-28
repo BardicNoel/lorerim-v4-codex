@@ -1,0 +1,26 @@
+# Import base pipeline configuration
+name: 'MGEF Analysis Pipeline'
+description: 'Process MGEF data for analysis'
+input: '../output/skyrim-extractor/lorerim/MGEF.json'
+output: 'config/scroll-craft-pre/mgef/decode.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Filter Winner Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'MGEF'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4

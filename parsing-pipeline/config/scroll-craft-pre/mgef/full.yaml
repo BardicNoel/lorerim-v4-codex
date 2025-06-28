@@ -1,0 +1,87 @@
+# Import base pipeline configuration
+name: 'MGEF Analysis Pipeline'
+description: 'Process MGEF data for analysis'
+input: '../output/skyrim-extractor/lorerim/MGEF.json'
+output: '../scroll-crafting/primaries/mgef.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Filter Winner Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'MGEF'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4
+
+  - from: 'local'
+    name: 'Remove MGEF Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove MGEF-specific fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Remove MGEF Data Fields'
+    type: 'remove-fields'
+    description: 'Remove specific MGEF data fields to clean up the dataset'
+    fields:
+      decodedData:
+        SNDD: 'all'
+        DATA:
+          # - 'baseCost'
+          # - 'relatedID'
+          # - 'skill'
+          # - 'resistanceAV'
+          - 'unknown1'
+          - 'castingLight'
+          - 'taperWeight'
+          - 'hitShader'
+          - 'enchantShader'
+          # - 'skillLevel'
+          - 'area'
+          - 'castingTime'
+          - 'taperCurve'
+          - 'taperDuration'
+          - 'secondAVWeight'
+          - 'effectType'
+          # - 'primaryAV'
+          - 'projectileID'
+          - 'explosionID'
+          - 'castType'
+          - 'deliveryType'
+          - 'secondAV'
+          - 'castingArt'
+          - 'hitEffectArt'
+          - 'impactDataID'
+          - 'skillUsageMult'
+          - 'dualCastID'
+          - 'dualCastScale'
+          - 'enchantArtID'
+          - 'nullData1'
+          - 'nullData2'
+          - 'equipAbility'
+          - 'imageSpaceModID'
+          # - 'perkID'
+          - 'soundVolume'
+          - 'scriptAIDataScore'
+          - 'scriptAIDataDelayTime'
+
+  - from: 'local'
+    name: 'Rename decodedData to MGEF'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to MGEF for scroll crafting primaries'
+    mappings:
+      decodedData: 'MGEF'

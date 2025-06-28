@@ -1,3 +1,8 @@
+---
+description: 
+globs: scroll-crafting/projects/*/generate.ts
+alwaysApply: false
+---
 # Output Format Rule
 
 This rule defines the expected structure and content of the output files (`.json` and `.md`) produced by each generator project.

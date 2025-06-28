@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { loadRecordSet } from "../../utils/loadRecordSet";
-import { renderMarkdownTemplate } from "../../utils/renderMarkdownTemplate";
+import { loadRecordSet } from "../../utils/index.js";
+import { renderMarkdownTemplate } from "../../utils/index.js";
 
 const PROJECT_DIR = path.resolve(__dirname);
 const RECORD_DIR = path.join(PROJECT_DIR, "records");

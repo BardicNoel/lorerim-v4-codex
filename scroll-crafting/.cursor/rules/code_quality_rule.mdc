@@ -1,0 +1,46 @@
+---
+description:
+globs: scroll-crafting/**
+alwaysApply: false
+---
+
+# Code Quality Rule
+
+This rule applies to all generator scripts (`generate.ts`) and utility modules within Lorerim doc generator projects.
+
+## Language & Style
+
+- All code must be written in **TypeScript**.
+- Use **ES module syntax** (`import/export`).
+- Enforce **strict typing**; `noImplicitAny` must be respected.
+- Avoid inline type definitions; use named `interface`s or `type`s.
+- Use descriptive, camelCase variable and function names.
+- Limit line length to 100 characters unless clarity is impaired.
+
+## File & Function Design
+
+- Each file must export a **single member** that reflects its purpose.
+- Internal helper functions are allowed to support the exported member.
+- Group reusable helper functions in `utils/` unless clearly project-local.
+- Avoid deeply nested control structures.
+
+## Readability & Documentation
+
+- Include a **JSDoc-style comment** for every exported function.
+- Each generator script must begin with a 1–3 line summary comment.
+- Use inline comments sparingly to explain non-obvious logic.
+
+## Dependency Management
+
+- Only the following external dependencies are allowed unless otherwise specified:
+  - `fs`, `path`, `url`, `Handlebars`
+- All dependencies must be declared in the top-level `package.json`.
+- Do not install packages within individual generator projects.
+- **Request permission before installing any new third-party library.**
+
+## Safety & Error Handling
+
+- All `async` operations must use `try/catch` or `.catch()` for error handling.
+- Avoid `any`, `@ts-ignore`, or type coercion hacks.
+- Generator scripts must only write to their local `output/` directory.
+- Validate file paths and template presence before use.

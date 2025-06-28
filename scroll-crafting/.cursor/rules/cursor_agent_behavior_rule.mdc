@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
 # Cursor Agent Behavior Rule
 
 This rule defines how Cursor agents must behave when writing or modifying code within the Lorerim Codex generator system. It ensures safe, consistent, and rules-aware behavior across all projects and scripts.

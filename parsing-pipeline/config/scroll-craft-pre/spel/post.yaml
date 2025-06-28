@@ -1,0 +1,31 @@
+# Import base pipeline configuration
+name: 'SPEL Analysis Pipeline'
+description: 'Process SPEL data for analysis'
+input: 'config/scroll-craft-pre/spel/decode.json'
+output: '../scroll-crafting/primaries/spel.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Remove SPEL Specific Fields'
+    type: 'remove-fields'
+    description: 'Remove SPEL-specific fields that are not needed for analysis'
+    fields:
+      record: 'all'
+      header: 'all'
+
+  - from: 'local'
+    name: 'Remove SPEL Data Fields'
+    type: 'remove-fields'
+    description: 'Remove specific SPEL data fields to clean up the dataset'
+    remove_fields:
+      - 'decodedData.SNDD'
+      - 'decodedData.OBND'
+      - 'decodedData.DATA.unknown1'
+
+  - from: 'local'
+    name: 'Rename decodedData to MGEF'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to MGEF for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'
