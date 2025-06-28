@@ -1,40 +1,34 @@
 import { flagParserGenerator } from '../generics';
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
+import { CTDA_ARRAY_SCHEMA } from '../ctda/ctdaSchema';
 
+// ENCH Flags from UESP documentation
 export const ENCHFlags: Record<number, string> = {
-  0x00000001: 'Manual Cost Calc',
-  0x00000002: 'Unknown',
-  0x00000004: 'Extend Duration on Recast',
-  0x00000008: 'Unknown',
-  0x00000010: 'Unknown',
-  0x00000020: 'Unknown',
-  0x00000040: 'Unknown',
-  0x00000080: 'Unknown',
-  0x00000100: 'Unknown',
-  0x00000200: 'Unknown',
-  0x00000400: 'Unknown',
-  0x00000800: 'Unknown',
-  0x00001000: 'Unknown',
-  0x00002000: 'Unknown',
-  0x00004000: 'Unknown',
-  0x00008000: 'Unknown',
-  0x00010000: 'Unknown',
-  0x00020000: 'Unknown',
-  0x00040000: 'Unknown',
-  0x00080000: 'Unknown',
-  0x00100000: 'Unknown',
-  0x00200000: 'Unknown',
-  0x00400000: 'Unknown',
-  0x00800000: 'Unknown',
-  0x01000000: 'Unknown',
-  0x02000000: 'Unknown',
-  0x04000000: 'Unknown',
-  0x08000000: 'Unknown',
-  0x10000000: 'Unknown',
-  0x20000000: 'Unknown',
-  0x40000000: 'Unknown',
-  0x80000000: 'Unknown',
+  0x00000001: 'ManualCalc',
+  0x00000004: 'ExtendDurationOnRecast',
+};
+
+// ENCH CastType enum from UESP documentation
+export const ENCHCastType: Record<number, string> = {
+  0x00: 'Constant Effect',
+  0x01: 'Fire and Forget',
+  0x02: 'Concentration',
+};
+
+// ENCH Delivery enum from UESP documentation
+export const ENCHDelivery: Record<number, string> = {
+  0x00: 'Self',
+  0x01: 'Touch',
+  0x02: 'Aimed',
+  0x03: 'Target Actor',
+  0x04: 'Target Location',
+};
+
+// ENCH EnchantType enum from UESP documentation
+export const ENCHEnchantType: Record<number, string> = {
+  0x06: 'Enchantment',
+  0x0c: 'Staff Enchantment',
 };
 
 export const enchSchema: RecordSpecificSchemas = createSchema('ENCH', {
@@ -48,30 +42,42 @@ export const enchSchema: RecordSpecificSchemas = createSchema('ENCH', {
     fields: [
       { name: 'enchantmentCost', type: 'uint32' },
       { name: 'flags', type: 'uint32', parser: flagParserGenerator(ENCHFlags) },
-      { name: 'castType', type: 'uint32' },
+      {
+        name: 'castType',
+        type: 'uint32',
+        parser: (value: number) => ENCHCastType[value] || `Unknown(${value})`,
+      },
       { name: 'chargeAmount', type: 'uint32' },
       { name: 'enchantmentAmount', type: 'uint32' },
-      { name: 'enchantmentType', type: 'uint32' },
+      {
+        name: 'delivery',
+        type: 'uint32',
+        parser: (value: number) => ENCHDelivery[value] || `Unknown(${value})`,
+      },
+      {
+        name: 'enchantmentType',
+        type: 'uint32',
+        parser: (value: number) => ENCHEnchantType[value] || `Unknown(${value})`,
+      },
       { name: 'chargeTime', type: 'float32' },
       { name: 'baseEnchantment', type: 'formid' },
       { name: 'wornRestrictions', type: 'formid' },
     ],
   },
-  // Effects array
-  EFID: { type: 'array', element: { type: 'formid' } }, // Effect IDs
+  // Effect ID - Magic Effect MGEF
+  EFID: { type: 'formid' },
+  // Effect data - 12 bytes: magnitude (float32) + area (uint32) + duration (uint32)
   EFIT: {
-    type: 'array',
-    element: {
-      type: 'struct',
-      fields: [
-        { name: 'magnitude', type: 'float32' },
-        { name: 'area', type: 'uint32' },
-        { name: 'duration', type: 'uint32' },
-      ],
-    },
+    type: 'struct',
+    size: 12,
+    fields: [
+      { name: 'magnitude', type: 'float32' },
+      { name: 'area', type: 'uint32' },
+      { name: 'duration', type: 'uint32' },
+    ],
   },
-  // Conditions (array of CTDA)
-  CTDA: { type: 'array', element: { type: 'unknown' } },
+  // Conditions (array of CTDA) - optional
+  CTDA: CTDA_ARRAY_SCHEMA,
   // VMAD (Papyrus script data) - optional, variable binary
   VMAD: { type: 'unknown' },
 });

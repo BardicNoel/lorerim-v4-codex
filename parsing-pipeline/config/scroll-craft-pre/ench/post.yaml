@@ -1,0 +1,33 @@
+# Import base pipeline configuration
+name: 'ENCH Analysis Pipeline'
+description: 'Process ENCH data for analysis'
+input: 'config/scroll-craft-pre/ench/decode.json'
+output: '../scroll-crafting/primaries/ench.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Remove Header Fields'
+    type: 'remove-fields'
+    description: 'Remove header fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Remove ENCH Data Fields'
+    type: 'remove-fields'
+    description: 'Remove specific ENCH data fields to clean up the dataset'
+    remove_fields:
+      # Remove object bounds
+      - 'decodedData.OBND'
+
+      # Remove script data
+      - 'decodedData.VMAD'
+
+  - from: 'local'
+    name: 'Rename decodedData to data'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to data for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'
