@@ -3,3 +3,688 @@ description:
 globs:
 alwaysApply: false
 ---
+# Enchanted Weapons Project Rule
+
+This rule defines the specific requirements and patterns for creating the enchanted weapons scroll crafting project in the Lorerim Codex system.
+
+## Project Overview
+
+The enchanted weapons project generates documentation for weapons with enchantments, showing weapon stats, enchantment effects, costs, and categorization. This involves resolving relationships between WEAP, ENCH, and MGEF records.
+
+**NEW: Pattern Recognition & Generalization**
+The system now identifies repetitive weapon-enchantment patterns and generalizes them into template blocks, while highlighting truly unique weapons with full documentation.
+
+## Project Structure
+
+```
+scroll-crafting/projects/enchanted-weapons/
+├── generate.ts                    # Main generator script
+├── rules.md                       # Project-specific rules (inherits from base)
+├── enchanted-weapons-logic.md     # Domain logic documentation
+├── templates/
+│   ├── primary.md                 # Main document template
+│   ├── enchanted_weapon_block.md  # Individual weapon template
+│   ├── weapon_pattern_block.md    # Generalized pattern template
+│   └── unique_weapon_block.md     # Unique weapon template
+├── logic/
+│   ├── resolveEnchantedWeapons.ts # Domain-specific processing logic
+│   ├── patternRecognition.ts      # Pattern detection and generalization
+│   └── weaponClassification.ts    # Unique vs pattern weapon classification
+├── __tests__/
+│   ├── resolveEnchantedWeapons.test.ts
+│   ├── patternRecognition.test.ts
+│   └── weaponClassification.test.ts
+├── output/                        # Generated files (created by script)
+│   ├── enchanted-weapons.json
+│   ├── enchanted-weapons.md
+│   ├── weapon-patterns.json       # Pattern analysis data
+│   └── unique-weapons.json        # Unique weapons only
+└── records/                       # Project-specific records (optional)
+```
+
+## Package.json Script
+
+Add this script to `scroll-crafting/package.json`:
+
+```json
+{
+  "scripts": {
+    "generate:enchanted-weapons": "node --loader ts-node/esm projects/enchanted-weapons/generate.ts"
+  }
+}
+```
+
+This allows running the generator with:
+```bash
+npm run generate:enchanted-weapons
+```
+
+## Data Relationships
+
+### Core Record Types
+- **WEAP** (Weapon records) - Base weapon data, stats, and enchantment references
+- **ENCH** (Enchantment records) - Enchantment data, effects, and costs
+- **MGEF** (Magic Effect records) - Effect details, magnitude, duration, area
+
+### Key Relationships
+- **WEAP.EITM** → **ENCH** (weapon enchantment reference)
+- **ENCH.EFID** → **MGEF** (enchantment effect reference)
+- **WEAP.DNAM.animationType** → weapon category mapping
+- **ENCH.ENIT** → enchantment cost and charge data
+- **ENCH.EFIT** → effect magnitude, duration, and area
+
+## Pattern Recognition Logic
+
+### Weapon Pattern Detection
+The system identifies patterns in weapon naming and enchantment combinations:
+
+1. **Material + Weapon Type + Enchantment Pattern**
+   - Example: "Dwarven Sword of Fire Damage", "Daedric Bow of Lightning"
+   - Pattern: `{material} {weaponType} of {enchantment}`
+   - Generalization: `{material} {weaponType} with {enchantmentType}`
+
+2. **Named Weapon Pattern**
+   - Example: "Dawnbreaker", "Chillrend", "Windshear"
+   - These are unique and get full documentation
+
+3. **Generic Pattern**
+   - Example: "Sword of Fire", "Bow of Lightning"
+   - Pattern: `{weaponType} of {enchantment}`
+   - Generalization: `{weaponType} with {enchantmentType}`
+
+### Pattern Classification Rules
+
+```typescript
+interface WeaponPattern {
+  patternType: 'material_weapon_enchantment' | 'named_weapon' | 'generic_weapon_enchantment';
+  material?: string;
+  weaponType: string;
+  enchantmentType: string;
+  enchantmentName: string;
+  examples: EnchantedWeapon[];
+  count: number;
+  baseStats: {
+    damageRange: [number, number];
+    weightRange: [number, number];
+    valueRange: [number, number];
+  };
+}
+
+interface UniqueWeapon {
+  name: string;
+  weaponType: string;
+  baseDamage: number;
+  weight: number;
+  value: number;
+  enchantment: EnchantedWeaponEnchantment;
+  globalFormId: string;
+  plugin: string;
+  uniquenessFactors: string[]; // What makes this weapon unique
+}
+```
+
+### Pattern Detection Algorithm
+
+1. **Extract Weapon Components**
+   - Parse weapon name for material, weapon type, enchantment
+   - Use regex patterns to identify common naming conventions
+
+2. **Group Similar Weapons**
+   - Group by material + weapon type + enchantment type
+   - Calculate statistical ranges for base stats
+   - Identify outliers that might be unique
+
+3. **Determine Uniqueness**
+   - Named weapons (no material prefix) = unique
+   - Weapons with unusual stats = unique
+   - Weapons with multiple effects = unique
+   - Weapons with custom enchantments = unique
+
+4. **Create Pattern Templates**
+   - Generate generalized descriptions for patterns
+   - Include stat ranges and example variations
+   - List all weapons that follow the pattern
+
+## Required Schema Types
+
+Create these TypeScript schemas in `scroll-crafting/types/`:
+
+### Weapon Schema
+```typescript
+export interface WeaponRecord {
+  meta: {
+    type: "WEAP";
+    formId: string;
+    globalFormId: string;
+    plugin: string;
+    stackOrder: number;
+    isWinner: boolean;
+  };
+  data: {
+    EDID: string;
+    FULL: string;
+    DATA: {
+      value: number;
+      weight: number;
+      damage: number;
+    };
+    DNAM: {
+      animationType: string;
+      speed: number;
+      reach: number;
+      flags1: string[];
+      flags2: string[];
+    };
+    EITM?: string; // Enchantment FormID
+    EAMT?: number; // Enchantment charge amount
+  };
+}
+```
+
+### Enchantment Schema
+```typescript
+export interface EnchantmentRecord {
+  meta: {
+    type: "ENCH";
+    formId: string;
+    globalFormId: string;
+    plugin: string;
+    stackOrder: number;
+    isWinner: boolean;
+  };
+  data: {
+    EDID: string;
+    FULL: string;
+    ENIT: {
+      enchantmentCost: number;
+      flags: string[];
+      castType: number;
+      chargeAmount: number;
+      enchantmentAmount: number;
+      enchantmentType: number;
+      chargeTime: number;
+      baseEnchantment: string;
+      wornRestrictions: string;
+    };
+    EFID: string; // Effect FormID
+    EFIT: {
+      magnitude: number;
+      area: number;
+      duration: number;
+    };
+  };
+}
+```
+
+## Logic Implementation
+
+### resolveEnchantedWeapons.ts Structure
+
+```typescript
+import { WeaponRecord, EnchantmentRecord } from "../../types/weaponSchema.js";
+import { findByFormId } from "../../utils/findByFormId.js";
+import { detectWeaponPatterns } from "./patternRecognition.js";
+import { classifyWeaponUniqueness } from "./weaponClassification.js";
+
+export interface EnchantedWeapon {
+  name: string;
+  weaponType: string;
+  baseDamage: number;
+  weight: number;
+  value: number;
+  enchantment: {
+    name: string;
+    cost: number;
+    chargeAmount: number;
+    effects: {
+      name: string;
+      magnitude: number;
+      duration: number;
+      area: number;
+      description: string;
+    }[];
+  };
+  globalFormId: string;
+  plugin: string;
+}
+
+export interface WeaponPattern {
+  patternType: 'material_weapon_enchantment' | 'named_weapon' | 'generic_weapon_enchantment';
+  material?: string;
+  weaponType: string;
+  enchantmentType: string;
+  enchantmentName: string;
+  examples: EnchantedWeapon[];
+  count: number;
+  baseStats: {
+    damageRange: [number, number];
+    weightRange: [number, number];
+    valueRange: [number, number];
+  };
+}
+
+export interface UniqueWeapon extends EnchantedWeapon {
+  uniquenessFactors: string[];
+}
+
+export async function resolveEnchantedWeapons(
+  weaponRecords: WeaponRecord[],
+  enchantmentRecords: EnchantmentRecord[],
+  magicEffectRecords: any[]
+): Promise<{
+  patterns: WeaponPattern[];
+  uniqueWeapons: UniqueWeapon[];
+  allWeapons: EnchantedWeapon[];
+}> {
+  // Implementation logic here
+}
+```
+
+### Key Processing Steps
+
+1. **Filter Enchanted Weapons**: Find WEAP records with EITM field
+2. **Resolve Enchantments**: Link WEAP.EITM to ENCH records
+3. **Resolve Effects**: Link ENCH.EFID to MGEF records
+4. **Categorize Weapons**: Map DNAM.animationType to weapon categories
+5. **Detect Patterns**: Identify repetitive weapon-enchantment combinations
+6. **Classify Uniqueness**: Determine which weapons are truly unique
+7. **Generate Patterns**: Create generalized pattern descriptions
+8. **Format Effects**: Transform MGEF data into readable descriptions
+
+## Template Design
+
+### primary.md Template
+```markdown
+# Enchanted Weapons
+
+## Unique Weapons
+
+{{#each uniqueWeapons}}
+{{> unique_weapon_block }}
+{{/each}}
+
+## Weapon Patterns
+
+{{#each weaponPatterns}}
+{{> weapon_pattern_block }}
+{{/each}}
+
+## Summary
+
+- **Total Enchanted Weapons:** {{totalWeapons}}
+- **Unique Weapons:** {{uniqueWeapons.length}}
+- **Weapon Patterns:** {{weaponPatterns.length}}
+- **Categories:** {{totalCategories}}
+- **Generated:** {{generatedDate}}
+```
+
+### unique_weapon_block.md Template
+```markdown
+## {{name}}
+
+- **Weapon Type:** {{weaponType}}
+- **Base Damage:** {{baseDamage}}
+- **Weight:** {{weight}}
+- **Value:** {{value}}
+- **Enchantment:** {{enchantment.name}}
+- **Enchantment Cost:** {{enchantment.cost}}
+- **Charge Amount:** {{enchantment.chargeAmount}}
+- **Uniqueness Factors:** {{#each uniquenessFactors}}- {{this}}{{/each}}
+
+### Effects
+{{#each enchantment.effects}}
+- **{{name}}:** {{description}}
+  - Magnitude: {{magnitude}}
+  - Duration: {{duration}}
+  - Area: {{area}}
+{{/each}}
+
+---
+```
+
+### weapon_pattern_block.md Template
+```markdown
+## {{material}} {{weaponType}} with {{enchantmentType}}
+
+**Pattern:** {{patternType}}
+
+This pattern represents {{count}} weapons with similar characteristics:
+
+- **Base Damage Range:** {{baseStats.damageRange.[0]}} - {{baseStats.damageRange.[1]}}
+- **Weight Range:** {{baseStats.weightRange.[0]}} - {{baseStats.weightRange.[1]}}
+- **Value Range:** {{baseStats.valueRange.[0]}} - {{baseStats.valueRange.[1]}}
+- **Enchantment:** {{enchantmentName}}
+
+### Example Weapons
+{{#each examples}}
+- {{name}} ({{baseDamage}} damage, {{weight}} weight, {{value}} value)
+{{/each}}
+
+---
+```
+
+## Weapon Categories
+
+Map WEAP.DNAM.animationType to these categories:
+
+```typescript
+export const WeaponCategories: Record<number, string> = {
+  1: "One-Handed Swords",
+  2: "One-Handed Daggers", 
+  3: "One-Handed Axes",
+  4: "One-Handed Maces",
+  5: "Two-Handed Swords",
+  6: "Two-Handed Axes",
+  7: "Bows",
+  8: "Staves",
+  9: "Crossbows",
+};
+```
+
+## Pattern Recognition Implementation
+
+### patternRecognition.ts
+
+```typescript
+export function detectWeaponPatterns(weapons: EnchantedWeapon[]): WeaponPattern[] {
+  // Implementation for pattern detection
+}
+
+export function parseWeaponName(name: string): {
+  material?: string;
+  weaponType: string;
+  enchantment: string;
+} {
+  // Implementation for name parsing
+}
+
+export function groupWeaponsByPattern(weapons: EnchantedWeapon[]): Map<string, EnchantedWeapon[]> {
+  // Implementation for grouping
+}
+```
+
+### weaponClassification.ts
+
+```typescript
+export function classifyWeaponUniqueness(weapon: EnchantedWeapon, allWeapons: EnchantedWeapon[]): {
+  isUnique: boolean;
+  uniquenessFactors: string[];
+} {
+  // Implementation for uniqueness classification
+}
+
+export function calculateStatRanges(weapons: EnchantedWeapon[]): {
+  damageRange: [number, number];
+  weightRange: [number, number];
+  valueRange: [number, number];
+} {
+  // Implementation for stat range calculation
+}
+```
+
+## Generator Implementation
+
+### generate.ts Pattern
+
+```typescript
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import {
+  loadRecordSet,
+  renderMarkdownTemplate,
+} from "../../utils/index.js";
+import { 
+  resolveEnchantedWeapons,
+  groupWeaponsByCategory 
+} from "./logic/resolveEnchantedWeapons.js";
+
+// ESM-compatible __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PROJECT_DIR = path.resolve(__dirname);
+const RECORD_DIR = path.join(PROJECT_DIR, "records");
+const PRIMARY_DIR = path.resolve(__dirname, "../../primaries");
+const OUTPUT_DIR = path.join(PROJECT_DIR, "output");
+const TEMPLATE_DIR = path.join(PROJECT_DIR, "templates");
+
+async function main() {
+  console.log("🚀 Starting enchanted weapons generation...");
+  
+  // 1. Load WEAP, ENCH, and MGEF records
+  const weaponRecords = await loadRecordSet<any>("WEAP", RECORD_DIR, PRIMARY_DIR);
+  const enchantmentRecords = await loadRecordSet<any>("ENCH", RECORD_DIR, PRIMARY_DIR);
+  const magicEffectRecords = await loadRecordSet<any>("MGEF", RECORD_DIR, PRIMARY_DIR);
+  
+  // 2. Process records using logic
+  const { patterns, uniqueWeapons, allWeapons } = await resolveEnchantedWeapons(
+    weaponRecords,
+    enchantmentRecords,
+    magicEffectRecords
+  );
+  
+  // 3. Group by weapon category
+  const weaponCategories = groupWeaponsByCategory(allWeapons);
+  
+  // 4. Prepare template context
+  const templateContext = {
+    uniqueWeapons,
+    weaponPatterns: patterns,
+    weaponCategories,
+    totalWeapons: allWeapons.length,
+    totalCategories: weaponCategories.length,
+    generatedDate: new Date().toISOString().split('T')[0],
+  };
+  
+  // 5. Render Markdown
+  const markdown = renderMarkdownTemplate(
+    path.join(TEMPLATE_DIR, "primary.md"),
+    templateContext
+  );
+  
+  // 6. Write output
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  fs.writeFileSync(path.join(OUTPUT_DIR, "enchanted-weapons.md"), markdown);
+  fs.writeFileSync(
+    path.join(OUTPUT_DIR, "enchanted-weapons.json"),
+    JSON.stringify(allWeapons, null, 2)
+  );
+  fs.writeFileSync(
+    path.join(OUTPUT_DIR, "weapon-patterns.json"),
+    JSON.stringify(patterns, null, 2)
+  );
+  fs.writeFileSync(
+    path.join(OUTPUT_DIR, "unique-weapons.json"),
+    JSON.stringify(uniqueWeapons, null, 2)
+  );
+}
+
+main().catch((err) => {
+  console.error("❌ Error generating enchanted weapons:", err);
+  process.exit(1);
+});
+```
+
+## Testing Requirements
+
+### resolveEnchantedWeapons.test.ts
+
+```typescript
+import { describe, it, expect } from "vitest";
+import { resolveEnchantedWeapons } from "../logic/resolveEnchantedWeapons.js";
+
+describe("resolveEnchantedWeapons", () => {
+  it("should resolve weapon-enchantment-effect relationships", async () => {
+    // Test implementation
+  });
+  
+  it("should detect weapon patterns correctly", async () => {
+    // Test implementation
+  });
+  
+  it("should classify unique weapons correctly", async () => {
+    // Test implementation
+  });
+  
+  it("should handle weapons without enchantments", async () => {
+    // Test implementation
+  });
+  
+  it("should categorize weapons correctly", async () => {
+    // Test implementation
+  });
+  
+  it("should calculate enchantment costs correctly", async () => {
+    // Test implementation
+  });
+});
+```
+
+### patternRecognition.test.ts
+
+```typescript
+import { describe, it, expect } from "vitest";
+import { detectWeaponPatterns, parseWeaponName } from "../logic/patternRecognition.js";
+
+describe("patternRecognition", () => {
+  it("should detect material + weapon + enchantment patterns", () => {
+    // Test implementation
+  });
+  
+  it("should parse weapon names correctly", () => {
+    // Test implementation
+  });
+  
+  it("should group similar weapons", () => {
+    // Test implementation
+  });
+});
+```
+
+### weaponClassification.test.ts
+
+```typescript
+import { describe, it, expect } from "vitest";
+import { classifyWeaponUniqueness } from "../logic/weaponClassification.js";
+
+describe("weaponClassification", () => {
+  it("should identify named weapons as unique", () => {
+    // Test implementation
+  });
+  
+  it("should identify weapons with unusual stats as unique", () => {
+    // Test implementation
+  });
+  
+  it("should identify weapons with multiple effects as unique", () => {
+    // Test implementation
+  });
+});
+```
+
+## Data Mapping Guidelines
+
+### Weapon Data Transformation
+- **WEAP.FULL** → `name` (weapon display name)
+- **WEAP.DATA.damage** → `baseDamage` (base weapon damage)
+- **WEAP.DATA.weight** → `weight` (weapon weight)
+- **WEAP.DATA.value** → `value` (base weapon value)
+- **WEAP.DNAM.animationType** → `weaponType` (categorized weapon type)
+
+### Enchantment Data Transformation
+- **ENCH.FULL** → `enchantment.name` (enchantment display name)
+- **ENCH.ENIT.enchantmentCost** → `enchantment.cost` (enchantment cost)
+- **ENCH.ENIT.chargeAmount** → `enchantment.chargeAmount` (charge amount)
+
+### Effect Data Transformation
+- **MGEF.FULL** → `effects[].name` (effect display name)
+- **ENCH.EFIT.magnitude** → `effects[].magnitude` (effect magnitude)
+- **ENCH.EFIT.duration** → `effects[].duration` (effect duration)
+- **ENCH.EFIT.area** → `effects[].area` (effect area)
+- **MGEF.DESC** → `effects[].description` (effect description)
+
+### Pattern Detection Transformation
+- **Weapon Name Parsing** → `material`, `weaponType`, `enchantment`
+- **Stat Analysis** → `damageRange`, `weightRange`, `valueRange`
+- **Uniqueness Analysis** → `uniquenessFactors`
+
+## Output Format
+
+### JSON Structure
+```json
+{
+  "patterns": [
+    {
+      "patternType": "material_weapon_enchantment",
+      "material": "Dwarven",
+      "weaponType": "Sword",
+      "enchantmentType": "Fire Damage",
+      "enchantmentName": "Fire Damage",
+      "examples": [...],
+      "count": 15,
+      "baseStats": {
+        "damageRange": [8, 12],
+        "weightRange": [4.0, 6.0],
+        "valueRange": [100, 150]
+      }
+    }
+  ],
+  "uniqueWeapons": [
+    {
+      "name": "Dawnbreaker",
+      "weaponType": "One-Handed Swords",
+      "baseDamage": 12,
+      "weight": 5.0,
+      "value": 200,
+      "enchantment": {...},
+      "uniquenessFactors": ["Named weapon", "Unique enchantment", "Quest reward"]
+    }
+  ],
+  "allWeapons": [...]
+}
+```
+
+### Markdown Structure
+- **Unique Weapons Section**: Full documentation for truly unique weapons
+- **Weapon Patterns Section**: Generalized descriptions for repetitive patterns
+- **Summary Section**: Statistics and overview
+
+## Error Handling
+
+- Handle missing ENCH records for WEAP.EITM references
+- Handle missing MGEF records for ENCH.EFID references
+- Validate required fields before processing
+- Log warnings for unresolved references
+- Gracefully handle malformed data
+- Handle pattern detection edge cases
+
+## Performance Considerations
+
+- Use efficient data structures for cross-record lookups
+- Process records in batches if dealing with large datasets
+- Cache resolved references to avoid repeated lookups
+- Optimize pattern detection algorithms
+- Consider memory usage when loading multiple record types
+
+## Validation Checklist
+
+Before considering the project complete, verify:
+
+- [ ] All WEAP records with EITM are processed
+- [ ] All ENCH records are properly resolved
+- [ ] All MGEF records are properly resolved
+- [ ] Weapon categorization is accurate
+- [ ] Pattern detection works correctly
+- [ ] Unique weapon classification is accurate
+- [ ] Enchantment costs are calculated correctly
+- [ ] Effect descriptions are human-readable
+- [ ] Templates render without errors
+- [ ] JSON output is properly structured
+- [ ] All tests pass
+- [ ] Error handling works for edge cases
+- [ ] Documentation is complete and accurate
+- [ ] Pattern recognition reduces repetitive content
+- [ ] Unique weapons are properly highlighted
+
+This rule ensures the enchanted weapons project follows the established patterns while addressing the specific requirements of weapon-enchantment-effect relationships and pattern recognition for better documentation organization.

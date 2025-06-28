@@ -1,7 +1,7 @@
 import { flagParserGenerator } from '../generics';
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
-import { CTDA_ARRAY_SCHEMA } from '../ctda/ctdaSchema';
+import { EFID_EFFECTS_SCHEMA } from '../sharedFields/efidSchema';
 
 // ENCH Flags from UESP documentation
 export const ENCHFlags: Record<number, string> = {
@@ -36,9 +36,10 @@ export const enchSchema: RecordSpecificSchemas = createSchema('ENCH', {
   EDID: { type: 'string', encoding: 'utf8' },
   // Full name
   FULL: { type: 'string', encoding: 'utf8' },
-  // Enchantment cost
+  // Enchantment cost - 36 bytes total according to UESP
   ENIT: {
     type: 'struct',
+    size: 36, // Explicitly set size to match UESP documentation
     fields: [
       { name: 'enchantmentCost', type: 'uint32' },
       { name: 'flags', type: 'uint32', parser: flagParserGenerator(ENCHFlags) },
@@ -47,15 +48,14 @@ export const enchSchema: RecordSpecificSchemas = createSchema('ENCH', {
         type: 'uint32',
         parser: (value: number) => ENCHCastType[value] || `Unknown(${value})`,
       },
-      { name: 'chargeAmount', type: 'uint32' },
-      { name: 'enchantmentAmount', type: 'uint32' },
+      { name: 'enchAmount', type: 'uint32' }, // Fully charged value (same if no charges)
       {
         name: 'delivery',
         type: 'uint32',
         parser: (value: number) => ENCHDelivery[value] || `Unknown(${value})`,
       },
       {
-        name: 'enchantmentType',
+        name: 'enchantType',
         type: 'uint32',
         parser: (value: number) => ENCHEnchantType[value] || `Unknown(${value})`,
       },
@@ -64,20 +64,8 @@ export const enchSchema: RecordSpecificSchemas = createSchema('ENCH', {
       { name: 'wornRestrictions', type: 'formid' },
     ],
   },
-  // Effect ID - Magic Effect MGEF
-  EFID: { type: 'formid' },
-  // Effect data - 12 bytes: magnitude (float32) + area (uint32) + duration (uint32)
-  EFIT: {
-    type: 'struct',
-    size: 12,
-    fields: [
-      { name: 'magnitude', type: 'float32' },
-      { name: 'area', type: 'uint32' },
-      { name: 'duration', type: 'uint32' },
-    ],
-  },
-  // Conditions (array of CTDA) - optional
-  CTDA: CTDA_ARRAY_SCHEMA,
+  // Effects - Using common EFID schema
+  EFID: EFID_EFFECTS_SCHEMA,
   // VMAD (Papyrus script data) - optional, variable binary
   VMAD: { type: 'unknown' },
 });

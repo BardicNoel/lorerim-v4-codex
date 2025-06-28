@@ -25,6 +25,14 @@ stages:
       # Remove script data
       - 'decodedData.VMAD'
 
+      # Remove nested effects[].CTDA[] fields - target each array element
+      - 'decodedData.effects[].CTDA[].unknown'
+      - 'decodedData.effects[].CTDA[].unknown2'
+      - 'decodedData.effects[].CTDA[].unknown3'
+      - 'decodedData.effects[].CTDA[].unknown4'
+      - 'decodedData.effects[].CTDA[].padding'
+      - 'decodedData.effects[].CTDA[].padding2'
+
   - from: 'local'
     name: 'Rename decodedData to data'
     type: 'rename-fields'

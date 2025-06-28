@@ -15,7 +15,7 @@ export interface EnrichedSpelEffect {
   duration: number;
   area: number;
   mgefFormId: string; // MGEF FormID
-  mgef: ParsedRecord["decodedData"];
+  mgef: MgefRecord;
 }
 
 export interface EnrichedSpel {
@@ -24,4 +24,21 @@ export interface EnrichedSpel {
   name: string; // FULL
   description: string; // DESC
   effects: EnrichedSpelEffect[];
+}
+
+export interface EnrichedEnchEffect {
+  effectFormId: string; // EFID
+  magnitude: number;
+  duration: number;
+  area: number;
+  mgefFormId: string; // MGEF FormID
+  mgef: MgefRecord;
+}
+
+export interface EnrichedEnch {
+  formId: string; // Original ENCH FormID
+  edid: string;
+  name: string; // FULL
+  description?: string; // Optional, if available
+  effects: EnrichedEnchEffect[];
 }

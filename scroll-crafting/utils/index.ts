@@ -1,11 +1,18 @@
 // Shared helpers for markdown rendering, record resolution, etc. (to be implemented)
 
-export * from './findByFormId.js';
-export * from './loadRecordSet.js';
-export * from './renderMarkdownTemplate.js';
-export * from './resolveEnrichedSpel.js';
-export * from './resolveOrderedRecords.js';
-export * from './formIdResolver.js';
+export * from "./findByFormId.js";
+export * from "./loadRecordSet.js";
+export * from "./renderMarkdownTemplate.js";
+export * from "./enrichedRecords/resolveEnrichedSpel.js";
+export * from "./resolveOrderedRecords.js";
+export * from "./formIdResolver.js";
+
+// New reusable utilities for pattern recognition and classification
+export * from "./patternRecognition.js";
+export * from "./classification.js";
+
+// Weapon keyword resolution utilities
+export * from "./weaponKeywordResolver.js";
 
 /**
  * Given a SPEL record and an array of MGEF records, returns all related MGEF records

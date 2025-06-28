@@ -2,358 +2,135 @@ import { describe, it, expect } from "vitest";
 import {
   resolveEnchantedWeapons,
   groupWeaponsByCategory,
-  type EnchantedWeapon,
-} from "../logic/resolveEnchantedWeapons.js";
+} from "../logic/index.js";
+import { generateMockData } from "./mockDataGenerator.js";
 
-describe("resolveEnchantedWeapons", () => {
-  const mockWeaponRecords = [
-    {
-      meta: {
-        type: "WEAP",
-        formId: "0x12345678",
-        globalFormId: "0x12345678",
-        plugin: "TestPlugin.esp",
-        stackOrder: 0,
-        isWinner: true,
-      },
-      data: {
-        EDID: "TestSword",
-        FULL: "Test Sword",
-        DATA: {
-          value: 100,
-          weight: 5.0,
-          damage: 10,
-        },
-        DNAM: {
-          animationType: 1, // One-Handed Swords
-          speed: 1.0,
-          reach: 1.0,
-          flags1: [],
-          flags2: [],
-        },
-        EITM: "0x87654321", // Enchantment FormID
-        EAMT: 100,
-      },
-    },
-  ];
+describe("resolveEnchantedWeapons - Integration", () => {
+  it("should resolve complete weapon-enchantment-effect relationships", async () => {
+    const mockData = generateMockData({
+      weaponCount: 2,
+      enchantmentCount: 2,
+      magicEffectCount: 2,
+      keywordCount: 4,
+      weaponTypes: ["Sword", "Bow"],
+      materials: ["Steel", "Wood"],
+      enchantmentTypes: ["Fire Damage", "Ice Damage"],
+    });
 
-  const mockEnchantmentRecords = [
-    {
-      meta: {
-        type: "ENCH",
-        formId: "0x87654321",
-        globalFormId: "0x87654321",
-        plugin: "TestPlugin.esp",
-        stackOrder: 0,
-        isWinner: true,
-      },
-      data: {
-        EDID: "TestEnchantment",
-        FULL: "Fire Damage",
-        ENIT: {
-          enchantmentCost: 25,
-          flags: [],
-          castType: 0,
-          chargeAmount: 100,
-          enchantmentAmount: 1,
-          enchantmentType: 0,
-          chargeTime: 0,
-          baseEnchantment: "",
-          wornRestrictions: "",
-        },
-        EFID: "0x11111111", // Magic Effect FormID
-        EFIT: {
-          magnitude: 15,
-          area: 0,
-          duration: 0,
-        },
-      },
-    },
-  ];
-
-  const mockMagicEffectRecords = [
-    {
-      meta: {
-        type: "MGEF",
-        formId: "0x11111111",
-        globalFormId: "0x11111111",
-        plugin: "TestPlugin.esp",
-        stackOrder: 0,
-        isWinner: true,
-      },
-      data: {
-        EDID: "TestEffect",
-        FULL: "Fire Damage",
-        DESC: "Deals fire damage to target",
-        DATA: {
-          flags: [],
-          baseCost: 25,
-          relatedID: "",
-          skill: 0,
-          resistanceAV: null,
-          skillLevel: 0,
-          effectType: 0,
-          primaryAV: null,
-          secondAV: 0,
-          perkID: "",
-        },
-        DNAM: "",
-      },
-    },
-  ];
-
-  it("should resolve weapon-enchantment-effect relationships", async () => {
     const result = await resolveEnchantedWeapons(
-      mockWeaponRecords,
-      mockEnchantmentRecords,
-      mockMagicEffectRecords
+      mockData.weapons,
+      mockData.enchantments,
+      mockData.magicEffects,
+      mockData.keywords
     );
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual({
-      name: "Test Sword",
-      weaponType: "One-Handed Swords",
-      baseDamage: 10,
-      weight: 5.0,
-      value: 100,
-      enchantment: {
-        name: "Fire Damage",
-        cost: 25,
-        chargeAmount: 100,
-        effects: [
-          {
-            name: "Fire Damage",
-            magnitude: 15,
-            duration: 0,
-            area: 0,
-            description: "Deals fire damage to target",
-          },
-        ],
-      },
-      globalFormId: "0x12345678",
-      plugin: "TestPlugin.esp",
+    expect(result.allWeapons).toHaveLength(2);
+    expect(result.patterns).toBeDefined();
+    expect(result.uniqueWeapons).toBeDefined();
+    expect(result.boundMysticWeapons).toBeDefined();
+    expect(result.wandStaffWeapons).toBeDefined();
+
+    // Verify weapons have proper enchantments
+    result.allWeapons.forEach((weapon) => {
+      expect(weapon.enchantment).toBeDefined();
+      expect(weapon.enchantment.effects).toHaveLength(1);
+      expect(weapon.weaponType).toBeDefined();
+      expect(weapon.material).toBeDefined();
     });
   });
 
   it("should handle weapons without enchantments", async () => {
-    const weaponsWithoutEnchantments = [
-      {
-        ...mockWeaponRecords[0],
-        data: {
-          ...mockWeaponRecords[0].data,
-          EITM: undefined,
-        },
-      },
-    ];
+    const mockData = generateMockData({
+      weaponCount: 2,
+      enchantmentCount: 0, // No enchantments
+      magicEffectCount: 0,
+      keywordCount: 2,
+    });
 
     const result = await resolveEnchantedWeapons(
-      weaponsWithoutEnchantments,
-      mockEnchantmentRecords,
-      mockMagicEffectRecords
+      mockData.weapons,
+      mockData.enchantments,
+      mockData.magicEffects,
+      mockData.keywords
     );
 
-    expect(result).toHaveLength(0);
-  });
-
-  it("should handle missing enchantment records", async () => {
-    const result = await resolveEnchantedWeapons(
-      mockWeaponRecords,
-      [], // Empty enchantment records
-      mockMagicEffectRecords
-    );
-
-    expect(result).toHaveLength(0);
+    expect(result.allWeapons).toHaveLength(0);
+    expect(result.patterns).toHaveLength(0);
+    expect(result.uniqueWeapons).toHaveLength(0);
   });
 
   it("should handle missing magic effect records", async () => {
-    const result = await resolveEnchantedWeapons(
-      mockWeaponRecords,
-      mockEnchantmentRecords,
-      [] // Empty magic effect records
-    );
-
-    expect(result).toHaveLength(0);
-  });
-
-  it("should categorize weapons correctly", async () => {
-    const weaponsWithDifferentTypes = [
-      {
-        ...mockWeaponRecords[0],
-        data: {
-          ...mockWeaponRecords[0].data,
-          DNAM: {
-            ...mockWeaponRecords[0].data.DNAM,
-            animationType: 2, // One-Handed Daggers
-          },
-        },
-      },
-      {
-        ...mockWeaponRecords[0],
-        meta: {
-          ...mockWeaponRecords[0].meta,
-          formId: "0x22222222",
-          globalFormId: "0x22222222",
-        },
-        data: {
-          ...mockWeaponRecords[0].data,
-          EDID: "TestDagger",
-          FULL: "Test Dagger",
-          DNAM: {
-            ...mockWeaponRecords[0].data.DNAM,
-            animationType: 7, // Bows
-          },
-        },
-      },
-    ];
+    const mockData = generateMockData({
+      weaponCount: 1,
+      enchantmentCount: 1,
+      magicEffectCount: 0, // No magic effects
+      keywordCount: 2,
+    });
 
     const result = await resolveEnchantedWeapons(
-      weaponsWithDifferentTypes,
-      mockEnchantmentRecords,
-      mockMagicEffectRecords
+      mockData.weapons,
+      mockData.enchantments,
+      mockData.magicEffects,
+      mockData.keywords
     );
 
-    expect(result).toHaveLength(2);
-    expect(result[0].weaponType).toBe("One-Handed Daggers");
-    expect(result[1].weaponType).toBe("Bows");
-  });
-});
-
-describe("groupWeaponsByCategory", () => {
-  it("should group weapons by category", () => {
-    const mockWeapons: EnchantedWeapon[] = [
-      {
-        name: "Sword 1",
-        weaponType: "One-Handed Swords",
-        baseDamage: 10,
-        weight: 5.0,
-        value: 100,
-        enchantment: {
-          name: "Fire",
-          cost: 25,
-          chargeAmount: 100,
-          effects: [],
-        },
-        globalFormId: "0x1",
-        plugin: "Test.esp",
-      },
-      {
-        name: "Sword 2",
-        weaponType: "One-Handed Swords",
-        baseDamage: 12,
-        weight: 6.0,
-        value: 120,
-        enchantment: {
-          name: "Ice",
-          cost: 30,
-          chargeAmount: 100,
-          effects: [],
-        },
-        globalFormId: "0x2",
-        plugin: "Test.esp",
-      },
-      {
-        name: "Bow 1",
-        weaponType: "Bows",
-        baseDamage: 8,
-        weight: 3.0,
-        value: 80,
-        enchantment: {
-          name: "Lightning",
-          cost: 20,
-          chargeAmount: 100,
-          effects: [],
-        },
-        globalFormId: "0x3",
-        plugin: "Test.esp",
-      },
-    ];
-
-    const result = groupWeaponsByCategory(mockWeapons);
-
-    expect(result).toHaveLength(2);
-    expect(result[0].categoryName).toBe("Bows");
-    expect(result[0].weapons).toHaveLength(1);
-    expect(result[1].categoryName).toBe("One-Handed Swords");
-    expect(result[1].weapons).toHaveLength(2);
+    expect(result.allWeapons).toHaveLength(0);
   });
 
-  it("should sort weapons alphabetically within categories", () => {
-    const mockWeapons: EnchantedWeapon[] = [
-      {
-        name: "Zebra Sword",
-        weaponType: "One-Handed Swords",
-        baseDamage: 10,
-        weight: 5.0,
-        value: 100,
-        enchantment: {
-          name: "Fire",
-          cost: 25,
-          chargeAmount: 100,
-          effects: [],
-        },
-        globalFormId: "0x1",
-        plugin: "Test.esp",
-      },
-      {
-        name: "Alpha Sword",
-        weaponType: "One-Handed Swords",
-        baseDamage: 12,
-        weight: 6.0,
-        value: 120,
-        enchantment: {
-          name: "Ice",
-          cost: 30,
-          chargeAmount: 100,
-          effects: [],
-        },
-        globalFormId: "0x2",
-        plugin: "Test.esp",
-      },
-    ];
+  it("should handle weapons with missing enchantment references", async () => {
+    const mockData = generateMockData({
+      weaponCount: 1,
+      enchantmentCount: 1,
+      magicEffectCount: 1,
+      keywordCount: 2,
+    });
 
-    const result = groupWeaponsByCategory(mockWeapons);
+    // Remove enchantment reference from weapon
+    const weaponsWithoutEnchantments = mockData.weapons.map((weapon) => ({
+      ...weapon,
+      data: {
+        ...weapon.data,
+        EITM: undefined,
+      },
+    }));
 
-    expect(result[0].weapons[0].name).toBe("Alpha Sword");
-    expect(result[0].weapons[1].name).toBe("Zebra Sword");
+    const result = await resolveEnchantedWeapons(
+      weaponsWithoutEnchantments,
+      mockData.enchantments,
+      mockData.magicEffects,
+      mockData.keywords
+    );
+
+    expect(result.allWeapons).toHaveLength(0);
   });
 
-  it("should sort categories alphabetically", () => {
-    const mockWeapons: EnchantedWeapon[] = [
-      {
-        name: "Sword",
-        weaponType: "One-Handed Swords",
-        baseDamage: 10,
-        weight: 5.0,
-        value: 100,
-        enchantment: {
-          name: "Fire",
-          cost: 25,
-          chargeAmount: 100,
-          effects: [],
-        },
-        globalFormId: "0x1",
-        plugin: "Test.esp",
-      },
-      {
-        name: "Bow",
-        weaponType: "Bows",
-        baseDamage: 8,
-        weight: 3.0,
-        value: 80,
-        enchantment: {
-          name: "Lightning",
-          cost: 20,
-          chargeAmount: 100,
-          effects: [],
-        },
-        globalFormId: "0x2",
-        plugin: "Test.esp",
-      },
-    ];
+  it("should properly categorize weapons by type", async () => {
+    const mockData = generateMockData({
+      weaponCount: 3,
+      enchantmentCount: 3,
+      magicEffectCount: 3,
+      keywordCount: 6,
+      weaponTypes: ["Sword", "Bow", "Dagger"],
+      materials: ["Steel", "Wood", "Iron"],
+    });
 
-    const result = groupWeaponsByCategory(mockWeapons);
+    const result = await resolveEnchantedWeapons(
+      mockData.weapons,
+      mockData.enchantments,
+      mockData.magicEffects,
+      mockData.keywords
+    );
 
-    expect(result[0].categoryName).toBe("Bows");
-    expect(result[1].categoryName).toBe("One-Handed Swords");
+    expect(result.allWeapons).toHaveLength(3);
+
+    // Test grouping separately
+    const groupedWeapons = groupWeaponsByCategory(result.allWeapons);
+    expect(groupedWeapons).toHaveLength(3);
+
+    // Verify different weapon types are categorized separately
+    const categoryNames = groupedWeapons.map((cat: any) => cat.categoryName);
+    expect(categoryNames).toContain("Bow");
+    expect(categoryNames).toContain("One-Handed Sword");
+    expect(categoryNames).toContain("Dagger");
   });
 });

@@ -2,7 +2,7 @@ import { flagParserGenerator, mapParserGenerator } from '../generics';
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
 import { actorValueMap } from '@lorerim/platform-types';
-import { CTDA_ARRAY_SCHEMA } from '../ctda/ctdaSchema';
+import { CTDA_ARRAY_SCHEMA } from '../sharedFields/ctdaSchema';
 
 export const MGEFFlags: Record<number, string> = {
   0x00000001: 'Hostile',

@@ -8,6 +8,13 @@
 - **Enchantment Cost:** {{enchantment.cost}}
 - **Charge Amount:** {{enchantment.chargeAmount}}
 
+{{#if description}}
+
+### Description
+
+{{description}}
+{{/if}}
+
 ### Effects
 
 {{#each enchantment.effects}}

@@ -1,4 +1,5 @@
 export * from './fullSchema';
 export * from './schemaTypes';
-export * from './ctda/ctdaSchema';
+export * from './sharedFields/ctdaSchema';
+export * from './sharedFields/efidSchema';
 export * from './sharedFields';

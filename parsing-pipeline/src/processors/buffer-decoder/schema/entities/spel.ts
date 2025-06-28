@@ -1,7 +1,7 @@
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
 import { flagParserGenerator } from '../generics';
-import { CTDA_ARRAY_SCHEMA } from '../ctda/ctdaSchema';
+import { EFID_EFFECTS_SCHEMA } from '../sharedFields/efidSchema';
 
 // SPEL SPIT flags
 const SPEL_FLAGS = {
@@ -114,51 +114,6 @@ export const spelSchema: RecordSpecificSchemas = createSchema('SPEL', {
       { name: 'halfCostPerk', type: 'formid' },
     ],
   },
-  // Effects - Grouped field for repeating effect structures
-  // Each effect consists of EFID (effect ID) + EFIT (effect data) + optional CTDA (conditions)
-  EFID: {
-    type: 'grouped',
-    virtualField: 'effects', // Group will be assigned to this field
-    cardinality: 'multiple',
-    terminatorTag: 'EFID', // Stop when we hit the next effect's EFID
-    groupSchema: {
-      // Effect ID - Magic Effect MGEF
-      EFID: {
-        type: 'formid',
-      },
-      // Effect data - 12 bytes: magnitude (float32) + area (uint32) + duration (uint32)
-      EFIT: {
-        type: 'struct',
-        size: 12,
-        fields: [
-          {
-            name: 'magnitude',
-            type: 'float32',
-            parser: (value: number) => {
-              // console.log('[DEBUG] EFIT magnitude:', { value, hex: value.toString(16) });
-              return value;
-            },
-          },
-          {
-            name: 'area',
-            type: 'uint32',
-            parser: (value: number) => {
-              // console.log('[DEBUG] EFIT area:', { value, hex: value.toString(16) });
-              return value;
-            },
-          },
-          {
-            name: 'duration',
-            type: 'uint32',
-            parser: (value: number) => {
-              // console.log('[DEBUG] EFIT duration:', { value, hex: value.toString(16) });
-              return value;
-            },
-          },
-        ],
-      },
-      // Conditions for this effect (array of 0-n CTDA records)
-      CTDA: CTDA_ARRAY_SCHEMA,
-    },
-  },
+  // Effects - Using common EFID schema
+  EFID: EFID_EFFECTS_SCHEMA,
 });

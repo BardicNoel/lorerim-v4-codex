@@ -47,17 +47,43 @@ stages:
       - 'decodedData.NNAM'
       - 'decodedData.WNAM'
 
+      # Remove padding from CRDT
+      - 'decodedData.CRDT.unused1'
+      - 'decodedData.CRDT.padding1'
+      - 'decodedData.CRDT.padding2'
+      - 'decodedData.CRDT.padding3'
+
+  - from: 'local'
+    name: 'Remove Unnecessary DNAM Fields'
+    type: 'remove-fields'
+    description: 'Remove DNAM fields that are not needed for weapon analysis, keeping only essential weapon properties'
+    remove_fields:
       # Remove padding and unused fields from DNAM
       - 'decodedData.DNAM.padding1'
       - 'decodedData.DNAM.padding2'
       - 'decodedData.DNAM.padding3'
       - 'decodedData.DNAM.padding4'
 
-      # Remove padding from CRDT
-      - 'decodedData.CRDT.unused1'
-      - 'decodedData.CRDT.padding1'
-      - 'decodedData.CRDT.padding2'
-      - 'decodedData.CRDT.padding3'
+      # Remove combat-related fields that are not essential
+      - 'decodedData.DNAM.attackAnimation'
+      - 'decodedData.DNAM.numProjectiles'
+      - 'decodedData.DNAM.embeddedWeaponAV'
+      - 'decodedData.DNAM.sightFOV'
+      - 'decodedData.DNAM.baseVATSToHitChance'
+      - 'decodedData.DNAM.attackDelay'
+      - 'decodedData.DNAM.minRange'
+      - 'decodedData.DNAM.maxRange'
+      - 'decodedData.DNAM.onHit'
+
+      # Remove rumble/controller fields
+      - 'decodedData.DNAM.rumbleLeftMotor'
+      - 'decodedData.DNAM.rumbleRightMotor'
+      - 'decodedData.DNAM.rumbleDuration'
+
+      # Remove skill and resistance fields (not essential for basic weapon analysis)
+      # - 'decodedData.DNAM.skill'
+      # - 'decodedData.DNAM.resist'
+      # - 'decodedData.DNAM.stagger'
 
   - from: 'local'
     name: 'Rename decodedData to WEAP'

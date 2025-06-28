@@ -1,0 +1,32 @@
+# Import base pipeline configuration
+name: 'KYWD Analysis Pipeline'
+description: 'Process KYWD (Keyword) data for analysis'
+input: '../output/skyrim-extractor/lorerim/KYWD.json'
+output: 'config/scroll-craft-pre/kywd/decode.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Filter Winner Records'
+    type: 'filter-records'
+    description: 'Filter to only include records where isWinner is true'
+    criteria:
+      - field: 'meta.isWinner'
+        operator: 'equals'
+        value: true
+
+  # - from: 'local'
+  #   name: 'Sample Records'
+  #   type: 'sample-records'
+  #   description: 'Take a random sample of records for testing'
+  #   sampleSize: 1000
+
+  - from: 'local'
+    name: 'Decode Binary Records'
+    type: 'buffer-decoder'
+    description: 'Decode binary record data into structured format'
+    recordType: 'KYWD'
+    loadPluginMetadata: true
+    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
+    multithreaded: true
+    maxWorkers: 4

@@ -19,7 +19,7 @@ stages:
   #   name: 'Sample Records'
   #   type: 'sample-records'
   #   description: 'Take a random sample of records for testing'
-  #   sampleSize: 1000
+  #   sampleSize: 100
 
   - from: 'local'
     name: 'Decode Binary Records'

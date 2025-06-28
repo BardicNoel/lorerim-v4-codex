@@ -1,0 +1,30 @@
+# Import base pipeline configuration
+name: 'KYWD Analysis Pipeline'
+description: 'Process KYWD data for analysis'
+input: 'config/scroll-craft-pre/kywd/decode.json'
+output: '../scroll-crafting/primaries/kywd.json'
+
+# Use stages from base template
+stages:
+  - from: 'local'
+    name: 'Remove Header Fields'
+    type: 'remove-fields'
+    description: 'Remove header fields that are not needed for analysis'
+    fields:
+      header: 'all'
+      record: 'all'
+
+  - from: 'local'
+    name: 'Remove KYWD Data Fields'
+    type: 'remove-fields'
+    description: 'Remove specific KYWD data fields to clean up the dataset'
+    remove_fields:
+      # Remove color data (CNAM) - not typically needed for scroll crafting
+      - 'decodedData.CNAM'
+
+  - from: 'local'
+    name: 'Rename decodedData to data'
+    type: 'rename-fields'
+    description: 'Rename decodedData field to data for scroll crafting primaries'
+    mappings:
+      decodedData: 'data'

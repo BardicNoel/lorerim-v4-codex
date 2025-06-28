@@ -1,6 +1,6 @@
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
-import { CTDA_ARRAY_SCHEMA } from '../ctda/ctdaSchema';
+import { CTDA_ARRAY_SCHEMA } from '../sharedFields/ctdaSchema';
 
 export const mesgSchema: RecordSpecificSchemas = createSchema('MESG', {
   // Icon Text - ManyAllowed FixedSize
@@ -22,4 +22,4 @@ export const mesgSchema: RecordSpecificSchemas = createSchema('MESG', {
   },
   // Conditions (array of CTDA) - ManyAllowed
   CTDA: CTDA_ARRAY_SCHEMA,
-}); 
+});
