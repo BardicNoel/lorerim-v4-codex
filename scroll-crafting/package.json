@@ -9,6 +9,7 @@
   },
   "scripts": {
     "generate:subclasses": "node --loader ts-node/esm projects/subclasses/generate.ts",
+    "generate:enchanted-weapons": "node --loader ts-node/esm projects/enchanted-weapons/generate.ts",
     "build": "tsc",
     "prepare": "npm run build",
     "typecheck": "tsc --noEmit",
