@@ -61,11 +61,29 @@ function determineWeaponTypeWithCache(
       (edid): edid is string => edid !== null && edid !== undefined
     ) || [];
 
-  // First try to determine from keywords
-  if (keywords.length > 0) {
-    const weaponType = determineWeaponTypeFromKeywords(keywords);
-    if (weaponType !== "Unknown") {
-      return weaponType;
+  // First check for spear keywords specifically to prioritize them
+  const hasSpear = keywords.some(
+    (keyword) =>
+      keyword === "WeapTypeSpear" ||
+      keyword === "OCF_WeapTypeSpear1H" ||
+      keyword === "OCF_WeapTypeSpear2H"
+  );
+
+  if (hasSpear) {
+    // Check for 1H/2H variants
+    if (keywords.includes("OCF_WeapTypeSpear2H")) {
+      return "Two-Handed Spear";
+    }
+    if (keywords.includes("OCF_WeapTypeSpear1H")) {
+      return "One-Handed Spear";
+    }
+    return "Spear"; // Default to generic spear if no specific variant found
+  }
+
+  // Then check other weapon types
+  for (const keyword of keywords) {
+    if (WeaponTypeKeywords[keyword]) {
+      return WeaponTypeKeywords[keyword];
     }
   }
 
@@ -115,6 +133,14 @@ export async function resolveEnchantedWeapons(
   allWeapons: EnchantedWeapon[];
   boundMysticWeapons: BoundMysticWeapon[];
   wandStaffWeapons: WandStaffWeapon[];
+  materials: string[];
+  weaponTypes: string[];
+  enchantments: {
+    name: string;
+    cost: number;
+    chargeAmount: number;
+    description: string;
+  }[];
 }> {
   // Load the FormID resolver
   try {
@@ -156,13 +182,39 @@ export async function resolveEnchantedWeapons(
   const boundMysticWeapons: BoundMysticWeapon[] = [];
   const wandStaffWeapons: WandStaffWeapon[] = [];
 
-  // Filter weapons that have enchantments (EITM field)
+  // Count REQ_NULL_ weapons for logging
+  const reqNullWeapons = weaponRecords.filter(
+    (weapon) => weapon.data.EDID && weapon.data.EDID.startsWith("REQ_NULL_")
+  );
+
+  // Count RPC_Replica weapons for logging
+  const rpcReplicaWeapons = weaponRecords.filter(
+    (weapon) => weapon.data.EDID && weapon.data.EDID.startsWith("RPC_Replica")
+  );
+
+  // Filter weapons that have enchantments (EITM field), exclude REQ_NULL_ weapons and unplayable weapons
+  // REQ_NULL_ weapons have special handling to remove them from the game
   const weaponsWithEnchantments = weaponRecords.filter(
-    (weapon) => weapon.data.EITM && weapon.data.EITM.trim() !== ""
+    (weapon) =>
+      weapon.data.EITM &&
+      weapon.data.EITM.trim() !== "" &&
+      (!weapon.data.EDID ||
+        (!weapon.data.EDID.startsWith("REQ_NULL_") &&
+          !weapon.data.EDID.startsWith("RPC_Replica"))) &&
+      !weapon.data.DNAM?.flags1?.includes("Unplayable") && // Filter out unplayable weapons
+      (!weapon.data.FULL || // Filter out specific weapon patterns
+        (!weapon.data.FULL.toLowerCase().includes("lunar ") && // Lunar weapons
+          !(
+            weapon.data.FULL.toLowerCase().includes("daedric") &&
+            weapon.data.FULL.toLowerCase().includes("of the inferno")
+          ) && // Daedric weapons of the Inferno
+          !weapon.data.FULL.toLowerCase().includes(
+            "poison-coated falmer war axe"
+          ))) // Specific weapon
   );
 
   console.log(
-    `🔍 Processing ${weaponsWithEnchantments.length} weapons with enchantments...`
+    `🔍 Processing ${weaponsWithEnchantments.length} weapons with enchantments (excluding ${reqNullWeapons.length} REQ_NULL_ weapons, ${rpcReplicaWeapons.length} RPC_Replica weapons, Lunar weapons, Daedric weapons of the Inferno, specific named weapons, and weapons marked as unplayable)...`
   );
 
   const startTime = Date.now();
@@ -213,13 +265,17 @@ export async function resolveEnchantedWeapons(
         baseDamage: weapon.data.DATA.damage,
         weight: weapon.data.DATA.weight,
         value: weapon.data.DATA.value,
-        enchantment: enchantmentObj,
+        enchantment: {
+          ...enchantmentObj,
+          chargeAmount: weapon.data.EAMT || enchantmentObj.chargeAmount, // Use weapon EAMT if available, fallback to enchantment charge
+        },
         globalFormId: weapon.meta.globalFormId,
         plugin: weapon.meta.plugin,
         keywords,
         material,
         isVendorItem,
         description: weapon.data.DESC || null,
+        cannotDisenchant: keywords.includes("MagicDisallowEnchanting"),
       };
 
       // Early exit for bound/mystic weapons (skip CNAM classification)
@@ -261,24 +317,114 @@ export async function resolveEnchantedWeapons(
 
   // Classify weapons using CNAM-based approach
   console.log("🔍 Classifying weapons using CNAM templates...");
+
+  // Collect all unique CNAM FormIDs from enchanted weapons
+  const cnamFormIds = new Set<string>();
+  for (const weapon of enchantedWeapons) {
+    const weaponRecord = weaponRecords.find(
+      (w) => w.meta.globalFormId === weapon.globalFormId
+    );
+    if (weaponRecord?.data.CNAM && weaponRecord.data.CNAM.trim() !== "") {
+      cnamFormIds.add(weaponRecord.data.CNAM);
+    }
+  }
+
+  console.log(`📊 Found ${cnamFormIds.size} unique CNAM template references`);
+
+  // Also collect any weapons that are CNAM templates but don't have enchantments themselves
+  const baseTemplateWeapons = weaponRecords.filter(
+    (weapon) =>
+      !weapon.data.EITM && // No enchantment
+      weapon.data.EDID &&
+      !weapon.data.EDID.startsWith("REQ_NULL_") && // Not REQ_NULL_
+      cnamFormIds.has(weapon.meta.globalFormId) // Referenced as CNAM by enchanted weapons
+  );
+
+  console.log(
+    `📊 Found ${baseTemplateWeapons.length} base template weapons without enchantments`
+  );
+
   const {
     uniqueWeapons,
     generalWeaponTemplates,
     generalWeaponEnchantments,
     baseWeaponTemplates,
-  } = separateUniqueAndGeneralWeapons(enchantedWeapons, weaponRecords);
+  } = separateUniqueAndGeneralWeapons(
+    enchantedWeapons,
+    weaponRecords,
+    baseTemplateWeapons
+  );
+
+  // Deduplicate unique weapons based on name, damage, value, and enchantment name
+  const deduplicatedUniqueWeapons = uniqueWeapons.reduce(
+    (acc: UniqueWeapon[], current) => {
+      const duplicate = acc.find(
+        (weapon) =>
+          weapon.name === current.name &&
+          weapon.baseDamage === current.baseDamage &&
+          weapon.value === current.value &&
+          weapon.enchantment.name === current.enchantment.name
+      );
+
+      if (!duplicate) {
+        acc.push(current);
+      } else {
+        console.log(
+          `📝 Skipping duplicate weapon: ${current.name} (${current.globalFormId}) - matches ${duplicate.globalFormId}`
+        );
+      }
+      return acc;
+    },
+    []
+  );
+
+  // Collect unique materials and weapon types
+  const materials = Array.from(
+    new Set(
+      enchantedWeapons
+        .map((weapon) => weapon.material)
+        .filter(
+          (material): material is string =>
+            material !== null && material !== undefined
+        )
+        .sort()
+    )
+  );
+
+  const weaponTypes = Array.from(
+    new Set(enchantedWeapons.map((weapon) => weapon.weaponType).sort())
+  );
+
+  // Collect and sort enchantments alphabetically
+  const enchantments = Array.from(
+    new Set(
+      enchantedWeapons
+        .map((weapon) => weapon.enchantment)
+        .filter((enchant) => enchant !== null)
+        .map((enchant) => ({
+          name: enchant.name,
+          cost: enchant.cost,
+          chargeAmount: enchant.chargeAmount,
+          description: enchant.effects.map((e) => e.description).join("; "),
+        }))
+    )
+  ).sort((a, b) => a.name.localeCompare(b.name));
+
   console.log(
-    `📊 Found ${uniqueWeapons.length} unique weapons, ${generalWeaponTemplates.length} general weapon templates, ${generalWeaponEnchantments.length} general enchantments, and ${baseWeaponTemplates.length} base weapon templates`
+    `📊 Found ${uniqueWeapons.length} unique weapons (${deduplicatedUniqueWeapons.length} after deduplication), ${materials.length} materials, ${weaponTypes.length} weapon types, and ${enchantments.length} enchantments`
   );
 
   return {
-    uniqueWeapons,
+    uniqueWeapons: deduplicatedUniqueWeapons,
     generalWeaponTemplates,
     generalWeaponEnchantments,
     baseWeaponTemplates,
     allWeapons: enchantedWeapons,
     boundMysticWeapons,
     wandStaffWeapons,
+    materials,
+    weaponTypes,
+    enchantments,
   };
 }
 

@@ -15,8 +15,28 @@ export function determineWeaponType(
   // First try to determine from keywords
   if (weapon.data.KWDA && weapon.data.KWDA.length > 0) {
     const keywords = resolveWeaponKeywords(weapon.data.KWDA, keywordRecords);
-    const weaponType = determineWeaponTypeFromKeywords(keywords);
 
+    // First check for spear keywords specifically to prioritize them
+    const hasSpear = keywords.some(
+      (keyword) =>
+        keyword === "WeapTypeSpear" ||
+        keyword === "OCF_WeapTypeSpear1H" ||
+        keyword === "OCF_WeapTypeSpear2H"
+    );
+
+    if (hasSpear) {
+      // Check for 1H/2H variants
+      if (keywords.includes("OCF_WeapTypeSpear2H")) {
+        return "Two-Handed Spear";
+      }
+      if (keywords.includes("OCF_WeapTypeSpear1H")) {
+        return "One-Handed Spear";
+      }
+      return "Spear"; // Default to generic spear if no specific variant found
+    }
+
+    // Then check other weapon types
+    const weaponType = determineWeaponTypeFromKeywords(keywords);
     if (weaponType !== "Unknown") {
       return weaponType;
     }

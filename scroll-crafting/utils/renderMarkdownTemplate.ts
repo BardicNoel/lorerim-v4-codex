@@ -2,6 +2,18 @@ import fs from "fs";
 import Handlebars from "handlebars";
 import path from "path";
 
+// Register math helper for division operations
+Handlebars.registerHelper(
+  "math",
+  function (lvalue: number, operator: string, rvalue: number) {
+    if (operator === "/") {
+      // Round to 2 decimal places for readability
+      return Math.round((lvalue / rvalue) * 100) / 100;
+    }
+    return lvalue;
+  }
+);
+
 export function renderMarkdownTemplate(
   templatePath: string,
   context: any
@@ -12,8 +24,8 @@ export function renderMarkdownTemplate(
   // Register all .md files in the partials directory as partials
   const files = fs.readdirSync(partialsDir);
   for (const file of files) {
-    if (file.endsWith('.md') && file !== path.basename(templatePath)) {
-      const partialName = path.basename(file, '.md');
+    if (file.endsWith(".md") && file !== path.basename(templatePath)) {
+      const partialName = path.basename(file, ".md");
       Handlebars.registerPartial(
         partialName,
         fs.readFileSync(path.join(partialsDir, file), "utf-8")

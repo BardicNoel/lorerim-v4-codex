@@ -47,12 +47,14 @@ export class ErrorLogger {
 
     this.errors.push(fullEntry);
 
-    // Also log to console for immediate visibility
-    const consoleMessage = `[${fullEntry.level}] [${fullEntry.category}] ${fullEntry.message}`;
-    if (fullEntry.weaponName) {
-      console.log(`${consoleMessage} (Weapon: ${fullEntry.weaponName})`);
-    } else {
-      console.log(consoleMessage);
+    if (fullEntry.level === "ERROR") {
+      // Also log to console for immediate visibility
+      const consoleMessage = `[${fullEntry.level}] [${fullEntry.category}] ${fullEntry.message}`;
+      if (fullEntry.weaponName) {
+        console.log(`${consoleMessage} (Weapon: ${fullEntry.weaponName})`);
+      } else {
+        console.log(consoleMessage);
+      }
     }
   }
 

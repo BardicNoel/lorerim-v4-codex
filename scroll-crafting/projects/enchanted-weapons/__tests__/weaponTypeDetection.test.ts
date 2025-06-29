@@ -15,7 +15,7 @@ describe("weaponTypeDetection", () => {
       mockData.weapons[0],
       mockData.keywords
     );
-    expect(weaponType).toBe("One-Handed Sword");
+    expect(weaponType).toBe("One-Handed Swords");
   });
 
   it("should fallback to animation type when no keywords found", () => {

@@ -1,5 +1,5 @@
 import { EnchantedWeapon } from "./types.js";
-import { WeapRecord } from "../../../types/weapSchema.js";
+import { WeapRecord, WeapCategories } from "../../../types/weapSchema.js";
 import { errorLogger } from "../utils/errorLogger.js";
 
 export interface UniqueWeapon extends EnchantedWeapon {
@@ -42,7 +42,8 @@ export interface GeneralWeaponEnchantment {
  */
 export function separateUniqueAndGeneralWeapons(
   weapons: EnchantedWeapon[],
-  weaponRecords: WeapRecord[]
+  weaponRecords: WeapRecord[],
+  baseTemplateWeapons: WeapRecord[] = []
 ): {
   uniqueWeapons: UniqueWeapon[];
   generalWeaponTemplates: GeneralWeaponTemplate[];
@@ -54,6 +55,11 @@ export function separateUniqueAndGeneralWeapons(
   // Create a map of weapon records for CNAM lookup
   const weaponRecordMap = new Map<string, WeapRecord>();
   for (const record of weaponRecords) {
+    weaponRecordMap.set(record.meta.globalFormId, record);
+  }
+
+  // Also add base template weapons to the map
+  for (const record of baseTemplateWeapons) {
     weaponRecordMap.set(record.meta.globalFormId, record);
   }
 
@@ -131,6 +137,17 @@ export function separateUniqueAndGeneralWeapons(
     );
     if (template) {
       generalWeaponTemplates.push(template);
+    }
+  }
+
+  // Create base weapon templates from actual base template weapons
+  for (const baseTemplate of baseTemplateWeapons) {
+    const baseTemplateObj = createBaseWeaponTemplateFromRecord(
+      baseTemplate,
+      weaponRecordMap
+    );
+    if (baseTemplateObj) {
+      baseWeaponTemplates.push(baseTemplateObj);
     }
   }
 
@@ -314,6 +331,63 @@ function createBaseWeaponTemplate(
     material: weapon.material || undefined,
     examples: [weapon], // Only this weapon uses this template
     count: 1,
+  };
+}
+
+/**
+ * Creates a base weapon template from a weapon record (for base template weapons)
+ */
+function createBaseWeaponTemplateFromRecord(
+  weaponRecord: WeapRecord,
+  weaponRecordMap: Map<string, WeapRecord>
+): GeneralWeaponTemplate | null {
+  // Get weapon type from animation type using proper categorization
+  const animationType = weaponRecord.data.DNAM.animationType;
+  let weaponType = "Unknown";
+
+  if (typeof animationType === "string") {
+    weaponType = WeapCategories[animationType] || animationType;
+  } else if (Array.isArray(animationType)) {
+    const firstType = animationType[0];
+    weaponType = WeapCategories[firstType] || firstType || "Unknown";
+  } else if (typeof animationType === "number") {
+    weaponType = WeapCategories[animationType.toString()] || "Unknown";
+  }
+
+  // Get material from keywords if available
+  let material: string | undefined;
+  if (weaponRecord.data.KWDA && weaponRecord.data.KWDA.length > 0) {
+    // This is a simplified material detection - in a real implementation,
+    // you'd want to use the weaponKeywordResolver utility
+    const keywords = weaponRecord.data.KWDA;
+    const materialKeywords = [
+      "WeapMaterialIron",
+      "WeapMaterialSteel",
+      "WeapMaterialOrcish",
+      "WeapMaterialDwarven",
+      "WeapMaterialElven",
+      "WeapMaterialGlass",
+      "WeapMaterialEbony",
+      "WeapMaterialDaedric",
+    ];
+    for (const keyword of keywords) {
+      if (materialKeywords.includes(keyword)) {
+        material = keyword.replace("WeapMaterial", "");
+        break;
+      }
+    }
+  }
+
+  return {
+    cnamFormId: weaponRecord.meta.globalFormId,
+    templateName: weaponRecord.data.FULL || weaponRecord.data.EDID,
+    weaponType,
+    baseDamage: weaponRecord.data.DATA.damage,
+    weight: weaponRecord.data.DATA.weight,
+    value: weaponRecord.data.DATA.value,
+    material,
+    examples: [], // Base templates don't have examples since they're not enchanted
+    count: 0,
   };
 }
 

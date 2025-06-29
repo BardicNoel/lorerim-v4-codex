@@ -3,3 +3,280 @@ description:
 globs:
 alwaysApply: false
 ---
+# Scroll Crafting Project Creation Rule
+
+This rule defines the standard process and structure for creating new scroll crafting projects in the Lorerim Codex system.
+
+## Project Creation Process
+
+### 1. Project Setup & Structure
+Follow this exact directory structure for all new projects:
+
+```
+scroll-crafting/projects/<project-name>/
+├── generate.ts              # Main generator script
+├── rules.md                 # Project-specific rules (inherits from base)
+├── <project-name>-logic.md  # Domain logic documentation
+├── templates/
+│   ├── primary.md           # Main document template
+│   └── <block>.md           # Partial templates for individual items
+├── logic/
+│   └── resolve<Feature>.ts  # Domain-specific processing logic
+├── __tests__/
+│   └── resolve<Feature>.test.ts  # Test coverage
+├── output/                  # Generated files (created by script)
+│   ├── <project-name>.json
+│   └── <project-name>.md
+└── records/                 # Project-specific records (optional)
+```
+
+### 2. Required Files Creation Order
+
+1. **Create project directory** in `scroll-crafting/projects/<project-name>/`
+2. **Create `rules.md`** inheriting from base rules
+3. **Create `templates/` directory** with primary and block templates
+4. **Create `logic/` directory** for domain-specific processing
+5. **Create `__tests__/` directory** for test coverage
+6. **Create `generate.ts`** following the established pattern
+7. **Add package.json script** for easy execution
+
+### 3. Package.json Script
+
+Add this script to `scroll-crafting/package.json`:
+
+```json
+{
+  "scripts": {
+    "generate:<project-name>": "node --loader ts-node/esm projects/<project-name>/generate.ts"
+  }
+}
+```
+
+This allows running the generator with:
+```bash
+npm run generate:<project-name>
+```
+
+### 4. Data Analysis & Schema Definition
+
+- Analyze relevant record types (e.g., ENCH, WEAP, PERK, etc.)
+- Create TypeScript schemas for record types in `scroll-crafting/types/`
+- Define relationships between different record types
+- Map raw data fields to semantic concepts
+
+### 5. Logic Implementation
+
+- Create `resolve<Feature>.ts` in the `logic/` directory
+- Implement data transformation and enrichment logic
+- Follow functional programming best practices
+- Use existing utilities from `scroll-crafting/utils/`
+- Always access record data through `decodedData` field
+
+### 6. Template Creation
+
+- Create `primary.md` as the main document template
+- Create partial templates for individual items (e.g., `perk_block.md`)
+- Use Handlebars syntax for templating
+- Focus on conceptual content, not raw data fields
+- Use semantic field names in templates
+
+### 7. Generator Implementation
+
+Follow this exact pattern for `generate.ts`:
+
+```typescript
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import {
+  loadRecordSet,
+  findByFormId,
+  renderMarkdownTemplate,
+} from "../../utils/index.js";
+import { resolve<Feature> } from "./logic/resolve<Feature>.js";
+
+// ESM-compatible __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PROJECT_DIR = path.resolve(__dirname);
+const RECORD_DIR = path.join(PROJECT_DIR, "records");
+const PRIMARY_DIR = path.resolve(__dirname, "../../primaries");
+const OUTPUT_DIR = path.join(PROJECT_DIR, "output");
+const TEMPLATE_DIR = path.join(PROJECT_DIR, "templates");
+
+async function main() {
+  console.log("🚀 Starting <project-name> generation...");
+  
+  // 1. Load required record types
+  const records = await loadRecordSet<any>(
+    "RECORD_TYPE",
+    RECORD_DIR,
+    PRIMARY_DIR,
+    { approvedPrimaries: ['RECORD_TYPE'] }
+  );
+  
+  // 2. Process records using logic
+  const processedData = await resolve<Feature>(records);
+  
+  // 3. Render Markdown
+  const markdown = renderMarkdownTemplate(
+    path.join(TEMPLATE_DIR, "primary.md"),
+    processedData
+  );
+  
+  // 4. Write output
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  fs.writeFileSync(path.join(OUTPUT_DIR, "<project-name>.md"), markdown);
+  fs.writeFileSync(
+    path.join(OUTPUT_DIR, "<project-name>.json"),
+    JSON.stringify(processedData, null, 2)
+  );
+}
+
+main().catch((err) => {
+  console.error("❌ Error generating <project-name>:", err);
+  process.exit(1);
+});
+```
+
+### 8. Testing & Validation
+
+- Write unit tests for all logic modules
+- Test data mapping and transformation functions
+- Validate template rendering with sample data
+- Test error handling for missing or malformed records
+- Ensure 100% test coverage for new logic
+
+### 9. Documentation
+
+Create `<project-name>-logic.md` with:
+
+```markdown
+# <Project Name> Logic
+
+## Overview
+Brief description of what this project generates and why.
+
+## Data Relationships
+- Record Type A → Record Type B (relationship description)
+- Record Type C → Record Type D (relationship description)
+
+## Process Outline
+1. **Step 1**: Description of first processing step
+2. **Step 2**: Description of second processing step
+3. **Step 3**: Description of third processing step
+
+## Output Guidelines
+- Description of expected output format
+- Any special formatting requirements
+- Visual elements or diagrams needed
+```
+
+### 10. Rules Inheritance
+
+Create `rules.md` inheriting from base rules:
+
+```markdown
+# RuleSet: <project-name>
+
+## Inherit Rules
+- code_quality
+- generator_structure
+- project_logic
+- data_mapping
+- schema_linker
+- template_construction
+- output_format
+- testing
+- cursor_agent_behavior
+
+## Project Directories
+- records/: source records for this project
+- templates/: primary and partial Markdown templates
+- logic/: domain-specific data interpretation and enrichment
+- output/: generated JSON and Markdown files
+
+## Cursor Agent Instructions
+- Follow all inherited rules as written
+- Never mutate files outside this project folder
+- Use utilities from `utils/` when available
+- Output must match the conceptual structure of this content type
+- Write tests in `__tests__/` for all logic modules
+
+## Project-Specific Notes
+- [Add any project-specific constraints, expected record types, or formatting notes here]
+```
+
+## Key Principles
+
+### Data Mapping
+- Always transform raw plugin data into semantic structures
+- Use descriptive field names that reflect meaning in context
+- Access record data through `decodedData` field only
+- Use `findByFormId()` for cross-record resolution
+
+### Template Design
+- Focus on human-readable content, not technical metadata
+- Use semantic field names in templates
+- Avoid exposing plugin internals (FormIDs, subrecord tags)
+- Prefer narrative labeling over technical terms
+
+### Code Quality
+- Write TypeScript with strict typing
+- Use ES module syntax
+- Follow functional programming practices
+- Include JSDoc comments for all exported functions
+- Limit line length to 100 characters
+
+### Testing
+- Write tests before implementing logic (TDD)
+- Use vitest for testing framework
+- Test both expected and edge-case behaviors
+- Ensure all logic modules are testable
+
+## Common Patterns
+
+### Record Loading
+```typescript
+const records = await loadRecordSet<any>(
+  "RECORD_TYPE",
+  RECORD_DIR,
+  PRIMARY_DIR,
+  { approvedPrimaries: ['RECORD_TYPE'] }
+);
+```
+
+### Cross-Record Resolution
+```typescript
+const targetRecord = findByFormId(recordSet, formId);
+if (targetRecord) {
+  const resolvedData = targetRecord.decodedData?.FIELD_NAME;
+}
+```
+
+### Template Rendering
+```typescript
+const markdown = renderMarkdownTemplate(
+  path.join(TEMPLATE_DIR, "primary.md"),
+  templateData
+);
+```
+
+## Validation Checklist
+
+Before considering a project complete, verify:
+
+- [ ] All required files exist in correct locations
+- [ ] `generate.ts` follows the established pattern
+- [ ] Package.json script is added for easy execution
+- [ ] Logic modules are fully tested
+- [ ] Templates render correctly with sample data
+- [ ] Output files are generated in correct format
+- [ ] Documentation explains the data relationships
+- [ ] Rules file inherits from base rules
+- [ ] No files are modified outside the project folder
+- [ ] All dependencies are properly imported
+- [ ] Error handling is implemented
+
+This rule ensures all scroll crafting projects follow consistent patterns and maintain the quality standards established in the codebase.

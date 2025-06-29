@@ -8,7 +8,11 @@ This document lists all base weapon templates found in the game. These are unenc
 
 Base weapon templates are the foundation weapons that can be enchanted to create general enchanted weapons. These templates represent the base weapon types available in the game.
 
-{{#each baseWeaponTemplates}}
+{{#each groupedBaseWeaponTemplates}}
+
+# {{@key}}
+
+{{#each this}}
 
 ## {{templateName}}
 
@@ -21,6 +25,8 @@ Base weapon templates are the foundation weapons that can be enchanted to create
 - **Usage Count:** {{count}} weapons
 
 ---
+
+{{/each}}
 
 {{/each}}
 

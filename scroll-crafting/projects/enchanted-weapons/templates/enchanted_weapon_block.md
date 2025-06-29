@@ -5,8 +5,7 @@
 - **Weight:** {{weight}}
 - **Value:** {{value}}
 - **Enchantment:** {{enchantment.name}}
-- **Enchantment Cost:** {{enchantment.cost}}
-- **Charge Amount:** {{enchantment.chargeAmount}}
+  **Enchantment Cost:** {{enchantment.cost}} **Charge Amount:** {{enchantment.chargeAmount}} **Max Uses Before Recharge:** {{#if enchantment.cost}}{{math enchantment.chargeAmount "/" enchantment.cost}}{{else}}N/A{{/if}}
 
 {{#if description}}
 

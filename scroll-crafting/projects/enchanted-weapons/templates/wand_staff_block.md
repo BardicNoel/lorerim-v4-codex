@@ -1,9 +1,3 @@
-# Wands and Staves
-
-This document contains enchanted wands and staves - magical implements that serve as both weapons and spellcasting tools.
-
-{{#each wandStaffWeapons}}
-
 ## {{name}}
 
 - **Weapon Type:** {{weaponType}}
@@ -13,19 +7,23 @@ This document contains enchanted wands and staves - magical implements that serv
 - **Enchantment:** {{enchantment.name}}
 - **Enchantment Cost:** {{enchantment.cost}}
 - **Charge Amount:** {{enchantment.chargeAmount}}
+- **Max Uses Before Recharge:** {{#if enchantment.cost}}{{math enchantment.chargeAmount "/" enchantment.cost}}{{else}}N/A{{/if}}
+
+{{#if description}}
+
+### Description
+
+{{description}}
+{{/if}}
 
 ### Effects
 
 {{#each enchantment.effects}}
 
 - **{{name}}:** {{description}}
-  {{/each}}
+  - Magnitude: {{magnitude}}
+  - Duration: {{duration}}
+  - Area: {{area}}
+    {{/each}}
 
 ---
-
-{{/each}}
-
-## Summary
-
-- **Total Wands and Staves:** {{wandStaffWeapons.length}}
-- **Generated:** {{generatedDate}}

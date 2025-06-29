@@ -19,6 +19,12 @@ export const WeaponTypeKeywords: Record<string, string> = {
   WeapTypeQtrStaff: "Quarterstaff",
   WeapTypeTdagger: "Throwing Dagger",
 
+  // Additional weapon types
+  WeapTypeSpear: "Spear",
+  WeapTypeWhip: "Whip",
+  WeapTypeClaw: "Claw",
+  WeapTypeJavelin: "Javelin",
+
   // Ordinator weapon types
   OCF_WeapTypeDagger1H: "One-Handed Dagger",
   OCF_WeapTypeRevDagger1H: "Reverse Grip Dagger",
@@ -30,6 +36,10 @@ export const WeaponTypeKeywords: Record<string, string> = {
   OCF_WeapTypeMace1H: "One-Handed Mace",
   OCF_WeapTypePickaxe1H: "Pickaxe",
   OCF_WeapTypeQuarterstaff1H: "Quarterstaff",
+  OCF_WeapTypeSpear1H: "One-Handed Spear",
+  OCF_WeapTypeWhip1H: "One-Handed Whip",
+  OCF_WeapTypeClaw1H: "One-Handed Claw",
+  OCF_WeapTypeJavelin1H: "One-Handed Javelin",
 
   OCF_WeapTypeGreatsword2H: "Two-Handed Sword",
   OCF_WeapTypeMassiveSword2H: "Massive Sword",
@@ -42,6 +52,7 @@ export const WeaponTypeKeywords: Record<string, string> = {
   OCF_WeapTypeWoodaxe2H: "Two-Handed Woodaxe",
   OCF_WeapTypeQuarterstaff2H: "Two-Handed Quarterstaff",
   OCF_WeapTypeBladestaff2H: "Bladestaff",
+  OCF_WeapTypeSpear2H: "Two-Handed Spear",
 
   OCF_WeapTypeBow: "Bow",
   OCF_WeapTypeBow2H: "Two-Handed Bow",
@@ -111,7 +122,26 @@ export function resolveWeaponKeywords(
  * Determines weapon type from keywords
  */
 export function determineWeaponTypeFromKeywords(keywords: string[]): string {
-  // Look for weapon type keywords first
+  // First check for spear keywords specifically to prioritize them
+  const hasSpear = keywords.some(
+    (keyword) =>
+      keyword === "WeapTypeSpear" ||
+      keyword === "OCF_WeapTypeSpear1H" ||
+      keyword === "OCF_WeapTypeSpear2H"
+  );
+
+  if (hasSpear) {
+    // Check for 1H/2H variants
+    if (keywords.includes("OCF_WeapTypeSpear2H")) {
+      return "Two-Handed Spear";
+    }
+    if (keywords.includes("OCF_WeapTypeSpear1H")) {
+      return "One-Handed Spear";
+    }
+    return "Spear"; // Default to generic spear if no specific variant found
+  }
+
+  // Then check other weapon types
   for (const keyword of keywords) {
     if (WeaponTypeKeywords[keyword]) {
       return WeaponTypeKeywords[keyword];

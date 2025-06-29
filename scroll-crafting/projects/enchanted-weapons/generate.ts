@@ -11,6 +11,7 @@ import { EnchRecord } from "../../types/enchSchema.js";
 import { KywdRecord } from "../../types/kywdSchema.js";
 import { MgefRecord } from "../../types/records.js";
 import { errorLogger } from "./utils/errorLogger.js";
+import { UniqueWeapon } from "./logic/weaponClassification.js";
 
 // ESM-compatible __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -78,6 +79,25 @@ async function main() {
     // 3. Group by weapon category
     const weaponCategories = groupWeaponsByCategory(allWeapons);
 
+    // Group templates by weapon type
+    function groupByWeaponType<T extends { weaponType: string }>(
+      templates: T[]
+    ): Record<string, T[]> {
+      const groups: Record<string, T[]> = {};
+      for (const template of templates) {
+        if (!groups[template.weaponType]) {
+          groups[template.weaponType] = [];
+        }
+        groups[template.weaponType].push(template);
+      }
+      return groups;
+    }
+
+    const groupedBaseWeaponTemplates = groupByWeaponType(baseWeaponTemplates);
+    const groupedGeneralWeaponTemplates = groupByWeaponType(
+      generalWeaponTemplates
+    );
+
     // 4. Prepare template contexts
     const generatedDate = new Date().toISOString().split("T")[0];
 
@@ -85,8 +105,10 @@ async function main() {
     const indexContext = {
       uniqueWeapons,
       generalWeaponTemplates,
+      groupedGeneralWeaponTemplates,
       generalWeaponEnchantments,
       baseWeaponTemplates,
+      groupedBaseWeaponTemplates,
       boundMysticWeapons,
       wandStaffWeapons,
       totalWeapons:
@@ -95,15 +117,40 @@ async function main() {
       generatedDate,
     };
 
-    // Unique weapons context
+    // Group and sort unique weapons by weapon type
+    const uniqueWeaponGroups = uniqueWeapons.reduce(
+      (groups: Record<string, UniqueWeapon[]>, weapon) => {
+        if (!groups[weapon.weaponType]) {
+          groups[weapon.weaponType] = [];
+        }
+        groups[weapon.weaponType].push(weapon);
+        return groups;
+      },
+      {}
+    );
+
+    // Sort weapon types alphabetically and sort weapons within each group by base damage
+    const sortedWeaponGroups: Record<string, UniqueWeapon[]> = {};
+    Object.keys(uniqueWeaponGroups)
+      .sort()
+      .forEach((weaponType) => {
+        sortedWeaponGroups[weaponType] = uniqueWeaponGroups[weaponType].sort(
+          (a, b) => b.baseDamage - a.baseDamage
+        );
+      });
+
+    // Unique weapons context with sorted groups
     const uniqueContext = {
-      uniqueWeapons,
+      weaponGroups: sortedWeaponGroups,
+      totalUniqueWeapons: uniqueWeapons.length,
+      weaponTypes: Object.keys(sortedWeaponGroups),
       generatedDate,
     };
 
     // General weapon templates context
     const generalTemplatesContext = {
       generalWeaponTemplates,
+      groupedGeneralWeaponTemplates,
       totalGeneralWeapons: allWeapons.length - uniqueWeapons.length,
       generatedDate,
     };
@@ -111,6 +158,7 @@ async function main() {
     // Base weapon templates context
     const baseTemplatesContext = {
       baseWeaponTemplates,
+      groupedBaseWeaponTemplates,
       generatedDate,
     };
 
@@ -140,8 +188,6 @@ async function main() {
     // 5. Render Markdown documents
     console.log("📝 Rendering separate Markdown documents...");
 
-    // Temporarily skip template rendering to isolate the issue
-    /*
     const indexMarkdown = renderMarkdownTemplate(
       path.join(TEMPLATE_DIR, "index.md"),
       indexContext
@@ -176,13 +222,11 @@ async function main() {
       path.join(TEMPLATE_DIR, "wands-staves.md"),
       wandStaffContext
     );
-    */
 
     // 6. Write output
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
     // Write Markdown documents
-    /*
     fs.writeFileSync(path.join(OUTPUT_DIR, "index.md"), indexMarkdown);
     fs.writeFileSync(
       path.join(OUTPUT_DIR, "unique-weapons.md"),
@@ -205,7 +249,6 @@ async function main() {
       path.join(OUTPUT_DIR, "wands-staves.md"),
       wandStaffMarkdown
     );
-    */
 
     // Write JSON files
     fs.writeFileSync(

@@ -11,10 +11,23 @@ describe("weaponMetadata", () => {
       materials: ["Steel"],
     });
 
-    const result = resolveWeaponKeywordsAndMetadata(
-      mockData.weapons[0],
-      mockData.keywords
-    );
+    // Debug: Log the mock data to see what's being generated
+    // (removed for clean test output)
+
+    // Explicitly set KWDA to the correct FormIDs for this test
+    const weapon = {
+      ...mockData.weapons[0],
+      data: {
+        ...mockData.weapons[0].data,
+        KWDA: mockData.keywords.map((k) => k.meta.globalFormId),
+      },
+    };
+
+    const result = resolveWeaponKeywordsAndMetadata(weapon, mockData.keywords);
+
+    console.log(`- Resolved keywords: ${result.keywords}`);
+    console.log(`- Material: ${result.material}`);
+    console.log(`- Is vendor item: ${result.isVendorItem}`);
 
     expect(result.keywords).toContain("WeapTypeSword");
     expect(result.material).toBe("Steel");

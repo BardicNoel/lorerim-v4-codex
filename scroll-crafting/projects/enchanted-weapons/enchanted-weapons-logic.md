@@ -5,7 +5,7 @@ This document explains the data relationships and processing logic for the encha
 ## Data Flow
 
 ```
-WEAP Records → Filter (has EITM) → Resolve ENCH → Resolve MGEF → Transform → Output
+WEAP Records → Filter (has EITM, not REQ_NULL_) → Resolve ENCH → Resolve MGEF → Transform → Output
 ```
 
 ## Record Relationships
@@ -31,6 +31,7 @@ WEAP Records → Filter (has EITM) → Resolve ENCH → Resolve MGEF → Transfo
 ### 1. Filter Enchanted Weapons
 
 - Find all WEAP records with non-empty EITM field
+- **Exclude weapons with EDIDs starting with "REQ*NULL*"** (these have special handling to remove them from the game)
 - Skip weapons without enchantments
 - Log warnings for malformed EITM references
 

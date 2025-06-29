@@ -37,25 +37,29 @@ export interface ParsedWeaponName {
 /**
  * Common weapon materials in Skyrim
  */
-export const WEAPON_MATERIALS = [
-  "Iron",
-  "Steel",
-  "Orcish",
-  "Dwarven",
-  "Elven",
-  "Glass",
-  "Ebony",
+
+const WEAPON_MATERIALS = [
+  "Ancient Nord",
+  "Blades",
+  "Bonemold",
+  "Chitin",
   "Daedric",
   "Dragonbone",
-  "Stalhrim",
-  "Nordic",
-  "Ancient Nord",
+  "Dwarven",
+  "Ebony",
+  "Elven",
   "Falmer",
-  "Chitin",
-  "Bonemold",
-  "Morag Tong",
-  "Blades",
+  "Glass",
   "Imperial",
+  "Iron",
+  "Lunar",
+  "Morag Tong",
+  "Nordic",
+  "Orcish",
+  "Skyforge Steel",
+  "Silver",
+  "Stalhrim",
+  "Steel",
   "Stormcloak",
   "Thalmor",
 ];
@@ -64,6 +68,15 @@ export const WEAPON_MATERIALS = [
  * Comprehensive list of weapon types found in Skyrim
  */
 export const WEAPON_TYPES = [
+  // Special types (prioritized)
+  "Spear",
+  "Halberd",
+  "Pike",
+  "Lance",
+  "Trident",
+  "Glaive",
+  "Polearm",
+
   // One-handed weapons
   "Sword",
   "Dagger",
@@ -71,23 +84,27 @@ export const WEAPON_TYPES = [
   "War Axe",
   "Battle Axe",
   "Warhammer",
+
   // Two-handed weapons
   "Greatsword",
   "Battleaxe",
   "Warhammer",
   "Bow",
   "Crossbow",
+
   // Staff variants
   "Staff",
   "Stave",
+  "Quarterstaff",
+
   // Additional variants
   "Blade",
-  "Sword",
   "Axe",
   "Hammer",
   "Mace",
   "Dagger",
   "Bow",
+
   // Special types
   "Katana",
   "Wakizashi",
@@ -107,15 +124,7 @@ export const WEAPON_TYPES = [
   "Maul",
   "Club",
   "Flail",
-  "Spear",
-  "Halberd",
-  "Pike",
-  "Lance",
-  "Trident",
-  "Glaive",
   "Scythe",
-  "Polearm",
-  "Quarterstaff",
 ];
 
 /**
@@ -209,20 +218,40 @@ function isNamedWeapon(name: string): boolean {
  * Extracts weapon type from a named weapon
  */
 function extractWeaponTypeFromNamed(name: string): string {
-  // Try to find weapon type in the name
+  const lowerName = name.toLowerCase();
+
+  // First check for spear specifically
+  if (lowerName.includes("spear")) {
+    // Check for specific spear variants
+    if (
+      lowerName.includes("two-handed spear") ||
+      lowerName.includes("2h spear")
+    ) {
+      return "Two-Handed Spear";
+    }
+    if (
+      lowerName.includes("one-handed spear") ||
+      lowerName.includes("1h spear")
+    ) {
+      return "One-Handed Spear";
+    }
+    return "Spear";
+  }
+
+  // Then check for other weapon types
   for (const weaponType of WEAPON_TYPES) {
-    if (name.toLowerCase().includes(weaponType.toLowerCase())) {
+    if (lowerName.includes(weaponType.toLowerCase())) {
       return weaponType;
     }
   }
 
   // Fallback based on common named weapon patterns
-  if (name.toLowerCase().includes("sword")) return "Sword";
-  if (name.toLowerCase().includes("dagger")) return "Dagger";
-  if (name.toLowerCase().includes("axe")) return "Axe";
-  if (name.toLowerCase().includes("mace")) return "Mace";
-  if (name.toLowerCase().includes("bow")) return "Bow";
-  if (name.toLowerCase().includes("staff")) return "Staff";
+  if (lowerName.includes("sword")) return "Sword";
+  if (lowerName.includes("dagger")) return "Dagger";
+  if (lowerName.includes("axe")) return "Axe";
+  if (lowerName.includes("mace")) return "Mace";
+  if (lowerName.includes("bow")) return "Bow";
+  if (lowerName.includes("staff")) return "Staff";
 
   return "Unknown";
 }
@@ -533,6 +562,24 @@ export function calculateStatRanges(weapons: EnchantedWeapon[]): {
  */
 function extractWeaponTypeFromName(name: string): string | null {
   const lowerName = name.toLowerCase();
+
+  // First check for spear specifically
+  if (lowerName.includes("spear")) {
+    // Check for specific spear variants
+    if (
+      lowerName.includes("two-handed spear") ||
+      lowerName.includes("2h spear")
+    ) {
+      return "Two-Handed Spear";
+    }
+    if (
+      lowerName.includes("one-handed spear") ||
+      lowerName.includes("1h spear")
+    ) {
+      return "One-Handed Spear";
+    }
+    return "Spear";
+  }
 
   // Look for weapon types anywhere in the name
   for (const weaponType of WEAPON_TYPES) {

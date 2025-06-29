@@ -1,37 +1,33 @@
 # General Weapon Templates
 
-This document lists all general weapon templates found in the game. These are base weapons that can be enchanted with various enchantments.
+Enchanted weapons in the game world commonly follow a pattern of `<Material> <Weapon Type> of <Enchantment>`. For example, you might find an "Orcish Sword of Burning" or "Glass Bow of Frost". These weapons combine the base statistics of their material and weapon type with various magical effects.
 
-**Generated:** {{generatedDate}}  
-**Total General Weapons:** {{totalGeneralWeapons}}
+## Available Materials
 
-## Template Overview
+{{#each materials}}
 
-General weapons are created by applying enchantments to base weapon templates. Each template represents a specific weapon type and material that can be found with various enchantments.
+- {{this}}
+  {{/each}}
 
-{{#each generalWeaponTemplates}}
+## Weapon Types
 
-## {{templateName}}
+{{#each weaponTypes}}
 
-- **Template FormID:** {{cnamFormId}}
-- **Weapon Type:** {{weaponType}}
-- **Base Damage:** {{baseDamage}}
-- **Weight:** {{weight}}
-- **Value:** {{value}}
-  {{#if material}}- **Material:** {{material}}{{/if}}
-- **Enchanted Variants:** {{count}}
+- {{this}}
+  {{/each}}
 
-### Example Enchanted Weapons
+## Common Enchantments
 
-{{#each examples}}
+Below is a comprehensive list of enchantments that can be found on general weapons. Any of these enchantments may appear on weapons of various materials and types.
 
-- {{name}} ({{baseDamage}} damage, {{weight}} weight, {{value}} value)
+{{#each enchantments}}
+
+### {{name}}
+
+- **Cost:** {{cost}} | **Charges:** {{chargeAmount}} | **Uses:** {{#if cost}}{{math chargeAmount "/" cost}}{{else}}N/A{{/if}}
+- **Effects:** {{description}}
   {{/each}}
 
 ---
 
-{{/each}}
-
-## Summary
-
-This document shows {{generalWeaponTemplates.length}} general weapon templates that can be enchanted with various enchantments. Each template represents a base weapon that players can find or craft and then enchant with different magical effects.
+_Note: Not all material and weapon type combinations exist for every enchantment. Some combinations may be restricted by game balance or design._

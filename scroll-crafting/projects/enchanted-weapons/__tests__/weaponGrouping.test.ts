@@ -23,6 +23,7 @@ describe("weaponGrouping", () => {
         material: "Steel",
         isVendorItem: false,
         description: null,
+        cannotDisenchant: false,
       },
       {
         name: "Sword 2",
@@ -42,6 +43,7 @@ describe("weaponGrouping", () => {
         material: "Iron",
         isVendorItem: false,
         description: null,
+        cannotDisenchant: false,
       },
       {
         name: "Bow 1",
@@ -61,6 +63,7 @@ describe("weaponGrouping", () => {
         material: "Wood",
         isVendorItem: false,
         description: null,
+        cannotDisenchant: false,
       },
     ];
 
@@ -93,6 +96,7 @@ describe("weaponGrouping", () => {
         material: "Steel",
         isVendorItem: false,
         description: null,
+        cannotDisenchant: false,
       },
       {
         name: "Alpha Sword",
@@ -112,6 +116,7 @@ describe("weaponGrouping", () => {
         material: "Iron",
         isVendorItem: false,
         description: null,
+        cannotDisenchant: false,
       },
     ];
 
@@ -141,6 +146,7 @@ describe("weaponGrouping", () => {
         material: "Steel",
         isVendorItem: false,
         description: null,
+        cannotDisenchant: false,
       },
       {
         name: "Bow",
@@ -160,6 +166,7 @@ describe("weaponGrouping", () => {
         material: "Wood",
         isVendorItem: false,
         description: null,
+        cannotDisenchant: false,
       },
     ];
 

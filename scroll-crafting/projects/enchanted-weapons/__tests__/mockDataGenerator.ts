@@ -53,6 +53,49 @@ function generateWeaponRecords(
     "Ebony",
   ];
 
+  // Add a template weapon that will be referenced by CNAM
+  const templateWeapon: WeapRecord = {
+    meta: {
+      type: "WEAP",
+      formId: "0x000302CA",
+      globalFormId: "0x000302CA",
+      plugin: "TestPlugin.esp",
+      stackOrder: 0,
+      isWinner: true,
+    },
+    data: {
+      EDID: "TemplateWeapon",
+      FULL: "Template Weapon",
+      MODL: "Weapons\\Sword\\TemplateSword.nif",
+      EITM: undefined, // No enchantment for template
+      EAMT: 0,
+      ETYP: "0x00013F42",
+      KSIZ: 0,
+      KWDA: [],
+      DESC: "A template weapon for testing",
+      DATA: {
+        value: 100,
+        weight: 5.0,
+        damage: 10,
+      },
+      DNAM: {
+        animationType: 1,
+        speed: 1.0,
+        reach: 1.0,
+        flags1: [],
+        flags2: [],
+      },
+      CRDT: {
+        criticalDamage: 0,
+        criticalPercent: 1,
+        flags: ["On Death"],
+        criticalEffect: "0x00000001",
+      },
+      CNAM: "", // Template has no CNAM
+    },
+  };
+  weapons.push(templateWeapon);
+
   for (let i = 0; i < count; i++) {
     const weaponType = weaponTypes[i % weaponTypes.length];
     const material = materials[i % materials.length];
@@ -71,6 +114,16 @@ function generateWeaponRecords(
     const materialKeywordFormId =
       keywordFormIds[materials.length + materialIndex];
 
+    // Add MagicDisallowEnchanting keyword to every third weapon
+    const magicDisallowEnchantingFormId =
+      i % 3 === 0 ? keywordFormIds[keywordFormIds.length - 1] : undefined;
+
+    const kwda = [
+      weaponTypeKeywordFormId,
+      materialKeywordFormId,
+      magicDisallowEnchantingFormId,
+    ].filter((id): id is string => typeof id === "string");
+
     const weapon: WeapRecord = {
       meta: {
         type: "WEAP",
@@ -87,11 +140,8 @@ function generateWeaponRecords(
         EITM: enchantmentFormId,
         EAMT: 100,
         ETYP: "0x00013F42",
-        KSIZ: keywordFormIds.length > 0 ? 2 : 0,
-        KWDA:
-          keywordFormIds.length > 0
-            ? [weaponTypeKeywordFormId, materialKeywordFormId]
-            : [],
+        KSIZ: kwda.length,
+        KWDA: kwda,
         DESC: `A test ${material.toLowerCase()} ${weaponType.toLowerCase()}`,
         DATA: {
           value: 50 + i * 10,
@@ -111,7 +161,7 @@ function generateWeaponRecords(
           flags: ["On Death"],
           criticalEffect: "0x00000001",
         },
-        CNAM: "0x000302CA",
+        CNAM: "0x000302CA", // Reference to the template weapon
       },
     };
     weapons.push(weapon);
@@ -293,6 +343,22 @@ function generateKeywordRecords(
     };
     keywords.push(keyword);
   }
+
+  // Add MagicDisallowEnchanting keyword
+  const magicDisallowEnchanting: KywdRecord = {
+    meta: {
+      type: "KYWD",
+      formId: generateFormId("KYWD", 999),
+      globalFormId: generateFormId("KYWD", 999),
+      plugin: "TestPlugin.esp",
+      stackOrder: 0,
+      isWinner: true,
+    },
+    data: {
+      EDID: "MagicDisallowEnchanting",
+    },
+  };
+  keywords.push(magicDisallowEnchanting);
 
   return keywords;
 }

@@ -1,22 +1,12 @@
-## {{name}}
+### {{name}}
 
-- **Weapon Type:** {{weaponType}}
-- **Base Damage:** {{baseDamage}}
-- **Weight:** {{weight}}
-- **Value:** {{value}}
-- **Enchantment:** {{enchantment.name}}
-- **Enchantment Cost:** {{enchantment.cost}}
-- **Charge Amount:** {{enchantment.chargeAmount}}
-- **Uniqueness Factors:** {{#each uniquenessFactors}}- {{this}}{{/each}}
+- **Type & Stats:** {{weaponType}} | Damage: {{baseDamage}} | Weight: {{weight}} | Value: {{value}}
+- **Enchantment:** {{#if enchantment.chargeAmount}}Uses: {{#if enchantment.cost}}{{math enchantment.chargeAmount "/" enchantment.cost}}{{else}}N/A{{/if}} | Total Charge: {{enchantment.chargeAmount}} | Cost Per Use: {{enchantment.cost}}{{else}}No Charge{{/if}}{{#if cannotDisenchant}} | **Cannot be disenchanted**{{/if}}
 
-{{#if description}}
+{{#if description}}### Description
+{{description}}{{/if}}
 
-### Description
-
-{{description}}
-{{/if}}
-
-### Effects
+#### Effects
 
 {{#each enchantment.effects}}
 

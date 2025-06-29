@@ -28,6 +28,7 @@ export interface EnchantedWeapon {
   material: string | null;
   isVendorItem: boolean;
   description: string | null;
+  cannotDisenchant: boolean;
 }
 
 export interface WeaponCategory {

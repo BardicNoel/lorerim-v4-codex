@@ -29,13 +29,6 @@ export async function processEnchantment(
 
     // Resolve FormID if needed
     let resolvedFormId = effectFormId;
-    if (formIdResolver.isReady()) {
-      const resolved = formIdResolver.resolveFormId(
-        effectFormId,
-        enchantment.meta.plugin
-      );
-      if (resolved) resolvedFormId = resolved;
-    }
 
     const mgefRecord = mgefMap.get(resolvedFormId.toLowerCase());
     if (!mgefRecord) {
