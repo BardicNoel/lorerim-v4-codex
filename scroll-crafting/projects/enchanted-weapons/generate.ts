@@ -30,13 +30,6 @@ function replaceNumbers(text: string, replacement: string) {
 }
 
 // Register handlebars helpers
-Handlebars.registerHelper(
-  "math",
-  function (lvalue: number, operator: string, rvalue: number) {
-    // ... existing code ...
-  }
-);
-
 Handlebars.registerHelper("replaceNumbers", replaceNumbers);
 
 async function main() {

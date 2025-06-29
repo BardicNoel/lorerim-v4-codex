@@ -107,9 +107,9 @@ export class ThreadPool {
         this.pluginLast = { name: pluginName, duration };
         this.currentPlugins.delete(pluginName);
         const pluginIndex = this.processedPlugins; // 1-based index of completed plugin
-        this.onLog?.(
-          `Plugin completed: ${pluginName} (${pluginIndex}/${this.totalPlugins}) (${duration.toFixed(2)}s)`
-        );
+        // this.onLog?.(
+        //   `Plugin completed: ${pluginName} (${pluginIndex}/${this.totalPlugins}) (${duration.toFixed(2)}s)`
+        // );
       }
       this.processNextTask();
     };
@@ -199,9 +199,9 @@ export class ThreadPool {
       this.pluginStartTimes.set(plugin.name, Date.now());
       this.currentPlugins.add(plugin.name);
       const pluginIndex = this.processedPlugins + this.currentPlugins.size; // 1-based index of this plugin
-      this.onLog?.(
-        `Plugin started: ${plugin.name} (${pluginIndex}/${this.totalPlugins})`
-      );
+      // this.onLog?.(
+      //   `Plugin started: ${plugin.name} (${pluginIndex}/${this.totalPlugins})`
+      // );
       worker.postMessage({
         plugin,
         recordTypeFilter: this.config.recordTypeFilter,

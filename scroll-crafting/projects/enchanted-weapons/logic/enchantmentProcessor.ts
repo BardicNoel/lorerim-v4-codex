@@ -138,7 +138,8 @@ export async function processEnchantment(
       name: enchantment.data.FULL || enchantment.data.EDID,
       cost: costInfo.cost,
       costMethod: costInfo.method,
-      chargeAmount: enchantment.data.ENIT.enchAmount || 0,
+      // Keep chargeAmount as 0 since it will be set by weapon's EAMT
+      chargeAmount: 0,
       effects,
     };
   } catch (error) {
@@ -157,6 +158,7 @@ export async function processEnchantment(
         enchantment.data.FULL || enchantment.data.EDID || "Unknown Enchantment",
       cost: 0,
       costMethod: "auto",
+      // Keep chargeAmount as 0 since it will be set by weapon's EAMT
       chargeAmount: 0,
       effects: [],
     };

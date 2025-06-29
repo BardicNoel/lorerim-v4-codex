@@ -150,6 +150,7 @@ function resolveConflictsForType(
   pluginRegistry: Record<string, PluginMeta>,
   recordType: string
 ): ParsedRecord[] {
+  console.log("Resolving conflicts for type", recordType);
   // Defensive copy
   const newRecords = records.map((record) => ({ ...record }));
   const totalRecords = newRecords.length;

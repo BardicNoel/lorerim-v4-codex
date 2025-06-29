@@ -296,7 +296,7 @@ async function processWeaponRecord(
       value: weapon.data.DATA.value,
       enchantment: {
         ...enchantmentObj,
-        chargeAmount: weapon.data.EAMT || enchantmentObj.chargeAmount,
+        chargeAmount: weapon.data.EAMT || 0,
       },
       globalFormId: weapon.meta.globalFormId,
       plugin: weapon.meta.plugin,

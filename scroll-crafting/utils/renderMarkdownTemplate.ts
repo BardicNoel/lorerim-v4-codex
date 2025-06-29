@@ -11,11 +11,24 @@ function replaceNumbers(text: string) {
 Handlebars.registerHelper(
   "math",
   function (lvalue: number, operator: string, rvalue: number) {
-    if (operator === "/") {
-      // Round to 2 decimal places for readability
-      return Math.round((lvalue / rvalue) * 100) / 100;
+    // Ensure we have valid numbers
+    if (typeof lvalue !== "number" || typeof rvalue !== "number") {
+      return "";
     }
-    return lvalue;
+
+    // Only handle division
+    if (operator !== "/") {
+      return "";
+    }
+
+    // Prevent division by zero
+    if (rvalue === 0) {
+      return "";
+    }
+
+    // Calculate and round to 2 decimal places
+    const result = lvalue / rvalue;
+    return Math.floor(result * 100) / 100;
   }
 );
 
