@@ -8,6 +8,7 @@ export type RecordOfType<T extends string> = ParsedRecord & {
 
 export type SpelRecord = RecordOfType<"SPEL">;
 export type MgefRecord = RecordOfType<"MGEF">;
+export type FlstRecord = RecordOfType<"FLST">;
 
 export interface EnrichedSpelEffect {
   effectFormId: string; // EFID

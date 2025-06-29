@@ -8,6 +8,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "generate:traits": "node --loader ts-node/esm projects/traits/generate.ts",
     "generate:subclasses": "node --loader ts-node/esm projects/subclasses/generate.ts",
     "build": "tsc",
     "prepare": "npm run build",

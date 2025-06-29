@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Traits Implementation Rule
+
+This rule serves as the authoritative guide for implementing the traits generator project in the Lorerim Codex system.
+
+## Implementation Status Matrix
+
+| Component                  | Not Started | In Progress | Complete | Notes |
+|---------------------------|-------------|-------------|----------|-------|
+| **Project Structure**     |             |             |          |       |
+| ├── Directory Setup       |             |             | ✓        | Created all required directories |
+| ├── rules.md             |             |             | ✓        | Created with all required sections |
+| **Templates**             |             |             |          |       |
+| ├── primary.md           |             |             | ✓        | Basic template with header and trait listing |
+| ├── trait_block.md       |             |             | ✓        | Template for individual traits with effects |
+| **Core Logic**            |             |             |          |       |
+| ├── Record Resolution    |             |             | ✓        | PERK -> SPEL -> MGEF resolution implemented |
+| ├── Tests               |             |             | ✓        | Unit tests for trait resolution with mock data |
+| **Generator Script**      |             |             |          |       |
+| ├── generate.ts         | ✓           |             |          | Not started |
+| ├── Record Loading      |             | ✓           |          | Started loadTraitRecords.ts implementation for "Traits_AbilityList" and "LoreRim Traits.esp" |
+| **Documentation**         |             |             |          |       |
+| ├── traits-logic.md     |             |             | ✓        | Core documentation created |
+| ├── API Documentation   | ✓           |             |          | Not started |
+
+## Project Structure Requirements
+
+```
+scroll-crafting/projects/traits/
+├── records/           # Trait-specific records
+├── templates/         # Markdown templates
+│   ├── primary.md    # Main document layout
+│   └── trait_block.md # Individual trait template
+├── logic/            # Trait-specific logic
+├── __tests__/        # Unit tests
+├── output/           # Generated files (auto-created)
+├── generate.ts       # Main generator script
+└── rules.md         # Project-specific rules
+```

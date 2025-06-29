@@ -1,0 +1,204 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Traits Implementation Rule
+
+This rule serves as the authoritative guide for implementing the traits generator project in the Lorerim Codex system.
+
+## Project Structure Requirements
+
+```
+scroll-crafting/projects/traits/
+├── records/           # Trait-specific records
+├── templates/         # Markdown templates
+│   ├── primary.md    # Main document layout
+│   └── trait_block.md # Individual trait template
+├── logic/            # Trait-specific logic
+├── __tests__/        # Unit tests
+├── output/           # Generated files (auto-created)
+├── generate.ts       # Main generator script
+└── rules.md         # Project-specific rules
+```
+
+## Entry Point Records
+
+The traits system is built from the following source records:
+
+### Primary Record Sources
+1. **Traits Form List (FLST)** 
+   - ID: `0xFEA76002`
+   - Plugin: `LoreRim Traits.esp`
+   - Purpose: Defines the canonical list of trait spells in load order
+   - Field: `LNAM` array contains FormIDs of all trait SPELs
+
+2. **Trait Spells (SPEL)**
+   - Referenced by: Traits Form List
+   - Contains: 
+     - Basic trait info (name, description)
+     - Effect bundles that define trait mechanics
+     - References to individual magic effects
+
+3. **Magic Effects (MGEF)**
+   - Referenced by: Trait spells
+   - Contains:
+     - Actual effect descriptions with magnitude/duration
+     - Core mechanical implementation details
+
+### Data Flow
+```mermaid
+graph TD
+    FLST["Traits Form List<br/>(0xFEA76002)"] -->|"LNAM[]"| SPEL["Trait Spells"]
+    SPEL -->|"effects[].EFID"| MGEF["Magic Effects"]
+```
+
+### Record Resolution Process
+1. Load and validate the traits form list
+2. Resolve form list entries to trait spells
+3. For each trait spell:
+   - Extract basic info (name, description)
+   - Resolve spell effects to magic effects
+   - Build complete trait definition
+
+## Implementation Status Matrix
+
+| Component                  | Not Started | In Progress | Complete | Notes |
+|---------------------------|-------------|-------------|----------|-------|
+| **Project Structure**     |             |             |          |       |
+| ├── Directory Setup       |             |             | ✓        | Created all required directories |
+| ├── rules.md             |             |             | ✓        | Created with all required sections |
+| **Templates**             |             |             |          |       |
+| ├── primary.md           |             |             | ✓        | Basic template with header and trait listing |
+| ├── trait_block.md       |             |             | ✓        | Template for individual traits with effects |
+| **Core Logic**            |             |             |          |       |
+| ├── Record Resolution    |             |             | ✓        | PERK -> SPEL -> MGEF resolution implemented |
+| ├── Record Loading      |             |             | ✓        | Form list and plugin record loading |
+| ├── Tests               |             |             | ✓        | Unit tests for resolution and loading |
+| **Generator Script**      |             |             |          |       |
+| ├── generate.ts         | ✓           |             |          | Not started |
+| **Documentation**         |             |             |          |       |
+| ├── traits-logic.md     |             |             | ✓        | Core documentation created |
+| ├── API Documentation   | ✓           |             |          | Not started |
+
+## Implementation Phases
+
+### 1. Project Setup
+- Initialize directory structure as shown above
+- Create `rules.md` inheriting from:
+  - code_quality
+  - generator_structure
+  - project_logic
+  - data_mapping
+  - schema_linker
+  - template_construction
+  - output_format
+  - testing
+
+### 2. Template Development
+- Create `primary.md`:
+  - Define document structure
+  - Set up section hierarchy
+  - Plan trait grouping layout
+- Create `trait_block.md`:
+  - Use semantic variable names
+  - Avoid exposing plugin internals
+  - Follow Handlebars syntax
+  - Focus on conceptual presentation
+
+### 3. Logic Implementation
+- Create core modules in `logic/`:
+  ```typescript
+  // Example structure
+  interface TraitDefinition {
+    name: string;
+    description: string;
+    category?: string;
+    effects: string[];
+    requirements?: string[];
+  }
+  ```
+- Implement with TDD approach
+- Create corresponding test files
+- Document relationships in `traits-logic.md`
+
+### 4. Generator Script
+- Follow Generator Structure Rule for `generate.ts`
+- Implement record loading with fallbacks
+- Set up proper error handling
+- Configure template registration
+- Define output paths
+
+### 5. Testing Requirements
+- Create test fixtures
+- Write unit tests for all logic
+- Test edge cases
+- Verify template rendering
+- Test record resolution
+
+### 6. Output Specifications
+
+#### JSON Output
+```typescript
+interface TraitOutput {
+  traits: TraitDefinition[];
+  categories?: {
+    [key: string]: TraitDefinition[];
+  };
+  metadata: {
+    generatedAt: string;
+    version: string;
+  };
+}
+```
+
+#### Markdown Structure
+```markdown
+# Traits
+## Overview
+## Categories
+### [Category Name]
+#### [Trait Name]
+- Description
+- Effects
+- Requirements
+```
+
+## Quality Standards
+
+### Code Quality
+- Follow TypeScript best practices
+- Use proper typing
+- Document functions
+- Handle errors gracefully
+
+### Testing Coverage
+- All logic must have tests
+- Test both success and failure cases
+- Include integration tests
+- Verify output formats
+
+### Documentation
+- Update `traits-logic.md`
+- Document record relationships
+- Include usage examples
+- Document any special cases
+
+## Cursor Agent Notes
+
+- Follow TDD approach for all implementations
+- Use existing utilities from `utils/`
+- Respect project boundaries
+- Update this rule if new patterns emerge
+- Reference UESP documentation for record structures
+
+*This rule is always in effect alongside other inherited rules.*
+
+
+
+
+
+
+
+
+

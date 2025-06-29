@@ -12,7 +12,7 @@
     "declaration": true,
     "outDir": "./dist",
     "sourceMap": true,
-    "types": ["node"]
+    "types": ["node", "vitest/importMeta"]
   },
   "include": [
     "projects/**/*.ts",
