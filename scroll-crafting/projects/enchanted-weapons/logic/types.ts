@@ -1,16 +1,17 @@
 export interface EnchantedWeaponEffect {
   formId: string;
   name: string;
+  description: string;
   magnitude: number;
   duration: number;
   area: number;
-  description: string;
   school: string;
 }
 
 export interface EnchantedWeaponEnchantment {
   name: string;
   cost: number;
+  costMethod: "manual" | "auto";
   chargeAmount: number;
   effects: EnchantedWeaponEffect[];
 }

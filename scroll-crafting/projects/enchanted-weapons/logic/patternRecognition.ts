@@ -1,5 +1,5 @@
 import { EnchantedWeapon } from "./types.js";
-import { errorLogger } from "../utils/errorLogger.js";
+import { errorLogger } from "../utils/error-logger-instance.js";
 
 export interface WeaponPattern {
   patternType:

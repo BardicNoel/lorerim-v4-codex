@@ -1,6 +1,7 @@
 import { WeapRecord } from "../../../types/weapSchema.js";
 import { EnchRecord } from "../../../types/enchSchema.js";
 import { KywdRecord } from "../../../types/kywdSchema.js";
+import { MgefRecordFromSchema } from "../../../types/mgefSchema.js";
 import {
   getBestDisplayName,
   isVendorItem,
@@ -30,7 +31,30 @@ import {
 import { processEnchantment } from "./enchantmentProcessor.js";
 import { groupWeaponsByCategory } from "./weaponGrouping.js";
 import { WeapCategories } from "../../../types/weapSchema.js";
-import { errorLogger } from "../utils/errorLogger.js";
+import { errorLogger } from "../utils/error-logger-instance.js";
+
+interface RecordMaps {
+  mgefMap: Map<string, MgefRecordFromSchema>;
+  enchantmentMap: Map<string, EnchRecord>;
+  keywordMap: Map<string, KywdRecord>;
+}
+
+interface ProcessedWeapons {
+  enchantedWeapons: EnchantedWeapon[];
+  boundMysticWeapons: BoundMysticWeapon[];
+  wandStaffWeapons: WandStaffWeapon[];
+}
+
+interface WeaponStats {
+  materials: string[];
+  weaponTypes: string[];
+  enchantments: {
+    name: string;
+    cost: number;
+    chargeAmount: number;
+    description: string;
+  }[];
+}
 
 /**
  * Resolves weapon metadata from pre-resolved keywords
@@ -117,13 +141,349 @@ function determineWeaponTypeFromKeywords(keywords: string[]): string {
 }
 
 /**
- * Resolves enchanted weapons by linking WEAP, ENCH, and MGEF records
- * Now uses CNAM-based classification for unique vs general weapons
+ * Builds lookup maps for efficient record access
+ */
+async function buildRecordMaps(
+  magicEffectRecords: MgefRecordFromSchema[],
+  enchantmentRecords: EnchRecord[],
+  keywordRecords: KywdRecord[]
+): Promise<RecordMaps> {
+  // Load FormID resolver
+  try {
+    await formIdResolver.loadPluginRegistry();
+    console.log(
+      `🔍 FormID resolver loaded with ${Object.keys(formIdResolver).length} plugins`
+    );
+  } catch (error) {
+    errorLogger.logError(`Failed to load FormID resolver: ${error}`, { error });
+    console.warn(`⚠️  Will continue without FormID resolution`);
+  }
+
+  const mgefMap = new Map<string, MgefRecordFromSchema>();
+  const enchantmentMap = new Map<string, EnchRecord>();
+  const keywordMap = new Map<string, KywdRecord>();
+
+  // Build magic effect map
+  for (const mgef of magicEffectRecords) {
+    const formId = mgef.meta.globalFormId.toLowerCase();
+    mgefMap.set(formId, mgef);
+  }
+
+  // Build enchantment map - store both original and lowercase FormIDs
+  for (const ench of enchantmentRecords) {
+    const formId = ench.meta.globalFormId;
+    enchantmentMap.set(formId, ench); // Original FormID
+    enchantmentMap.set(formId.toLowerCase(), ench); // Lowercase FormID
+
+    // Log any duplicate FormIDs
+    if (enchantmentMap.has(formId) && enchantmentMap.get(formId) !== ench) {
+      errorLogger.logError(`Duplicate enchantment FormID detected`, {
+        formId,
+        edid: ench.data.EDID,
+        plugin: ench.meta.plugin,
+      });
+    }
+  }
+
+  // Build keyword map
+  for (const kwd of keywordRecords) {
+    keywordMap.set(kwd.meta.globalFormId, kwd);
+  }
+
+  console.log(
+    `📊 Built maps:`,
+    `\n- Magic Effects: ${mgefMap.size}`,
+    `\n- Enchantments: ${enchantmentMap.size / 2} (${enchantmentMap.size} entries including case variants)`,
+    `\n- Keywords: ${keywordMap.size}`
+  );
+
+  return { mgefMap, enchantmentMap, keywordMap };
+}
+
+/**
+ * Filters weapons that should be processed
+ */
+function filterProcessableWeapons(weaponRecords: WeapRecord[]): WeapRecord[] {
+  return weaponRecords.filter((weapon) => {
+    if (!weapon.data.EITM || weapon.data.EITM.trim() === "") return false;
+    if (weapon.data.EDID?.startsWith("REQ_NULL_")) return false;
+    if (weapon.data.EDID?.startsWith("RPC_Replica")) return false;
+    if (weapon.data.DNAM?.flags1?.includes("Unplayable")) return false;
+
+    const weaponName = weapon.data.FULL?.toLowerCase() || "";
+    if (weaponName.includes("lunar ")) return false;
+    if (weaponName.includes("daedric") && weaponName.includes("of the inferno"))
+      return false;
+    if (weaponName.includes("poison-coated falmer war axe")) return false;
+
+    return true;
+  });
+}
+
+/**
+ * Processes a single weapon record into an EnchantedWeapon
+ */
+async function processWeaponRecord(
+  weapon: WeapRecord,
+  recordMaps: RecordMaps
+): Promise<EnchantedWeapon | BoundMysticWeapon | WandStaffWeapon | null> {
+  try {
+    const enchantmentFormId = weapon.data.EITM;
+    if (!enchantmentFormId) {
+      errorLogger.logError(`Missing enchantment FormID`, {
+        weaponName: weapon.data.EDID,
+        formId: weapon.meta.globalFormId,
+        plugin: weapon.meta.plugin,
+      });
+      return null;
+    }
+
+    const enchantment = recordMaps.enchantmentMap.get(enchantmentFormId);
+    if (!enchantment) {
+      errorLogger.logError(`Could not find enchantment record`, {
+        weaponName: weapon.data.EDID,
+        formId: weapon.meta.globalFormId,
+        plugin: weapon.meta.plugin,
+        enchantmentFormId,
+      });
+      return null;
+    }
+
+    if (!enchantment.data.effects?.length) {
+      errorLogger.logError(`Enchantment has no effects`, {
+        weaponName: weapon.data.EDID,
+        formId: weapon.meta.globalFormId,
+        plugin: weapon.meta.plugin,
+        enchantmentFormId,
+        enchantmentEdid: enchantment.data.EDID,
+      });
+      return null;
+    }
+
+    const enchantmentObj = await processEnchantment(
+      enchantment,
+      recordMaps.mgefMap
+    );
+    if (!enchantmentObj) {
+      errorLogger.logError(`Failed to process enchantment`, {
+        weaponName: weapon.data.EDID,
+        formId: weapon.meta.globalFormId,
+        plugin: weapon.meta.plugin,
+        enchantmentFormId,
+        enchantmentEdid: enchantment.data.EDID,
+      });
+      return null;
+    }
+
+    const keywords =
+      weapon.data.KWDA?.map(
+        (id) => recordMaps.keywordMap.get(id)?.data.EDID
+      ).filter((edid): edid is string => edid !== null && edid !== undefined) ||
+      [];
+
+    const { material, isVendorItem } =
+      resolveWeaponMetadataFromKeywords(keywords);
+    const weaponType = determineWeaponTypeWithCache(
+      weapon,
+      recordMaps.keywordMap
+    );
+
+    const enchantedWeapon: EnchantedWeapon = {
+      name: getBestDisplayName(weapon.data),
+      weaponType,
+      baseDamage: weapon.data.DATA.damage,
+      weight: weapon.data.DATA.weight,
+      value: weapon.data.DATA.value,
+      enchantment: {
+        ...enchantmentObj,
+        chargeAmount: weapon.data.EAMT || enchantmentObj.chargeAmount,
+      },
+      globalFormId: weapon.meta.globalFormId,
+      plugin: weapon.meta.plugin,
+      keywords,
+      material,
+      isVendorItem,
+      description: weapon.data.DESC || null,
+      cannotDisenchant: keywords.includes("MagicDisallowEnchanting"),
+    };
+
+    if (isBoundMysticWeapon(enchantedWeapon)) {
+      return convertToBoundMysticWeapon(enchantedWeapon);
+    }
+    if (isWandOrStaff(enchantedWeapon)) {
+      return convertToWandStaffWeapon(enchantedWeapon);
+    }
+    return enchantedWeapon;
+  } catch (error) {
+    errorLogger.logError(`Error processing weapon ${weapon.data.EDID}`, {
+      weaponName: weapon.data.EDID,
+      formId: weapon.meta.globalFormId,
+      plugin: weapon.meta.plugin,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+}
+
+/**
+ * Processes all weapon records with performance monitoring
+ */
+async function processWeaponRecords(
+  weapons: WeapRecord[],
+  recordMaps: RecordMaps
+): Promise<ProcessedWeapons> {
+  const startTime = Date.now();
+  let processedCount = 0;
+  let skippedCount = 0;
+  let errorCount = 0;
+
+  const enchantedWeapons: EnchantedWeapon[] = [];
+  const boundMysticWeapons: BoundMysticWeapon[] = [];
+  const wandStaffWeapons: WandStaffWeapon[] = [];
+
+  console.log(`Starting to process ${weapons.length} weapons...`);
+
+  for (const weapon of weapons) {
+    try {
+      const result = await processWeaponRecord(weapon, recordMaps);
+      if (result) {
+        if ("isBound" in result) {
+          boundMysticWeapons.push(result as BoundMysticWeapon);
+        } else if ("isWandOrStaff" in result) {
+          wandStaffWeapons.push(result as WandStaffWeapon);
+        } else {
+          enchantedWeapons.push(result as EnchantedWeapon);
+        }
+        processedCount++;
+      } else {
+        skippedCount++;
+        errorLogger.logError(`Skipped weapon processing`, {
+          weaponName: weapon.data.EDID,
+          formId: weapon.meta.globalFormId,
+          plugin: weapon.meta.plugin,
+          reason: "processWeaponRecord returned null",
+        });
+      }
+    } catch (error) {
+      errorCount++;
+      errorLogger.logError(`Failed to process weapon`, {
+        weaponName: weapon.data.EDID,
+        formId: weapon.meta.globalFormId,
+        plugin: weapon.meta.plugin,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    if ((processedCount + skippedCount + errorCount) % 1000 === 0) {
+      const elapsed = Date.now() - startTime;
+      const rate =
+        (processedCount + skippedCount + errorCount) / (elapsed / 1000);
+      console.log(
+        `📊 Progress: ${processedCount + skippedCount + errorCount}/${weapons.length} weapons`,
+        `\n- Processed: ${processedCount}`,
+        `\n- Skipped: ${skippedCount}`,
+        `\n- Errors: ${errorCount}`,
+        `\n- Rate: ${rate.toFixed(1)}/sec`
+      );
+    }
+  }
+
+  const totalTime = Date.now() - startTime;
+  console.log(
+    `✅ Processing complete:`,
+    `\n- Total weapons: ${weapons.length}`,
+    `\n- Successfully processed: ${processedCount}`,
+    `\n- Skipped: ${skippedCount}`,
+    `\n- Errors: ${errorCount}`,
+    `\n- Time: ${totalTime}ms`,
+    `\n- Rate: ${(processedCount / (totalTime / 1000)).toFixed(1)}/sec`,
+    `\n\nResults:`,
+    `\n- Enchanted weapons: ${enchantedWeapons.length}`,
+    `\n- Bound/Mystic weapons: ${boundMysticWeapons.length}`,
+    `\n- Wands/Staves: ${wandStaffWeapons.length}`
+  );
+
+  return { enchantedWeapons, boundMysticWeapons, wandStaffWeapons };
+}
+
+/**
+ * Collects and calculates weapon statistics
+ */
+function calculateWeaponStats(weapons: EnchantedWeapon[]): WeaponStats {
+  const materials = Array.from(
+    new Set(
+      weapons
+        .map((w) => w.material)
+        .filter((m): m is string => m !== null && m !== undefined)
+        .sort()
+    )
+  );
+
+  const weaponTypes = Array.from(
+    new Set(weapons.map((w) => w.weaponType).sort())
+  );
+
+  const enchantments = Array.from(
+    new Set(
+      weapons
+        .map((w) => w.enchantment)
+        .filter((e) => e !== null)
+        .map((e) => ({
+          name: e.name,
+          cost: e.cost,
+          chargeAmount: e.chargeAmount,
+          description: e.effects.map((ef) => ef.description).join("; "),
+        }))
+    )
+  ).sort((a, b) => a.name.localeCompare(b.name));
+
+  return { materials, weaponTypes, enchantments };
+}
+
+/**
+ * Deduplicates a list of weapons based on name, stats, and enchantment.
+ * Weapons are considered duplicates if they have the same name, base damage, value, and enchantment name.
+ */
+function deduplicateWeaponList<T extends EnchantedWeapon>(
+  weapons: T[],
+  context: string = "weapon"
+): T[] {
+  const deduplicated = weapons.reduce((acc: T[], current) => {
+    const duplicate = acc.find(
+      (weapon) =>
+        weapon.name === current.name &&
+        weapon.baseDamage === current.baseDamage &&
+        weapon.value === current.value &&
+        weapon.enchantment.name === current.enchantment.name
+    );
+
+    if (!duplicate) {
+      acc.push(current);
+    } else {
+      console.log(
+        `📝 Skipping duplicate ${context}: ${current.name} (${current.globalFormId}) - matches ${duplicate.globalFormId}`
+      );
+    }
+    return acc;
+  }, []);
+
+  console.log(
+    `📊 ${context} deduplication:`,
+    `\n- Original count: ${weapons.length}`,
+    `\n- After deduplication: ${deduplicated.length}`,
+    `\n- Duplicates removed: ${weapons.length - deduplicated.length}`
+  );
+
+  return deduplicated;
+}
+
+/**
+ * Main function to resolve enchanted weapons
  */
 export async function resolveEnchantedWeapons(
   weaponRecords: WeapRecord[],
   enchantmentRecords: EnchRecord[],
-  magicEffectRecords: any[],
+  magicEffectRecords: MgefRecordFromSchema[],
   keywordRecords: KywdRecord[]
 ): Promise<{
   uniqueWeapons: UniqueWeapon[];
@@ -142,208 +502,42 @@ export async function resolveEnchantedWeapons(
     description: string;
   }[];
 }> {
-  // Load the FormID resolver
-  try {
-    await formIdResolver.loadPluginRegistry();
-    console.log(
-      `🔍 FormID resolver loaded with ${Object.keys(formIdResolver).length} plugins`
-    );
-  } catch (error) {
-    errorLogger.logError(`Failed to load FormID resolver: ${error}`, { error });
-    console.warn(`⚠️  Will continue without FormID resolution`);
-  }
+  // 1. Build lookup maps
+  const recordMaps = await buildRecordMaps(
+    magicEffectRecords,
+    enchantmentRecords,
+    keywordRecords
+  );
 
-  // Build all lookup maps once for O(1) access
-  console.log("🔧 Building lookup maps...");
-  const mgefMap = new Map<string, any>();
-  const enchantmentMap = new Map<string, EnchRecord>();
-  const keywordMap = new Map<string, KywdRecord>();
+  // 2. Filter weapons to process
+  const processableWeapons = filterProcessableWeapons(weaponRecords);
+  console.log(`🔍 Processing ${processableWeapons.length} weapons...`);
 
-  // Pre-populate magic effect map
-  for (const mgef of magicEffectRecords) {
-    mgefMap.set(mgef.meta.globalFormId.toLowerCase(), mgef);
-  }
-
-  // Pre-populate enchantment map
-  for (const ench of enchantmentRecords) {
-    enchantmentMap.set(ench.meta.globalFormId, ench);
-  }
-
-  // Pre-populate keyword map
-  for (const kwd of keywordRecords) {
-    keywordMap.set(kwd.meta.globalFormId, kwd);
-  }
+  // 3. Process weapons
+  const processedWeapons = await processWeaponRecords(
+    processableWeapons,
+    recordMaps
+  );
+  const { enchantedWeapons, boundMysticWeapons, wandStaffWeapons } =
+    processedWeapons;
 
   console.log(
-    `📊 Built maps: ${mgefMap.size} magic effects, ${enchantmentMap.size} enchantments, ${keywordMap.size} keywords`
+    `📊 Processed weapons breakdown:`,
+    `\n- Enchanted: ${enchantedWeapons.length}`,
+    `\n- Bound/Mystic: ${boundMysticWeapons.length}`,
+    `\n- Wands/Staves: ${wandStaffWeapons.length}`,
+    `\n- Total: ${enchantedWeapons.length + boundMysticWeapons.length + wandStaffWeapons.length}`
   );
 
-  const enchantedWeapons: EnchantedWeapon[] = [];
-  const boundMysticWeapons: BoundMysticWeapon[] = [];
-  const wandStaffWeapons: WandStaffWeapon[] = [];
-
-  // Count REQ_NULL_ weapons for logging
-  const reqNullWeapons = weaponRecords.filter(
-    (weapon) => weapon.data.EDID && weapon.data.EDID.startsWith("REQ_NULL_")
-  );
-
-  // Count RPC_Replica weapons for logging
-  const rpcReplicaWeapons = weaponRecords.filter(
-    (weapon) => weapon.data.EDID && weapon.data.EDID.startsWith("RPC_Replica")
-  );
-
-  // Filter weapons that have enchantments (EITM field), exclude REQ_NULL_ weapons and unplayable weapons
-  // REQ_NULL_ weapons have special handling to remove them from the game
-  const weaponsWithEnchantments = weaponRecords.filter(
-    (weapon) =>
-      weapon.data.EITM &&
-      weapon.data.EITM.trim() !== "" &&
-      (!weapon.data.EDID ||
-        (!weapon.data.EDID.startsWith("REQ_NULL_") &&
-          !weapon.data.EDID.startsWith("RPC_Replica"))) &&
-      !weapon.data.DNAM?.flags1?.includes("Unplayable") && // Filter out unplayable weapons
-      (!weapon.data.FULL || // Filter out specific weapon patterns
-        (!weapon.data.FULL.toLowerCase().includes("lunar ") && // Lunar weapons
-          !(
-            weapon.data.FULL.toLowerCase().includes("daedric") &&
-            weapon.data.FULL.toLowerCase().includes("of the inferno")
-          ) && // Daedric weapons of the Inferno
-          !weapon.data.FULL.toLowerCase().includes(
-            "poison-coated falmer war axe"
-          ))) // Specific weapon
-  );
-
-  console.log(
-    `🔍 Processing ${weaponsWithEnchantments.length} weapons with enchantments (excluding ${reqNullWeapons.length} REQ_NULL_ weapons, ${rpcReplicaWeapons.length} RPC_Replica weapons, Lunar weapons, Daedric weapons of the Inferno, specific named weapons, and weapons marked as unplayable)...`
-  );
-
-  const startTime = Date.now();
-  let processedWeapons = 0;
-
-  for (const weapon of weaponsWithEnchantments) {
-    try {
-      // Early exit for weapons without enchantments
-      if (!weapon.data.EITM?.trim()) continue;
-
-      // O(1) enchantment lookup instead of O(n) find
-      const enchantment = enchantmentMap.get(weapon.data.EITM);
-      if (!enchantment) {
-        errorLogger.logMissingEnchantment(
-          weapon.data.EDID,
-          weapon.data.EITM,
-          weapon.meta.plugin
-        );
-        continue;
-      }
-
-      // Early exit for enchantments without effects
-      if (!enchantment.data.effects?.length) continue;
-
-      // Process enchantment (now async)
-      const enchantmentObj = await processEnchantment(enchantment, mgefMap);
-      if (!enchantmentObj) {
-        continue;
-      }
-
-      // O(1) keyword resolution using pre-built map
-      const keywords =
-        weapon.data.KWDA?.map((id) => keywordMap.get(id)?.data.EDID).filter(
-          (edid): edid is string => edid !== null && edid !== undefined
-        ) || [];
-
-      // Resolve weapon metadata using resolved keywords
-      const { material, isVendorItem } =
-        resolveWeaponMetadataFromKeywords(keywords);
-
-      // Determine weapon type from keywords (with animation fallback)
-      const weaponType = determineWeaponTypeWithCache(weapon, keywordMap);
-
-      // Create the enchanted weapon object
-      const enchantedWeapon: EnchantedWeapon = {
-        name: getBestDisplayName(weapon.data),
-        weaponType,
-        baseDamage: weapon.data.DATA.damage,
-        weight: weapon.data.DATA.weight,
-        value: weapon.data.DATA.value,
-        enchantment: {
-          ...enchantmentObj,
-          chargeAmount: weapon.data.EAMT || enchantmentObj.chargeAmount, // Use weapon EAMT if available, fallback to enchantment charge
-        },
-        globalFormId: weapon.meta.globalFormId,
-        plugin: weapon.meta.plugin,
-        keywords,
-        material,
-        isVendorItem,
-        description: weapon.data.DESC || null,
-        cannotDisenchant: keywords.includes("MagicDisallowEnchanting"),
-      };
-
-      // Early exit for bound/mystic weapons (skip CNAM classification)
-      if (isBoundMysticWeapon(enchantedWeapon)) {
-        boundMysticWeapons.push(convertToBoundMysticWeapon(enchantedWeapon));
-      } else if (isWandOrStaff(enchantedWeapon)) {
-        wandStaffWeapons.push(convertToWandStaffWeapon(enchantedWeapon));
-      } else {
-        enchantedWeapons.push(enchantedWeapon);
-      }
-
-      // Performance monitoring
-      processedWeapons++;
-      if (processedWeapons % 1000 === 0) {
-        const elapsed = Date.now() - startTime;
-        const rate = processedWeapons / (elapsed / 1000);
-        console.log(
-          `📊 Processed ${processedWeapons} weapons at ${rate.toFixed(1)}/sec`
-        );
-      }
-    } catch (error) {
-      errorLogger.logError(`Error processing weapon ${weapon.data.EDID}`, {
-        weaponName: weapon.data.EDID,
-        formId: weapon.meta.globalFormId,
-        plugin: weapon.meta.plugin,
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  }
-
-  const totalTime = Date.now() - startTime;
-  const finalRate = processedWeapons / (totalTime / 1000);
-  console.log(
-    `✅ Successfully processed ${enchantedWeapons.length} enchanted weapons, ${boundMysticWeapons.length} bound/mystic weapons, and ${wandStaffWeapons.length} wands/staves`
-  );
-  console.log(
-    `⏱️  Total processing time: ${totalTime}ms (${finalRate.toFixed(1)} weapons/sec)`
-  );
-
-  // Classify weapons using CNAM-based approach
-  console.log("🔍 Classifying weapons using CNAM templates...");
-
-  // Collect all unique CNAM FormIDs from enchanted weapons
-  const cnamFormIds = new Set<string>();
-  for (const weapon of enchantedWeapons) {
-    const weaponRecord = weaponRecords.find(
-      (w) => w.meta.globalFormId === weapon.globalFormId
-    );
-    if (weaponRecord?.data.CNAM && weaponRecord.data.CNAM.trim() !== "") {
-      cnamFormIds.add(weaponRecord.data.CNAM);
-    }
-  }
-
-  console.log(`📊 Found ${cnamFormIds.size} unique CNAM template references`);
-
-  // Also collect any weapons that are CNAM templates but don't have enchantments themselves
+  // 4. Find base template weapons
   const baseTemplateWeapons = weaponRecords.filter(
     (weapon) =>
-      !weapon.data.EITM && // No enchantment
+      !weapon.data.EITM &&
       weapon.data.EDID &&
-      !weapon.data.EDID.startsWith("REQ_NULL_") && // Not REQ_NULL_
-      cnamFormIds.has(weapon.meta.globalFormId) // Referenced as CNAM by enchanted weapons
+      !weapon.data.EDID.startsWith("REQ_NULL_")
   );
 
-  console.log(
-    `📊 Found ${baseTemplateWeapons.length} base template weapons without enchantments`
-  );
-
+  // 5. Classify weapons
   const {
     uniqueWeapons,
     generalWeaponTemplates,
@@ -355,63 +549,13 @@ export async function resolveEnchantedWeapons(
     baseTemplateWeapons
   );
 
-  // Deduplicate unique weapons based on name, damage, value, and enchantment name
-  const deduplicatedUniqueWeapons = uniqueWeapons.reduce(
-    (acc: UniqueWeapon[], current) => {
-      const duplicate = acc.find(
-        (weapon) =>
-          weapon.name === current.name &&
-          weapon.baseDamage === current.baseDamage &&
-          weapon.value === current.value &&
-          weapon.enchantment.name === current.enchantment.name
-      );
+  // 6. Calculate stats
+  const stats = calculateWeaponStats(enchantedWeapons);
 
-      if (!duplicate) {
-        acc.push(current);
-      } else {
-        console.log(
-          `📝 Skipping duplicate weapon: ${current.name} (${current.globalFormId}) - matches ${duplicate.globalFormId}`
-        );
-      }
-      return acc;
-    },
-    []
-  );
-
-  // Collect unique materials and weapon types
-  const materials = Array.from(
-    new Set(
-      enchantedWeapons
-        .map((weapon) => weapon.material)
-        .filter(
-          (material): material is string =>
-            material !== null && material !== undefined
-        )
-        .sort()
-    )
-  );
-
-  const weaponTypes = Array.from(
-    new Set(enchantedWeapons.map((weapon) => weapon.weaponType).sort())
-  );
-
-  // Collect and sort enchantments alphabetically
-  const enchantments = Array.from(
-    new Set(
-      enchantedWeapons
-        .map((weapon) => weapon.enchantment)
-        .filter((enchant) => enchant !== null)
-        .map((enchant) => ({
-          name: enchant.name,
-          cost: enchant.cost,
-          chargeAmount: enchant.chargeAmount,
-          description: enchant.effects.map((e) => e.description).join("; "),
-        }))
-    )
-  ).sort((a, b) => a.name.localeCompare(b.name));
-
-  console.log(
-    `📊 Found ${uniqueWeapons.length} unique weapons (${deduplicatedUniqueWeapons.length} after deduplication), ${materials.length} materials, ${weaponTypes.length} weapon types, and ${enchantments.length} enchantments`
+  // 7. Unique Weapon's Final Filtering / Polish
+  const deduplicatedUniqueWeapons = deduplicateWeaponList(
+    uniqueWeapons,
+    "unique weapon"
   );
 
   return {
@@ -422,9 +566,7 @@ export async function resolveEnchantedWeapons(
     allWeapons: enchantedWeapons,
     boundMysticWeapons,
     wandStaffWeapons,
-    materials,
-    weaponTypes,
-    enchantments,
+    ...stats,
   };
 }
 

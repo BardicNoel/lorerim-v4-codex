@@ -203,13 +203,13 @@ function generateEnchantmentRecords(
         isWinner: true,
       },
       data: {
-        EDID: `TestEnchantment${i + 1}`,
-        FULL: enchantmentType,
+        EDID: `Test${enchantmentType}${i + 1}`,
+        FULL: `${enchantmentType} Enchantment`,
         ENIT: {
-          enchantmentCost: 25 + i * 5,
-          flags: [],
+          enchantmentCost: 50 + i * 10,
+          flags: ["ManualCalc"],
           castType: "Fire and Forget",
-          enchAmount: 100 + i * 10,
+          enchAmount: 100,
           delivery: "Touch",
           enchantType: "Enchantment",
           chargeTime: 0,

@@ -2,6 +2,11 @@ import fs from "fs";
 import Handlebars from "handlebars";
 import path from "path";
 
+// Helper function to italicize numbers in descriptions
+function replaceNumbers(text: string) {
+  return text.replace(/\d+/g, (match) => `_${match}_`);
+}
+
 // Register math helper for division operations
 Handlebars.registerHelper(
   "math",
@@ -13,6 +18,9 @@ Handlebars.registerHelper(
     return lvalue;
   }
 );
+
+// Register helper to italicize numbers in descriptions
+Handlebars.registerHelper("replaceNumbers", replaceNumbers);
 
 export function renderMarkdownTemplate(
   templatePath: string,

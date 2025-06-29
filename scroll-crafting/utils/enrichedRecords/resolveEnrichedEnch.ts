@@ -1,13 +1,10 @@
-import {
-  EnrichedEnch,
-  EnrichedEnchEffect,
-  MgefRecord,
-} from "../../types/records.js";
+import { EnrichedEnch, EnrichedEnchEffect } from "../../types/records.js";
 import { EnchRecord } from "../../types/enchSchema.js";
+import { MgefRecordFromSchema } from "../../types/mgefSchema.js";
 
 export function resolveEnrichedEnch(
   ench: EnchRecord,
-  getMgef: (formId: string) => MgefRecord
+  getMgef: (formId: string) => MgefRecordFromSchema
 ): EnrichedEnch {
   // Get effects from the nested effects array
   return {

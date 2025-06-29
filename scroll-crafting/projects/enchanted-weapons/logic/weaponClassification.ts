@@ -1,6 +1,6 @@
 import { EnchantedWeapon } from "./types.js";
 import { WeapRecord, WeapCategories } from "../../../types/weapSchema.js";
-import { errorLogger } from "../utils/errorLogger.js";
+import { errorLogger } from "../utils/error-logger-instance.js";
 
 export interface UniqueWeapon extends EnchantedWeapon {
   uniquenessFactors: string[];

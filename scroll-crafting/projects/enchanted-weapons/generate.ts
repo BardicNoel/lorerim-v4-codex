@@ -9,9 +9,10 @@ import {
 import { WeapRecord } from "../../types/weapSchema.js";
 import { EnchRecord } from "../../types/enchSchema.js";
 import { KywdRecord } from "../../types/kywdSchema.js";
-import { MgefRecord } from "../../types/records.js";
-import { errorLogger } from "./utils/errorLogger.js";
+import { MgefRecordFromSchema } from "../../types/mgefSchema.js";
+import { errorLogger } from "./utils/error-logger-instance.js";
 import { UniqueWeapon } from "./logic/weaponClassification.js";
+import Handlebars from "handlebars";
 
 // ESM-compatible __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -22,6 +23,21 @@ const RECORD_DIR = path.join(PROJECT_DIR, "records");
 const PRIMARY_DIR = path.resolve(__dirname, "../../primaries");
 const OUTPUT_DIR = path.join(PROJECT_DIR, "output");
 const TEMPLATE_DIR = path.join(PROJECT_DIR, "templates");
+
+// Helper function to italicize numbers in descriptions
+function replaceNumbers(text: string, replacement: string) {
+  return text.replace(/\d+/g, (match) => `_${match}_`);
+}
+
+// Register handlebars helpers
+Handlebars.registerHelper(
+  "math",
+  function (lvalue: number, operator: string, rvalue: number) {
+    // ... existing code ...
+  }
+);
+
+Handlebars.registerHelper("replaceNumbers", replaceNumbers);
 
 async function main() {
   console.log("🚀 Starting enhanced enchanted weapons generation...");
@@ -45,7 +61,7 @@ async function main() {
     console.log(`   Loaded ${enchantmentRecords.length} enchantment records`);
 
     console.log("📂 Loading magic effect records...");
-    const magicEffectRecords = await loadRecordSet<MgefRecord>(
+    const magicEffectRecords = await loadRecordSet<MgefRecordFromSchema>(
       "MGEF",
       RECORD_DIR,
       PRIMARY_DIR

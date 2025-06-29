@@ -14,23 +14,28 @@ export * from "./classification.js";
 // Weapon keyword resolution utilities
 export * from "./weaponKeywordResolver.js";
 
+import { MgefRecordFromSchema } from "../types/mgefSchema.js";
+import { SpelRecordFromSchema } from "../types/spelSchema.js";
+
 /**
  * Given a SPEL record and an array of MGEF records, returns all related MGEF records
  * by connecting the spell's effects (decodedData.effects or decodedData.Effects)
  * with findByFormId on the MGEF records array.
  */
 export function getMgefRecordsForSpell(
-  spelRecord: any,
-  mgefRecords: any[],
-  findByFormId: (records: any[], formId: string) => any
-): any[] {
-  const effects =
-    spelRecord?.decodedData?.effects || spelRecord?.decodedData?.Effects;
+  spelRecord: SpelRecordFromSchema,
+  mgefRecords: MgefRecordFromSchema[],
+  findByFormId: (
+    records: MgefRecordFromSchema[],
+    formId: string
+  ) => MgefRecordFromSchema | undefined
+): MgefRecordFromSchema[] {
+  const effects = spelRecord.data.effects;
   if (!Array.isArray(effects)) return [];
   const mgefFormIds = effects
-    .map((effect: any) => effect?.EFID)
-    .filter((id: string | undefined) => typeof id === "string");
+    .map((effect) => effect.EFID)
+    .filter((id): id is string => typeof id === "string");
   return mgefFormIds
     .map((formId) => findByFormId(mgefRecords, formId))
-    .filter(Boolean);
+    .filter((mgef): mgef is MgefRecordFromSchema => mgef !== undefined);
 }

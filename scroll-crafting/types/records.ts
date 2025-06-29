@@ -1,4 +1,5 @@
 import { ParsedRecord } from "@lorerim/platform-types";
+import { MgefRecordFromSchema } from "./mgefSchema.js";
 
 export type RecordOfType<T extends string> = ParsedRecord & {
   meta: Omit<ParsedRecord["meta"], "type"> & {
@@ -15,7 +16,7 @@ export interface EnrichedSpelEffect {
   duration: number;
   area: number;
   mgefFormId: string; // MGEF FormID
-  mgef: MgefRecord;
+  mgef: MgefRecordFromSchema;
 }
 
 export interface EnrichedSpel {
@@ -32,7 +33,7 @@ export interface EnrichedEnchEffect {
   duration: number;
   area: number;
   mgefFormId: string; // MGEF FormID
-  mgef: MgefRecord;
+  mgef: MgefRecordFromSchema;
 }
 
 export interface EnrichedEnch {

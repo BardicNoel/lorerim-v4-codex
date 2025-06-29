@@ -1,13 +1,10 @@
-import {
-  EnrichedSpel,
-  EnrichedSpelEffect,
-  MgefRecord,
-} from "../../types/records.js";
+import { EnrichedSpel, EnrichedSpelEffect } from "../../types/records.js";
 import { SpelRecordFromSchema } from "../../types/spelSchema.js";
+import { MgefRecordFromSchema } from "../../types/mgefSchema.js";
 
 export function resolveEnrichedSpel(
   spel: SpelRecordFromSchema,
-  getMgef: (formId: string) => MgefRecord
+  getMgef: (formId: string) => MgefRecordFromSchema
 ): EnrichedSpel {
   return {
     formId: spel.meta.globalFormId,

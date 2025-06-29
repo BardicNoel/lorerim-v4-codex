@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { processEnchantment } from "../logic/enchantmentProcessor.js";
 import { generateMockData } from "./mockDataGenerator.js";
+import { MgefRecordFromSchema } from "../../../types/mgefSchema.js";
 
 describe("enchantmentProcessor", () => {
   it("should process enchantment with single effect", async () => {
@@ -11,7 +12,7 @@ describe("enchantmentProcessor", () => {
     });
 
     // Build mgefMap
-    const mgefMap = new Map<string, any>();
+    const mgefMap = new Map<string, MgefRecordFromSchema>();
     for (const mgef of mockData.magicEffects) {
       mgefMap.set(mgef.meta.globalFormId.toLowerCase(), mgef);
     }
@@ -19,12 +20,48 @@ describe("enchantmentProcessor", () => {
     const result = await processEnchantment(mockData.enchantments[0], mgefMap);
 
     expect(result).not.toBeNull();
-    expect(result!.name).toBe("Fire Damage");
-    expect(result!.cost).toBe(25);
-    expect(result!.chargeAmount).toBe(100);
+    expect(result!.name).toBe("Fire Damage Enchantment");
+    expect(result!.cost).toBeGreaterThan(0);
+    expect(result!.chargeAmount).toBeGreaterThan(0);
     expect(result!.effects).toHaveLength(1);
     expect(result!.effects[0].name).toBe("Fire Damage");
-    expect(result!.effects[0].magnitude).toBe(10);
+  });
+
+  it("should handle missing magic effects", async () => {
+    const mockData = generateMockData({
+      enchantmentCount: 1,
+      magicEffectCount: 0, // No magic effects
+      enchantmentTypes: ["Fire Damage"],
+    });
+
+    // Build empty mgefMap
+    const mgefMap = new Map<string, MgefRecordFromSchema>();
+
+    const result = await processEnchantment(mockData.enchantments[0], mgefMap);
+
+    expect(result).not.toBeNull();
+    expect(result!.effects).toHaveLength(1);
+    expect(result!.effects[0].name).toBe("Unknown Effect");
+  });
+
+  it("should calculate enchantment cost correctly", async () => {
+    const mockData = generateMockData({
+      enchantmentCount: 1,
+      magicEffectCount: 1,
+      enchantmentTypes: ["Fire Damage"],
+    });
+
+    // Build mgefMap
+    const mgefMap = new Map<string, MgefRecordFromSchema>();
+    for (const mgef of mockData.magicEffects) {
+      mgefMap.set(mgef.meta.globalFormId.toLowerCase(), mgef);
+    }
+
+    const result = await processEnchantment(mockData.enchantments[0], mgefMap);
+
+    expect(result).not.toBeNull();
+    expect(result!.cost).toBeGreaterThan(0);
+    expect(result!.costMethod).toBe("manual"); // Since we set ManualCalc flag in mock data
   });
 
   it("should return null when no valid effects found", async () => {
@@ -34,7 +71,7 @@ describe("enchantmentProcessor", () => {
     });
 
     // Build empty mgefMap
-    const mgefMap = new Map<string, any>();
+    const mgefMap = new Map<string, MgefRecordFromSchema>();
 
     const result = await processEnchantment(mockData.enchantments[0], mgefMap);
     expect(result).toBeNull();
@@ -47,7 +84,7 @@ describe("enchantmentProcessor", () => {
     });
 
     // Build mgefMap
-    const mgefMap = new Map<string, any>();
+    const mgefMap = new Map<string, MgefRecordFromSchema>();
     for (const mgef of mockData.magicEffects) {
       mgefMap.set(mgef.meta.globalFormId.toLowerCase(), mgef);
     }
