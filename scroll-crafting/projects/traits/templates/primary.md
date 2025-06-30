@@ -1,10 +1,17 @@
-# Lorerim Character Traits
+# Traits
 
-## Overview
-At the start of your journey in Lorerim, you may choose two traits to define your character. These traits represent innate abilities, quirks, or characteristics that will influence your gameplay experience. Choose wisely, as your traits cannot be changed after character creation.
+This document describes the available traits in the game. Each trait represents a unique combination of benefits and drawbacks that can fundamentally change how your character plays.
 
-## Available Traits
+## Categories
+{{#each categories}}
+- [{{@key}}](#{{@key}})
+{{/each}}
 
-{{#each traits}}
+{{#each categories}}
+## {{@key}}
+
+{{#each this}}
 {{> trait_block}}
+{{/each}}
+
 {{/each}} 

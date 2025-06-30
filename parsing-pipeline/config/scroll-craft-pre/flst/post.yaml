@@ -7,25 +7,6 @@ output: '../scroll-crafting/primaries/flst.json'
 # Use stages from base template
 stages:
   - from: 'local'
-    name: 'Filter FLST Records'
-    type: 'filter-records'
-    description: 'Filter to only include records where isWinner is true'
-    criteria:
-      - field: 'meta.isWinner'
-        operator: 'equals'
-        value: true
-
-  - from: 'local'
-    name: 'Decode Binary Records'
-    type: 'buffer-decoder'
-    description: 'Decode binary record data into structured format'
-    recordType: 'FLST'
-    loadPluginMetadata: true
-    pluginMetadataPath: '../output/skyrim-extractor/lorerim/plugin-metadata-map.json'
-    multithreaded: true
-    maxWorkers: 4
-
-  - from: 'local'
     name: 'Remove FLST Specific Fields'
     type: 'remove-fields'
     description: 'Remove FLST-specific fields that are not needed for analysis'

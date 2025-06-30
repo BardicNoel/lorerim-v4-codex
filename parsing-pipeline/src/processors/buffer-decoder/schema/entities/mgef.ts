@@ -1,8 +1,83 @@
 import { flagParserGenerator, mapParserGenerator } from '../generics';
 import { RecordSpecificSchemas } from '../schemaTypes';
 import { createSchema } from '../createSchema';
-import { actorValueMap } from '@lorerim/platform-types';
+import { actorValueMap } from '../actorValueMapRecord';
 import { CTDA_ARRAY_SCHEMA } from '../ctda/ctdaSchema';
+
+// Effect Type mapping
+export const MGEF_EFFECT_TYPES = {
+  0: 'Value Modifier',
+  1: 'Script',
+  2: 'Dispel',
+  3: 'Cure Disease',
+  4: 'Absorb',
+  5: 'Dual Value Modifier',
+  6: 'Calm',
+  7: 'Demoralize',
+  8: 'Frenzy',
+  9: 'Disarm',
+  10: 'Command Summoned',
+  11: 'Invisibility',
+  12: 'Light',
+  13: 'Lock',
+  14: 'Open',
+  15: 'Bound Weapon',
+  16: 'Summon Creature',
+  17: 'Detect Life',
+  18: 'Telekinesis',
+  19: 'Paralysis',
+  20: 'Reanimate',
+  21: 'Soul Trap',
+  22: 'Turn Undead',
+  23: 'Guide',
+  24: 'Werewolf Feed',
+  25: 'Cure Paralysis',
+  26: 'Cure Addiction',
+  27: 'Cure Poison',
+  28: 'Concussion',
+  29: 'Value And Parts',
+  30: 'Accumulate Magnitude',
+  31: 'Stagger',
+  32: 'Peak Value Modifier',
+  33: 'Cloak',
+  34: 'Werewolf',
+  35: 'Slow Time',
+  36: 'Rally',
+  37: 'Enhance Weapon',
+  38: 'Spawn Hazard',
+  39: 'Etherealize',
+  40: 'Banish',
+  41: 'Spawn Scripted Ref',
+  42: 'Disguise',
+  43: 'Grab Actor',
+  44: 'Vampire Lord'
+} as const;
+
+// Cast Type mapping
+export const MGEF_CAST_TYPES = {
+  0: 'Constant Effect',
+  1: 'Fire and Forget',
+  2: 'Concentration'
+} as const;
+
+// Delivery Type mapping
+export const MGEF_DELIVERY_TYPES = {
+  0: 'Self',
+  1: 'Contact',
+  2: 'Aimed',
+  3: 'Target Actor',
+  4: 'Target Location'
+} as const;
+
+// Skill Type mapping for magic schools
+export const MGEF_SKILL_TYPES = {
+  [-1]: 'None',
+  18: 'Alteration',
+  19: 'Conjuration',
+  20: 'Destruction',
+  21: 'Illusion',
+  22: 'Restoration'
+} as const;
 
 export const MGEFFlags: Record<number, string> = {
   0x00000001: 'Hostile',
@@ -46,7 +121,7 @@ export const mgefSchema: RecordSpecificSchemas = createSchema('MGEF', {
       { name: 'flags', type: 'uint32', parser: flagParserGenerator(MGEFFlags) },
       { name: 'baseCost', type: 'float32' },
       { name: 'relatedID', type: 'formid' },
-      { name: 'skill', type: 'int32' },
+      { name: 'skill', type: 'int32', parser: (value: number) => MGEF_SKILL_TYPES[value as keyof typeof MGEF_SKILL_TYPES] || `Unknown(${value})` },
       { name: 'resistanceAV', type: 'uint32', parser: mapParserGenerator(actorValueMap) },
       { name: 'unknown1', type: 'uint32' },
       { name: 'castingLight', type: 'formid' },
@@ -59,13 +134,13 @@ export const mgefSchema: RecordSpecificSchemas = createSchema('MGEF', {
       { name: 'taperCurve', type: 'float32' },
       { name: 'taperDuration', type: 'float32' },
       { name: 'secondAVWeight', type: 'float32' },
-      { name: 'effectType', type: 'uint32' },
+      { name: 'effectType', type: 'uint32', parser: (value: number) => MGEF_EFFECT_TYPES[value as keyof typeof MGEF_EFFECT_TYPES] || `Unknown(${value})` },
       { name: 'primaryAV', type: 'int32', parser: mapParserGenerator(actorValueMap) },
       { name: 'projectileID', type: 'formid' },
       { name: 'explosionID', type: 'formid' },
-      { name: 'castType', type: 'uint32' },
-      { name: 'deliveryType', type: 'uint32' },
-      { name: 'secondAV', type: 'int32' },
+      { name: 'castType', type: 'uint32', parser: (value: number) => MGEF_CAST_TYPES[value as keyof typeof MGEF_CAST_TYPES] || `Unknown(${value})` },
+      { name: 'deliveryType', type: 'uint32', parser: (value: number) => MGEF_DELIVERY_TYPES[value as keyof typeof MGEF_DELIVERY_TYPES] || `Unknown(${value})` },
+      { name: 'secondAV', type: 'int32', parser: mapParserGenerator(actorValueMap) },
       { name: 'castingArt', type: 'formid' },
       { name: 'hitEffectArt', type: 'formid' },
       { name: 'impactDataID', type: 'formid' },

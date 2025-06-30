@@ -12,32 +12,347 @@ This rule serves as the authoritative guide for implementing the traits generato
 | Component                  | Not Started | In Progress | Complete | Notes |
 |---------------------------|-------------|-------------|----------|-------|
 | **Project Structure**     |             |             |          |       |
-| ├── Directory Setup       |             |             | ✓        | Created all required directories |
-| ├── rules.md             |             |             | ✓        | Created with all required sections |
+| ├── Directory Setup       |             |             | ✓        | All required directories created and organized |
+| ├── rules.md             |             |             | ✓        | Inherits from all required rules |
 | **Templates**             |             |             |          |       |
 | ├── primary.md           |             |             | ✓        | Basic template with header and trait listing |
-| ├── trait_block.md       |             |             | ✓        | Template for individual traits with effects |
+| ├── trait_block.md       |             |             | ✓        | Template for individual traits |
 | **Core Logic**            |             |             |          |       |
-| ├── Record Resolution    |             |             | ✓        | PERK -> SPEL -> MGEF resolution implemented |
-| ├── Tests               |             |             | ✓        | Unit tests for trait resolution with mock data |
+| ├── Record Resolution    |             |             | ✓        | SPEL -> MGEF resolution implemented |
+| ├── Record Loading       |             |             | ✓        | loadTraitRecords.ts complete with tests |
+| ├── Effect Resolution    |             | ✓           |          | Need to enhance with MGEF details and tags |
+| ├── Effect Tagging      | ✓           |             |          | Need to implement automatic tag generation |
 | **Generator Script**      |             |             |          |       |
-| ├── generate.ts         | ✓           |             |          | Not started |
-| ├── Record Loading      |             | ✓           |          | Started loadTraitRecords.ts implementation for "Traits_AbilityList" and "LoreRim Traits.esp" |
+| ├── generate.ts         |             |             | ✓        | Basic generation pipeline working |
+| ├── Output Files        |             |             | ✓        | Generates MD, full JSON, and descriptive JSON |
 | **Documentation**         |             |             |          |       |
 | ├── traits-logic.md     |             |             | ✓        | Core documentation created |
-| ├── API Documentation   | ✓           |             |          | Not started |
+| ├── API Documentation   |             | ✓           |          | Types documented, need effect schema docs |
 
-## Project Structure Requirements
+## Entry Point Records
 
+The traits system is built from the following source records:
+
+### Primary Record Sources
+1. **Trait Spells (SPEL)**
+   - Contains: 
+     - Basic trait info (name, description)
+     - Effect bundles that define trait mechanics
+     - References to individual magic effects
+
+2. **Magic Effects (MGEF)**
+   - Referenced by: Trait spells
+   - Contains:
+     - Effect descriptions with magnitude/duration
+     - Core mechanical implementation details
+
+### Data Flow
+```mermaid
+graph TD
+    SPEL["Trait Spells"] -->|"effects[].EFID"| MGEF["Magic Effects"]
+    MGEF -->|"DATA.primaryAV"| AVIF["Actor Values"]
+    MGEF -->|"flags"| TAGS["Effect Tags"]
 ```
-scroll-crafting/projects/traits/
-├── records/           # Trait-specific records
-├── templates/         # Markdown templates
-│   ├── primary.md    # Main document layout
-│   └── trait_block.md # Individual trait template
-├── logic/            # Trait-specific logic
-├── __tests__/        # Unit tests
-├── output/           # Generated files (auto-created)
-├── generate.ts       # Main generator script
-└── rules.md         # Project-specific rules
+
+## Implementation Phases
+
+### 1. Project Setup ✓
+- Directory structure created
+- Rules and inheritance established
+- Basic types defined
+
+### 2. Template Development ✓
+- Created `primary.md` and `trait_block.md`
+- Set up template rendering
+- Established output format
+
+### 3. Core Logic Implementation ✓
+- Implemented record loading
+- Created resolution pipeline
+- Added basic tests
+
+### 4. Effect Enhancement 🔄
+- Need to add:
+  - Detailed MGEF information
+  - Effect categorization
+  - Automatic tagging
+  - Enhanced type definitions
+
+### 5. Documentation Updates 🔄
+- Need to document:
+  - Enhanced schema
+  - Tag categories
+  - MGEF type mappings
+
+## Output Specifications
+
+### Current JSON Output
+```typescript
+interface TraitDefinition {
+  name: string;
+  description: string;
+  edid: string;
+  formId: string;
+}
 ```
+
+### Planned Enhanced JSON Output
+```typescript
+interface EnhancedTrait {
+  name: string;
+  description: string;
+  edid: string;
+  formId: string;
+  spell: {
+    cost: number;
+    type: string;
+    castType: string;
+    delivery: string;
+    flags: string[];
+  };
+  effects: Array<{
+    name: string;
+    description: string;
+    magnitude: number;
+    duration: number;
+    area: number;
+    flags: string[];
+    primaryAttribute?: string;
+    effectType: number;
+    baseCost: number;
+    resistanceType?: string;
+  }>;
+  tags: string[];
+}
+```
+
+## Effect System Design
+
+### MGEF Data Structure
+```typescript
+interface MgefData {
+  flags: string[];          // From MGEFFlags
+  baseCost: number;         // Base magicka cost
+  resistanceAV?: string;    // Resistance type (magic, fire, etc)
+  skillLevel: number;       // Required skill level
+  effectType: number;       // Type of effect (value, script, etc)
+  primaryAV?: string;       // Primary actor value affected
+  castType: string;         // How the effect is cast
+  deliveryType: string;     // How effect reaches target
+}
+```
+
+### Effect Categories
+1. **Attribute Effects**
+   - Health/Magicka/Stamina modifications
+   - Derived attribute changes (carry weight, speed)
+   - Regeneration rate changes
+
+2. **Combat Effects**
+   - Damage modifications
+   - Resistance changes
+   - Critical hit effects
+   - Weapon/armor effectiveness
+
+3. **Skill Effects**
+   - Skill level modifications
+   - Learning rate changes
+   - Skill usage effects
+
+4. **Special Abilities**
+   - Unique powers
+   - Transformations
+   - Environmental interactions
+
+### Automatic Tagging System
+
+#### Tag Sources
+1. **MGEF Flags**
+   ```typescript
+   const MGEFFlags = {
+     0x00000001: 'Hostile',
+     0x00000002: 'Recover',
+     0x00000004: 'Detrimental',
+     // ... other flags
+   };
+   ```
+
+2. **Effect Types**
+   ```typescript
+   const EffectTypes = {
+     ATTRIBUTE_MOD: 'attribute_mod',
+     SCRIPT_EFFECT: 'script_effect',
+     SUMMON_EFFECT: 'summon',
+     LIGHT_EFFECT: 'light',
+     // ... other types
+   };
+   ```
+
+3. **Actor Values**
+   ```typescript
+   const ActorValueTags = {
+     Health: 'health',
+     Magicka: 'magicka',
+     Stamina: 'stamina',
+     // ... other values
+   };
+   ```
+
+#### Tag Categories
+
+1. **Effect Type Tags**
+   - buff: Positive effects
+   - debuff: Negative effects
+   - mixed: Both positive and negative
+   - special: Unique mechanics
+
+2. **Target Tags**
+   - self: Self-targeted
+   - other: Targets others
+   - area: Area effect
+   - weapon: Weapon-based
+   - spell: Spell-based
+
+3. **Condition Tags**
+   - combat: Combat-related
+   - passive: Always active
+   - triggered: Requires condition
+   - timed: Duration-based
+
+4. **Resource Tags**
+   - health_based
+   - magicka_based
+   - stamina_based
+   - skill_based
+
+### Implementation Plan
+
+1. **Effect Resolution Enhancement**
+   ```typescript
+   interface EnhancedEffect {
+     base: {
+       name: string;
+       description: string;
+       formId: string;
+     };
+     mechanics: {
+       magnitude: number;
+       duration: number;
+       area: number;
+       baseCost: number;
+     };
+     attributes: {
+       primaryAV?: string;
+       resistanceType?: string;
+       skillLevel?: number;
+     };
+     flags: string[];
+     tags: string[];
+   }
+   ```
+
+2. **Tag Generation Pipeline**
+   ```typescript
+   function generateTags(effect: EnhancedEffect): string[] {
+     return [
+       ...getEffectTypeTags(effect),
+       ...getTargetTags(effect),
+       ...getConditionTags(effect),
+       ...getResourceTags(effect)
+     ];
+   }
+   ```
+
+3. **Enhanced Trait Output**
+   ```typescript
+   interface EnhancedTrait {
+     base: {
+       name: string;
+       description: string;
+       edid: string;
+       formId: string;
+     };
+     spell: {
+       cost: number;
+       type: string;
+       castType: string;
+       delivery: string;
+       flags: string[];
+     };
+     effects: EnhancedEffect[];
+     tags: string[];
+     categories: string[];
+   }
+   ```
+
+### Implementation Steps
+
+1. **Effect Enhancement (Current Sprint)**
+   - [ ] Create effect type mapping system
+   - [ ] Implement MGEF data extraction
+   - [ ] Add effect categorization logic
+   - [ ] Create tag generation functions
+
+2. **Data Structure Updates**
+   - [ ] Update TraitDefinition interface
+   - [ ] Add EnhancedEffect interface
+   - [ ] Create tag type definitions
+   - [ ] Update JSON output format
+
+3. **Template Enhancement**
+   - [ ] Add effect details to trait blocks
+   - [ ] Include tag-based filtering
+   - [ ] Add category grouping
+   - [ ] Update markdown formatting
+
+4. **Testing**
+   - [ ] Add effect resolution tests
+   - [ ] Add tag generation tests
+   - [ ] Add categorization tests
+   - [ ] Update existing tests
+
+### Validation Rules
+
+1. **Effect Validation**
+   - All effects must have valid magnitude/duration/area
+   - Primary actor values must be valid
+   - Effect types must be recognized
+
+2. **Tag Validation**
+   - Tags must come from predefined categories
+   - Each trait must have at least one tag
+   - Conflicting tags must be prevented
+
+3. **Category Validation**
+   - Categories must be consistent
+   - Category hierarchy must be maintained
+   - No orphaned categories allowed
+
+## Next Implementation Tasks
+
+1. Create new files:
+   ```
+   logic/
+   ├── enhanceEffects.ts
+   ├── generateTags.ts
+   ├── categorizeEffects.ts
+   └── validateEffects.ts
+   ```
+
+2. Update existing files:
+   ```
+   ├── types.ts           // Add new interfaces
+   ├── resolveTraits.ts   // Integrate enhancement
+   └── generate.ts        // Update output format
+   ```
+
+3. Add new tests:
+   ```
+   __tests__/
+   ├── enhanceEffects.test.ts
+   ├── generateTags.test.ts
+   ├── categorizeEffects.test.ts
+   └── validateEffects.test.ts
+   ```
+
+*This rule is always in effect alongside other inherited rules.*
