@@ -45,4 +45,13 @@ export function generateFlowchart(
     ...nodeLines,
     ...edgeLines
   ].join('\n');
+}
+
+/**
+ * Creates a Mermaid flowchart from a list of lines
+ */
+export function createMermaidFlowchart(lines: string[]): string {
+  return `\`\`\`mermaid
+${lines.join('\n')}
+\`\`\``;
 } 

@@ -3,10 +3,12 @@ import { resolveOrderedRecords } from "../../../utils/resolveOrderedRecords.js";
 import { findByFormId } from "../../../utils/findByFormId.js";
 import { SpelRecordFromSchema } from "../../../types/spelSchema.js";
 import { FlstRecordFromSchema } from "../../../types/flstSchema.js";
+import { MgefRecordFromSchema } from "../../../types/mgefSchema.js";
 import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
+import { TraitRecordSet } from "../types.js";
 
-const TRAITS_FORMLIST_ID = "0xFEA76002";
+const TRAITS_FORMLIST_EDID = "Traits_AbilityList";
 const TRAIT_EDID_PREFIX = "LoreTraits_";
 const TRAIT_EDID_SUFFIX = "Ab";
 
@@ -27,11 +29,6 @@ const EXCLUDED_TRAITS = [
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export interface TraitRecordSet {
-  /** All trait spells, both from form list and EDID pattern matching */
-  spells: SpelRecordFromSchema[];
-}
-
 /**
  * Checks if a trait should be included in the output.
  * Excludes helper traits and traits without descriptions.
@@ -48,6 +45,24 @@ function shouldIncludeTrait(spell: SpelRecordFromSchema): boolean {
 }
 
 /**
+ * Creates a function to look up MGEF records by FormID
+ */
+function createMgefLookup(mgefRecords: MgefRecordFromSchema[]) {
+  // Create a map for faster lookups
+  const mgefMap = new Map(
+    mgefRecords.map(record => [record.meta.globalFormId, record])
+  );
+
+  return (formId: string): MgefRecordFromSchema => {
+    const record = mgefMap.get(formId);
+    if (!record) {
+      throw new Error(`Could not find MGEF record with ID ${formId}`);
+    }
+    return record;
+  };
+}
+
+/**
  * Loads all trait-related records from both:
  * 1. The traits form list (core traits explicitly listed)
  * 2. Any spells with EDID pattern LoreTraits_*Ab (additional traits)
@@ -59,11 +74,15 @@ export async function loadTraitRecords(): Promise<TraitRecordSet> {
   // Load all required record sets
   const formListRecords = await loadRecordSet<FlstRecordFromSchema>("flst", primariesDir, primariesDir);
   const spellRecords = await loadRecordSet<SpelRecordFromSchema>("spel", primariesDir, primariesDir);
+  const mgefRecords = await loadRecordSet<MgefRecordFromSchema>("mgef", primariesDir, primariesDir);
 
-  // 1. Get traits from form list
-  const traitsList = findByFormId(formListRecords, TRAITS_FORMLIST_ID);
+  // Create MGEF lookup function
+  const getMgef = createMgefLookup(mgefRecords);
+
+  // 1. Get traits from form list by EDID
+  const traitsList = formListRecords.find(record => record.data?.EDID === TRAITS_FORMLIST_EDID);
   if (!traitsList) {
-    throw new Error(`Could not find traits form list with ID ${TRAITS_FORMLIST_ID}`);
+    throw new Error(`Could not find traits form list with EDID ${TRAITS_FORMLIST_EDID}`);
   }
 
   // Get all valid spells from the form list
@@ -98,6 +117,9 @@ export async function loadTraitRecords(): Promise<TraitRecordSet> {
   console.log(`Total unique traits after deduplication: ${uniqueTraits.length}`);
 
   return {
-    spells: uniqueTraits
+    spells: uniqueTraits,
+    effects: mgefRecords,
+    perks: [], // We'll load perks later if needed
+    getMgef
   };
 } 

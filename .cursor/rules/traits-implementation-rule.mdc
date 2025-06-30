@@ -7,6 +7,201 @@ alwaysApply: false
 
 This rule serves as the authoritative guide for implementing the traits generator project in the Lorerim Codex system.
 
+## Data Structure
+
+### Core Data Model
+
+```typescript
+interface EnhancedTrait {
+  name: string;          // From SPEL.FULL
+  description: string;   // From SPEL.DESC
+  edid: string;         // From SPEL.EDID
+  formId: string;       // SPEL FormID
+  effects: StructuredEffect[];
+  category: TraitCategory;
+  tags: TraitCategory[];
+  diagram?: string;     // Mermaid diagram of effect relationships
+  spell?: {
+    cost: number;       // From SPEL.SPIT.spellCost
+    type: string;       // From SPEL.SPIT.type
+    castType: string;   // From SPEL.SPIT.castType
+    delivery: string;   // From SPEL.SPIT.delivery
+  };
+  anchorRecord?: SpelRecordFromSchema;
+}
+
+interface StructuredEffect {
+  type: EffectType;     // Mapped from MGEF.DATA.effectType
+  value: number;        // From SPEL.effects[].EFIT.magnitude
+  duration?: number;    // From SPEL.effects[].EFIT.duration
+  condition?: string;   // Extracted from MGEF.DNAM
+  flags: string[];      // From MGEF.DATA.flags
+}
+```
+
+### Record Resolution Chain
+
+```mermaid
+graph TD
+  SPEL["SPEL Record<br/>(Trait Spell)"]
+  MGEF["MGEF Record<br/>(Magic Effect)"]
+  PERK["PERK Record<br/>(Related Perk)"]
+  
+  SPEL -->|"effects[].EFID"| MGEF
+  MGEF -->|"DATA.perkID"| PERK
+```
+
+### Field Mapping
+
+1. Trait Base Information:
+   - `name`: SPEL.FULL or SPEL.EDID
+   - `description`: SPEL.DESC (with bracketed values formatted)
+   - `edid`: SPEL.EDID
+   - `formId`: SPEL.meta.globalFormId
+
+2. Spell Information:
+   - `spell.cost`: SPEL.SPIT.spellCost
+   - `spell.type`: SPEL.SPIT.type
+   - `spell.castType`: SPEL.SPIT.castType
+   - `spell.delivery`: SPEL.SPIT.delivery
+
+3. Effect Information:
+   - `effects[].type`: Mapped from MGEF.DATA.effectType
+   - `effects[].value`: SPEL.effects[].EFIT.magnitude
+   - `effects[].duration`: SPEL.effects[].EFIT.duration
+   - `effects[].condition`: Extracted from MGEF.DNAM
+   - `effects[].flags`: MGEF.DATA.flags
+
+4. Categories and Tags:
+   - Determined by analyzing:
+     - SPEL.DESC content
+     - MGEF.DNAM content
+     - MGEF.DATA.skill
+     - MGEF.DATA.effectType
+
+### Effect Types
+
+1. Spell and Magic:
+   - `SPELL_POWER`: Spell effectiveness/magnitude
+   - `SPELL_COST`: Spell casting cost
+   - `SPELL_DURATION`: Spell duration
+   - `MAGIC_REGEN`: Magicka regeneration
+
+2. Combat:
+   - `DAMAGE_DEALT`: Outgoing damage
+   - `DAMAGE_TAKEN`: Incoming damage
+   - `PHYSICAL_DAMAGE`: Physical damage
+   - `STAGGER_CHANCE`: Stagger probability
+
+3. Resources:
+   - `HEALTH_REGEN`: Health regeneration
+   - `STAMINA_REGEN`: Stamina regeneration
+
+4. Movement:
+   - `MOVE_SPEED`: Movement speed
+   - `CARRY_WEIGHT`: Carry capacity
+
+5. Social:
+   - `FOLLOWER_COST`: Follower recruitment cost
+   - `MERCHANT_PRICES`: Buy/sell prices
+
+6. Crafting:
+   - `CRAFTING_SPEED`: Crafting speed
+   - `CRAFTING_QUALITY`: Item quality
+
+7. Special:
+   - `SPECIAL`: Unique/script effects
+
+### Categories
+
+1. `COMBAT`: Combat-focused traits
+2. `MAGIC`: Magic-focused traits
+3. `SOCIAL`: Social interaction traits
+4. `CRAFTING`: Crafting-related traits
+5. `MOVEMENT`: Movement-related traits
+6. `SPECIAL`: Special/unique traits
+
+## Implementation Phases
+
+### 1. Record Loading (`loadTraitRecords.ts`)
+- Load SPEL, MGEF, and PERK records
+- Filter and deduplicate records
+- Create initial record set
+
+### 2. Effect Enhancement (`enhanceEffects.ts`)
+- Map MGEF effect types to structured types
+- Extract conditions from descriptions
+- Determine effect scopes and categories
+- Format values and descriptions
+
+### 3. Trait Resolution (`resolveTraits.ts`)
+- Resolve trait base information
+- Enhance effects with MGEF data
+- Determine trait categories
+- Generate effect diagrams
+- Link related perks
+
+### 4. Documentation Generation
+- Generate Markdown documentation
+- Create effect relationship diagrams
+- Format descriptions with proper markup
+
+## Testing Requirements
+
+1. Unit Tests:
+   - Record loading
+   - Effect enhancement
+   - Trait resolution
+   - Category determination
+
+2. Integration Tests:
+   - Full pipeline execution
+   - Documentation generation
+   - Record relationships
+
+3. Test Data:
+   - Sample records for each type
+   - Edge cases and special effects
+   - Various category combinations
+
+## Output Format
+
+1. JSON Output:
+   - Enhanced trait definitions
+   - Effect relationships
+   - Category mappings
+
+2. Markdown Output:
+   - Trait descriptions
+   - Effect diagrams
+   - Category organization
+   - Related perk links
+
+## Dependencies
+
+1. Record Schemas:
+   - `spelSchema.ts`
+   - `mgefSchema.ts`
+   - `perkSchema.ts`
+
+2. Utilities:
+   - `mermaid.ts` for diagrams
+   - `renderMarkdownTemplate.ts`
+   - `findByFormId.ts`
+   - `loadRecordSet.ts`
+
+## Inherited Rules
+
+This implementation must follow all inherited rules:
+- Code Quality Rule
+- Generator Structure Rule
+- Template Construction Rule
+- Output Format Rule
+- Data Mapping & Resolution Rule
+- Testing Rule
+- Project Logic Rule
+- Schema Linker Rule
+
 ## Project Structure Requirements
 
 ```
@@ -21,65 +216,6 @@ scroll-crafting/projects/traits/
 ├── generate.ts       # Main generator script
 └── rules.md         # Project-specific rules
 ```
-
-## Entry Point Records
-
-The traits system is built from the following source records:
-
-### Primary Record Sources
-1. **Traits Form List (FLST)** 
-   - ID: `0xFEA76002`
-   - Plugin: `LoreRim Traits.esp`
-   - Purpose: Defines the canonical list of trait spells in load order
-   - Field: `LNAM` array contains FormIDs of all trait SPELs
-
-2. **Trait Spells (SPEL)**
-   - Referenced by: Traits Form List
-   - Contains: 
-     - Basic trait info (name, description)
-     - Effect bundles that define trait mechanics
-     - References to individual magic effects
-
-3. **Magic Effects (MGEF)**
-   - Referenced by: Trait spells
-   - Contains:
-     - Actual effect descriptions with magnitude/duration
-     - Core mechanical implementation details
-
-### Data Flow
-```mermaid
-graph TD
-    FLST["Traits Form List<br/>(0xFEA76002)"] -->|"LNAM[]"| SPEL["Trait Spells"]
-    SPEL -->|"effects[].EFID"| MGEF["Magic Effects"]
-```
-
-### Record Resolution Process
-1. Load and validate the traits form list
-2. Resolve form list entries to trait spells
-3. For each trait spell:
-   - Extract basic info (name, description)
-   - Resolve spell effects to magic effects
-   - Build complete trait definition
-
-## Implementation Status Matrix
-
-| Component                  | Not Started | In Progress | Complete | Notes |
-|---------------------------|-------------|-------------|----------|-------|
-| **Project Structure**     |             |             |          |       |
-| ├── Directory Setup       |             |             | ✓        | Created all required directories |
-| ├── rules.md             |             |             | ✓        | Created with all required sections |
-| **Templates**             |             |             |          |       |
-| ├── primary.md           |             |             | ✓        | Basic template with header and trait listing |
-| ├── trait_block.md       |             |             | ✓        | Template for individual traits with effects |
-| **Core Logic**            |             |             |          |       |
-| ├── Record Resolution    |             |             | ✓        | PERK -> SPEL -> MGEF resolution implemented |
-| ├── Record Loading      |             |             | ✓        | Form list and plugin record loading |
-| ├── Tests               |             |             | ✓        | Unit tests for resolution and loading |
-| **Generator Script**      |             |             |          |       |
-| ├── generate.ts         | ✓           |             |          | Not started |
-| **Documentation**         |             |             |          |       |
-| ├── traits-logic.md     |             |             | ✓        | Core documentation created |
-| ├── API Documentation   | ✓           |             |          | Not started |
 
 ## Implementation Phases
 
@@ -108,16 +244,9 @@ graph TD
 
 ### 3. Logic Implementation
 - Create core modules in `logic/`:
-  ```typescript
-  // Example structure
-  interface TraitDefinition {
-    name: string;
-    description: string;
-    category?: string;
-    effects: string[];
-    requirements?: string[];
-  }
-  ```
+  - `loadTraitRecords.ts`: Load and validate trait records
+  - `resolveTraits.ts`: Resolve trait relationships and effects
+  - `enhanceEffects.ts`: Enhance effects with metadata
 - Implement with TDD approach
 - Create corresponding test files
 - Document relationships in `traits-logic.md`
@@ -141,9 +270,9 @@ graph TD
 #### JSON Output
 ```typescript
 interface TraitOutput {
-  traits: TraitDefinition[];
+  traits: EnhancedTrait[];
   categories?: {
-    [key: string]: TraitDefinition[];
+    [key: string]: EnhancedTrait[];
   };
   metadata: {
     generatedAt: string;
@@ -161,7 +290,10 @@ interface TraitOutput {
 #### [Trait Name]
 - Description
 - Effects
-- Requirements
+  - Effect 1 description with value and duration
+  - Effect 2 description with conditions
+- Related Perks (if any)
+- Requirements (if any)
 ```
 
 ## Quality Standards
@@ -193,6 +325,9 @@ interface TraitOutput {
 - Reference UESP documentation for record structures
 
 *This rule is always in effect alongside other inherited rules.*
+
+
+
 
 
 

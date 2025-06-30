@@ -1,127 +1,111 @@
-import { describe, expect, it } from "vitest";
-import { resolveTrait, resolveTraits } from "../logic/resolveTraits.js";
-
-describe("resolveTrait", () => {
-  const mockPerk = {
-    meta: {
-      globalFormId: "0x123456"
-    },
-    data: {
-      EDID: "TEST_Trait_01",
-      FULL: "Test Trait",
-      DESC: "A test trait description",
-      DATA: {
-        isTrait: 1
-      },
-      sections: [
-        {
-          DATA: {
-            spellId: "0x789ABC"
-          }
-        }
-      ]
-    }
-  };
-
-  const mockSpell = {
-    data: {
-      effects: [
-        {
-          EFID: "0xDEF123",
-          EFIT: {
-            magnitude: 50,
-            duration: 30,
-            area: 0
-          }
-        }
-      ]
-    }
-  };
-
-  const mockMgef = {
-    data: {
-      DNAM: "Increases strength by <mag> points for <dur> seconds"
-    }
-  };
-
-  it("resolves a trait with spell effects", () => {
-    const result = resolveTrait(
-      mockPerk as any,
-      [mockSpell as any],
-      [mockMgef as any]
-    );
-
-    expect(result).toEqual({
-      name: "Test Trait",
-      description: "A test trait description",
-      effects: ["Increases strength by 50 points for 30 seconds"],
-      edid: "TEST_Trait_01",
-      formId: "0x123456"
-    });
-  });
-
-  it("handles missing spell references gracefully", () => {
-    const perkWithoutSpell = {
-      ...mockPerk,
-      data: {
-        ...mockPerk.data,
-        sections: [{ DATA: {} }]
-      }
-    };
-
-    const result = resolveTrait(
-      perkWithoutSpell as any,
-      [mockSpell as any],
-      [mockMgef as any]
-    );
-
-    expect(result.effects).toHaveLength(0);
-  });
-});
+import { describe, expect, test } from "vitest";
+import { resolveTraits, resolveSpellTrait } from "../logic/resolveTraits.js";
+import type { SpelRecordFromSchema } from "../../../types/spelSchema.js";
+import type { MgefRecordFromSchema } from "../../../types/mgefSchema.js";
 
 describe("resolveTraits", () => {
-  const mockPerks = [
-    {
-      meta: { globalFormId: "0x1" },
-      data: {
-        EDID: "TRAIT_01",
-        FULL: "Trait A",
-        DESC: "Description A",
-        DATA: { isTrait: 1 },
-        sections: []
-      }
+  const mockSpell: SpelRecordFromSchema = {
+    meta: {
+      type: "SPEL",
+      formId: "0x123456",
+      globalFormId: "0x123456",
+      plugin: "Test.esp",
+      isWinner: true
     },
-    {
-      meta: { globalFormId: "0x2" },
-      data: {
-        EDID: "PERK_02",
-        FULL: "Not A Trait",
-        DESC: "Description B",
-        DATA: { isTrait: 0 },
-        sections: []
-      }
-    },
-    {
-      meta: { globalFormId: "0x3" },
-      data: {
-        EDID: "TRAIT_03",
-        FULL: "Trait B",
-        DESC: "Description C",
-        DATA: { isTrait: 1 },
-        sections: []
-      }
+    data: {
+      EDID: "TEST_TRAIT_SPELL",
+      FULL: "Test Trait",
+      DESC: "A test trait description",
+      ETYP: "",
+      SPIT: {
+        type: "Spell",
+        spellCost: 100,
+        flags: ["No Auto Calc"],
+        chargeTime: 0,
+        castType: "FireAndForget",
+        delivery: "Self",
+        castDuration: 0,
+        range: 0,
+        halfCostPerk: ""
+      },
+      effects: [
+        {
+          EFID: "0x789ABC",
+          EFIT: {
+            magnitude: 1.5,
+            area: 0,
+            duration: 0
+          }
+        }
+      ]
     }
-  ];
+  };
 
-  it("filters and sorts traits correctly", () => {
-    const result = resolveTraits(
-      mockPerks as any,
-      [],
-      []
-    );
+  const mockMgef: MgefRecordFromSchema = {
+    meta: {
+      type: "MGEF",
+      formId: "0x789ABC",
+      globalFormId: "0x789ABC",
+      plugin: "Test.esp",
+      isWinner: true
+    },
+    data: {
+      EDID: "TEST_MGEF",
+      FULL: "Test Magic Effect",
+      DATA: {
+        flags: ["Detrimental"],
+        castType: "FireAndForget",
+        area: 0,
+        baseCost: 100,
+        relatedID: "",
+        skill: "Alteration",
+        resistanceAV: null,
+        effectType: "Value Modifier",
+        primaryAV: {
+          type: "Attribute",
+          formId: "0xDEF123",
+          name: "Health",
+          effect: "Modifies health regeneration"
+        },
+        secondAV: {
+          type: "Attribute",
+          formId: "0xDEF124",
+          name: "Magicka",
+          effect: "Modifies magicka regeneration"
+        },
+        perkID: "0xFEDCBA",
+        skillLevel: 0,
+        castingTime: 0,
+        deliveryType: "Self"
+      },
+      DNAM: "A test magic effect"
+    }
+  };
 
-    expect(result).toHaveLength(2);
-    expect(result[0].name).toBe("Trait A");
-    expect(result[1].name).toBe("Trait B");
+  const getMgef = (formId: string): MgefRecordFromSchema => {
+    if (formId === "0x789ABC") return mockMgef;
+    throw new Error(`Unknown MGEF: ${formId}`);
+  };
+
+  test("should resolve a single trait", () => {
+    const result = resolveSpellTrait(mockSpell, getMgef);
+    expect(result).toBeDefined();
+    expect(result.name).toBe("Test Trait");
+    expect(result.edid).toBe("TEST_TRAIT_SPELL");
+    expect(result.formId).toBe("0x123456");
+    expect(result.effects).toHaveLength(1);
+  });
+
+  test("should resolve multiple traits", () => {
+    const result = resolveTraits([mockSpell], getMgef);
+    expect(result).toBeDefined();
+    expect(Array.isArray(result)).toBe(true);
+    expect(result).toHaveLength(1);
+
+    const trait = result[0];
+    expect(trait.name).toBe("Test Trait");
+    expect(trait.edid).toBe("TEST_TRAIT_SPELL");
+    expect(trait.formId).toBe("0x123456");
+    expect(trait.effects).toHaveLength(1);
   });
 }); 
